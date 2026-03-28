@@ -20,26 +20,73 @@ interface SummaryFeedProps {
 export function SummaryFeed({ nodes, onNodeSelect, selectedNodeId }: SummaryFeedProps) {
   const summaries = nodes.filter(n => n.type === 'summary');
   const questions = nodes.filter(n => n.type === 'question');
+  const rawDrops = nodes.filter(n => n.status === 'RAW').sort((a, b) => {
+    const dateA = a.metadata?.date_added ? new Date(a.metadata.date_added).getTime() : 0;
+    const dateB = b.metadata?.date_added ? new Date(b.metadata.date_added).getTime() : 0;
+    return dateB - dateA;
+  });
 
   return (
     <div className="flex flex-col h-full neo-bg p-8 font-sans overflow-y-auto custom-scrollbar">
       <div className="mb-12">
-        <h2 className="text-2xl font-serif text-zinc-100 tracking-tight">Summary Feed</h2>
-        <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1 font-mono">Distilled Essence of the Void</p>
+        <h2 className="text-2xl font-serif text-zinc-100 tracking-tight">Stream Feed</h2>
+        <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1 font-mono">Distilled Essence & Raw Drops</p>
       </div>
 
       <div className="space-y-12 max-w-4xl mx-auto">
-        {summaries.map((summary) => (
-          <motion.div
-            key={summary.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            onClick={() => onNodeSelect(summary)}
-            className={cn(
-              "neo-flat rounded-3xl p-8 cursor-pointer border border-transparent transition-all duration-300 group",
-              selectedNodeId === summary.id ? "neo-pressed border-orange-500/20" : "hover:border-white/5"
-            )}
-          >
+        {/* Raw Drops Section */}
+        {rawDrops.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-xl font-serif text-zinc-100 tracking-tight mb-6">Recent Ingestions (Raw Drops)</h2>
+            <div className="space-y-6">
+              {rawDrops.map((drop) => (
+                <motion.div
+                  key={drop.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  onClick={() => onNodeSelect(drop)}
+                  className={cn(
+                    "neo-flat rounded-2xl p-6 cursor-pointer border border-transparent transition-all duration-300 group",
+                    selectedNodeId === drop.id ? "neo-pressed border-orange-500/20" : "hover:border-white/5"
+                  )}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-6 h-6 rounded-lg neo-convex flex items-center justify-center text-orange-500/80 group-hover:text-orange-400 transition-colors">
+                      <Sparkles className="w-3 h-3" />
+                    </div>
+                    <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Raw Drop • {new Date(drop.metadata?.date_added || Date.now()).toLocaleDateString()}</span>
+                  </div>
+                  <h3 className="text-lg font-serif text-zinc-100 mb-2">{drop.label}</h3>
+                  <p className="text-sm text-zinc-400 leading-relaxed mb-4">{drop.summary}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {drop.metadata?.tags?.map((tag: string, i: number) => (
+                      <span key={i} className="px-2 py-1 bg-white/5 rounded text-[10px] text-zinc-500 uppercase tracking-wider">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Summaries Section */}
+        {summaries.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-xl font-serif text-zinc-100 tracking-tight mb-6">Synthesized Summaries</h2>
+            <div className="space-y-8">
+              {summaries.map((summary) => (
+                <motion.div
+                  key={summary.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  onClick={() => onNodeSelect(summary)}
+                  className={cn(
+                    "neo-flat rounded-3xl p-8 cursor-pointer border border-transparent transition-all duration-300 group",
+                    selectedNodeId === summary.id ? "neo-pressed border-orange-500/20" : "hover:border-white/5"
+                  )}
+                >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-8 h-8 rounded-xl neo-convex flex items-center justify-center text-orange-500/80 group-hover:text-orange-400 transition-colors">
                 <Sparkles className="w-4 h-4" />
@@ -77,6 +124,9 @@ export function SummaryFeed({ nodes, onNodeSelect, selectedNodeId }: SummaryFeed
             </div>
           </motion.div>
         ))}
+        </div>
+        </div>
+        )}
 
         {/* Questions Section */}
         <div className="mt-24 mb-12">

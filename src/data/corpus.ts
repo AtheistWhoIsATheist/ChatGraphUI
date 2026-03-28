@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { NTNodeType, NTEdgeType } from './nt_schema';
+
 export type NodeType =
   | "treatise"
   | "journal"
@@ -16,7 +18,8 @@ export type NodeType =
   | "summary"
   | "question"
   | "praxis"
-  | "axiom";
+  | "axiom"
+  | NTNodeType;
 
 export type NodeStatus =
   | "VERIFIED"
@@ -45,6 +48,19 @@ export interface Node {
   status?: NodeStatus;
   confidence?: number;
   evidence_quote_ids?: string[];
+  summary?: string;
+  socratic_questions?: string[];
+  saturation_level?: number;
+  last_audited_date?: Date | string;
+  revision_count?: number;
+  audit_logs?: {
+    id: string;
+    timestamp: string;
+    action: string;
+    actor: string;
+    hash: string;
+    details: string;
+  }[];
   metadata?: {
     geometry?: "circle" | "square" | "diamond" | "hex" | "octagon";
     chromatic_tag?: string;
@@ -70,7 +86,8 @@ export interface Link {
     | "triggers"
     | "confronts"
     | "paradox"
-    | "objection";
+    | "objection"
+    | NTEdgeType;
 }
 
 const createBlock = (content: string): VoidBlock => ({

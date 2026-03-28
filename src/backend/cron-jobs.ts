@@ -48,9 +48,19 @@ export function startCronJobs() {
                 ghost_structures_pruned: {
                   type: Type.ARRAY,
                   items: { type: Type.STRING }
+                },
+                audit_trail: {
+                  type: Type.OBJECT,
+                  properties: {
+                    action: { type: Type.STRING },
+                    actor: { type: Type.STRING },
+                    hash: { type: Type.STRING },
+                    details: { type: Type.STRING }
+                  },
+                  required: ['action', 'actor', 'hash', 'details']
                 }
               },
-              required: ['expanded_summary', 'socratic_questions', 'ghost_structures_pruned']
+              required: ['expanded_summary', 'socratic_questions', 'ghost_structures_pruned', 'audit_trail']
             }
           }
         });
@@ -68,8 +78,18 @@ export function startCronJobs() {
                 saturation_level: 100,
                 last_audited_date: new Date()
               },
+              $push: {
+                audit_logs: {
+                  id: `log_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+                  timestamp: new Date().toISOString(),
+                  action: result.audit_trail.action,
+                  actor: result.audit_trail.actor,
+                  hash: result.audit_trail.hash,
+                  details: result.audit_trail.details
+                }
+              },
               $inc: { revision_count: 1 }
-            }
+            } as any
           );
           console.log(`[CRON] Densified Node: ${node.label}`);
         }

@@ -7,15 +7,16 @@ import { AbyssalIngestor } from './components/AbyssalIngestor';
 import { StreamFeed } from './components/StreamFeed';
 import { StructuralGaps } from './components/StructuralGaps';
 import { ShiftingVoidExplanation } from './components/ShiftingVoidExplanation';
+import { AuditTrailPanel } from './components/AuditTrailPanel';
 import { corpusNodes, corpusLinks, Node } from './data/corpus';
 import { 
-  Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles
+  Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles, ShieldCheck
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 
 type ViewMode = 'ingestion' | 'engine' | 'stream' | 'gaps';
-type SidebarMode = 'chat' | 'intelligence' | 'insights';
+type SidebarMode = 'chat' | 'intelligence' | 'insights' | 'audit';
 
 function TheoryOverlay() {
   const [isOpen, setIsOpen] = useState(false);
@@ -274,6 +275,16 @@ function App() {
               >
                 <Zap className="w-4 h-4" />
               </button>
+              <button
+                onClick={() => setSidebarMode('audit')}
+                className={cn(
+                  "w-10 h-10 rounded-l-xl flex items-center justify-center transition-all border border-r-0 border-white/10",
+                  sidebarMode === 'audit' ? "bg-[#0f0f0f] text-emerald-500" : "bg-black/60 text-zinc-500 hover:text-zinc-300"
+                )}
+                title="Audit Trail"
+              >
+                <ShieldCheck className="w-4 h-4" />
+              </button>
             </div>
 
             {sidebarMode === 'chat' ? (
@@ -287,11 +298,15 @@ function App() {
                 links={corpusLinks}
                 onNodeSelect={handleNodeSelect}
               />
-            ) : (
+            ) : sidebarMode === 'insights' ? (
               <InsightPrompts 
                 nodes={nodes}
                 links={corpusLinks}
                 onNodeSelect={handleNodeSelect}
+              />
+            ) : (
+              <AuditTrailPanel 
+                node={nodes.find(n => n.id === selectedNodeId)}
               />
             )}
           </motion.div>

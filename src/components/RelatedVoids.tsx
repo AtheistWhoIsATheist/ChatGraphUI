@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Node } from '../data/corpus';
 import { motion } from 'motion/react';
 import { Sparkles, ArrowRight } from 'lucide-react';
+import { NT_PROTOCOL } from '../data/nt_schema';
 
 interface RelatedVoidsProps {
   nodeId: string | undefined;
@@ -19,7 +20,11 @@ export function RelatedVoids({ nodeId, onSelect }: RelatedVoidsProps) {
     const fetchRelated = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/vector/related/${nodeId}`);
+        const res = await fetch(`/api/vector/related/${nodeId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ protocol: NT_PROTOCOL })
+        });
         if (res.ok) {
           const data = await res.json();
           setRelated(data);

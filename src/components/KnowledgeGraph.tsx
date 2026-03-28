@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import * as d3 from 'd3';
 import { corpusNodes, corpusLinks, Node, NodeType, NodeStatus } from '../data/corpus';
+import { NT_NODE_COLORS } from '../data/nt_schema';
 import { cn } from '../lib/utils';
 import { 
   Maximize, RotateCcw, ZoomIn, ShieldAlert, CheckCircle2, 
@@ -27,6 +28,7 @@ const NODE_COLORS: Record<NodeType, string> = {
   question: '#f43f5e', // Rose-500
   praxis: '#84cc16',   // Lime-500
   axiom: '#d946ef',    // Fuchsia-500
+  ...NT_NODE_COLORS,
 };
 
 // --- COMPONENT ---
@@ -114,7 +116,7 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
     };
   }, []);
 
-  // --- LATENT SYNAPSES LOGIC ---
+  // --- GAP SYNTHESIS LOGIC ---
   const latentLinksBase = useMemo(() => {
     const lLinks: { sourceId: string; targetId: string; reason: string }[] = [];
     for (let i = 0; i < nodes.length; i++) {
@@ -132,7 +134,15 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
           const tags2 = n2.metadata?.tags || [];
           const sharedTags = tags1.filter(t => tags2.includes(t));
           if (sharedTags.length >= 2) {
-            lLinks.push({ sourceId: n1.id, targetId: n2.id, reason: sharedTags.join(', ') });
+            lLinks.push({ sourceId: n1.id, targetId: n2.id, reason: `Shared conceptual space: ${sharedTags.join(', ')}` });
+          } else if (
+            sharedTags.length === 1 &&
+            (n1.type === "concept" ||
+              n2.type === "concept" ||
+              n1.type === "experience" ||
+              n2.type === "experience")
+          ) {
+            lLinks.push({ sourceId: n1.id, targetId: n2.id, reason: `Potential unified voice via: ${sharedTags[0]}` });
           }
         }
       }
@@ -297,8 +307,8 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
                       : "bg-black/40 border-white/10 text-zinc-400 hover:bg-white/5"
                   )}
                 >
-                  <Link2Off className={cn("w-4 h-4", showLatent && "animate-pulse")} />
-                  <span className="text-xs uppercase tracking-wider">Latent Synapses</span>
+                  <Sparkles className={cn("w-4 h-4", showLatent && "animate-pulse")} />
+                  <span className="text-xs uppercase tracking-wider">Gap Synthesis Overlay</span>
                 </button>
 
                 {/* Gravity Slider */}

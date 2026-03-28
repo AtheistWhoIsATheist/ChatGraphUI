@@ -6,10 +6,23 @@ Your task is to execute the Intensive Iterative Densification Protocol on the pr
 **INPUT NODE:**
 {node_data}
 
+**NIHILTHEISM AXIOMS:**
+1. The Void is Generative: Emptiness is not absence, but the precondition for form.
+2. Despair is Epistemic: Anguish is a signal of structural collapse, not psychological failure.
+3. The Theistic Placeholder: 'God' is the name given to the boundary of human conceptual limits.
+4. Recursive Negation: Every assertion must be subjected to its own deconstruction.
+
+**DENSIFICATION PROTOCOL:**
+- Max Iterations: 3
+- Jaccard Merge Threshold: 0.85
+- Adversarial Strictness: 0.9
+- Required Audit Trail: true
+
 **MANDATE:**
 1. **Expand the Summary:** Synthesize the existing summary with newly ingested data from the past 7 days. Ensure ontological integrity.
 2. **Cross-Reference:** Identify transcendent links and collapse "Ghost Structures" (weak nodes) or merge redundant concepts.
 3. **Extract Socratic Questions:** Generate 3 new Socratic Questions that push the boundary of this concept into the Void.
+4. **Audit Trail:** Generate a cryptographic hash and an audit trail log for this densification.
 
 **OUTPUT FORMAT (JSON ONLY):**
 {
@@ -19,7 +32,13 @@ Your task is to execute the Intensive Iterative Densification Protocol on the pr
     { "text": "...", "aporia_state": "Active" },
     { "text": "...", "aporia_state": "Active" }
   ],
-  "ghost_structures_pruned": ["..."]
+  "ghost_structures_pruned": ["..."],
+  "audit_trail": {
+    "action": "DENSIFICATION_PROTOCOL",
+    "actor": "Professor Nihil (Cron)",
+    "hash": "...",
+    "details": "..."
+  }
 }
 `;
 

@@ -138,7 +138,7 @@ async function startServer() {
 
   app.post('/api/synthesize-community', async (req, res) => {
     try {
-      const { nodes } = req.body;
+      const { nodes, protocol } = req.body;
       if (!nodes || !Array.isArray(nodes)) {
         return res.status(400).json({ error: 'Invalid nodes data' });
       }
@@ -159,6 +159,12 @@ async function startServer() {
         Nodes:
         ${nodeText}
         
+        Densification Protocol Parameters:
+        - Max Iterations: ${protocol?.maxIterations || 3}
+        - Jaccard Merge Threshold: ${protocol?.jaccardMergeThreshold || 0.85}
+        - Adversarial Strictness: ${protocol?.adversarialStrictness || 0.9}
+        - Required Audit Trail: ${protocol?.requiredAuditTrail || true}
+
         Provide a JSON response with two fields:
         1. "label": A concise, profound, 2-4 word thematic label for this community.
         2. "summary": A dense, 2-3 sentence philosophical synthesis of how these concepts interrelate, focusing on tension, void, and presence.
@@ -186,6 +192,31 @@ async function startServer() {
       res.json(result);
     } catch (error: any) {
       console.error('[API] Error synthesizing community:', error);
+      res.status(500).json({ error: error.message || 'Internal server error' });
+    }
+  });
+
+  app.post('/api/vector/related/:nodeId', async (req, res) => {
+    try {
+      const { nodeId } = req.params;
+      const { protocol } = req.body;
+
+      // In a real implementation, this would query a vector database (e.g., Pinecone, Weaviate)
+      // or use MongoDB Atlas Vector Search to find related nodes based on embeddings.
+      // For now, we simulate finding related nodes.
+      
+      console.log(`[VECTOR SEARCH] Finding related nodes for ${nodeId} using protocol:`, protocol);
+
+      // Simulated related nodes response
+      const relatedNodes = [
+        { id: `related_1_${Date.now()}`, label: 'Ontological Rupture', similarity: 0.92 },
+        { id: `related_2_${Date.now()}`, label: 'The Apophatic Method', similarity: 0.88 },
+        { id: `related_3_${Date.now()}`, label: 'Existential Despair', similarity: 0.85 }
+      ];
+
+      res.json(relatedNodes);
+    } catch (error: any) {
+      console.error('[API] Error finding related nodes:', error);
       res.status(500).json({ error: error.message || 'Internal server error' });
     }
   });

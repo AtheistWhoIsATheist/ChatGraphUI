@@ -104,14 +104,14 @@ export function StructuralGaps({
       <div className="flex items-center gap-3 mb-2">
         <MapIcon className="w-6 h-6 text-orange-500" />
         <h1 className="text-2xl font-light tracking-tight">
-          Strategic Diagnostic Tool
+          GapSynth Module
         </h1>
       </div>
       <p className="text-sm text-zinc-500 mb-8 max-w-3xl leading-relaxed">
         Acting as a cartographer mapping an uncharted intellectual terrain. This
-        module exposes the interwoven fabric of Journal314 and its 52 thinkers,
+        module exposes the interwoven fabric of the Knowledgebase,
         translating the labyrinth of modern thought into actionable,
-        transformative insights.
+        transformative insights. It identifies latent and missing conceptual bridges.
       </p>
 
       <div className="flex gap-4 mb-6 border-b border-white/10 pb-4">
@@ -138,7 +138,7 @@ export function StructuralGaps({
           )}
         >
           <Sparkles className="w-4 h-4" />
-          The Unified Voice ({analysis.suggestions.length})
+          Gap Synthesis ({analysis.suggestions.length})
         </button>
         <button
           onClick={() => setActiveTab("hubs")}

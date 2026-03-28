@@ -4,6 +4,7 @@ import { Node, Link } from '../data/corpus';
 import { detectCommunities, Community } from '../utils/communityDetection';
 import { Sparkles, Loader2, Layers, RefreshCw } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { NT_PROTOCOL } from '../data/nt_schema';
 
 interface IntelligenceCardsProps {
   nodes: Node[];
@@ -29,7 +30,10 @@ export function IntelligenceCards({ nodes, links, onNodeSelect }: IntelligenceCa
       const response = await fetch('/api/synthesize-community', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nodes: community.nodes })
+        body: JSON.stringify({ 
+          nodes: community.nodes,
+          protocol: NT_PROTOCOL
+        })
       });
       
       if (!response.ok) throw new Error('Failed to synthesize');

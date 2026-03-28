@@ -48,10 +48,10 @@ export function ShiftingVoidExplanation() {
               <div className="bg-[#0f0f0f] border border-white/5 p-6 rounded-2xl shadow-lg">
                 <h3 className="text-lg font-medium text-white mb-3 flex items-center gap-2">
                   <Network className="w-5 h-5 text-blue-400" />
-                  Latent Synapses
+                  Gap Synthesis Overlay
                 </h3>
                 <p className="text-sm text-zinc-400">
-                  The system continuously scans for unmapped connections between disparate thinkers (e.g., Eckhart and Nāgārjuna). These latent synapses represent potential insights waiting to be formalized.
+                  The system continuously scans for unmapped connections between disparate thinkers (e.g., Eckhart and Nāgārjuna). These latent synapses represent potential insights waiting to be formalized through the GapSynth Module.
                 </p>
               </div>
               <div className="bg-[#0f0f0f] border border-white/5 p-6 rounded-2xl shadow-lg">
@@ -69,16 +69,16 @@ export function ShiftingVoidExplanation() {
                   Recursive Densification
                 </h3>
                 <p className="text-sm text-zinc-400">
-                  Through nightly automated processes, the system revisits under-saturated nodes, expanding their summaries, cross-referencing new data, and generating new Socratic questions to deepen the ontology.
+                  Through nightly automated processes guided by the NTDensificationProtocol, the system revisits under-saturated nodes, expanding their summaries, cross-referencing new data, and generating new Socratic questions to deepen the ontology.
                 </p>
               </div>
               <div className="bg-[#0f0f0f] border border-white/5 p-6 rounded-2xl shadow-lg">
                 <h3 className="text-lg font-medium text-white mb-3 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-emerald-400" />
-                  The Revelation Digest
+                  Cryptographic Audit Trail
                 </h3>
                 <p className="text-sm text-zinc-400">
-                  A weekly synthesis of the system's autonomous evolution, narrating how the "Distinct Realm" of the knowledge base has shifted, highlighting collapsed structures and newly discovered transcendent links.
+                  Every autonomous action taken by the engine—from ingestion to densification—is cryptographically hashed and logged. This ensures absolute transparency and traceability of the evolving ontology.
                 </p>
               </div>
             </div>

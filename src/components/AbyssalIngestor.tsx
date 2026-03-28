@@ -105,21 +105,24 @@ export function AbyssalIngestor({ onComplete }: AbyssalIngestorProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              {...getRootProps()}
-              className={`border-2 border-dashed rounded-3xl p-16 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 ${
-                isDragActive ? 'border-orange-500 bg-orange-500/5' : 'border-white/10 bg-black/40 hover:border-white/20 hover:bg-white/5'
-              }`}
             >
-              <input {...getInputProps()} />
-              <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
-                <UploadCloud className={`w-10 h-10 ${isDragActive ? 'text-orange-500' : 'text-zinc-500'}`} />
+              <div
+                {...getRootProps()}
+                className={`border-2 border-dashed rounded-3xl p-16 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 ${
+                  isDragActive ? 'border-orange-500 bg-orange-500/5' : 'border-white/10 bg-black/40 hover:border-white/20 hover:bg-white/5'
+                }`}
+              >
+                <input {...getInputProps()} />
+                <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                  <UploadCloud className={`w-10 h-10 ${isDragActive ? 'text-orange-500' : 'text-zinc-500'}`} />
+                </div>
+                <p className="text-xl text-zinc-300 font-light mb-2 text-center">
+                  {isDragActive ? "Release to the Void" : "Drag & Drop to Ingest"}
+                </p>
+                <p className="text-xs text-zinc-600 uppercase tracking-widest text-center">
+                  Supported formats: .pdf, .md, .txt
+                </p>
               </div>
-              <p className="text-xl text-zinc-300 font-light mb-2 text-center">
-                {isDragActive ? "Release to the Void" : "Drag & Drop to Ingest"}
-              </p>
-              <p className="text-xs text-zinc-600 uppercase tracking-widest text-center">
-                Supported formats: .pdf, .md, .txt
-              </p>
             </motion.div>
           ) : (
             <motion.div
@@ -155,8 +158,8 @@ export function AbyssalIngestor({ onComplete }: AbyssalIngestorProps) {
                 </div>
 
                 <div className="w-full max-w-md space-y-4">
-                  <Step active={stage === 'ingestion' || stage === 'parsing' || stage === 'synthesis' || stage === 'complete'} done={stage !== 'ingestion' && stage !== 'idle'} label="Reading File Stream" />
-                  <Step active={stage === 'parsing' || stage === 'synthesis' || stage === 'complete'} done={stage !== 'ingestion' && stage !== 'parsing' && stage !== 'idle'} label="Extracting Ontological Text" />
+                  <Step active={stage === 'ingestion' || stage === 'parsing' || stage === 'synthesis' || stage === 'complete'} done={stage !== 'ingestion'} label="Reading File Stream" />
+                  <Step active={stage === 'parsing' || stage === 'synthesis' || stage === 'complete'} done={stage !== 'ingestion' && stage !== 'parsing'} label="Extracting Ontological Text" />
                   <Step active={stage === 'synthesis' || stage === 'complete'} done={stage === 'complete'} label="Calculating Gravity Connections" />
                 </div>
               </div>
