@@ -33,7 +33,7 @@ const NODE_COLORS: Record<NodeType, string> = {
 
 // --- COMPONENT ---
 
-export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes: Node[]; onNodeSelect: (node: Node) => void; selectedNodeId?: string }) {
+export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selectedNodeId }: { nodes: Node[]; links: any[]; onNodeSelect: (node: Node) => void; selectedNodeId?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 1200, height: 800 });
   const [clusterMode, setClusterMode] = useState(false);
@@ -52,7 +52,7 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
   // Layout Hook
   const { nodes: layoutNodes, links } = useGraphLayout({
     nodes: nodes,
-    links: corpusLinks,
+    links: initialLinks,
     width: dimensions.width,
     height: dimensions.height,
     clusterMode,
@@ -123,7 +123,7 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
       for (let j = i + 1; j < nodes.length; j++) {
         const n1 = nodes[i];
         const n2 = nodes[j];
-        const isLinked = corpusLinks.some(l => 
+        const isLinked = initialLinks.some(l => 
           (typeof l.source === 'string' ? l.source === n1.id : (l.source as any).id === n1.id) && 
           (typeof l.target === 'string' ? l.target === n2.id : (l.target as any).id === n2.id) ||
           (typeof l.source === 'string' ? l.source === n2.id : (l.source as any).id === n2.id) && 
@@ -148,7 +148,7 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
       }
     }
     return lLinks;
-  }, [nodes]);
+  }, [nodes, initialLinks]);
 
   const activeLatentLinks = useMemo(() => {
     if (!showLatent) return [];
@@ -165,7 +165,7 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
     const node = nodes.find(n => n.id === nodeId);
     if (!node) return null;
     
-    const connectedLinks = corpusLinks.filter(l => 
+    const connectedLinks = initialLinks.filter(l => 
       (typeof l.source === 'string' ? l.source === nodeId : (l.source as any).id === nodeId) || 
       (typeof l.target === 'string' ? l.target === nodeId : (l.target as any).id === nodeId)
     );
@@ -185,6 +185,145 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
   };
 
   const selectedInsights = selectedNodeId ? getInsights(selectedNodeId) : null;
+
+  // --- BUOY-HOVER ANIMATION ENGINE ---
+  const layoutNodesRef = useRef(layoutNodes);
+  const linksRef = useRef(links);
+  const activeLatentLinksRef = useRef(activeLatentLinks);
+
+  useEffect(() => {
+    layoutNodesRef.current = layoutNodes;
+    linksRef.current = links;
+    activeLatentLinksRef.current = activeLatentLinks;
+  }, [layoutNodes, links, activeLatentLinks]);
+
+  const nodeRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const linkRefs = useRef<Map<string, SVGPathElement>>(new Map());
+  const latentLinkRefs = useRef<Map<string, SVGPathElement>>(new Map());
+
+  useEffect(() => {
+    let animationFrameId: number;
+    
+    const nodeParams = new Map<string, {
+      freqX: number;
+      freqY: number;
+      phaseX: number;
+      phaseY: number;
+      ampX: number;
+      ampY: number;
+    }>();
+
+    const getParams = (id: string) => {
+      if (!nodeParams.has(id)) {
+        nodeParams.set(id, {
+          freqX: 0.3 + Math.random() * 0.2, // 0.3 - 0.5 rad/s
+          freqY: 0.3 + Math.random() * 0.2,
+          phaseX: Math.random() * Math.PI * 2,
+          phaseY: Math.random() * Math.PI * 2,
+          ampX: 3 + Math.random() * 4, // 3 - 7px
+          ampY: 2 + Math.random() * 3, // 2 - 5px
+        });
+      }
+      return nodeParams.get(id)!;
+    };
+
+    const renderLoop = (time: number) => {
+      const t = time / 1000;
+      const currentNodes = layoutNodesRef.current;
+      const currentLinks = linksRef.current;
+      const currentLatentLinks = activeLatentLinksRef.current;
+      
+      const offsets = new Map<string, {x: number, y: number}>();
+      
+      currentNodes.forEach(node => {
+        const p = getParams(node.id);
+        
+        // Harmonic overtone: 30% of main amplitude, 2x frequency
+        const harmonicX = Math.sin(t * (p.freqX * 2) + p.phaseX) * (p.ampX * 0.3);
+        const harmonicY = Math.sin(t * (p.freqY * 2) + p.phaseY) * (p.ampY * 0.3);
+        
+        const offsetX = Math.sin(t * p.freqX + p.phaseX) * p.ampX + harmonicX;
+        const offsetY = Math.sin(t * p.freqY + p.phaseY) * p.ampY + harmonicY + Math.sin(t * 0.15 + p.phaseX) * 2;
+        
+        offsets.set(node.id, { x: offsetX, y: offsetY });
+        
+        const el = nodeRefs.current.get(node.id);
+        if (el) {
+          el.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`;
+        }
+      });
+      
+      currentLinks.forEach(link => {
+        const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
+        const targetId = typeof link.target === 'string' ? link.target : link.target.id;
+        
+        const sourceNode = typeof link.source === 'string' ? currentNodes.find(n => n.id === sourceId) : link.source as any;
+        const targetNode = typeof link.target === 'string' ? currentNodes.find(n => n.id === targetId) : link.target as any;
+        
+        const sourceOffset = offsets.get(sourceId) || { x: 0, y: 0 };
+        const targetOffset = offsets.get(targetId) || { x: 0, y: 0 };
+        
+        const sx = (sourceNode?.x || 0) + sourceOffset.x;
+        const sy = (sourceNode?.y || 0) + sourceOffset.y;
+        const tx = (targetNode?.x || 0) + targetOffset.x;
+        const ty = (targetNode?.y || 0) + targetOffset.y;
+        
+        const dx = tx - sx;
+        const dy = ty - sy;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        
+        const curvature = 0.2;
+        const mx = (sx + tx) / 2;
+        const my = (sy + ty) / 2;
+        const cx = mx - (dy / dist) * (dist * curvature);
+        const cy = my + (dx / dist) * (dist * curvature);
+        
+        const linkId = `link-${sourceId}-${targetId}`;
+        const el = linkRefs.current.get(linkId);
+        if (el) {
+          el.setAttribute('d', `M ${sx} ${sy} Q ${cx} ${cy} ${tx} ${ty}`);
+        }
+      });
+
+      currentLatentLinks.forEach(link => {
+        const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
+        const targetId = typeof link.target === 'string' ? link.target : link.target.id;
+        
+        const sourceNode = typeof link.source === 'string' ? currentNodes.find(n => n.id === sourceId) : link.source as any;
+        const targetNode = typeof link.target === 'string' ? currentNodes.find(n => n.id === targetId) : link.target as any;
+        
+        const sourceOffset = offsets.get(sourceId) || { x: 0, y: 0 };
+        const targetOffset = offsets.get(targetId) || { x: 0, y: 0 };
+        
+        const sx = (sourceNode?.x || 0) + sourceOffset.x;
+        const sy = (sourceNode?.y || 0) + sourceOffset.y;
+        const tx = (targetNode?.x || 0) + targetOffset.x;
+        const ty = (targetNode?.y || 0) + targetOffset.y;
+        
+        const dx = tx - sx;
+        const dy = ty - sy;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        
+        const curvature = -0.2;
+        const mx = (sx + tx) / 2;
+        const my = (sy + ty) / 2;
+        const cx = mx - (dy / dist) * (dist * curvature);
+        const cy = my + (dx / dist) * (dist * curvature);
+        
+        const linkId = `latent-${sourceId}-${targetId}`;
+        const el = latentLinkRefs.current.get(linkId);
+        if (el) {
+          el.setAttribute('d', `M ${sx} ${sy} Q ${cx} ${cy} ${tx} ${ty}`);
+        }
+      });
+      
+      animationFrameId = requestAnimationFrame(renderLoop);
+    };
+    
+    animationFrameId = requestAnimationFrame(renderLoop);
+    
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
 
   // --- RENDER HELPERS ---
 
@@ -382,10 +521,6 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
       >
         <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
           <defs>
-            <linearGradient id="link-gradient" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.1)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-          </linearGradient>
           <linearGradient id="latent-gradient" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="rgba(16, 185, 129, 0.8)" />
             <stop offset="100%" stopColor="rgba(16, 185, 129, 0.2)" />
@@ -404,9 +539,13 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
           {showLatent && activeLatentLinks.map((link, i) => {
             if (!link.source || !link.target || isNaN(link.source.x) || isNaN(link.target.x)) return null;
 
+            const sourceId = link.source.id;
+            const targetId = link.target.id;
+            const linkId = `latent-${sourceId}-${targetId}`;
+            
             const dx = link.target.x - link.source.x;
             const dy = link.target.y - link.source.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
             
             const curvature = -0.2;
             const mx = (link.source.x + link.target.x) / 2;
@@ -416,8 +555,8 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
 
             return (
               <motion.path
-                key={`latent-${link.source.id}-${link.target.id}`}
-                d={`M ${link.source.x} ${link.source.y} Q ${cx} ${cy} ${link.target.x} ${link.target.y}`}
+                key={linkId}
+                ref={(el) => { if (el) latentLinkRefs.current.set(linkId, el as any); else latentLinkRefs.current.delete(linkId); }}
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ 
                   pathLength: 1, 
@@ -446,10 +585,14 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
           {links.map((link, i) => {
             if (!link.source || !link.target || typeof link.source === 'string' || typeof link.target === 'string' || isNaN(link.source.x) || isNaN(link.target.x)) return null;
 
+            const sourceId = link.source.id;
+            const targetId = link.target.id;
+            const linkId = `link-${sourceId}-${targetId}`;
+
             // Calculate Quadratic Bezier Control Point
             const dx = link.target.x - link.source.x;
             const dy = link.target.y - link.source.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
             
             // Curvature based on index to separate overlapping links
             const curvature = 0.2;
@@ -463,15 +606,15 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
 
             return (
               <motion.path
-                key={`link-${link.source.id}-${link.target.id}`}
-                d={`M ${link.source.x} ${link.source.y} Q ${cx} ${cy} ${link.target.x} ${link.target.y}`}
+                key={linkId}
+                ref={(el) => { if (el) linkRefs.current.set(linkId, el as any); else linkRefs.current.delete(linkId); }}
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ 
                   pathLength: 1, 
                   opacity: isDimmed ? 0.05 : (isActive ? 0.8 : 0.25)
                 }}
                 exit={{ opacity: 0 }}
-                stroke={isActive ? "#f97316" : "url(#link-gradient)"}
+                stroke={isActive ? "#f97316" : "rgba(255,255,255,0.15)"}
                 strokeWidth={isActive ? 2 : 1}
                 fill="none"
                 strokeDasharray={isActive ? "4,4" : "none"}
@@ -516,19 +659,14 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
                 style={{ 
                   left: isNaN(node.x) ? 0 : node.x, 
                   top: isNaN(node.y) ? 0 : node.y,
-                  x: "-50%",
-                  y: "-50%"
                 }}
               >
                 <div 
+                  ref={(el) => { if (el) nodeRefs.current.set(node.id, el); else nodeRefs.current.delete(node.id); }}
                   className={cn(
-                    "pointer-events-auto relative group cursor-pointer flex items-center justify-center transition-all duration-300",
+                    "pointer-events-auto relative group cursor-pointer flex items-center justify-center",
                     isSelected ? "z-30" : "z-20"
                   )}
-                  style={{
-                    animation: `float ${4 + (node.id.charCodeAt(0) % 3)}s ease-in-out infinite`,
-                    animationDelay: `${(node.id.charCodeAt(node.id.length - 1) % 5) * 0.2}s`
-                  }}
                   onMouseEnter={() => setHoveredNodeId(node.id)}
                   onMouseLeave={() => setHoveredNodeId(null)}
                   onClick={() => onNodeSelect(node)}
@@ -565,7 +703,7 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
       <AnimatePresence>
         {expandedNodeId && (() => {
           const expandedNode = nodes.find(n => n.id === expandedNodeId);
-          const expandedLinks = corpusLinks.filter(l => 
+          const expandedLinks = initialLinks.filter(l => 
             (typeof l.source === 'string' ? l.source === expandedNodeId : (l.source as any).id === expandedNodeId) || 
             (typeof l.target === 'string' ? l.target === expandedNodeId : (l.target as any).id === expandedNodeId)
           );
@@ -625,6 +763,14 @@ export function KnowledgeGraph({ nodes, onNodeSelect, selectedNodeId }: { nodes:
 
                   {/* Metadata Crystallization */}
                   <div className="mt-12 space-y-6">
+                    {expandedNode?.metadata?.deconstruction_residue && (
+                      <div className="p-4 bg-orange-500/5 border border-orange-500/20 rounded-lg">
+                        <div className="text-[10px] text-orange-500/70 uppercase tracking-widest mb-2 font-bold">Deconstruction Residue</div>
+                        <div className="text-sm text-zinc-300 italic leading-relaxed">
+                          "{expandedNode.metadata.deconstruction_residue}"
+                        </div>
+                      </div>
+                    )}
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/5">
                         <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-1">Gravity</div>

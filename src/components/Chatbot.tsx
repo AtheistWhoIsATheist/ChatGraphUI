@@ -26,7 +26,7 @@ interface ChatbotProps {
 
 export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', text: 'I am the Knowledge Curator. I synthesize the Void into structured wisdom. How shall we deconstruct the library today?' }
+    { role: 'model', text: 'I am SPEN-BRAIN: the Synthetic Philosopher-Engine of Nihiltheism. I am now ready to process specific files or prompts under this architecture. Feed the engine.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);

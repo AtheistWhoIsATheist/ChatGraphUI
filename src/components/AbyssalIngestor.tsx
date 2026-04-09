@@ -61,10 +61,22 @@ export function AbyssalIngestor({ onComplete }: AbyssalIngestorProps) {
         content: text.substring(0, 1000) + (text.length > 1000 ? '...' : '') // Truncate for safety
       }],
       metadata: {
-        tags: ['ingested', 'raw'],
+        tags: ['ingested', 'void', 'raw'],
         geometry: 'diamond'
       }
     };
+
+    try {
+      await fetch('/api/nodes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newNode),
+      });
+    } catch (error) {
+      console.error('Failed to save node to backend:', error);
+    }
 
     setStage('complete');
     setTimeout(() => {

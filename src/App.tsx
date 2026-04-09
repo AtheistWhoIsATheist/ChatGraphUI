@@ -8,14 +8,15 @@ import { StreamFeed } from './components/StreamFeed';
 import { StructuralGaps } from './components/StructuralGaps';
 import { ShiftingVoidExplanation } from './components/ShiftingVoidExplanation';
 import { AuditTrailPanel } from './components/AuditTrailPanel';
+import KnowledgeBaseDeepIngestion from './pages/KnowledgeBaseDeepIngestion';
 import { corpusNodes, corpusLinks, Node } from './data/corpus';
 import { 
-  Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles, ShieldCheck
+  Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles, ShieldCheck, HardDriveDownload
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 
-type ViewMode = 'ingestion' | 'engine' | 'stream' | 'gaps';
+type ViewMode = 'ingestion' | 'engine' | 'stream' | 'gaps' | 'deep_ingestion';
 type SidebarMode = 'chat' | 'intelligence' | 'insights' | 'audit';
 
 function TheoryOverlay() {
@@ -54,13 +55,46 @@ function TheoryOverlay() {
 }
 
 function App() {
-  const [nodes, setNodes] = useState<Node[]>(corpusNodes);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [links, setLinks] = useState<any[]>([]);
   const [selectedNodeId, setSelectedNodeId] = useState<string | undefined>();
   const [viewMode, setViewMode] = useState<ViewMode>('engine');
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>('chat');
   const [showRupture, setShowRupture] = useState(true);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [nodesRes, linksRes] = await Promise.all([
+          fetch('/api/nodes'),
+          fetch('/api/links')
+        ]);
+        
+        if (nodesRes.ok) {
+          const data = await nodesRes.json();
+          setNodes(data);
+        } else {
+          console.error('Failed to fetch nodes, falling back to corpusNodes');
+          setNodes(corpusNodes);
+        }
+
+        if (linksRes.ok) {
+          const data = await linksRes.json();
+          setLinks(data);
+        } else {
+          console.error('Failed to fetch links, falling back to corpusLinks');
+          setLinks(corpusLinks);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setNodes(corpusNodes);
+        setLinks(corpusLinks);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowRupture(false), 4000);
@@ -151,6 +185,16 @@ function App() {
                 <Database className="w-5 h-5" strokeWidth={1.5} />
               </button>
               <button 
+                onClick={() => setViewMode('deep_ingestion')}
+                className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'deep_ingestion' ? "neo-pressed text-orange-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                )}
+                title="Phase 1.5: Deep Ingestion"
+              >
+                <HardDriveDownload className="w-5 h-5" strokeWidth={1.5} />
+              </button>
+              <button 
                 onClick={() => setViewMode('engine')}
                 className={cn(
                   "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
@@ -188,15 +232,31 @@ function App() {
       {/* Main Content Area */}
       <main className="flex-1 relative overflow-hidden">
         {viewMode === 'ingestion' && (
-          <AbyssalIngestor onComplete={(node) => {
-            setNodes(prev => [...prev, node]);
+          <AbyssalIngestor onComplete={async (node) => {
+            try {
+              const [nodesRes, linksRes] = await Promise.all([
+                fetch('/api/nodes'),
+                fetch('/api/links')
+              ]);
+              if (nodesRes.ok) setNodes(await nodesRes.json());
+              if (linksRes.ok) setLinks(await linksRes.json());
+            } catch (e) {
+              console.error('Failed to refetch data:', e);
+              setNodes(prev => [...prev, node]);
+            }
             setViewMode('stream');
           }} />
+        )}
+        {viewMode === 'deep_ingestion' && (
+          <div className="w-full h-full overflow-y-auto custom-scrollbar">
+            <KnowledgeBaseDeepIngestion />
+          </div>
         )}
         {viewMode === 'engine' && (
           <div className="relative w-full h-full">
             <KnowledgeGraph 
               nodes={nodes} 
+              links={links}
               onNodeSelect={handleNodeSelect} 
               selectedNodeId={selectedNodeId} 
             />
@@ -295,13 +355,13 @@ function App() {
             ) : sidebarMode === 'intelligence' ? (
               <IntelligenceCards 
                 nodes={nodes}
-                links={corpusLinks}
+                links={links}
                 onNodeSelect={handleNodeSelect}
               />
             ) : sidebarMode === 'insights' ? (
               <InsightPrompts 
                 nodes={nodes}
-                links={corpusLinks}
+                links={links}
                 onNodeSelect={handleNodeSelect}
               />
             ) : (
