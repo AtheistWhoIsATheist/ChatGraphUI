@@ -31,6 +31,13 @@ const NODE_COLORS: Record<NodeType, string> = {
   ...NT_NODE_COLORS,
 };
 
+const getHierarchicalColor = (node: Node) => {
+  if (node.id === 'void') return '#ffffff'; // The Singularity is pure light
+  if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) return '#f97316'; // Foundations are warm
+  if (node.type === 'methodology' || node.id.includes('series') || node.id.includes('codex')) return '#8b5cf6'; // Operations are violet
+  return NODE_COLORS[node.type] || '#71717a';
+};
+
 // --- COMPONENT ---
 
 export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selectedNodeId }: { nodes: Node[]; links: any[]; onNodeSelect: (node: Node) => void; selectedNodeId?: string }) {
@@ -44,6 +51,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
   const [expandedNodeId, setExpandedNodeId] = useState<string | null>(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, k: 1 });
   const [isToolbarOpen, setIsToolbarOpen] = useState(true);
+  const [structuralIntegrity, setStructuralIntegrity] = useState(true);
   
   // Filters
   const [activeTypes, setActiveTypes] = useState<Set<string>>(new Set());
@@ -186,6 +194,96 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
 
   const selectedInsights = selectedNodeId ? getInsights(selectedNodeId) : null;
 
+  // --- PERSISTENT RELATIONAL WEB LOGIC ---
+  const calculateLinkStyle = (link: any) => {
+    const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
+    const targetId = typeof link.target === 'string' ? link.target : link.target.id;
+    
+    const sourceNode = nodes.find(n => n.id === sourceId);
+    const targetNode = nodes.find(n => n.id === targetId);
+    
+    const isFoundational = sourceId === 'void' || targetId === 'void' || 
+                          (sourceNode?.type === 'concept' && targetNode?.type === 'concept');
+    
+    const isSelected = selectedNodeId === sourceId || selectedNodeId === targetId;
+    const isHovered = hoveredNodeId === sourceId || hoveredNodeId === targetId;
+    const isFocusMode = selectedNodeId || hoveredNodeId;
+    
+    // 1. Dynamic Weight & Opacity
+    let opacity = structuralIntegrity ? 0.15 : 0.05;
+    let width = 1;
+    
+    if (isFoundational) {
+      opacity = structuralIntegrity ? 0.3 : 0.1;
+      width = 1.5;
+    }
+    
+    if (isFocusMode) {
+      if (isSelected || isHovered) {
+        opacity = 0.8;
+        width = 2;
+      } else {
+        opacity = 0.02; // Focus Mode: Dim unrelated
+      }
+    }
+    
+    // 2. Connection Hierarchy (Visual Style)
+    let dashArray = "none";
+    if (link.type === 'explores' || link.type === 'documents') {
+      dashArray = "4,4"; // Influential
+    }
+    
+    return {
+      opacity,
+      width,
+      dashArray,
+      color: isSelected || isHovered ? "#f97316" : (isFoundational ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.15)"),
+      isActive: isSelected || isHovered
+    };
+  };
+
+  // --- PERMANENT GLOBAL SCALING LOGIC ---
+  const nodeDegrees = useMemo(() => {
+    const degrees: Record<string, number> = {};
+    initialLinks.forEach(link => {
+      const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
+      const targetId = typeof link.target === 'string' ? link.target : link.target.id;
+      degrees[sourceId] = (degrees[sourceId] || 0) + 1;
+      degrees[targetId] = (degrees[targetId] || 0) + 1;
+    });
+    return degrees;
+  }, [initialLinks]);
+
+  const calculateNodeScale = (node: Node) => {
+    const degree = nodeDegrees[node.id] || 0;
+    const saturation = node.metadata?.saturation_level || 50;
+    
+    // 1. Base Scale by Type/ID (Hierarchical)
+    let baseRadius = 15;
+    if (node.id === 'void') baseRadius = 45; // Level 1: Singularity
+    else if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) baseRadius = 35; // Level 2: Foundations
+    else if (node.type === 'methodology' || node.id.includes('series') || node.id.includes('codex')) baseRadius = 25; // Level 3: Operations
+    else baseRadius = 12; // Level 4: Specifics
+    
+    // 2. Structural Weighting (Centrality)
+    const centralityBonus = Math.min(degree * 2.5, 25);
+    
+    // 3. Semantic Saturation
+    const saturationMultiplier = 0.8 + (saturation / 100) * 0.4;
+    
+    const finalRadius = (baseRadius + centralityBonus) * saturationMultiplier;
+    
+    // 4. Abyssal Integration Factor (AIF)
+    const aif = (Math.min(degree, 10) / 10) * 0.4 + (saturation / 100) * 0.6;
+    
+    return {
+      radius: Math.max(6, Math.min(65, finalRadius)),
+      aif,
+      glowIntensity: aif * 0.6,
+      auraSize: aif * 25
+    };
+  };
+
   // --- BUOY-HOVER ANIMATION ENGINE ---
   const layoutNodesRef = useRef(layoutNodes);
   const linksRef = useRef(links);
@@ -327,8 +425,6 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
 
   // --- RENDER HELPERS ---
 
-  const getNodeColor = (type: NodeType) => NODE_COLORS[type] || '#71717a';
-
   return (
     <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-[#0a0a0a] text-zinc-100 font-sans selection:bg-orange-500/30">
       
@@ -448,6 +544,19 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                 >
                   <Sparkles className={cn("w-4 h-4", showLatent && "animate-pulse")} />
                   <span className="text-xs uppercase tracking-wider">Gap Synthesis Overlay</span>
+                </button>
+
+                <button
+                  onClick={() => setStructuralIntegrity(!structuralIntegrity)}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-xl border backdrop-blur-md transition-all duration-300 shadow-lg",
+                    structuralIntegrity 
+                      ? "bg-blue-500 text-black border-blue-400 font-semibold" 
+                      : "bg-black/40 border-white/10 text-zinc-400 hover:bg-white/5"
+                  )}
+                >
+                  <Network className={cn("w-4 h-4", structuralIntegrity && "animate-pulse")} />
+                  <span className="text-xs uppercase tracking-wider">Structural Integrity</span>
                 </button>
 
                 {/* Gravity Slider */}
@@ -588,6 +697,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
             const sourceId = link.source.id;
             const targetId = link.target.id;
             const linkId = `link-${sourceId}-${targetId}`;
+            const style = calculateLinkStyle(link);
 
             // Calculate Quadratic Bezier Control Point
             const dx = link.target.x - link.source.x;
@@ -601,36 +711,41 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
             const cx = mx - (dy / dist) * (dist * curvature);
             const cy = my + (dx / dist) * (dist * curvature);
 
-            const isDimmed = hoveredNodeId && (link.source.id !== hoveredNodeId && link.target.id !== hoveredNodeId);
-            const isActive = selectedNodeId === link.source.id || selectedNodeId === link.target.id;
-
             return (
-              <motion.path
-                key={linkId}
-                ref={(el) => { if (el) linkRefs.current.set(linkId, el as any); else linkRefs.current.delete(linkId); }}
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ 
-                  pathLength: 1, 
-                  opacity: isDimmed ? 0.05 : (isActive ? 0.8 : 0.25)
-                }}
-                exit={{ opacity: 0 }}
-                stroke={isActive ? "#f97316" : "rgba(255,255,255,0.15)"}
-                strokeWidth={isActive ? 2 : 1}
-                fill="none"
-                strokeDasharray={isActive ? "4,4" : "none"}
-                style={{
-                  strokeDashoffset: isActive ? 0 : 0
-                }}
-              >
-                {isActive && (
-                  <animate 
-                    attributeName="stroke-dashoffset" 
-                    values="100;0" 
-                    dur="2s" 
-                    repeatCount="indefinite" 
+              <g key={linkId}>
+                <motion.path
+                  ref={(el) => { if (el) linkRefs.current.set(linkId, el as any); else linkRefs.current.delete(linkId); }}
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ 
+                    pathLength: 1, 
+                    opacity: style.opacity
+                  }}
+                  exit={{ opacity: 0 }}
+                  stroke={style.color}
+                  strokeWidth={style.width}
+                  fill="none"
+                  strokeDasharray={style.dashArray}
+                />
+                
+                {/* Animated Particle (Logic Flow) */}
+                {(style.isActive || (structuralIntegrity && Math.random() > 0.95)) && (
+                  <motion.circle
+                    r={1.5}
+                    fill="#f97316"
+                    initial={{ offsetDistance: "0%" }}
+                    animate={{ offsetDistance: "100%" }}
+                    transition={{ 
+                      duration: 2 + Math.random() * 2, 
+                      repeat: Infinity, 
+                      ease: "linear" 
+                    }}
+                    style={{
+                      offsetPath: `path('M ${link.source.x} ${link.source.y} Q ${cx} ${cy} ${link.target.x} ${link.target.y}')`,
+                      filter: "blur(1px) drop-shadow(0 0 2px #f97316)"
+                    }}
                   />
                 )}
-              </motion.path>
+              </g>
             );
           })}
         </AnimatePresence>
@@ -643,7 +758,8 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
             const matchesSearch = searchQuery && node.label.toLowerCase().includes(searchQuery.toLowerCase());
             const isDimmed = (searchQuery && !matchesSearch) || (hoveredNodeId && hoveredNodeId !== node.id && !links.some(l => (l.source?.id === node.id && l.target?.id === hoveredNodeId) || (l.target?.id === node.id && l.source?.id === hoveredNodeId)));
             const isSelected = selectedNodeId === node.id;
-            const color = getNodeColor(node.type);
+            const color = getHierarchicalColor(node);
+            const scale = calculateNodeScale(node);
 
             return (
               <motion.div
@@ -672,19 +788,41 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                   onClick={() => onNodeSelect(node)}
                   onDoubleClick={() => setExpandedNodeId(node.id)}
                 >
+                  {/* Abyssal Integration Aura */}
+                  {scale.aif > 0.4 && (
+                    <motion.div 
+                      animate={{ 
+                        scale: [1, 1.05, 1],
+                        opacity: [scale.aif * 0.3, scale.aif * 0.6, scale.aif * 0.3]
+                      }}
+                      transition={{ 
+                        duration: 4, 
+                        repeat: Infinity, 
+                        ease: "easeInOut" 
+                      }}
+                      className="absolute rounded-full pointer-events-none"
+                      style={{
+                        width: scale.radius * 2 + scale.auraSize,
+                        height: scale.radius * 2 + scale.auraSize,
+                        background: `radial-gradient(circle, ${color}40 0%, transparent 70%)`,
+                        filter: `blur(${scale.auraSize / 2}px)`,
+                      }}
+                    />
+                  )}
+
                   {/* Node Shape */}
                   <div 
                     className={cn(
                       "rounded-full shadow-[0_0_15px_rgba(0,0,0,0.5)] border-2 transition-all duration-300",
-                      isSelected ? "border-white animate-pulse" : "w-4 h-4 border-white/20 group-hover:border-white/60 group-hover:scale-125",
+                      isSelected ? "border-white animate-pulse" : "border-white/20 group-hover:border-white/60 group-hover:scale-110",
                       matchesSearch && "shadow-[0_0_20px_rgba(255,255,255,0.8)] border-white"
                     )}
                     style={{ 
                       backgroundColor: color, 
                       borderColor: isSelected || matchesSearch ? '#fff' : undefined,
-                      boxShadow: isSelected ? `0 0 30px ${color}80` : undefined,
-                      width: isSelected ? `${Math.max(24, Math.min(48, (node.metadata?.saturation_level || 50) / 2))}px` : undefined,
-                      height: isSelected ? `${Math.max(24, Math.min(48, (node.metadata?.saturation_level || 50) / 2))}px` : undefined,
+                      boxShadow: `0 0 ${10 + scale.glowIntensity * 30}px ${color}${Math.round(scale.glowIntensity * 255).toString(16).padStart(2, '0')}`,
+                      width: `${scale.radius * 2}px`,
+                      height: `${scale.radius * 2}px`,
                     }}
                   />
 
