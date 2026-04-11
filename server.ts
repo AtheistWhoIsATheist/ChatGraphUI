@@ -195,6 +195,74 @@ async function startServer() {
     res.json({ status: 'ok', message: 'The Void-Graph Protocol is active.', key: process.env.GEMINI_API_KEY });
   });
 
+  app.post('/api/extract-graph', async (req, res) => {
+    const { text } = req.body;
+    if (!text) return res.status(400).json({ error: 'Text is required' });
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
+    }
+
+    try {
+      const prompt = `
+        You are a senior philosophical knowledge graph extractor.
+        Your task is to analyze the provided text and extract meaningful philosophical entities and their relationships.
+
+        NODES:
+        - Extract concepts, thinkers, treatises, axioms, methodologies, and experiential claims.
+        - For each node, provide:
+          - id: A unique, URL-friendly slug (e.g., "categorical-imperative").
+          - label: A clear, human-readable name.
+          - type: One of [concept, thinker, treatise, question, axiom, praxis, methodology, claim, experience].
+          - definition: A concise summary of the entity.
+          - tradition: (Optional) The philosophical tradition it belongs to.
+
+        EDGES:
+        - Extract relationships between the nodes.
+        - For each edge, provide:
+          - source: The ID of the source node.
+          - target: The ID of the target node.
+          - relation: A short description of the link (e.g., "influences", "critiques", "derives-from").
+          - confidence: A value between 0 and 1.
+
+        Return ONLY a valid JSON object with the following structure:
+        {
+          "nodes": [{"id": "...", "label": "...", "type": "...", "definition": "...", "tradition": "..."}],
+          "edges": [{"source": "...", "target": "...", "relation": "...", "confidence": 0.9}]
+        }
+
+        TEXT TO ANALYZE:
+        ${text}
+      `;
+
+      const ai = new GoogleGenAI({ apiKey });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.1-pro-preview',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+        }
+      });
+      
+      const extracted = await (async () => {
+        try {
+          return JSON.parse(response.text);
+        } catch (parseError) {
+          console.error('[API] JSON Parse Error. Raw response:', response.text);
+          const jsonMatch = response.text.match(/\{[\s\S]*\}/);
+          if (jsonMatch) return JSON.parse(jsonMatch[0]);
+          throw parseError;
+        }
+      })();
+
+      res.json(extracted);
+    } catch (error) {
+      console.error('[API] Extraction error:', error);
+      res.status(500).json({ error: 'Failed to extract graph elements. The void is turbulent.' });
+    }
+  });
+
   app.get('/api/nodes', async (req, res) => {
     try {
       const db = getDb();

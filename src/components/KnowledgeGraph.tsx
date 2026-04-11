@@ -675,11 +675,17 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                   {/* Node Shape */}
                   <div 
                     className={cn(
-                      "w-4 h-4 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.5)] border-2 transition-all duration-300",
-                      isSelected ? "w-6 h-6 border-white shadow-[0_0_20px_rgba(249,115,22,0.6)]" : "border-white/20 group-hover:border-white/60 group-hover:scale-125",
+                      "rounded-full shadow-[0_0_15px_rgba(0,0,0,0.5)] border-2 transition-all duration-300",
+                      isSelected ? "border-white animate-pulse" : "w-4 h-4 border-white/20 group-hover:border-white/60 group-hover:scale-125",
                       matchesSearch && "shadow-[0_0_20px_rgba(255,255,255,0.8)] border-white"
                     )}
-                    style={{ backgroundColor: color, borderColor: isSelected || matchesSearch ? '#fff' : undefined }}
+                    style={{ 
+                      backgroundColor: color, 
+                      borderColor: isSelected || matchesSearch ? '#fff' : undefined,
+                      boxShadow: isSelected ? `0 0 30px ${color}80` : undefined,
+                      width: isSelected ? `${Math.max(24, Math.min(48, (node.metadata?.saturation_level || 50) / 2))}px` : undefined,
+                      height: isSelected ? `${Math.max(24, Math.min(48, (node.metadata?.saturation_level || 50) / 2))}px` : undefined,
+                    }}
                   />
 
                   {/* Label */}

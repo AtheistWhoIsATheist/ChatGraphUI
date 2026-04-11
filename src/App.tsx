@@ -8,16 +8,19 @@ import { StreamFeed } from './components/StreamFeed';
 import { StructuralGaps } from './components/StructuralGaps';
 import { ShiftingVoidExplanation } from './components/ShiftingVoidExplanation';
 import { AuditTrailPanel } from './components/AuditTrailPanel';
+import { NodeDetailsPanel } from './components/NodeDetailsPanel';
+import { FileManager } from './components/FileManager';
 import KnowledgeBaseDeepIngestion from './pages/KnowledgeBaseDeepIngestion';
-import { corpusNodes, corpusLinks, Node } from './data/corpus';
+import { corpusNodes, corpusLinks, Node, Link } from './data/corpus';
 import { 
-  Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles, ShieldCheck, HardDriveDownload
+  Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles, ShieldCheck, HardDriveDownload, Info, HardDrive
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { runIngestion, IngestionFile } from './utils/runIngestion';
 
 type ViewMode = 'ingestion' | 'engine' | 'stream' | 'gaps' | 'deep_ingestion';
-type SidebarMode = 'chat' | 'intelligence' | 'insights' | 'audit';
+type SidebarMode = 'chat' | 'intelligence' | 'insights' | 'audit' | 'details';
 
 function TheoryOverlay() {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,13 +59,15 @@ function TheoryOverlay() {
 
 function App() {
   const [nodes, setNodes] = useState<Node[]>([]);
-  const [links, setLinks] = useState<any[]>([]);
+  const [links, setLinks] = useState<Link[]>([]);
   const [selectedNodeId, setSelectedNodeId] = useState<string | undefined>();
   const [viewMode, setViewMode] = useState<ViewMode>('engine');
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>('chat');
   const [showRupture, setShowRupture] = useState(true);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
+  const [isFileManagerOpen, setIsFileManagerOpen] = useState(false);
+  const [files, setFiles] = useState<IngestionFile[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,6 +108,31 @@ function App() {
 
   const handleNodeSelect = (node: Node) => {
     setSelectedNodeId(node.id);
+    setSidebarMode('details');
+    setIsRightSidebarOpen(true);
+  };
+
+  const handleFileExtract = async (file: IngestionFile) => {
+    try {
+      const result = await runIngestion(
+        file, 
+        nodes, 
+        links, 
+        (id, status) => {
+          setFiles(prev => prev.map(f => f.id === id ? { ...f, status } : f));
+        }
+      );
+
+      setNodes(result.nodes);
+      setLinks(result.links);
+      
+      // Persist to backend if needed
+      // In this app, we'll rely on the local state for now, 
+      // but ideally we'd call an API to save the new nodes/links.
+      
+    } catch (error) {
+      console.error('Extraction failed:', error);
+    }
   };
 
   return (
@@ -224,7 +254,40 @@ function App() {
               >
                 <AlertTriangle className="w-5 h-5" strokeWidth={1.5} />
               </button>
+
+              <div className="mt-auto flex flex-col gap-4">
+                <button 
+                  onClick={() => setIsFileManagerOpen(!isFileManagerOpen)}
+                  className={cn(
+                    "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
+                    isFileManagerOpen ? "neo-pressed text-orange-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                  )}
+                  title="Abyssal Archives (File Manager)"
+                >
+                  <HardDrive className="w-5 h-5" strokeWidth={1.5} />
+                </button>
+              </div>
             </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* File Manager Panel */}
+      <AnimatePresence>
+        {isFileManagerOpen && (
+          <motion.div
+            initial={{ x: -400 }}
+            animate={{ x: 0 }}
+            exit={{ x: -400 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed left-20 top-0 bottom-0 w-80 z-10 shadow-2xl"
+          >
+            <FileManager 
+              files={files}
+              setFiles={setFiles}
+              onExtract={handleFileExtract}
+              onClose={() => setIsFileManagerOpen(false)}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -336,6 +399,16 @@ function App() {
                 <Zap className="w-4 h-4" />
               </button>
               <button
+                onClick={() => setSidebarMode('details')}
+                className={cn(
+                  "w-10 h-10 rounded-l-xl flex items-center justify-center transition-all border border-r-0 border-white/10",
+                  sidebarMode === 'details' ? "bg-[#0f0f0f] text-orange-500" : "bg-black/60 text-zinc-500 hover:text-zinc-300"
+                )}
+                title="Node Details"
+              >
+                <Info className="w-4 h-4" />
+              </button>
+              <button
                 onClick={() => setSidebarMode('audit')}
                 className={cn(
                   "w-10 h-10 rounded-l-xl flex items-center justify-center transition-all border border-r-0 border-white/10",
@@ -363,6 +436,10 @@ function App() {
                 nodes={nodes}
                 links={links}
                 onNodeSelect={handleNodeSelect}
+              />
+            ) : sidebarMode === 'details' ? (
+              <NodeDetailsPanel 
+                node={nodes.find(n => n.id === selectedNodeId)}
               />
             ) : (
               <AuditTrailPanel 

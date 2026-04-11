@@ -72,6 +72,11 @@ export interface Node {
     revision_count?: number;
     aporia_state?: "Active" | "Synthesized" | "Terminal";
     embedding?: number[];
+    historical_context?: string;
+    source_references?: string[];
+    philosophical_stance?: string;
+    relation_to_void?: string;
+    deconstruction_residue?: string;
   };
 }
 
@@ -107,7 +112,15 @@ export const corpusNodes: Node[] = [
     blocks: [
       createBlock("The Minimum Apophatic Condition (MAC_α) states that any valid nihiltheistic assertion must first pass through the negation of all positive theological and philosophical constructs before it can point to the generative Void.")
     ],
-    metadata: { tags: ["axiom", "apophasis", "void"] }
+    metadata: { 
+      tags: ["axiom", "apophasis", "void"],
+      historical_context: "Formulated during the early stages of the Void-Graph Protocol to establish a baseline for rigorous philosophical inquiry.",
+      source_references: ["The Cloud of Unknowing", "Pseudo-Dionysius the Areopagite"],
+      philosophical_stance: "Radical Negation",
+      relation_to_void: "Acts as the primary filter or gateway through which all concepts must pass before entering the Void.",
+      saturation_level: 85,
+      deconstruction_residue: "The persistent human desire to name the unnameable."
+    }
   },
   {
     id: "aif",
