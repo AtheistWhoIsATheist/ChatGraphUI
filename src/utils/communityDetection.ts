@@ -1,5 +1,15 @@
-import jLouvain from 'jlouvain';
+import jLouvainImport from 'jlouvain';
 import { Node, Link } from '../data/corpus';
+
+// Robust jLouvain initialization for ESM/CJS interop
+const getJLouvain = (mod: any) => {
+  if (typeof mod === 'function') return mod;
+  if (mod && typeof mod.default === 'function') return mod.default;
+  if (mod && typeof mod.jLouvain === 'function') return mod.jLouvain;
+  return mod;
+};
+
+const jLouvain: any = getJLouvain(jLouvainImport);
 
 export interface Community {
   id: number;

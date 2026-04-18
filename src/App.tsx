@@ -3,7 +3,6 @@ import { KnowledgeGraph } from './components/KnowledgeGraph';
 import { Chatbot } from './components/Chatbot';
 import { IntelligenceCards } from './components/IntelligenceCards';
 import { InsightPrompts } from './components/InsightPrompts';
-import { AbyssalIngestor } from './components/AbyssalIngestor';
 import { StreamFeed } from './components/StreamFeed';
 import { StructuralGaps } from './components/StructuralGaps';
 import { ShiftingVoidExplanation } from './components/ShiftingVoidExplanation';
@@ -19,7 +18,7 @@ import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { runIngestion, IngestionFile } from './utils/runIngestion';
 
-type ViewMode = 'ingestion' | 'engine' | 'stream' | 'gaps' | 'deep_ingestion';
+type ViewMode = 'engine' | 'stream' | 'gaps' | 'deep_ingestion';
 type SidebarMode = 'chat' | 'intelligence' | 'insights' | 'audit' | 'details';
 
 function TheoryOverlay() {
@@ -205,24 +204,14 @@ function App() {
             
             <nav className="flex-1 flex flex-col gap-4">
               <button 
-                onClick={() => setViewMode('ingestion')}
-                className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'ingestion' ? "neo-pressed text-orange-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
-                )}
-                title="Phase 1: Ingestion (The Source)"
-              >
-                <Database className="w-5 h-5" strokeWidth={1.5} />
-              </button>
-              <button 
                 onClick={() => setViewMode('deep_ingestion')}
                 className={cn(
                   "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
                   viewMode === 'deep_ingestion' ? "neo-pressed text-orange-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
                 )}
-                title="Phase 1.5: Deep Ingestion"
+                title="Phase 1: Deep Ingestion (The Source)"
               >
-                <HardDriveDownload className="w-5 h-5" strokeWidth={1.5} />
+                <Database className="w-5 h-5" strokeWidth={1.5} />
               </button>
               <button 
                 onClick={() => setViewMode('engine')}
@@ -294,22 +283,6 @@ function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 relative overflow-hidden">
-        {viewMode === 'ingestion' && (
-          <AbyssalIngestor onComplete={async (node) => {
-            try {
-              const [nodesRes, linksRes] = await Promise.all([
-                fetch('/api/nodes'),
-                fetch('/api/links')
-              ]);
-              if (nodesRes.ok) setNodes(await nodesRes.json());
-              if (linksRes.ok) setLinks(await linksRes.json());
-            } catch (e) {
-              console.error('Failed to refetch data:', e);
-              setNodes(prev => [...prev, node]);
-            }
-            setViewMode('stream');
-          }} />
-        )}
         {viewMode === 'deep_ingestion' && (
           <div className="w-full h-full overflow-y-auto custom-scrollbar">
             <KnowledgeBaseDeepIngestion />

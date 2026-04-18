@@ -12,7 +12,8 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(express.json());
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
   // Connect to MongoDB
   await connectDB();
@@ -137,50 +138,157 @@ async function startServer() {
       const payload = req.body;
 
       if (mode === 'preview') {
-        // Mock mapping preview generation
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+          return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
+        }
+
+        const ai = new GoogleGenAI({ apiKey });
+        
+        // Truncate to avoid massive timeouts, but take a very large chunk
+        const rawText = payload.extracted?.text || '';
+        const textToAnalyze = rawText.substring(0, 100000); 
+
+        const prompt = `
+          You are the Nihiltheism Operations Engine. Extract fundamental philosophical entities and linkages from the following text document.
+          Identify at least 2 to 5 profound "RPEs" (Radical Philosophical Events) or "Axioms" from the reading.
+          
+          Document Name: ${payload.file_name}
+
+          Text:
+          ${textToAnalyze}
+        `;
+
+        let generated = { entities: [] };
+        try {
+          const response = await ai.models.generateContent({
+            model: 'gemini-3.1-pro-preview',
+            contents: prompt,
+            config: {
+              responseMimeType: 'application/json',
+              responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                  entities: {
+                    type: Type.ARRAY,
+                    items: {
+                      type: Type.OBJECT,
+                      properties: {
+                        kind: { type: Type.STRING },
+                        name: { type: Type.STRING },
+                        core_fracture: { type: Type.STRING },
+                        statement: { type: Type.STRING },
+                        operation: { type: Type.STRING },
+                        confidence: { type: Type.NUMBER }
+                      },
+                      required: ["kind", "name", "operation", "confidence"]
+                    }
+                  }
+                },
+                required: ["entities"]
+              }
+            }
+          });
+          generated = JSON.parse(response.text || '{"entities":[]}');
+        } catch (genErr) {
+          console.error("Gemini Extraction Error:", genErr);
+          // Fallback to basic extraction if Gemini fails
+          generated.entities = [
+            {
+              kind: "rpe",
+              name: `Substrate Rupture [Fallback]`,
+              core_fracture: "The API failed to parse profound implications; this is a generic extraction.",
+              operation: "insert",
+              confidence: 0.1
+            }
+          ] as any;
+        }
+        
         const preview = {
           file_id: `file_${Date.now()}`,
           file_name: payload.file_name,
           file_type: payload.file_type,
-          entities: [
-            {
-              kind: "rpe",
-              name: `Extracted RPE from ${payload.file_name}`,
-              core_fracture: "The inherent tension between being and nothingness.",
-              source_file: payload.file_name,
-              operation: "insert",
-              confidence: 0.92
-            },
-            {
-              kind: "axiom",
-              name: `Axiom derived from ${payload.file_name}`,
-              statement: "The void is not empty, but full of potential.",
-              source_file: payload.file_name,
-              operation: "insert",
-              confidence: 0.88
-            }
-          ],
-          graph_links: [
-            {
-              source_entity_type: "axiom",
-              source_entity_id: "AXIOM-PRIMARY-SOURCE",
-              target_entity_type: "file",
-              target_entity_id: `FILE::${payload.file_name}`,
-              relation: "PRIMARY_SOURCE_OF"
-            }
-          ]
+          entities: generated.entities.map((e: any) => ({
+            ...e,
+            source_file: payload.file_name,
+            kind: e.kind === 'axiom' ? 'axiom' : 'rpe',
+            operation: 'insert',
+            core_fracture: e.core_fracture || e.statement || 'Unknown structure.'
+          })),
+          graph_links: generated.entities.map((e: any, idx: number) => ({
+            source_entity_type: e.kind,
+            source_entity_id: `EXTRACT-${Date.now()}-${idx}`,
+            target_entity_type: "file",
+            target_entity_id: `FILE-${payload.file_name}`,
+            relation: "EXTRACTED_FROM"
+          }))
         };
         return res.json(preview);
       } else if (mode === 'commit') {
-        // Mock commit process
         const db = getDb();
         if (!db) {
           return res.status(500).json({ error: 'Database connection severed.' });
         }
         
-        // In a real implementation, we would insert the entities into the database here.
-        // For now, we'll just return success.
-        return res.json({ success: true, message: "Densification committed to the graph." });
+        const nodesCollection = getNodesCollection();
+        if (!nodesCollection) {
+          return res.status(500).json({ error: 'Database connection severed.' });
+        }
+
+        const preview = payload;
+        let ingestedCount = 0;
+
+        // Ensure a source node exists for the file itself
+        const fileNodeId = preview.file_id || `file_${Date.now()}`;
+        try {
+          await nodesCollection.insertOne({
+            id: fileNodeId,
+            label: preview.file_name || 'Deep Ingested File',
+            type: 'treatise',
+            status: 'ASSIMILATED',
+            summary: `A document ingested through the Deep Protocol.`,
+            blocks: [],
+            socratic_questions: [],
+            metadata: { file_type: preview.file_type, source: 'Deep Ingestion' },
+            saturation_level: 50,
+            revision_count: 0,
+            last_audited_date: new Date().toISOString()
+          });
+        } catch (e) {
+          console.error("File node insertion error, might already exist.", e);
+        }
+
+        const insertLink = db.prepare('INSERT INTO links (source, target, label, type) VALUES (?, ?, ?, ?)');
+
+        // Insert the extracted entities as nodes and link them to the file node!
+        for (let i = 0; i < (preview.entities || []).length; i++) {
+          const e = preview.entities[i];
+          const newId = `node_${Date.now()}_${Math.random().toString(36).substring(2,7)}`;
+          
+          try {
+            await nodesCollection.insertOne({
+              id: newId,
+              label: e.name || 'Unnamed Concept',
+              type: e.kind === 'axiom' ? 'axiom' : 'concept',
+              status: 'RAW',
+              summary: e.core_fracture || e.statement || '',
+              blocks: [],
+              socratic_questions: [],
+              metadata: { confidence: e.confidence, source_file: preview.file_name },
+              saturation_level: Math.floor((e.confidence || 0.5) * 100),
+              revision_count: 0,
+              last_audited_date: new Date().toISOString()
+            });
+
+            // Create a link
+            insertLink.run(newId, fileNodeId, 'EXTRACTED_FROM', 'documents');
+            ingestedCount++;
+          } catch(err) {
+            console.error(`Failed to insert entity ${e.name}:`, err);
+          }
+        }
+
+        return res.json({ success: true, message: `Densification committed. assimilated ${ingestedCount} concepts into the Void.` });
       } else {
         return res.status(400).json({ error: 'Invalid mode' });
       }
