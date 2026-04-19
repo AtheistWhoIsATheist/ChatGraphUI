@@ -91,7 +91,21 @@ async function startServer() {
           });
 
           if (response.text) {
-            const result = JSON.parse(response.text);
+            const parseAIDensificationResponse = (text: string) => {
+              try {
+                return JSON.parse(text);
+              } catch (e) {
+                const cleaned = text.replace(/```(json)?/g, '').trim();
+                try {
+                  return JSON.parse(cleaned);
+                } catch (e2) {
+                  const match = text.match(/\{[\s\S]*\}/);
+                  if (match) return JSON.parse(match[0]);
+                  throw e2;
+                }
+              }
+            };
+            const result = parseAIDensificationResponse(response.text);
             
             await nodesCollection.updateOne(
               { _id: node._id },
@@ -189,7 +203,48 @@ async function startServer() {
               }
             }
           });
-          generated = JSON.parse(response.text || '{"entities":[]}');
+          
+          const parseAIPreviewResponse = (text: string | null | undefined) => {
+            if (!text) return { entities: [] };
+            try {
+              return JSON.parse(text);
+            } catch (e) {
+              const cleaned = text.replace(/```(json)?/g, '').trim();
+              try {
+                return JSON.parse(cleaned);
+              } catch (e2) {
+                // If it STILL fails, try brute-force regex
+                const objMatch = text.match(/\{[\s\S]*\}/);
+                const arrMatch = text.match(/\[[\s\S]*\]/);
+                
+                // Prefer the match that starts earlier
+                const objIdx = objMatch ? text.indexOf(objMatch[0]) : Infinity;
+                const arrIdx = arrMatch ? text.indexOf(arrMatch[0]) : Infinity;
+                
+                if (objIdx < arrIdx && objMatch) {
+                   return JSON.parse(objMatch[0]);
+                } else if (arrMatch) {
+                   return { entities: JSON.parse(arrMatch[0]) };
+                }
+                throw e2;
+              }
+            }
+          };
+          
+          generated = parseAIPreviewResponse(response.text);
+          
+          if (!generated || !Array.isArray(generated.entities)) {
+            if (Array.isArray(generated)) {
+              generated = { entities: generated };
+            } else {
+              generated = { entities: [] };
+            }
+          }
+          
+          if (generated.entities.length === 0) {
+            throw new Error("No entities extracted.");
+          }
+
         } catch (genErr) {
           console.error("Gemini Extraction Error:", genErr);
           // Fallback to basic extraction if Gemini fails
@@ -354,13 +409,19 @@ async function startServer() {
       });
       
       const extracted = await (async () => {
+        const text = response.text || '';
         try {
-          return JSON.parse(response.text);
+          return JSON.parse(text);
         } catch (parseError) {
-          console.error('[API] JSON Parse Error. Raw response:', response.text);
-          const jsonMatch = response.text.match(/\{[\s\S]*\}/);
-          if (jsonMatch) return JSON.parse(jsonMatch[0]);
-          throw parseError;
+          const cleaned = text.replace(/```(json)?/g, '').trim();
+          try {
+            return JSON.parse(cleaned);
+          } catch (e2) {
+            console.error('[API] JSON Parse Error. Raw response:', text);
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            if (jsonMatch) return JSON.parse(jsonMatch[0]);
+            throw e2;
+          }
         }
       })();
 
@@ -510,8 +571,22 @@ async function startServer() {
         }
       });
 
-      const resultText = response.text || '{}';
-      const result = JSON.parse(resultText);
+      const parseAIResponse1 = (text: string | null | undefined) => {
+        if (!text) return {};
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          const cleaned = text.replace(/```(json)?/g, '').trim();
+          try {
+            return JSON.parse(cleaned);
+          } catch (e2) {
+            const match = text.match(/\{[\s\S]*\}/);
+            if (match) return JSON.parse(match[0]);
+            throw e2;
+          }
+        }
+      };
+      const result = parseAIResponse1(response.text);
 
       const newNode = {
         id: `node_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
@@ -606,8 +681,22 @@ async function startServer() {
         }
       });
 
-      const resultText = response.text || '{}';
-      const result = JSON.parse(resultText);
+      const parseAIResponse2 = (text: string | null | undefined) => {
+        if (!text) return {};
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          const cleaned = text.replace(/```(json)?/g, '').trim();
+          try {
+            return JSON.parse(cleaned);
+          } catch (e2) {
+            const match = text.match(/\{[\s\S]*\}/);
+            if (match) return JSON.parse(match[0]);
+            throw e2;
+          }
+        }
+      };
+      const result = parseAIResponse2(response.text);
 
       res.json(result);
     } catch (error: any) {

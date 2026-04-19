@@ -128,45 +128,73 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-6 relative">
+        {/* Decorative Hex Grid Backdrop */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
+        
         {filteredLogs.length === 0 ? (
           <div className="text-center text-zinc-500 text-sm mt-8">
             No audit logs match your search criteria.
           </div>
         ) : (
-          <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/10 before:to-transparent">
+          <div className="space-y-8 relative">
+            {/* Pulsing Timeline Line */}
+            <div className="absolute left-[19px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-emerald-500/20 to-transparent">
+              <motion.div 
+                animate={{ opacity: [0.1, 0.5, 0.1], scaleY: [0.8, 1, 0.8] }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className="w-full h-full bg-emerald-500/40"
+              />
+            </div>
+
             {filteredLogs.map((log, index) => (
               <motion.div 
                 key={log.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.08, type: "spring", damping: 20 }}
+                className="relative flex gap-6 group"
               >
-                <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-[#111] text-zinc-500 group-[.is-active]:text-emerald-500 group-[.is-active]:border-emerald-500/30 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                {/* Cryptographic Key Icon */}
+                <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-xl border border-white/10 bg-[#0f0f0f] text-zinc-500 group-hover:text-emerald-400 group-hover:border-emerald-500/40 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-all duration-500 shadow-2xl overflow-hidden">
                   <Fingerprint className="w-4 h-4" />
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 border border-t-emerald-500/30 border-r-transparent border-b-transparent border-l-transparent rounded-full opacity-0 group-hover:opacity-100" 
+                  />
                 </div>
                 
-                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-white/5 bg-[#111] shadow-xl hover:border-emerald-500/20 transition-colors">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500/70">
-                      {log.action.replace(/_/g, ' ')}
-                    </span>
-                    <div className="flex items-center gap-1 text-[10px] text-zinc-500">
-                      <Clock className="w-3 h-3" />
-                      {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                <div className="flex-1 p-5 rounded-2xl border border-white/5 bg-zinc-900/40 backdrop-blur-sm shadow-2xl group-hover:border-emerald-500/20 group-hover:bg-zinc-900/60 transition-all duration-500">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500/80">
+                        {log.action.replace(/_/g, ' ')}
+                      </span>
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 font-mono">
+                      <Clock className="w-3 h-3 text-zinc-600" />
+                      {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                     </div>
                   </div>
-                  <p className="text-sm text-zinc-300 mb-3 leading-relaxed">
+                  
+                  <p className="text-sm text-zinc-400 mb-4 leading-relaxed font-serif italic">
                     {log.details}
                   </p>
-                  <div className="flex items-center gap-2 pt-3 border-t border-white/5">
-                    <span className="text-[10px] text-zinc-600 uppercase">Actor:</span>
-                    <span className="text-xs text-zinc-400">{log.actor}</span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[10px] text-zinc-600 uppercase">Hash:</span>
-                    <span className="text-[10px] font-mono text-zinc-500 truncate" title={log.hash}>{log.hash}</span>
+                  
+                  <div className="space-y-2 pt-4 border-t border-white/5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">Operator Proxy</span>
+                      <span className="text-[11px] text-zinc-300 font-medium">{log.actor}</span>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">SHA-256 Provenance</span>
+                      <div className="flex items-center gap-2 px-2 py-1 bg-black/40 border border-white/5 rounded font-mono text-[9px] text-zinc-500 group-hover:text-emerald-500 transition-colors">
+                        <ShieldCheck className="w-3 h-3 opacity-50" />
+                        <span className="truncate">{log.hash}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>

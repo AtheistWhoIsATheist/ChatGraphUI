@@ -124,6 +124,23 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
     };
   }, []);
 
+  // --- AUTO-CENTER SEARCH MATCH ---
+  useEffect(() => {
+    if (searchQuery.trim().length > 2) {
+      const firstMatch = layoutNodes.find(n => n.label.toLowerCase().includes(searchQuery.toLowerCase()));
+      if (firstMatch && !isNaN(firstMatch.x) && !isNaN(firstMatch.y)) {
+        // Transition to center the first match
+        const k = Math.max(1.2, transform.k);
+        setTransform({
+          x: dimensions.width / 2 - firstMatch.x * k,
+          y: dimensions.height / 2 - firstMatch.y * k,
+          k: k
+        });
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
+
   // --- GAP SYNTHESIS LOGIC ---
   const latentLinksBase = useMemo(() => {
     const lLinks: { sourceId: string; targetId: string; reason: string }[] = [];
@@ -207,37 +224,45 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
     
     const isSelected = selectedNodeId === sourceId || selectedNodeId === targetId;
     const isHovered = hoveredNodeId === sourceId || hoveredNodeId === targetId;
-    const isFocusMode = selectedNodeId || hoveredNodeId;
+    const isFocusMode = !!selectedNodeId || !!hoveredNodeId;
+    const isNeighbor = (sourceId === selectedNodeId || targetId === selectedNodeId) || 
+                       (sourceId === hoveredNodeId || targetId === hoveredNodeId);
     
     // 1. Dynamic Weight & Opacity
-    let opacity = structuralIntegrity ? 0.15 : 0.05;
-    let width = 1;
+    let opacity = structuralIntegrity ? 0.25 : 0.1;
+    let width = 1.2;
     
     if (isFoundational) {
-      opacity = structuralIntegrity ? 0.3 : 0.1;
-      width = 1.5;
+      opacity = structuralIntegrity ? 0.5 : 0.2;
+      width = 2.2;
     }
     
     if (isFocusMode) {
       if (isSelected || isHovered) {
-        opacity = 0.8;
-        width = 2;
+        opacity = 1.0;
+        width = 3.2;
+      } else if (isNeighbor) {
+        opacity = 0.4;
+        width = 1.8;
       } else {
-        opacity = 0.02; // Focus Mode: Dim unrelated
+        opacity = 0.01; // Deep Focus: Almost vanish unrelated
       }
     }
     
     // 2. Connection Hierarchy (Visual Style)
     let dashArray = "none";
+    let isFlowing = false;
     if (link.type === 'explores' || link.type === 'documents') {
-      dashArray = "4,4"; // Influential
+      dashArray = "10,6"; 
+      isFlowing = true;
     }
     
     return {
       opacity,
       width,
       dashArray,
-      color: isSelected || isHovered ? "#f97316" : (isFoundational ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.15)"),
+      isFlowing,
+      color: isSelected || isHovered ? "#f97316" : (isNeighbor ? "rgba(249,115,22,0.4)" : (isFoundational ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.25)")),
       isActive: isSelected || isHovered
     };
   };
@@ -428,6 +453,33 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
   return (
     <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-[#0a0a0a] text-zinc-100 font-sans selection:bg-orange-500/30">
       
+      {/* Sovereign Context Indicator */}
+      <AnimatePresence>
+        {selectedNodeId && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 px-6 py-2 bg-black/60 backdrop-blur-2xl border border-orange-500/40 rounded-full shadow-[0_0_30px_rgba(249,115,22,0.2)]"
+          >
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-orange-500 animate-pulse" />
+              <span className="text-[10px] uppercase font-black tracking-[0.3em] text-orange-100">Sovereign Inquiry Active</span>
+            </div>
+            <div className="w-px h-4 bg-white/10" />
+            <div className="text-[10px] uppercase font-bold tracking-widest text-zinc-400">
+              {nodes.find(n => n.id === selectedNodeId)?.label}
+            </div>
+            <button 
+              onClick={(e) => { e.stopPropagation(); onNodeSelect({ id: undefined } as any); }}
+              className="ml-2 p-1 hover:bg-white/10 rounded-full transition-colors"
+            >
+              <X className="w-3 h-3 text-zinc-500 hover:text-white" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* --- TOOLBAR (TOP LEFT) --- */}
       <div className="absolute top-6 left-6 z-40 flex flex-col gap-4 pointer-events-none">
         
@@ -620,9 +672,25 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
         )}
       </AnimatePresence>
 
+      {/* Background Singularity (Aesthetic Anchor) */}
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden opacity-30 select-none">
+        <motion.div 
+          animate={{ rotate: 360 }}
+          transition={{ duration: 300, repeat: Infinity, ease: "linear" }}
+          className="relative w-[200%] h-[200%] flex items-center justify-center"
+        >
+          {/* Fractal Grid */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px]" />
+          <div className="absolute w-full h-full bg-[radial-gradient(circle_at_center,transparent_0%,#000_70%)]" />
+          
+          {/* Distant "Stars" Particles */}
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 contrast-150 brightness-50 mix-blend-overlay" />
+        </motion.div>
+      </div>
+
       {/* --- GRAPH CANVAS --- */}
       <div 
-        className="absolute inset-0 w-full h-full pointer-events-none"
+        className="absolute inset-0 w-full h-full pointer-events-none overflow-visible transition-transform duration-700 ease-[cubic-bezier(0.2,0,0,1)]"
         style={{
           transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.k})`,
           transformOrigin: '0 0'
@@ -630,18 +698,23 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
       >
         <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
           <defs>
-          <linearGradient id="latent-gradient" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="rgba(16, 185, 129, 0.8)" />
-            <stop offset="100%" stopColor="rgba(16, 185, 129, 0.2)" />
-          </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
+            <linearGradient id="latent-gradient" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="rgba(16, 185, 129, 0.8)" />
+              <stop offset="100%" stopColor="rgba(16, 185, 129, 0.2)" />
+            </linearGradient>
+            <filter id="void-bloom" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="glow" />
+              <feComposite in="SourceGraphic" in2="glow" operator="over" />
+            </filter>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
         
         {/* Latent Links */}
         <AnimatePresence>
@@ -727,23 +800,29 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                   strokeDasharray={style.dashArray}
                 />
                 
-                {/* Animated Particle (Logic Flow) */}
-                {(style.isActive || (structuralIntegrity && Math.random() > 0.95)) && (
-                  <motion.circle
-                    r={1.5}
-                    fill="#f97316"
-                    initial={{ offsetDistance: "0%" }}
-                    animate={{ offsetDistance: "100%" }}
-                    transition={{ 
-                      duration: 2 + Math.random() * 2, 
-                      repeat: Infinity, 
-                      ease: "linear" 
-                    }}
-                    style={{
-                      offsetPath: `path('M ${link.source.x} ${link.source.y} Q ${cx} ${cy} ${link.target.x} ${link.target.y}')`,
-                      filter: "blur(1px) drop-shadow(0 0 2px #f97316)"
-                    }}
-                  />
+                {/* Animated Data Packets (Logic Flow) */}
+                {style.isActive && (
+                  <g className="pointer-events-none">
+                    {[0, 1, 2].map((i) => (
+                      <motion.circle
+                        key={`${linkId}-packet-${i}`}
+                        r={1.2 + i * 0.3}
+                        fill={style.color}
+                        initial={{ offsetDistance: "0%" }}
+                        animate={{ offsetDistance: "100%" }}
+                        transition={{ 
+                          duration: 1.5 + Math.random() * 0.5, 
+                          repeat: Infinity, 
+                          delay: i * 0.6,
+                          ease: "linear" 
+                        }}
+                        style={{
+                          offsetPath: `path('M ${link.source.x} ${link.source.y} Q ${cx} ${cy} ${link.target.x} ${link.target.y}')`,
+                          filter: `blur(${0.5}px) drop-shadow(0 0 5px ${style.color})`,
+                        }}
+                      />
+                    ))}
+                  </g>
                 )}
               </g>
             );
@@ -755,9 +834,22 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
       <div className="absolute inset-0 pointer-events-none">
         <AnimatePresence>
           {layoutNodes.map((node) => {
-            const matchesSearch = searchQuery && node.label.toLowerCase().includes(searchQuery.toLowerCase());
-            const isDimmed = (searchQuery && !matchesSearch) || (hoveredNodeId && hoveredNodeId !== node.id && !links.some(l => (l.source?.id === node.id && l.target?.id === hoveredNodeId) || (l.target?.id === node.id && l.source?.id === hoveredNodeId)));
+            const hasSearchQuery = searchQuery && searchQuery.trim().length > 0;
+            const matchesSearch = hasSearchQuery && node.label.toLowerCase().includes(searchQuery.toLowerCase());
             const isSelected = selectedNodeId === node.id;
+            const isHovered = hoveredNodeId === node.id;
+            
+            const isFocusMode = !!selectedNodeId || !!hoveredNodeId;
+            const isConnectedToFocus = links.some(l => 
+              (l.source?.id === node.id && (l.target?.id === selectedNodeId || l.target?.id === hoveredNodeId)) || 
+              (l.target?.id === node.id && (l.source?.id === selectedNodeId || l.source?.id === hoveredNodeId))
+            );
+
+            // True if faded out by focus isolation OR search isolation
+            const isDimmed = (isFocusMode && !isSelected && !isHovered && !isConnectedToFocus) || (hasSearchQuery && !matchesSearch);
+            // Even darker if not matching focus
+            const isDeeplyDimmed = isDimmed && ((isFocusMode && !isConnectedToFocus) || (hasSearchQuery && !matchesSearch));
+
             const color = getHierarchicalColor(node);
             const scale = calculateNodeScale(node);
 
@@ -766,72 +858,90 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                 key={`node-${node.id}`}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ 
-                  scale: matchesSearch ? 1.2 : 1, 
-                  opacity: isDimmed ? 0.1 : 1 
+                  scale: matchesSearch ? 1.3 : (isSelected ? 1.15 : 1), 
+                  opacity: isDeeplyDimmed ? 0.05 : (isDimmed ? 0.2 : 1),
+                  filter: isDeeplyDimmed ? "blur(2px) grayscale(0.5)" : "blur(0px) grayscale(0)"
                 }}
                 exit={{ scale: 0, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                transition={{ type: "spring", stiffness: 400, damping: 35 }}
                 className="absolute"
                 style={{ 
                   left: isNaN(node.x) ? 0 : node.x, 
                   top: isNaN(node.y) ? 0 : node.y,
+                  zIndex: isSelected ? 50 : (isHovered || isConnectedToFocus ? 40 : 10)
                 }}
               >
                 <div 
                   ref={(el) => { if (el) nodeRefs.current.set(node.id, el); else nodeRefs.current.delete(node.id); }}
                   className={cn(
-                    "pointer-events-auto relative group cursor-pointer flex items-center justify-center",
-                    isSelected ? "z-30" : "z-20"
+                    "pointer-events-auto relative group cursor-pointer flex items-center justify-center transition-all duration-700",
                   )}
                   onMouseEnter={() => setHoveredNodeId(node.id)}
                   onMouseLeave={() => setHoveredNodeId(null)}
                   onClick={() => onNodeSelect(node)}
                   onDoubleClick={() => setExpandedNodeId(node.id)}
                 >
-                  {/* Abyssal Integration Aura */}
-                  {scale.aif > 0.4 && (
-                    <motion.div 
-                      animate={{ 
-                        scale: [1, 1.05, 1],
-                        opacity: [scale.aif * 0.3, scale.aif * 0.6, scale.aif * 0.3]
-                      }}
-                      transition={{ 
-                        duration: 4, 
-                        repeat: Infinity, 
-                        ease: "easeInOut" 
-                      }}
-                      className="absolute rounded-full pointer-events-none"
-                      style={{
-                        width: scale.radius * 2 + scale.auraSize,
-                        height: scale.radius * 2 + scale.auraSize,
-                        background: `radial-gradient(circle, ${color}40 0%, transparent 70%)`,
-                        filter: `blur(${scale.auraSize / 2}px)`,
-                      }}
-                    />
+                  {/* Elite Abyssal Aura (Layered) */}
+                  {scale.aif > 0.3 && (
+                    <>
+                      <motion.div 
+                        animate={{ 
+                          scale: [1, 1.15, 1],
+                          rotate: [0, 180, 360],
+                          opacity: [scale.aif * 0.15, scale.aif * 0.45, scale.aif * 0.15]
+                        }}
+                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                        className="absolute rounded-full pointer-events-none border border-dashed border-white/5"
+                        style={{
+                          width: scale.radius * 2 + scale.auraSize * 1.5,
+                          height: scale.radius * 2 + scale.auraSize * 1.5,
+                        }}
+                      />
+                      <motion.div 
+                        animate={{ 
+                          scale: [1.1, 1, 1.1],
+                          opacity: [scale.aif * 0.1, scale.aif * 0.3, scale.aif * 0.1]
+                        }}
+                        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute rounded-full pointer-events-none"
+                        style={{
+                          width: scale.radius * 2 + scale.auraSize,
+                          height: scale.radius * 2 + scale.auraSize,
+                          background: `radial-gradient(circle, ${color}30 0%, transparent 80%)`,
+                          filter: `blur(${scale.auraSize / 3}px)`,
+                        }}
+                      />
+                    </>
                   )}
 
                   {/* Node Shape */}
                   <div 
                     className={cn(
-                      "rounded-full shadow-[0_0_15px_rgba(0,0,0,0.5)] border-2 transition-all duration-300",
-                      isSelected ? "border-white animate-pulse" : "border-white/20 group-hover:border-white/60 group-hover:scale-110",
-                      matchesSearch && "shadow-[0_0_20px_rgba(255,255,255,0.8)] border-white"
+                      "rounded-full shadow-[0_0_20px_rgba(0,0,0,0.8)] border-2 transition-all duration-500",
+                      isSelected ? "animate-pulse" : "group-hover:scale-110",
+                      matchesSearch && "shadow-[0_0_40px_white] ring-4 ring-white/20"
                     )}
                     style={{ 
-                      backgroundColor: color, 
-                      borderColor: isSelected || matchesSearch ? '#fff' : undefined,
-                      boxShadow: `0 0 ${10 + scale.glowIntensity * 30}px ${color}${Math.round(scale.glowIntensity * 255).toString(16).padStart(2, '0')}`,
+                      backgroundColor: isSelected ? `${color}` : `${color}15`, 
+                      borderColor: isSelected || matchesSearch ? '#fff' : (isHovered || isConnectedToFocus ? color : `${color}80`),
+                      boxShadow: (isSelected || isHovered) ? `0 0 ${20 + scale.glowIntensity * 50}px ${color}` : `0 0 10px rgba(0,0,0,0.5)`,
                       width: `${scale.radius * 2}px`,
                       height: `${scale.radius * 2}px`,
                     }}
-                  />
+                  >
+                    {/* Inner Semantic Core */}
+                    <div 
+                      className="absolute inset-2 rounded-full opacity-40"
+                      style={{ backgroundColor: color }}
+                    />
+                  </div>
 
-                  {/* Label */}
+                  {/* Label (Dynamic Density) */}
                   <div className={cn(
-                    "absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-1 rounded-md bg-black/60 backdrop-blur-sm border border-white/10 text-[10px] uppercase tracking-wider transition-all duration-300 pointer-events-none",
-                    (hoveredNodeId === node.id || isSelected || matchesSearch) 
-                      ? "opacity-100 translate-y-0 text-orange-400 border-orange-500/30" 
-                      : (isDimmed ? "opacity-0 -translate-y-1" : "opacity-40 translate-y-0")
+                    "absolute top-full mt-3 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-xl border border-white/10 text-[10px] uppercase font-bold tracking-widest transition-all duration-500 pointer-events-none",
+                    (isHovered || isSelected || matchesSearch || scale.radius > 30) 
+                      ? "opacity-100 translate-y-0 text-white border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.3)] bg-orange-950/20" 
+                      : (isDeeplyDimmed ? "opacity-0 -translate-y-2 scale-90" : "opacity-30 translate-y-0 text-zinc-400")
                   )}>
                     {node.label}
                   </div>

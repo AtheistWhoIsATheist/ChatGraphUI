@@ -81,6 +81,32 @@ export function useGraphLayout({ nodes, links, width, height, clusterMode, gravi
       };
     });
 
+    // Calculate node sizes for collision mapping
+    const nodeDegrees: Record<string, number> = {};
+    links.forEach(l => {
+      const sId = typeof l.source === 'string' ? l.source : (l.source as any).id;
+      const tId = typeof l.target === 'string' ? l.target : (l.target as any).id;
+      nodeDegrees[sId] = (nodeDegrees[sId] || 0) + 1;
+      nodeDegrees[tId] = (nodeDegrees[tId] || 0) + 1;
+    });
+
+    const getRadius = (n: any) => {
+      const degree = nodeDegrees[n.id] || 0;
+      const saturation = n.metadata?.saturation_level || 50;
+      
+      let baseRadius = 15;
+      if (n.id === 'void') baseRadius = 45;
+      else if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(n.id)) baseRadius = 35;
+      else if (n.type === 'methodology' || n.id.includes('series') || n.id.includes('codex')) baseRadius = 25;
+      else baseRadius = 12;
+      
+      const centralityBonus = Math.min(degree * 2.5, 25);
+      const saturationMultiplier = 0.8 + (saturation / 100) * 0.4;
+      const finalRadius = (baseRadius + centralityBonus) * saturationMultiplier;
+      const calculatedRadius = Math.max(6, Math.min(65, finalRadius));
+      return calculatedRadius + 30; // 30px extra padding for robust aura breathability
+    };
+
     // Calculate forces based on gravity (0 to 100)
     const chargeStrength = clusterMode ? -100 : -300 * (1 - (gravity - 50) / 100);
     const linkDistance = clusterMode ? 50 : 100 * (1 - (gravity - 50) / 100);
@@ -88,10 +114,12 @@ export function useGraphLayout({ nodes, links, width, height, clusterMode, gravi
 
     // Initialize simulation
     const simulation = d3.forceSimulation(simNodes as d3.SimulationNodeDatum[])
+      .alphaDecay(0.01) // Slower cooling for smoother settling
+      .velocityDecay(0.4) // Increased friction for "viscous" feel
       .force('charge', d3.forceManyBody().strength(chargeStrength))
       .force('link', d3.forceLink(filteredLinks).id((d: any) => d.id).distance(linkDistance))
       .force('center', d3.forceCenter(width / 2, height / 2).strength(centerStrength))
-      .force('collide', d3.forceCollide().radius(40).iterations(2));
+      .force('collide', d3.forceCollide().radius((d: any) => getRadius(d)).iterations(3));
 
     // Apply clustering forces if enabled
     if (clusterMode) {
