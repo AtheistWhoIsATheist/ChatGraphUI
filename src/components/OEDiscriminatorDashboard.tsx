@@ -1,23 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { motion } from 'motion/react';
 import { oeTermFrequencies, oeTriggerFrequencies, oeGraphSample } from '../data/oeStats';
 import { Database, Network, TrendingUp, Hash, FastForward } from 'lucide-react';
 import { cn } from '../lib/utils';
 
+// Flow data model
+const PATHWAYS_NODES = [
+  // Occurrences (O-claims)
+  { id: "o1", label: "Suffering / Death", type: "O", group: 0 },
+  { id: "o2", label: "Nothingness / Void", type: "O", group: 0 },
+  { id: "o3", label: "Despair / Anxiety", type: "O", group: 0 },
+  
+  // Thinkers
+  { id: "t1", label: "Meister Eckhart", type: "T", group: 1 },
+  { id: "t2", label: "Simone Weil", type: "T", group: 1 },
+  { id: "t3", label: "Kierkegaard", type: "T", group: 1 },
+  { id: "t4", label: "Arthur Schopenhauer", type: "T", group: 1 },
+  { id: "t5", label: "Emil Cioran", type: "T", group: 1 },
+
+  // Elevations (E-claims)
+  { id: "e1", label: "Divine / Perfect Union", type: "E", group: 2 },
+  { id: "e2", label: "Ultimate Truth / Salvation", type: "E", group: 2 },
+  { id: "e3", label: "Transcendental Emptiness", type: "E", group: 2 },
+];
+
+const PATHWAYS_LINKS = [
+  // O -> T
+  { source: "o1", target: "t2", value: 35 }, // Suffering -> Weil
+  { source: "o1", target: "t4", value: 25 }, // Suffering -> Schopenhauer
+  { source: "o2", target: "t1", value: 40 }, // Nothingness -> Eckhart
+  { source: "o2", target: "t5", value: 30 }, // Nothingness -> Cioran
+  { source: "o3", target: "t3", value: 45 }, // Despair -> Kierkegaard
+  { source: "o3", target: "t5", value: 20 }, // Despair -> Cioran
+
+  // T -> E
+  { source: "t1", target: "e1", value: 38 }, // Eckhart -> Divine Union
+  { source: "t2", target: "e1", value: 25 }, // Weil -> Divine Union
+  { source: "t2", target: "e2", value: 10 }, // Weil -> Truth/Salvation
+  { source: "t3", target: "e2", value: 40 }, // Kierkegaard -> Truth/Salvation
+  { source: "t4", target: "e3", value: 22 }, // Schopenhauer -> Transcendental Emptiness
+  { source: "t5", target: "e3", value: 45 }, // Cioran -> Transcendental Emptiness
+];
+
 export function OEDashboard() {
   const [activeTab, setActiveTab] = useState<'terms' | 'triggers' | 'network' | 'pathways'>('terms');
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
 
-  // Mock data for O-E pathways / thinkers
-  const oePathways = [
-    { thinker: "Meister Eckhart", o_count: 42, e_count: 38, transitions: 25 },
-    { thinker: "Philipp Mainländer", o_count: 60, e_count: 15, transitions: 5 },
-    { thinker: "Emil Cioran", o_count: 75, e_count: 8, transitions: 3 },
-    { thinker: "Friedrich Nietzsche", o_count: 55, e_count: 22, transitions: 18 },
-    { thinker: "Julian of Norwich", o_count: 20, e_count: 45, transitions: 12 },
-    { thinker: "Arthur Schopenhauer", o_count: 65, e_count: 10, transitions: 4 },
-    { thinker: "Simone Weil", o_count: 35, e_count: 40, transitions: 22 },
-  ].sort((a, b) => b.transitions - a.transitions);
+  // Dynamic Graph Dimensions
+  const viewWidth = 800;
+  const viewHeight = 400;
+
+  const graphCoords = useMemo(() => {
+    const coords: Record<string, { x: number, y: number, height: number }> = {};
+    const cols: Array<typeof PATHWAYS_NODES[0]>[] = [[], [], []];
+    
+    // Distribute nodes to columns
+    PATHWAYS_NODES.forEach(n => cols[n.group].push(n));
+
+    // Calculate generic sizes
+    cols.forEach((colNodes, colIndex) => {
+      const x = colIndex === 0 ? 50 : colIndex === 1 ? viewWidth / 2 : viewWidth - 50;
+      const totalHeightAvailable = viewHeight - 40; // Use margins
+      
+      let currentY = 20;
+      const verticalSpacing = colNodes.length > 1 ? (totalHeightAvailable / colNodes.length) : 0;
+      
+      colNodes.forEach((node) => {
+        // Base uniform rect heights by type just for visualization representation
+        const h = node.type === "T" ? 30 : 40;
+
+        // Spread them dynamically
+        const yOffset = colNodes.length === 1 ? viewHeight / 2 - h / 2 : currentY + (verticalSpacing / 2) - h / 2;
+        
+        coords[node.id] = { x, y: yOffset, height: h };
+        currentY += verticalSpacing;
+      });
+    });
+
+    return coords;
+  }, [viewWidth, viewHeight]);
 
   return (
     <div className="w-full h-full flex flex-col bg-[#0a0a0a] text-zinc-100 p-8 overflow-hidden font-sans">
@@ -146,25 +208,121 @@ export function OEDashboard() {
 
         {activeTab === 'pathways' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex flex-col">
-            <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-widest mb-2">Thinkers with highest O-to-E transition volumes</h3>
-            <p className="text-xs text-zinc-500 mb-6">Transition indicates the presence of a void-phenomenological feature acting as an operator to an Elevation claim.</p>
-            <div className="flex-1 min-h-0 relative">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={oePathways} layout="vertical" margin={{ top: 0, right: 30, left: 100, bottom: 0 }}>
-                  <XAxis type="number" hide />
-                  <YAxis dataKey="thinker" type="category" axisLine={false} tickLine={false} tick={{ fill: '#a1a1aa', fontSize: 12 }} />
-                  <Tooltip cursor={{ fill: '#ffffff0a' }} contentStyle={{ backgroundColor: '#000', border: '1px solid #3f3f46', borderRadius: '8px' }} />
-                  <Bar dataKey="transitions" radius={[0, 4, 4, 0]}>
-                    {oePathways.map((entry, index) => (
-                      <Cell key={`cell-\${index}`} fill={index < 3 ? '#f97316' : '#ea580c'} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+            <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-widest mb-2">Occurrence (O) to Elevation (E) Pathways</h3>
+            <p className="text-xs text-zinc-500 mb-6">Tracing semantic flow from base phenomenon to its culmination through specific thinkers.</p>
+            <div className="flex-1 min-h-0 relative border border-white/5 bg-zinc-950/50 rounded-xl overflow-hidden p-6 flex flex-col">
+              <svg width="100%" height="100%" viewBox={`0 0 ${viewWidth} ${viewHeight}`} preserveAspectRatio="xMidYMid meet">
+                
+                {/* 1. Links (Bez Curves) */}
+                <g className="links">
+                  {PATHWAYS_LINKS.map((link, idx) => {
+                    const src = graphCoords[link.source];
+                    const tgt = graphCoords[link.target];
+                    if (!src || !tgt) return null;
+
+                    const widthStroke = Math.max(1, (link.value / 45) * 8);
+
+                    const x1 = src.x;
+                    const y1 = src.y + (src.height / 2);
+                    const x2 = tgt.x;
+                    const y2 = tgt.y + (tgt.height / 2);
+
+                    const midX = (x1 + x2) / 2;
+
+                    const pathd = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
+
+                    const isHovered = hoveredNodeId === link.source || hoveredNodeId === link.target;
+                    const isFaded = hoveredNodeId && !isHovered;
+
+                    return (
+                      <path
+                        key={`link-${idx}`}
+                        d={pathd}
+                        fill="none"
+                        stroke={isHovered ? '#ea580c' : '#52525b'}
+                        strokeWidth={widthStroke}
+                        strokeOpacity={isHovered ? 0.8 : isFaded ? 0.1 : 0.4}
+                        className="transition-all duration-300 ease-in-out"
+                        style={{ pointerEvents: 'none' }}
+                      />
+                    );
+                  })}
+                </g>
+
+                {/* 2. Nodes */}
+                <g className="nodes">
+                  {PATHWAYS_NODES.map((node, i) => {
+                    const c = graphCoords[node.id];
+                    if (!c) return null;
+
+                    const isHovered = hoveredNodeId === node.id;
+                    const isFaded = hoveredNodeId && !isHovered;
+
+                    // Color based on type
+                    let fill = '#3f3f46';
+                    let textFill = '#d4d4d8';
+                    if (node.type === "O") { fill = '#18181b'; textFill = '#d946ef'; }
+                    if (node.type === "T") { fill = '#27272a'; textFill = '#f97316'; }
+                    if (node.type === "E") { fill = '#18181b'; textFill = '#6366f1'; }
+
+                    return (
+                      <g 
+                        key={`node-${node.id}`} 
+                        className="cursor-crosshair transition-all duration-300"
+                        onMouseEnter={() => setHoveredNodeId(node.id)}
+                        onMouseLeave={() => setHoveredNodeId(null)}
+                        style={{ opacity: isFaded ? 0.3 : 1 }}
+                      >
+                        <rect
+                          x={c.x - 4}
+                          y={c.y - c.height / 2}
+                          width={8}
+                          height={c.height}
+                          fill={isHovered ? '#f97316' : fill}
+                          rx={3}
+                        />
+                        <text
+                          x={node.group === 0 ? c.x - 12 : node.group === 2 ? c.x + 12 : c.x}
+                          y={c.y}
+                          textAnchor={node.group === 0 ? "end" : node.group === 2 ? "start" : "middle"}
+                          dominantBaseline="middle"
+                          fill={isHovered ? '#fff' : textFill}
+                          fontSize={node.type === "T" ? "12px" : "14px"}
+                          fontWeight={node.type === "T" ? "600" : "400"}
+                          className="select-none pointer-events-none"
+                          style={{
+                            textShadow: isHovered ? '0 0 8px rgba(0,0,0,0.8)' : 'none',
+                          }}
+                        >
+                          {node.type === "T" ? (
+                             <tspan dy="-16">{node.label}</tspan>
+                          ) : (
+                             node.label
+                          )}
+                        </text>
+                        {/* Hidden interactive area to ease hovering */}
+                        <circle cx={c.x} cy={c.y} r={24} fill="transparent" />
+                      </g>
+                    );
+                  })}
+                </g>
+              </svg>
             </div>
+            {hoveredNodeId && (
+              <div className="absolute bottom-10 right-10 bg-black/80 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-2xl max-w-xs transition-opacity z-10 pointer-events-none">
+                 <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold mb-1">
+                   {PATHWAYS_NODES.find(n => n.id === hoveredNodeId)?.type === 'O' ? 'Occurrence (Base)' : PATHWAYS_NODES.find(n => n.id === hoveredNodeId)?.type === 'E' ? 'Elevation (Culmination)' : 'Thinker (Operator)'}
+                 </div>
+                 <div className="font-medium text-white text-sm mb-2">{PATHWAYS_NODES.find(n => n.id === hoveredNodeId)?.label}</div>
+                 <div className="text-xs text-zinc-400">
+                    Transitions are calculated based on sequential contextual drift within classified text segments linked to this node.
+                 </div>
+              </div>
+            )}
           </motion.div>
         )}
       </div>
     </div>
   );
 }
+
