@@ -1,6 +1,6 @@
 {
-  "name": "The 314REN Knowledgebase",
-  "description": "A nihiltheistic knowledge graph for exploring the shifting void.",
+  "name": "J314 Occurrence-Elevation Discriminator",
+  "description": "Analyzes philosophical texts for Occurrence vs Elevation claims and synthesizes knowledge graphs.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }

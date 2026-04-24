@@ -8,6 +8,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+import { nes2Router } from './src/backend/nes2-router';
+
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -20,6 +22,9 @@ async function startServer() {
 
   // Start Autonomous Densification Loops
   startCronJobs();
+
+  // Mount NES2 Pipeline router
+  app.use('/api/nes2', nes2Router);
 
   app.post('/api/densify', async (req, res) => {
     try {
@@ -354,6 +359,87 @@ async function startServer() {
   });
 
   // API Routes
+  app.post('/api/oe-discriminate', async (req, res) => {
+    try {
+      const { text, thinker, source_file } = req.body;
+      if (!text) return res.status(400).json({ error: 'Text is required' });
+
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
+      }
+
+      const ai = new GoogleGenAI({ apiKey });
+      const prompt = `
+        You are the Journal314 Occurrence-Elevation Discriminator.
+        Analyze the following text by ${thinker || 'Unknown'} from "${source_file || 'Unknown'}".
+        
+        Detect and map where philosophical language shifts from descriptive occurrence into structural elevation.
+        Core maxim: "Allow every experiential tone. Promote none without marking the promotion."
+        
+        Distinctions:
+        - Occurrence (O): Reports what appears within collapse/void. No explanatory, grounding, normative, or salvific role.
+        - Elevation (E): Promotes something from within the event into an explanatory, grounding, normative, salvific, ontological, or resolving role.
+        
+        5-Level Scale:
+        0: Pure Occurrence
+        1: Suggestive Drift
+        2: Proto-Elevation
+        3: Full Elevation
+        4: Systemic Elevation
+        
+        Target terms to watch: void, nothingness, beauty, despair, meaning, value, truth, God, divine, transcendent, self, annihilation, silence, dread, death, suffering, union, salvation, ground, ultimate.
+        
+        Return a JSON object containing a "passages" array. Each passage should have:
+        - thinker: String
+        - source_file: String
+        - segment_id: String (e.g., "seg-1")
+        - quote: The exact excerpt String
+        - target_terms: Array of matched strings
+        - classification: "O", "E", or "O_TO_E"
+        - elevation_level: Number (0-4)
+        - trigger_phrases: Array of strings
+        - axis_function: String (describe, explain, justify, resolve, ground, prescribe)
+        - axis_position: String (inside collapse or outside/above)
+        - axis_dependency: String (removable local detail or required system support)
+        - why_occurrence: String
+        - why_elevation: String
+        - collapse_violation: Boolean
+        - confidence: Number (0 to 1)
+
+        Text to analyze:
+        ${text}
+
+        RETURN STRICT JSON MATCHING THIS SCHEMA.
+      `;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.1-pro-preview',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+        }
+      });
+
+      const extracted = await (async () => {
+        const txt = response.text || '';
+        try {
+          return JSON.parse(txt);
+        } catch (e) {
+          const cleaned = txt.replace(/\`\`\`(json)?/g, '').trim();
+          const match = cleaned.match(/\{[\s\S]*\}/);
+          if (match) return JSON.parse(match[0]);
+          return { passages: [] };
+        }
+      })();
+
+      res.json(extracted);
+    } catch (error: any) {
+      console.error('[API] O-E Discriminator Error:', error);
+      res.status(500).json({ error: error.message || 'Failed to discriminate text.' });
+    }
+  });
+
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'The Void-Graph Protocol is active.', key: process.env.GEMINI_API_KEY });
   });

@@ -10,15 +10,18 @@ import { AuditTrailPanel } from './components/AuditTrailPanel';
 import { NodeDetailsPanel } from './components/NodeDetailsPanel';
 import { FileManager } from './components/FileManager';
 import KnowledgeBaseDeepIngestion from './pages/KnowledgeBaseDeepIngestion';
+import { OEDiscriminator } from './components/OEDiscriminator';
+import { OEDashboard } from './components/OEDiscriminatorDashboard';
+import { ThreeGraph } from './components/ThreeGraph';
 import { corpusNodes, corpusLinks, Node, Link } from './data/corpus';
 import { 
-  Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles, ShieldCheck, HardDriveDownload, Info, HardDrive
+  Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles, ShieldCheck, HardDriveDownload, Info, HardDrive, Microscope, Box, BarChart3
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { runIngestion, IngestionFile } from './utils/runIngestion';
 
-type ViewMode = 'engine' | 'stream' | 'gaps' | 'deep_ingestion';
+type ViewMode = 'engine' | 'stream' | 'gaps' | 'deep_ingestion' | 'discriminator' | '3d_engine' | 'oe_analytics';
 type SidebarMode = 'chat' | 'intelligence' | 'insights' | 'audit' | 'details';
 
 function TheoryOverlay() {
@@ -224,6 +227,16 @@ function App() {
                 <Cpu className="w-5 h-5" strokeWidth={1.5} />
               </button>
               <button 
+                onClick={() => setViewMode('3d_engine')}
+                className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === '3d_engine' ? "neo-pressed text-blue-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                )}
+                title="Phase 2.5: 3D Topology (Three.js)"
+              >
+                <Box className="w-5 h-5" strokeWidth={1.5} />
+              </button>
+              <button 
                 onClick={() => setViewMode('stream')}
                 className={cn(
                   "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
@@ -234,12 +247,32 @@ function App() {
                 <Sparkles className="w-5 h-5" strokeWidth={1.5} />
               </button>
               <button 
+                onClick={() => setViewMode('discriminator')}
+                className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'discriminator' ? "neo-pressed text-fuchsia-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                )}
+                title="Phase 4: O-E Discriminator"
+              >
+                <Microscope className="w-5 h-5" strokeWidth={1.5} />
+              </button>
+              <button 
+                onClick={() => setViewMode('oe_analytics')}
+                className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'oe_analytics' ? "neo-pressed text-fuchsia-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                )}
+                title="Phase 4.5: O-E Analytics Dashboard"
+              >
+                <BarChart3 className="w-5 h-5" strokeWidth={1.5} />
+              </button>
+              <button 
                 onClick={() => setViewMode('gaps')}
                 className={cn(
                   "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
                   viewMode === 'gaps' ? "neo-pressed text-orange-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
                 )}
-                title="Phase 4: Gaps"
+                title="Phase 5: Gaps"
               >
                 <AlertTriangle className="w-5 h-5" strokeWidth={1.5} />
               </button>
@@ -299,11 +332,27 @@ function App() {
             <TheoryOverlay />
           </div>
         )}
+        {viewMode === '3d_engine' && (
+          <div className="relative w-full h-full">
+            <ThreeGraph 
+              nodes={nodes} 
+              links={links}
+              onNodeSelect={handleNodeSelect} 
+            />
+            <TheoryOverlay />
+          </div>
+        )}
         {viewMode === 'stream' && (
           <StreamFeed nodes={nodes} onNodeSelect={handleNodeSelect} selectedNodeId={selectedNodeId} />
         )}
         {viewMode === 'gaps' && (
           <StructuralGaps nodes={nodes} onNodeSelect={handleNodeSelect} />
+        )}
+        {viewMode === 'discriminator' && (
+          <OEDiscriminator />
+        )}
+        {viewMode === 'oe_analytics' && (
+          <OEDashboard />
         )}
       </main>
 
