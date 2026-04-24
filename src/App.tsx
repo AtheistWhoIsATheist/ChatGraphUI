@@ -13,15 +13,17 @@ import KnowledgeBaseDeepIngestion from './pages/KnowledgeBaseDeepIngestion';
 import { OEDiscriminator } from './components/OEDiscriminator';
 import { OEDashboard } from './components/OEDiscriminatorDashboard';
 import { ThreeGraph } from './components/ThreeGraph';
+import { ThemeClusters } from './components/ThemeClusters';
+import { AISynthesisPanel } from './components/AISynthesisPanel';
 import { corpusNodes, corpusLinks, Node, Link } from './data/corpus';
 import { 
-  Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles, ShieldCheck, HardDriveDownload, Info, HardDrive, Microscope, Box, BarChart3
+  Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles, ShieldCheck, HardDriveDownload, Info, HardDrive, Microscope, Box, BarChart3, Group, Network
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { runIngestion, IngestionFile } from './utils/runIngestion';
 
-type ViewMode = 'engine' | 'stream' | 'gaps' | 'deep_ingestion' | 'discriminator' | '3d_engine' | 'oe_analytics';
+type ViewMode = 'engine' | 'stream' | 'gaps' | 'deep_ingestion' | 'discriminator' | '3d_engine' | 'oe_analytics' | 'theme_clusters' | 'ai_synthesis';
 type SidebarMode = 'chat' | 'intelligence' | 'insights' | 'audit' | 'details';
 
 function TheoryOverlay() {
@@ -276,6 +278,26 @@ function App() {
               >
                 <AlertTriangle className="w-5 h-5" strokeWidth={1.5} />
               </button>
+              <button 
+                onClick={() => setViewMode('theme_clusters')}
+                className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'theme_clusters' ? "neo-pressed text-emerald-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                )}
+                title="Phase 6: Theme Topological Clusters"
+              >
+                <Network className="w-5 h-5" strokeWidth={1.5} />
+              </button>
+              <button 
+                onClick={() => setViewMode('ai_synthesis')}
+                className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'ai_synthesis' ? "neo-pressed text-cyan-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                )}
+                title="Phase 7: AI Synthesis Panel"
+              >
+                <Cpu className="w-5 h-5" strokeWidth={1.5} />
+              </button>
 
               <div className="mt-auto flex flex-col gap-4">
                 <button 
@@ -353,6 +375,12 @@ function App() {
         )}
         {viewMode === 'oe_analytics' && (
           <OEDashboard />
+        )}
+        {viewMode === 'theme_clusters' && (
+          <ThemeClusters />
+        )}
+        {viewMode === 'ai_synthesis' && (
+          <AISynthesisPanel />
         )}
       </main>
 
