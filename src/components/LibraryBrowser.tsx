@@ -90,7 +90,9 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
   };
 
   return (
-    <div className="flex flex-col h-full neo-bg p-8 font-sans relative">
+    <div className="flex flex-col h-full bg-[#000] p-8 font-mono relative">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiMwMDAiIC8+PGNpcmNsZSBjeD0iNCIgY3k9IjQiIHI9IjEiIGZpbGw9IiMzMzMiIC8+PC9zdmc+')] opacity-20 pointer-events-none z-0"></div>
+
       {/* Success Toast */}
       <AnimatePresence>
         {showSuccessToast && (
@@ -98,26 +100,27 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-6 py-3 rounded-full shadow-lg flex items-center gap-2"
+            className="absolute top-6 left-1/2 -translate-x-1/2 z-50 bg-[#00FF66]/10 border-2 border-[#00FF66] text-[#00FF66] px-6 py-3 shadow-[4px_4px_0_rgba(0,255,102,0.3)] flex items-center gap-3 neo-flat"
           >
-            <CheckCircle2 className="w-4 h-4" />
-            <span className="text-xs font-medium uppercase tracking-wider">Ingestion Complete</span>
+            <CheckCircle2 className="w-5 h-5" />
+            <span className="text-xs font-black uppercase tracking-widest">Ingestion Complete</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="flex items-center justify-between mb-12">
+      <div className="flex items-center justify-between mb-12 relative z-10 border-b-2 border-[#333] pb-6">
         <div>
-          <h2 className="text-2xl font-serif text-zinc-100 tracking-tight">The Library</h2>
-          <p className="text-xs text-zinc-500 uppercase tracking-widest mt-1 font-mono">The Void of Raw Information</p>
+          <h2 className="text-3xl font-black text-[#fff] tracking-widest uppercase">The Library</h2>
+          <p className="text-xs font-bold text-[#FF3A00] uppercase tracking-[0.2em] mt-2 border-l-2 border-[#FF3A00] pl-3">The Void of Raw Information</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-600" />
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888] group-hover:text-[#00E5FF] transition-colors" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#00E5FF] to-transparent opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
             <input 
               type="text" 
-              placeholder="Search the void..." 
-              className="neo-pressed rounded-full py-2 pl-9 pr-4 text-[11px] text-zinc-300 placeholder:text-zinc-600 focus:outline-none w-64"
+              placeholder="SEARCH THE VOID..." 
+              className="bg-[#050505] border-2 border-[#333] hover:border-[#00E5FF] focus:border-[#00E5FF] py-3 pl-12 pr-4 text-xs font-bold tracking-widest uppercase text-[#eee] placeholder:text-[#555] focus:outline-none w-72 transition-colors neo-flat relative z-10"
             />
           </div>
           
@@ -125,7 +128,7 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
           <div className="relative">
             <button 
               onClick={() => setIsExporting(!isExporting)}
-              className="w-10 h-10 rounded-full neo-convex flex items-center justify-center text-zinc-500 hover:text-zinc-300 transition-all"
+              className="w-12 h-12 border-2 border-transparent hover:border-[#FF3A00] bg-[#111] hover:bg-[#FF3A00]/10 flex items-center justify-center text-[#888] hover:text-[#FF3A00] transition-colors neo-flat"
               title="Export Corpus"
             >
               <Download className="w-5 h-5" />
@@ -138,9 +141,9 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
                     initial={{ opacity: 0, scale: 0.95, y: 10 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                    className="absolute right-0 top-12 w-48 neo-flat border border-white/10 rounded-xl p-2 z-40 shadow-xl flex flex-col gap-1"
+                    className="absolute right-0 top-14 w-56 bg-[#050505] border-2 border-[#333] p-3 z-40 shadow-[8px_8px_0_rgba(0,0,0,1)] flex flex-col gap-2 neo-flat"
                   >
-                    <div className="px-3 py-2 text-[10px] text-zinc-500 uppercase tracking-widest font-mono border-b border-white/5 mb-1">
+                    <div className="px-3 py-2 text-[10px] text-[#888] font-bold uppercase tracking-[0.2em] border-b-2 border-[#222] mb-2">
                       Select Format
                     </div>
                     {[
@@ -154,9 +157,9 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
                       <button
                         key={item.format}
                         onClick={() => handleExport(item.format as ExportFormat)}
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-zinc-200 transition-colors text-xs text-left"
+                        className="flex items-center gap-3 px-3 py-3 border border-transparent hover:border-[#00E5FF] hover:bg-[#00E5FF]/10 text-[#ccc] hover:text-[#00E5FF] transition-colors text-xs font-bold tracking-widest uppercase text-left neo-flat group"
                       >
-                        <item.icon className="w-3.5 h-3.5" />
+                        <item.icon className="w-4 h-4 text-[#888] group-hover:text-[#00E5FF]" />
                         {item.label}
                       </button>
                     ))}
@@ -168,49 +171,49 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
 
           <button 
             onClick={() => setIsAdding(true)}
-            className="w-10 h-10 rounded-full neo-convex flex items-center justify-center text-orange-500/80 hover:text-orange-500 transition-all"
+            className="w-12 h-12 border-2 border-transparent hover:border-[#00E5FF] bg-[#111] hover:bg-[#00E5FF]/10 flex items-center justify-center text-[#00E5FF] transition-colors neo-flat"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-6 h-6" />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto custom-scrollbar pr-4 pb-20">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 overflow-y-auto custom-scrollbar pr-4 pb-20 relative z-10">
         {libraryItems.map((item) => (
           <motion.div
             key={item.id}
             whileHover={{ y: -4 }}
             onClick={() => onNodeSelect(item)}
             className={cn(
-              "neo-flat rounded-3xl p-6 cursor-pointer border border-transparent transition-all duration-300 group",
-              selectedNodeId === item.id ? "neo-pressed border-orange-500/20" : "hover:border-white/5"
+              "bg-[#050505] p-6 cursor-pointer border-2 transition-colors duration-300 group neo-flat flex flex-col",
+              selectedNodeId === item.id ? "border-[#00E5FF] shadow-[4px_4px_0_rgba(0,229,255,0.3)]" : "border-[#333] hover:border-[#FF3A00]"
             )}
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className="w-10 h-10 rounded-2xl neo-convex flex items-center justify-center text-zinc-500 group-hover:text-orange-400 transition-colors">
+            <div className="flex items-start justify-between mb-6">
+              <div className="w-12 h-12 border-2 border-[#444] bg-[#111] flex items-center justify-center text-[#888] group-hover:text-[#FF3A00] group-hover:border-[#FF3A00] transition-colors neo-flat">
                 {getIcon(item.metadata?.url)}
               </div>
-              <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">{item.status}</span>
+              <span className="text-[10px] font-bold text-[#555] uppercase tracking-[0.2em] bg-[#111] px-2 py-1 border border-[#222]">{item.status}</span>
             </div>
             
-            <h3 className="text-lg font-serif text-zinc-200 mb-2 group-hover:text-zinc-100 transition-colors">{item.label}</h3>
-            <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed mb-4">
-              {blocksToString(item.blocks)}
+            <h3 className="text-xl font-bold tracking-tight text-[#fff] mb-4 group-hover:text-[#FF3A00] transition-colors line-clamp-2">{item.label}</h3>
+            <p className="text-sm text-[#888] line-clamp-3 leading-relaxed mb-6 font-serif italic">
+              {blocksToString(item.blocks) || "No preview text available."}
             </p>
             
             <div className="flex flex-wrap gap-2 mt-auto">
               {item.metadata?.tags?.map((tag, i) => (
-                <span key={i} className="text-[8px] uppercase tracking-widest px-2 py-1 rounded-full neo-convex text-zinc-600 font-mono">
+                <span key={i} className="text-[9px] uppercase font-bold tracking-widest px-2 py-1 bg-[#111] border border-[#333] text-[#ccc]">
                   {tag}
                 </span>
               ))}
             </div>
             
-            <div className="mt-6 pt-4 border-t border-white/[0.02] flex items-center justify-between">
-              <span className="text-[8px] text-zinc-600 font-mono">{item.metadata?.date_added}</span>
-              <div className="flex items-center gap-1.5">
-                <div className="w-1 h-1 bg-orange-500 rounded-full"></div>
-                <span className="text-[8px] text-zinc-500 uppercase tracking-tighter">Ready for Transmutation</span>
+            <div className="mt-8 pt-4 border-t-2 border-[#222] flex items-center justify-between">
+              <span className="text-[10px] text-[#555] font-bold tracking-widest">{item.metadata?.date_added}</span>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-[#FF3A00] rounded-none animate-pulse"></div>
+                <span className="text-[9px] text-[#FF3A00] font-black uppercase tracking-[0.2em]">Ready</span>
               </div>
             </div>
           </motion.div>
@@ -219,10 +222,12 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
         {/* Placeholder for "Add New" */}
         <div 
           onClick={() => setIsAdding(true)}
-          className="neo-pressed rounded-3xl p-6 flex flex-col items-center justify-center border border-dashed border-white/5 opacity-40 hover:opacity-100 transition-opacity cursor-pointer group min-h-[200px]"
+          className="bg-[#050505] p-6 flex flex-col items-center justify-center border-2 border-dashed border-[#555] opacity-60 hover:opacity-100 hover:border-[#00E5FF] hover:bg-[#00E5FF]/5 transition-all cursor-pointer group min-h-[300px] neo-flat"
         >
-          <Plus className="w-8 h-8 text-zinc-600 group-hover:text-orange-500 transition-colors mb-2" />
-          <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono">Ingest New Data</span>
+          <div className="p-4 border-2 border-[#555] bg-[#111] group-hover:border-[#00E5FF] group-hover:text-[#00E5FF] transition-colors mb-4 neo-flat">
+            <Plus className="w-8 h-8 text-[#555] group-hover:text-[#00E5FF] transition-colors" />
+          </div>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#888] group-hover:text-[#00E5FF]">Ingest New Data</span>
         </div>
       </div>
 
@@ -235,57 +240,57 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsAdding(false)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm z-40 rounded-3xl"
+              className="absolute inset-0 bg-black/80 backdrop-blur-md z-40"
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[80vh] neo-flat border border-white/10 rounded-3xl p-8 z-50 shadow-2xl flex flex-col"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] max-w-[90vw] h-[85vh] bg-[#000] border-2 border-[#00E5FF] p-8 z-50 shadow-[10px_10px_0_rgba(0,229,255,0.2)] flex flex-col font-mono text-[#eee]"
             >
-              <div className="flex items-center justify-between mb-6 shrink-0">
-                <h3 className="text-xl font-serif text-zinc-100">Ingest New Data</h3>
+              <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-[#333] shrink-0">
+                <h3 className="text-2xl font-black tracking-widest uppercase text-[#00E5FF]">Ingest New Data</h3>
                 <button 
                   onClick={() => setIsAdding(false)}
-                  className="w-8 h-8 rounded-full neo-convex flex items-center justify-center text-zinc-500 hover:text-zinc-300 transition-colors"
+                  className="w-10 h-10 border-2 border-transparent hover:border-[#FF3A00] hover:bg-[#FF3A00]/10 flex items-center justify-center text-[#888] hover:text-[#FF3A00] transition-colors neo-flat"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-2">
+              <div className="flex-1 overflow-y-auto custom-scrollbar space-y-6 pr-4">
                 <div>
-                  <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono mb-1.5 block">Title / Label *</label>
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FF3A00] mb-2 block">Title / Label *</label>
                   <input 
                     type="text" 
                     value={newLabel}
                     onChange={(e) => setNewLabel(e.target.value)}
                     className={cn(
-                      "w-full neo-pressed rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-700 focus:outline-none focus:ring-1 transition-all",
-                      errors.label ? "ring-1 ring-red-500/50" : "focus:ring-orange-500/50"
+                      "w-full bg-[#050505] border-2 border-[#333] px-5 py-4 text-sm font-bold tracking-wide text-[#eee] placeholder:text-[#555] focus:outline-none transition-colors neo-flat",
+                      errors.label ? "border-[#FF0055]" : "focus:border-[#00E5FF] hover:border-[#666]"
                     )}
                     placeholder="e.g., The Architecture of Silence"
                   />
                   {errors.label && (
-                    <div className="flex items-center gap-1 mt-1 text-red-500 text-[10px]">
-                      <AlertCircle className="w-3 h-3" />
+                    <div className="flex items-center gap-2 mt-2 text-[#FF0055] text-[10px] font-bold uppercase tracking-widest">
+                      <AlertCircle className="w-4 h-4" />
                       <span>{errors.label}</span>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono mb-1.5 block">Source Type</label>
-                  <div className="flex gap-2">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FF3A00] mb-2 block">Source Type</label>
+                  <div className="flex flex-wrap gap-3">
                     {['article', 'video', 'tweet', 'paper'].map((type) => (
                       <button
                         key={type}
                         onClick={() => setSourceType(type as any)}
                         className={cn(
-                          "px-3 py-1.5 rounded-lg text-[10px] uppercase tracking-wider font-mono transition-all",
+                          "px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-colors border-2 neo-flat",
                           sourceType === type 
-                            ? "bg-orange-500/20 text-orange-400 border border-orange-500/30" 
-                            : "neo-convex text-zinc-600 hover:text-zinc-400"
+                            ? "bg-[#00E5FF] text-[#000] border-[#00E5FF] shadow-[2px_2px_0_rgba(0,229,255,0.4)] translate-x-[-1px] translate-y-[-1px]" 
+                            : "bg-[#111] border-[#333] text-[#888] hover:border-[#00E5FF] hover:text-[#fff]"
                         )}
                       >
                         {type}
@@ -294,9 +299,9 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
                   </div>
                 </div>
 
-                <div className="flex-1 flex flex-col min-h-[300px]">
-                  <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono mb-1.5 block">Content Blocks *</label>
-                  <div className="flex-1 neo-pressed rounded-xl p-4 border border-white/5">
+                <div className="flex-1 flex flex-col min-h-[350px]">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FF3A00] mb-2 block">Content Blocks *</label>
+                  <div className="flex-1 bg-[#050505] border-2 border-[#333] p-1 flex neo-flat">
                     <VoidEditor 
                       initialBlocks={newBlocks} 
                       nodes={nodes} 
@@ -304,40 +309,42 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
                     />
                   </div>
                   {errors.content && (
-                    <div className="flex items-center gap-1 mt-1 text-red-500 text-[10px]">
-                      <AlertCircle className="w-3 h-3" />
+                    <div className="flex items-center gap-2 mt-2 text-[#FF0055] text-[10px] font-bold uppercase tracking-widest">
+                      <AlertCircle className="w-4 h-4" />
                       <span>{errors.content}</span>
                     </div>
                   )}
                 </div>
 
-                <div>
-                  <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono mb-1.5 block">Source URL (Optional)</label>
-                  <input 
-                    type="text" 
-                    value={newUrl}
-                    onChange={(e) => setNewUrl(e.target.value)}
-                    className="w-full neo-pressed rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-700 focus:outline-none focus:ring-1 focus:ring-orange-500/50"
-                    placeholder="https://..."
-                  />
-                </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FF3A00] mb-2 block">Source URL (Optional)</label>
+                    <input 
+                      type="text" 
+                      value={newUrl}
+                      onChange={(e) => setNewUrl(e.target.value)}
+                      className="w-full bg-[#050505] border-2 border-[#333] px-5 py-4 text-sm font-bold text-[#eee] placeholder:text-[#555] focus:outline-none focus:border-[#00E5FF] hover:border-[#666] transition-colors neo-flat"
+                      placeholder="https://..."
+                    />
+                  </div>
 
-                <div>
-                  <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono mb-1.5 block">Tags (Comma Separated)</label>
-                  <input 
-                    type="text" 
-                    value={newTags}
-                    onChange={(e) => setNewTags(e.target.value)}
-                    className="w-full neo-pressed rounded-xl px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-700 focus:outline-none focus:ring-1 focus:ring-orange-500/50"
-                    placeholder="void, architecture, silence"
-                  />
+                  <div>
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FF3A00] mb-2 block">Tags (CSV)</label>
+                    <input 
+                      type="text" 
+                      value={newTags}
+                      onChange={(e) => setNewTags(e.target.value)}
+                      className="w-full bg-[#050505] border-2 border-[#333] px-5 py-4 text-sm font-bold text-[#eee] placeholder:text-[#555] focus:outline-none focus:border-[#00E5FF] hover:border-[#666] transition-colors neo-flat"
+                      placeholder="VOID, ARCHITECTURE, SILENCE"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-4 flex justify-end shrink-0 border-t border-white/5 mt-4">
+              <div className="pt-6 flex justify-end shrink-0 border-t-2 border-[#333] mt-6">
                 <button 
                   onClick={handleAdd}
-                  className="px-6 py-2 rounded-xl bg-orange-500 text-black font-medium text-sm hover:bg-orange-400 transition-colors shadow-[0_0_20px_rgba(249,115,22,0.3)]"
+                  className="px-8 py-4 border-2 border-[#FF3A00] bg-[#FF3A00] hover:bg-[#fff] hover:border-[#fff] text-[#000] font-black text-sm tracking-widest uppercase transition-colors neo-flat shadow-[6px_6px_0_rgba(255,58,0,0.3)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                 >
                   Ingest into Void
                 </button>

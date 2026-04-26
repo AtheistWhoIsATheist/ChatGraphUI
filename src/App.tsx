@@ -32,10 +32,10 @@ function TheoryOverlay() {
     <>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="absolute bottom-6 right-6 z-40 px-4 py-2 bg-black/80 backdrop-blur-md border border-white/10 rounded-xl text-zinc-400 hover:text-white hover:border-white/30 transition-all flex items-center gap-2 shadow-2xl"
+        className="absolute bottom-6 right-6 z-40 px-6 py-4 bg-[#FF3A00] border-2 border-[#FF3A00] text-[#000] hover:bg-[#fff] hover:border-[#fff] transition-colors flex items-center gap-3 shadow-[6px_6px_0_rgba(255,58,0,0.3)] hover:shadow-none hover:translate-y-[2px] hover:translate-x-[2px] neo-flat"
       >
-        <BookOpen className="w-4 h-4" />
-        <span className="text-xs uppercase tracking-widest">Theory Overlay</span>
+        <BookOpen className="w-5 h-5" />
+        <span className="text-sm font-black uppercase tracking-widest">Theoretical Framework</span>
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -43,12 +43,12 @@ function TheoryOverlay() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-20 right-6 z-40 w-[600px] max-h-[70vh] overflow-hidden bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex flex-col"
+            className="absolute bottom-24 right-6 z-40 w-[600px] max-h-[70vh] overflow-hidden bg-[#000] border-4 border-[#00E5FF] shadow-[10px_10px_0_rgba(0,229,255,0.2)] flex flex-col neo-flat"
           >
-            <div className="p-4 flex justify-between items-center border-b border-white/10 bg-black/50">
-              <h3 className="text-orange-500 font-serif italic">The Shifting Void</h3>
-              <button onClick={() => setIsOpen(false)} className="p-1 text-zinc-500 hover:text-white transition-colors">
-                <X className="w-4 h-4" />
+            <div className="p-4 flex justify-between items-center border-b-4 border-[#333] bg-[#050505]">
+              <h3 className="text-[#00E5FF] font-black uppercase tracking-widest">Theoretical Framework</h3>
+              <button onClick={() => setIsOpen(false)} className="p-2 text-[#888] hover:text-[#FF3A00] hover:bg-[#FF3A00]/10 border-2 border-transparent hover:border-[#FF3A00] transition-colors neo-flat">
+                <X className="w-5 h-5" />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto custom-scrollbar relative">
@@ -141,8 +141,6 @@ function App() {
 
   return (
     <div className="flex h-screen w-full bg-[#000] text-zinc-100 overflow-hidden font-sans selection:bg-[#FF3A00]/50 relative">
-      <div className="scanline-overlay"></div>
-      
       {/* Rupture Sequence */}
       <AnimatePresence>
         {showRupture && (
@@ -158,10 +156,10 @@ function App() {
               className="text-center space-y-6"
             >
               <h1 className="text-4xl md:text-6xl font-serif tracking-widest text-[#FF3A00] uppercase animate-glitch">
-                The Void-Graph Protocol
+                Journal314 & REN Analysis Engine
               </h1>
               <p className="text-zinc-500 font-mono tracking-[0.3em] uppercase text-sm">
-                Professor Nihil & the Nihiltheistic Ontology
+                Structural Textual Analysis
               </p>
               <motion.div 
                 animate={{ scaleX: [0, 1] }} 
@@ -181,9 +179,9 @@ function App() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -50, opacity: 0 }}
             onClick={() => setIsLeftSidebarOpen(true)}
-            className="fixed left-0 top-1/2 -translate-y-1/2 z-30 w-8 h-16 bg-[#0f0f0f] border border-l-0 border-white/10 rounded-r-xl flex items-center justify-center text-zinc-500 hover:text-orange-500 transition-colors shadow-2xl"
+            className="fixed left-0 top-1/2 -translate-y-1/2 z-30 w-10 h-20 bg-[#000] border-y-4 border-r-4 border-[#333] flex items-center justify-center text-[#888] hover:text-[#00E5FF] hover:border-[#00E5FF] transition-colors neo-flat group"
           >
-            <Menu className="w-4 h-4" />
+            <Menu className="w-6 h-6 group-hover:scale-110 transition-transform" />
           </motion.button>
         )}
       </AnimatePresence>
@@ -196,120 +194,57 @@ function App() {
             animate={{ x: 0 }}
             exit={{ x: -80 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="w-20 border-r border-white/5 bg-[#0f0f0f] flex flex-col items-center py-6 z-20 shadow-2xl relative"
+            className="w-24 border-r-4 border-[#333] bg-[#050505] flex flex-col items-center py-6 z-20 shadow-[10px_0_0_rgba(0,0,0,0.5)] relative"
           >
             <button 
               onClick={() => setIsLeftSidebarOpen(false)}
-              className="absolute top-2 right-2 p-1 text-zinc-500 hover:text-white transition-colors"
+              className="absolute top-2 right-2 p-1 text-[#555] hover:text-[#FF3A00] transition-colors"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
-            <div className="w-10 h-10 bg-black border-2 border-[#FF3A00] flex items-center justify-center mb-8 shadow-[4px_4px_0px_rgba(255,58,0,0.5)]">
-              <span className="font-serif text-[#FF3A00] font-bold text-xl animate-pulse-slow">V</span>
+            <div className="w-12 h-12 bg-[#000] border-4 border-[#FF3A00] flex items-center justify-center mb-8 shadow-[6px_6px_0_rgba(255,58,0,0.5)] neo-flat">
+              <span className="font-serif text-[#FF3A00] font-black text-2xl animate-pulse-slow">V</span>
             </div>
             
-            <nav className="flex-1 flex flex-col gap-4">
-              <button 
-                onClick={() => setViewMode('deep_ingestion')}
-                className={cn(
-                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'deep_ingestion' ? "neo-pressed" : "neo-convex text-zinc-500"
-                )}
-                title="Phase 1: Deep Ingestion (The Source)"
-              >
-                <Database className="w-5 h-5" strokeWidth={1.5} />
-              </button>
-              <button 
-                onClick={() => setViewMode('engine')}
-                className={cn(
-                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'engine' ? "neo-pressed" : "neo-convex text-zinc-500"
-                )}
-                title="Phase 2: The Engine [Ω]"
-              >
-                <Cpu className="w-5 h-5" strokeWidth={1.5} />
-              </button>
-              <button 
-                onClick={() => setViewMode('3d_engine')}
-                className={cn(
-                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === '3d_engine' ? "neo-pressed" : "neo-convex text-zinc-500"
-                )}
-                title="Phase 2.5: 3D Topology (Three.js)"
-              >
-                <Box className="w-5 h-5" strokeWidth={1.5} />
-              </button>
-              <button 
-                onClick={() => setViewMode('stream')}
-                className={cn(
-                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'stream' ? "neo-pressed" : "neo-convex text-zinc-500"
-                )}
-                title="Phase 3: The Stream"
-              >
-                <Sparkles className="w-5 h-5" strokeWidth={1.5} />
-              </button>
-              <button 
-                onClick={() => setViewMode('discriminator')}
-                className={cn(
-                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'discriminator' ? "neo-pressed" : "neo-convex text-zinc-500"
-                )}
-                title="Phase 4: O-E Discriminator"
-              >
-                <Microscope className="w-5 h-5" strokeWidth={1.5} />
-              </button>
-              <button 
-                onClick={() => setViewMode('oe_analytics')}
-                className={cn(
-                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'oe_analytics' ? "neo-pressed" : "neo-convex text-zinc-500"
-                )}
-                title="Phase 4.5: O-E Analytics Dashboard"
-              >
-                <BarChart3 className="w-5 h-5" strokeWidth={1.5} />
-              </button>
-              <button 
-                onClick={() => setViewMode('gaps')}
-                className={cn(
-                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'gaps' ? "neo-pressed" : "neo-convex text-zinc-500"
-                )}
-                title="Phase 5: Gaps"
-              >
-                <AlertTriangle className="w-5 h-5" strokeWidth={1.5} />
-              </button>
-              <button 
-                onClick={() => setViewMode('theme_clusters')}
-                className={cn(
-                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'theme_clusters' ? "neo-pressed" : "neo-convex text-zinc-500"
-                )}
-                title="Phase 6: Theme Topological Clusters"
-              >
-                <Network className="w-5 h-5" strokeWidth={1.5} />
-              </button>
-              <button 
-                onClick={() => setViewMode('ai_synthesis')}
-                className={cn(
-                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'ai_synthesis' ? "neo-pressed" : "neo-convex text-zinc-500"
-                )}
-                title="Phase 7: AI Synthesis Panel"
-              >
-                <Cpu className="w-5 h-5" strokeWidth={1.5} />
-              </button>
+            <nav className="flex-1 flex flex-col gap-6">
+              {[
+                { id: 'deep_ingestion', icon: Database, title: "Journal314 Ingestion" },
+                { id: 'engine', icon: Cpu, title: "Journal314 / REN Graph Engine" },
+                { id: '3d_engine', icon: Box, title: "REN Topology (3D)" },
+                { id: 'stream', icon: Sparkles, title: "Synthesis Stream" },
+                { id: 'discriminator', icon: Microscope, title: "Occurrence-Elevation Discriminator" },
+                { id: 'oe_analytics', icon: BarChart3, title: "Occurrence-Elevation Analytics" },
+                { id: 'gaps', icon: AlertTriangle, title: "Structural Gaps" },
+                { id: 'theme_clusters', icon: Network, title: "Theme Topological Clusters" },
+                { id: 'ai_synthesis', icon: Cpu, title: "REN Synthesis Panel" }
+              ].map((item) => (
+                <button 
+                  key={item.id}
+                  onClick={() => setViewMode(item.id as ViewMode)}
+                  className={cn(
+                    "w-14 h-14 flex items-center justify-center transition-all cursor-pointer border-2 neo-flat",
+                    viewMode === item.id 
+                      ? "bg-[#00E5FF] border-[#00E5FF] text-[#000] shadow-[4px_4px_0_rgba(0,229,255,0.3)] translate-y-[-2px] translate-x-[-2px]" 
+                      : "bg-[#111] border-transparent text-[#888] hover:border-[#00E5FF] hover:text-[#00E5FF] hover:bg-[#00E5FF]/10"
+                  )}
+                  title={item.title}
+                >
+                  <item.icon className="w-6 h-6" strokeWidth={2} />
+                </button>
+              ))}
 
-              <div className="mt-auto flex flex-col gap-4">
+              <div className="mt-auto flex flex-col gap-4 border-t-2 border-[#333] pt-6">
                 <button 
                   onClick={() => setIsFileManagerOpen(!isFileManagerOpen)}
                   className={cn(
-                    "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
-                    isFileManagerOpen ? "neo-pressed" : "neo-convex text-zinc-500"
+                    "w-14 h-14 flex items-center justify-center transition-all cursor-pointer border-2 neo-flat",
+                    isFileManagerOpen 
+                      ? "bg-[#FF3A00] border-[#FF3A00] text-[#000] shadow-[4px_4px_0_rgba(255,58,0,0.3)] translate-y-[-2px] translate-x-[-2px]" 
+                      : "bg-[#111] border-transparent text-[#888] hover:border-[#FF3A00] hover:text-[#FF3A00] hover:bg-[#FF3A00]/10"
                   )}
-                  title="Abyssal Archives (File Manager)"
+                  title="Document Ingestion Manager"
                 >
-                  <HardDrive className="w-5 h-5" strokeWidth={1.5} />
+                  <HardDrive className="w-6 h-6" strokeWidth={2} />
                 </button>
               </div>
             </nav>
@@ -393,9 +328,9 @@ function App() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 50, opacity: 0 }}
             onClick={() => setIsRightSidebarOpen(true)}
-            className="fixed right-0 top-1/2 -translate-y-1/2 z-30 w-8 h-16 bg-[#0f0f0f] border border-r-0 border-white/10 rounded-l-xl flex items-center justify-center text-zinc-500 hover:text-orange-500 transition-colors shadow-2xl"
+            className="fixed right-0 top-1/2 -translate-y-1/2 z-30 w-10 h-20 bg-[#000] border-y-4 border-l-4 border-[#333] flex items-center justify-center text-[#888] hover:text-[#00E5FF] hover:border-[#00E5FF] transition-colors neo-flat group"
           >
-            <Menu className="w-4 h-4" />
+            <Menu className="w-6 h-6 group-hover:scale-110 transition-transform" />
           </motion.button>
         )}
       </AnimatePresence>
@@ -408,67 +343,41 @@ function App() {
             animate={{ x: 0 }}
             exit={{ x: 400 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="w-[400px] border-l border-white/5 bg-[#0f0f0f] flex flex-col z-20 shadow-2xl relative"
+            className="w-[400px] border-l-4 border-[#333] bg-[#050505] flex flex-col z-20 shadow-[-10px_0_0_rgba(0,0,0,0.5)] relative"
           >
             <button 
               onClick={() => setIsRightSidebarOpen(false)}
-              className="absolute top-2 left-2 p-1 text-zinc-500 hover:text-white transition-colors z-50"
+              className="absolute top-2 left-2 p-1 text-[#555] hover:text-[#FF3A00] transition-colors z-50"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
             
             {/* Sidebar Mode Toggle */}
-            <div className="absolute -left-12 top-20 flex flex-col gap-2 z-50">
-              <button
-                onClick={() => setSidebarMode('chat')}
-                className={cn(
-                  "w-10 h-10 rounded-l-xl flex items-center justify-center transition-all border border-r-0 border-white/10",
-                  sidebarMode === 'chat' ? "bg-[#0f0f0f] text-orange-500" : "bg-black/60 text-zinc-500 hover:text-zinc-300"
-                )}
-                title="Professor Nihil"
-              >
-                <MessageSquare className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setSidebarMode('intelligence')}
-                className={cn(
-                  "w-10 h-10 rounded-l-xl flex items-center justify-center transition-all border border-r-0 border-white/10",
-                  sidebarMode === 'intelligence' ? "bg-[#0f0f0f] text-fuchsia-500" : "bg-black/60 text-zinc-500 hover:text-zinc-300"
-                )}
-                title="Intelligence Cards"
-              >
-                <Layers className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setSidebarMode('insights')}
-                className={cn(
-                  "w-10 h-10 rounded-l-xl flex items-center justify-center transition-all border border-r-0 border-white/10",
-                  sidebarMode === 'insights' ? "bg-[#0f0f0f] text-emerald-500" : "bg-black/60 text-zinc-500 hover:text-zinc-300"
-                )}
-                title="Insight Prompts"
-              >
-                <Zap className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setSidebarMode('details')}
-                className={cn(
-                  "w-10 h-10 rounded-l-xl flex items-center justify-center transition-all border border-r-0 border-white/10",
-                  sidebarMode === 'details' ? "bg-[#0f0f0f] text-orange-500" : "bg-black/60 text-zinc-500 hover:text-zinc-300"
-                )}
-                title="Node Details"
-              >
-                <Info className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setSidebarMode('audit')}
-                className={cn(
-                  "w-10 h-10 rounded-l-xl flex items-center justify-center transition-all border border-r-0 border-white/10",
-                  sidebarMode === 'audit' ? "bg-[#0f0f0f] text-emerald-500" : "bg-black/60 text-zinc-500 hover:text-zinc-300"
-                )}
-                title="Audit Trail"
-              >
-                <ShieldCheck className="w-4 h-4" />
-              </button>
+            <div className="absolute -left-[3.5rem] top-24 flex flex-col gap-4 z-50">
+              {[
+                { id: 'chat', icon: MessageSquare, color: 'text-[#FF3A00]', activeBorder: 'border-[#FF3A00]' },
+                { id: 'intelligence', icon: Layers, color: 'text-[#FFD700]', activeBorder: 'border-[#FFD700]' },
+                { id: 'insights', icon: Zap, color: 'text-[#00FF66]', activeBorder: 'border-[#00FF66]' },
+                { id: 'details', icon: Info, color: 'text-[#00E5FF]', activeBorder: 'border-[#00E5FF]' },
+                { id: 'audit', icon: ShieldCheck, color: 'text-[#ff00ff]', activeBorder: 'border-[#ff00ff]' }
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setSidebarMode(item.id as SidebarMode)}
+                  className={cn(
+                    "w-14 h-14 flex items-center justify-center transition-all border-y-4 border-l-4 border-r-0 relative neo-flat",
+                    sidebarMode === item.id 
+                      ? `bg-[#050505] ${item.activeBorder} ${item.color} -ml-2 w-16 z-20` 
+                      : "bg-[#111] border-[#333] text-[#555] hover:text-[#fff] hover:border-[#555] hover:bg-[#222]"
+                  )}
+                  title={item.id}
+                >
+                  <item.icon className="w-6 h-6" strokeWidth={sidebarMode === item.id ? 3 : 2} />
+                  {sidebarMode === item.id && (
+                    <div className={cn("absolute right-[-4px] top-0 bottom-0 w-2 bg-[#050505] z-30", item.activeBorder.replace('border-', 'bg-'))} />
+                  )}
+                </button>
+              ))}
             </div>
 
             {sidebarMode === 'chat' ? (

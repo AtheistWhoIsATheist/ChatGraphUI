@@ -16,7 +16,7 @@ export function SystemTopology() {
           <div className="inline-flex items-center justify-center p-6 bg-[#111] border-2 border-[#FF3A00] mb-6">
             <Cpu className="w-16 h-16 text-[#FF3A00] animate-pulse-slow" />
           </div>
-          <h1 className="text-5xl md:text-6xl font-serif font-black tracking-widest uppercase text-[#fff] animate-glitch">Nihiltheism Engine (Ω)</h1>
+          <h1 className="text-5xl md:text-6xl font-serif font-black tracking-widest uppercase text-[#fff] animate-glitch">Analysis Engine Topology</h1>
           <p className="text-[#00E5FF] text-lg font-mono uppercase tracking-[0.2em] max-w-3xl mx-auto leading-relaxed border-t-2 border-[#333] pt-6">
             A Living Philosophical Intelligence Environment. Single, deployable artifact functioning as a recursive abstraction engine.
           </p>
@@ -29,14 +29,14 @@ export function SystemTopology() {
             <div className="absolute top-0 left-0 w-2 h-full bg-[#00E5FF] group-hover:scale-y-110 transition-transform" />
             <div className="flex items-center gap-4 mb-8 border-b border-[#333] pb-4">
               <Database className="w-8 h-8 text-[#00E5FF]" />
-              <h2 className="text-2xl font-bold font-serif tracking-widest text-[#fff] uppercase">Abyssal Archive</h2>
+              <h2 className="text-2xl font-bold font-serif tracking-widest text-[#fff] uppercase">Journal314 Repository</h2>
               <span className="text-xs font-bold uppercase tracking-widest text-[#00E5FF] bg-[#111] px-3 py-1 ml-auto">K-Base</span>
             </div>
             <ul className="space-y-6 text-sm text-[#ccc] font-mono tracking-wider">
               <li className="flex items-center gap-4"><div className="w-2 h-2 bg-[#00E5FF] shadow-[0_0_10px_#00E5FF]"/> Axioms (MAC_α, AIF, S→100%)</li>
               <li className="flex items-center gap-4"><div className="w-2 h-2 bg-[#00E5FF] shadow-[0_0_10px_#00E5FF]"/> Operational Codex (A, K, O, RN)</li>
               <li className="flex items-center gap-4"><div className="w-2 h-2 bg-[#00E5FF] shadow-[0_0_10px_#00E5FF]"/> Praxis Directives</li>
-              <li className="flex items-center gap-4"><div className="w-2 h-2 bg-[#00E5FF] shadow-[0_0_10px_#00E5FF]"/> Void-Nodes & Thinker-Nodes</li>
+              <li className="flex items-center gap-4"><div className="w-2 h-2 bg-[#00E5FF] shadow-[0_0_10px_#00E5FF]"/> Corpus Nodes</li>
             </ul>
           </motion.div>
 
@@ -94,7 +94,7 @@ export function SystemTopology() {
               <div className="text-[#FF3A00] mb-8 scale-125 origin-left"><Database className="w-10 h-10" /></div>
               <div className="text-xs font-bold uppercase tracking-[0.2em] text-[#00E5FF] mb-4 bg-[#111] inline-block px-3 py-1">[M1]</div>
               <h3 className="text-2xl font-black font-serif text-[#fff] tracking-wider uppercase mb-4">DataHub</h3>
-              <p className="text-sm text-[#888] font-mono leading-relaxed">DevOps Engine. Manages ingestion, embeddings, and the Abyssal Archive database.</p>
+              <p className="text-sm text-[#888] font-mono leading-relaxed">System architecture. Manages ingestion, embeddings, and the document database.</p>
             </div>
             
             {/* M2 */}

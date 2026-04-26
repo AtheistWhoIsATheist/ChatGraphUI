@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { ShieldCheck, Clock, Fingerprint, Database, Search, Filter } from 'lucide-react';
+import { cn } from '../lib/utils';
 import { Node } from '../data/corpus';
 
 interface AuditTrailPanelProps {
@@ -29,7 +30,7 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
       id: 'log_1',
       timestamp: new Date(Date.now() - 86400000 * 2).toISOString(),
       action: 'INITIAL_INGESTION',
-      actor: 'Abyssal Ingestor',
+      actor: 'Ingestion Module',
       hash: '0x' + Math.random().toString(16).slice(2, 10) + '...' + Math.random().toString(16).slice(2, 10),
       details: 'Node ingested from raw drop.'
     },
@@ -37,7 +38,7 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
       id: 'log_2',
       timestamp: new Date(Date.now() - 86400000).toISOString(),
       action: 'DENSIFICATION_PROTOCOL',
-      actor: 'Professor Nihil (Cron)',
+      actor: 'Synthesis Engine (Cron)',
       hash: '0x' + Math.random().toString(16).slice(2, 10) + '...' + Math.random().toString(16).slice(2, 10),
       details: 'Node densified. Summary expanded and Socratic questions generated.'
     },

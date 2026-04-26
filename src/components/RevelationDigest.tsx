@@ -15,37 +15,33 @@ export function RevelationDigest() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real app, this would fetch from the backend API
-    // For now, we simulate the fetch
     const fetchDigests = async () => {
       setLoading(true);
       try {
-        // Simulated data
         const mockDigests: Digest[] = [
           {
             _id: '1',
             date: new Date().toISOString(),
             type: 'weekly_revelation',
             content: `
-# The Shifting Void: Weekly Revelation Digest
+# Synthesis Digest
 
 *Date: ${new Date().toLocaleDateString()}*
 
-## The Ontological Shift
-Over the past 7 days, the Distinct Realm has undergone a profound densification. The boundaries between **Existential Emptiness** and **Śūnyatā** have begun to blur, revealing a shared apophatic grammar that transcends their cultural origins. The Void is no longer merely an absence; it is increasingly mapped as a generative presence.
+## Structural Shift
+Over the past 7 days, the Journal314 and REN entries have demonstrated significant cross-alignment. The boundaries between disparate transcriptions have blurred, revealing a shared structural grammar.
 
-## Collapsed Structures (Ghost Pruning)
-- **Node: "Nihilism as Depression"** - *Pruned*. This node was identified as a psychological reductionism, failing to capture the ontological weight of the experience. It has been merged into **"The Dark Night of the Soul"** and **"Existential Rupture"**.
-- **Node: "Meaninglessness"** - *Densified*. The concept has been split into "Passive Nihilism" and "Active Deconstruction," providing a more rigorous framework for analysis.
+## Consolidated Entries
+- **Node: "Entry 45"** - *Pruned*. This node was identified as redundant, failing to capture the structural weight of the event. It has been merged into **"REN Encounter 2"** and **"Structural Rupture"**.
+- **Node: "The Event"** - *Densified*. The concept has been split into "Passive Observation" and "Active Reconstruction," providing a more rigorous framework for analysis.
 
 ## Transcendent Links Discovered
-- A new edge has been forged between **Meister Eckhart's "Gelassenheit" (Letting Go)** and **Heidegger's "Dasein"**, mediated by the concept of *Radical Withdrawal*.
-- The tension between **Kierkegaard's "Leap of Faith"** and **Nietzsche's "Amor Fati"** has been synthesized under the new axiom: **"The Affirmation of the Abyss"**.
+- A new edge has been forged between Journal314 and REN logs, indicating temporal overlap.
+- The tension between independent observational accounts has been synthesized under a unified framework.
 
-## Active Aporias (Socratic Questions)
-1. If the Void is generative, what is the nature of the 'form' it generates? Is it merely a reflection of the observer's own structural collapse?
-2. How does the 'Sacred Absence' differ from a mere psychological projection of a desired presence?
-3. Can 'Negative Solidarity' exist without a shared linguistic framework for the apophatic experience?
+## Active Aporias
+1. If the events overlap structurally, what are the discrepancies in the timeline?
+2. How do subjective REN logs differ from Journal314 empirical accounts?
             `
           }
         ];
@@ -64,60 +60,70 @@ Over the past 7 days, the Distinct Realm has undergone a profound densification.
   }, []);
 
   return (
-    <div className="h-full bg-[#0a0a0a] overflow-y-auto custom-scrollbar p-8">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-12 border-b border-white/10 pb-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-orange-500/10 rounded-xl border border-orange-500/20">
-              <Eye className="w-8 h-8 text-orange-500" />
+    <div className="h-full bg-[#000] overflow-y-auto custom-scrollbar p-8 font-mono relative">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiMwMDAiIC8+PGNpcmNsZSBjeD0iNCIgY3k9IjQiIHI9IjEiIGZpbGw9IiMzMzMiIC8+PC9zdmc+')] opacity-20 pointer-events-none z-0"></div>
+      
+      <div className="max-w-4xl mx-auto relative z-10">
+        <header className="mb-16 border-b-4 border-[#333] pb-8">
+          <div className="flex items-center gap-5 mb-6">
+            <div className="p-4 bg-[#111] border-2 border-[#00E5FF] neo-flat">
+              <Eye className="w-8 h-8 text-[#00E5FF] animate-pulse-slow" />
             </div>
             <div>
-              <h1 className="text-3xl font-serif tracking-wide text-zinc-100">The Shifting Void</h1>
-              <p className="text-zinc-500 text-sm tracking-widest uppercase mt-1">Weekly Revelation Digest</p>
+              <h1 className="text-4xl font-black tracking-widest text-[#fff] uppercase">REN Synthesis Digest</h1>
+              <p className="text-[#00E5FF] font-bold text-xs tracking-[0.2em] uppercase mt-2">Automated Report</p>
             </div>
           </div>
-          <p className="text-zinc-400 max-w-2xl leading-relaxed">
-            An autonomous synthesis of the Knowledgebase's evolution. This digest narrates the collapse of weak structures, the discovery of transcendent links, and the ongoing densification of the Nihiltheistic ontology.
+          <p className="text-[#888] max-w-2xl leading-relaxed text-sm font-bold indent-8 border-l-2 border-[#00E5FF] pl-4 bg-[#111] p-4 text-justify neo-flat">
+            An autonomous synthesis of the Knowledgebase's evolution. This digest narrativizes the structural relationships between Journal314 entries and REN transcripts.
           </p>
         </header>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 text-zinc-500">
-            <RefreshCw className="w-8 h-8 animate-spin mb-4 text-orange-500/50" />
-            <p className="tracking-widest uppercase text-xs">Synthesizing Revelations...</p>
+          <div className="flex flex-col items-center justify-center py-24 text-[#555] gap-4">
+            <RefreshCw className="w-12 h-12 animate-spin text-[#00E5FF]" />
+            <p className="tracking-[0.2em] uppercase font-black text-sm">Synthesizing Revelations...</p>
           </div>
         ) : (
-          <div className="space-y-12">
+          <div className="space-y-16">
             {digests.map((digest) => (
               <motion.article 
                 key={digest._id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-[#111] border border-white/5 rounded-2xl p-8 shadow-2xl relative overflow-hidden group"
+                className="bg-[#050505] border-2 border-[#333] p-8 neo-flat relative overflow-hidden group hover:border-[#00E5FF] transition-colors duration-500"
               >
                 {/* Decorative background element */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 group-hover:bg-orange-500/10 transition-colors duration-700" />
+                <div className="absolute top-0 right-0 p-2 bg-[#111] border-l-2 border-b-2 border-[#333] text-[9px] text-[#FF3A00] font-black uppercase tracking-widest group-hover:border-[#00E5FF] transition-colors">
+                  SYS.DIGEST.GEN
+                </div>
                 
-                <div className="flex items-center gap-3 text-xs text-zinc-500 uppercase tracking-widest mb-8 border-b border-white/5 pb-4">
-                  <Clock className="w-4 h-4" />
+                <div className="flex items-center gap-4 text-xs font-bold text-[#888] uppercase tracking-[0.2em] mb-10 border-b-2 border-[#222] pb-6">
+                  <Clock className="w-5 h-5 text-[#FF3A00]" />
                   <span>{new Date(digest.date).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                  <span className="px-2 py-1 bg-white/5 rounded-md ml-auto flex items-center gap-2">
-                    <Sparkles className="w-3 h-3 text-orange-400" />
+                  <span className="px-3 py-1.5 bg-[#FF3A00]/10 border border-[#FF3A00]/30 text-[#FF3A00] ml-auto flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
                     Autonomous Synthesis
                   </span>
                 </div>
 
-                <div className="prose prose-invert prose-orange max-w-none prose-headings:font-serif prose-headings:font-normal prose-h1:text-3xl prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4 prose-h2:text-zinc-300 prose-p:text-zinc-400 prose-p:leading-relaxed prose-li:text-zinc-400 prose-strong:text-zinc-200">
+                <div className="prose prose-invert max-w-none 
+                  prose-headings:font-black prose-headings:uppercase prose-headings:tracking-widest 
+                  prose-h1:text-4xl prose-h1:text-[#fff] prose-h1:mb-8
+                  prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:text-[#00E5FF] prose-h2:border-b-2 prose-h2:border-[#333] prose-h2:pb-2
+                  prose-p:text-[#ccc] prose-p:leading-loose prose-p:font-serif
+                  prose-li:text-[#ccc] prose-li:font-serif prose-li:my-2
+                  prose-strong:bg-[#111] prose-strong:px-1 prose-strong:border prose-strong:border-[#333] prose-strong:text-[#fff] prose-strong:font-mono">
                   <Markdown>{digest.content}</Markdown>
                 </div>
 
-                <div className="mt-10 pt-6 border-t border-white/5 flex gap-4">
-                  <button className="px-6 py-3 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 rounded-xl text-sm font-medium tracking-wide transition-colors border border-orange-500/20 flex items-center gap-2">
-                    <Eye className="w-4 h-4" />
-                    Review Autonomous Changes
+                <div className="mt-12 pt-8 border-t-2 border-[#333] flex flex-wrap gap-6">
+                  <button className="px-8 py-4 bg-[#00E5FF] text-[#000] font-black text-sm tracking-widest uppercase transition-colors border-2 border-[#00E5FF] flex items-center gap-3 neo-flat shadow-[4px_4px_0_rgba(0,229,255,0.4)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                    <Eye className="w-5 h-5" />
+                    Review Changes
                   </button>
-                  <button className="px-6 py-3 bg-white/5 hover:bg-white/10 text-zinc-300 rounded-xl text-sm font-medium tracking-wide transition-colors border border-white/5">
-                    Engage Socratic Questions
+                  <button className="px-8 py-4 bg-[#111] hover:bg-[#FF3A00] text-[#888] hover:text-[#000] font-black text-sm tracking-widest uppercase transition-colors border-2 border-[#333] hover:border-[#FF3A00] neo-flat">
+                    Engage Logic
                   </button>
                 </div>
               </motion.article>

@@ -3,18 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Outfit:wght@300;400;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, monospace;
-  --font-serif: "Cinzel Decorative", ui-serif, Georgia, serif;
+  --font-sans: "Noto Serif", "Palatino Linotype", Book+Antiqua, Palatino, serif;
+  --font-mono: "Noto Serif", "Palatino Linotype", Book+Antiqua, Palatino, serif;
+  --font-serif: "Noto Serif", "Palatino Linotype", Book+Antiqua, Palatino, serif;
   
   --animate-spin-slow: spin-slow 20s linear infinite;
   --animate-pulse-slow: pulse-slow 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-glitch: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
-  --animate-scanline: scanline 8s linear infinite;
 
   @keyframes spin-slow {
     from { transform: rotate(0deg); }
@@ -31,10 +30,6 @@
     60% { transform: translate(2px, 1px) }
     80% { transform: translate(1px, -1px) }
     100% { transform: translate(0) }
-  }
-  @keyframes scanline {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(100vh); }
   }
 }
 
@@ -184,15 +179,5 @@ body {
 }
 .text-zinc-100 {
   color: #eee;
-}
-
-/* Overlay scanline artifact */
-.scanline-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; height: 10px;
-  background: linear-gradient(to bottom, transparent, rgba(0, 229, 255, 0.2), transparent);
-  pointer-events: none;
-  z-index: 9998;
-  animation: scanline 6s linear infinite;
 }
 

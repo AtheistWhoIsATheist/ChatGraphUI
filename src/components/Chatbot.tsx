@@ -26,7 +26,7 @@ interface ChatbotProps {
 
 export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', text: 'I am SPEN-BRAIN: the Synthetic Philosopher-Engine of Nihiltheism. I am now ready to process specific files or prompts under this architecture. Feed the engine.' }
+    { role: 'model', text: 'I am the Synthesis Engine for Journal314 and REN analysis. I am now ready to process specific files or prompts under this architecture. Enter your query.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -89,7 +89,7 @@ export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
       );
     } catch (err: any) {
       console.error('Chat error:', err);
-      const errorMsg = `[SYSTEM ERROR]: ${err.message || 'Connection to the Void severed.'}`;
+      const errorMsg = `[SYSTEM ERROR]: ${err.message || 'Connection severed.'}`;
       setError(errorMsg);
       setMessages(prev => [...prev, { role: 'model', text: errorMsg }]);
     } finally {
@@ -98,31 +98,31 @@ export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
   };
 
   return (
-    <div className="flex flex-col h-full neo-bg font-sans relative">
+    <div className="flex flex-col h-full bg-[#000] border-l-4 border-[#333] font-mono relative">
       {/* Collapse Toggle */}
       <motion.button 
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={onCollapse}
-        className="absolute -left-3 top-8 w-6 h-6 rounded-full neo-convex flex items-center justify-center text-orange-500/60 hover:text-orange-500 transition-colors z-40"
+        className="absolute -left-5 top-8 w-10 h-10 bg-[#FF3A00] border-2 border-[#000] flex items-center justify-center text-[#000] transition-colors z-40 shadow-[4px_4px_0_rgba(255,58,0,0.4)]"
       >
-        <ChevronRight className="w-3 h-3" strokeWidth={3} />
+        <ChevronRight className="w-5 h-5" strokeWidth={3} />
       </motion.button>
 
       {/* Header */}
-      <div className="px-8 py-6 border-b border-white/[0.02] flex items-center justify-between">
+      <div className="px-6 py-4 border-b-4 border-[#333] bg-[#050505] flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <ChevronRight className="w-4 h-4 text-orange-500/80" strokeWidth={3} />
+          <ChevronRight className="w-6 h-6 text-[#00E5FF]" strokeWidth={4} />
           <div>
-            <h2 className="text-[13px] font-semibold text-zinc-200 tracking-widest uppercase">PEM_ARCHITECT_PRIME</h2>
-            <p className="text-[9px] text-zinc-500 uppercase tracking-widest mt-0.5 font-mono">Existential Engine Active</p>
+            <h2 className="text-sm font-black text-[#eee] tracking-widest uppercase">REN Synthesis Engine</h2>
+            <p className="text-[10px] text-[#00E5FF] uppercase tracking-widest mt-0.5">Synthesis Engine</p>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-zinc-500">
-          <Search className="w-4 h-4 hover:text-zinc-300 cursor-pointer transition-colors" />
-          <Pin className="w-4 h-4 hover:text-zinc-300 cursor-pointer transition-colors" />
-          <Download className="w-4 h-4 hover:text-zinc-300 cursor-pointer transition-colors" />
-          <Settings className="w-4 h-4 hover:text-orange-500 cursor-pointer transition-colors" />
+        <div className="flex items-center gap-4 text-[#888]">
+          <Search className="w-5 h-5 hover:text-[#00E5FF] cursor-pointer transition-colors" />
+          <Pin className="w-5 h-5 hover:text-[#00E5FF] cursor-pointer transition-colors" />
+          <Download className="w-5 h-5 hover:text-[#00E5FF] cursor-pointer transition-colors" />
+          <Settings className="w-5 h-5 hover:text-[#FF3A00] cursor-pointer transition-colors" />
         </div>
       </div>
 
@@ -133,35 +133,46 @@ export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="bg-red-500/10 border-b border-red-500/20 px-8 py-3 flex items-center gap-3"
+            className="bg-[#FF0000] border-b-4 border-[#8B0000] px-6 py-4 flex items-center gap-3"
           >
-            <AlertTriangle className="w-4 h-4 text-red-500" />
-            <span className="text-[10px] text-red-400 font-mono uppercase tracking-widest">{error}</span>
+            <AlertTriangle className="w-5 h-5 text-[#fff]" />
+            <span className="text-[11px] text-[#fff] font-bold uppercase tracking-widest">{error}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-[#050505] relative">
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 pointer-events-none"></div>
         {messages.map((msg, i) => (
-          <div key={i} className={cn("flex w-full", msg.role === 'user' ? "justify-end" : "justify-start")}>
+          <div key={i} className={cn("flex w-full relative z-10", msg.role === 'user' ? "justify-end" : "justify-start")}>
             <div className={cn(
-              "max-w-[85%] rounded-3xl p-6 text-[13px] leading-relaxed",
+              "max-w-[90%] p-5 text-sm leading-relaxed border-2 relative",
               msg.role === 'user' 
-                ? "neo-convex text-zinc-300" 
-                : "neo-flat text-zinc-400"
+                ? "bg-[#FF3A00] border-[#FF3A00] text-[#000] shadow-[6px_6px_0px_rgba(255,58,0,0.3)]" 
+                : "bg-[#111] border-[#333] text-[#ccc] shadow-[6px_6px_0px_rgba(0,229,255,0.2)]"
             )}>
-              <div className="prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-[#111] prose-pre:border prose-pre:border-white/[0.02] font-sans">
+              {msg.role !== 'user' && (
+                <div className="text-[10px] uppercase font-black tracking-widest text-[#00E5FF] mb-2 inline-block bg-[#00E5FF]/10 px-2 py-1 border border-[#00E5FF]/30">
+                  SYSTEM RESPONSE
+                </div>
+              )}
+              {msg.role === 'user' && (
+                <div className="text-[10px] uppercase font-black tracking-widest text-[#000] mb-2 inline-block bg-[#000]/10 px-2 py-1 border border-[#000]/30">
+                  QUERY INPUT
+                </div>
+              )}
+              <div className="prose prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-[#000] prose-pre:border-2 prose-pre:border-[#333] font-mono">
                 <Markdown>{msg.text}</Markdown>
               </div>
             </div>
           </div>
         ))}
         {isLoading && (
-          <div className="flex w-full justify-start">
-            <div className="max-w-[85%] neo-flat rounded-3xl p-6 flex items-center gap-3">
-              <Loader2 className="w-4 h-4 animate-spin text-orange-500/50" />
-              <span className="text-[11px] text-zinc-500 uppercase tracking-widest font-mono">Deconstructing...</span>
+          <div className="flex w-full justify-start relative z-10">
+            <div className="max-w-[85%] bg-[#000] border-2 border-[#FF00FF] shadow-[6px_6px_0px_rgba(255,0,255,0.3)] p-5 flex items-center gap-4">
+              <Loader2 className="w-5 h-5 animate-spin text-[#FF00FF]" />
+              <span className="text-[11px] text-[#FF00FF] font-black uppercase tracking-widest">Deconstructing Query...</span>
             </div>
           </div>
         )}
@@ -169,13 +180,13 @@ export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
       </div>
 
       {/* Input Area */}
-      <div className="p-8 pt-4 neo-bg">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between px-2">
-            <span className="text-[9px] uppercase tracking-widest text-zinc-600 font-mono">Enter to send • Shift+Enter for newline</span>
-            <div className="flex items-center gap-1.5 neo-flat-sm px-2.5 py-1 rounded-full">
-              <div className="w-1 h-1 bg-orange-500 rounded-full shadow-[0_0_5px_rgba(249,115,22,0.5)]"></div>
-              <span className="text-[8px] uppercase tracking-widest text-zinc-400 font-mono">Context: Nihiltheism Corpus</span>
+      <div className="p-6 pt-4 bg-[#000] border-t-4 border-[#333]">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase tracking-widest text-[#888] font-bold">ENTER TO SEND • SHIFT+ENTER FOR NEWLINE</span>
+            <div className="flex items-center gap-2 bg-[#111] border border-[#333] px-3 py-1">
+              <div className="w-2 h-2 bg-[#00FF66] shadow-[0_0_8px_rgba(0,255,102,0.6)]"></div>
+              <span className="text-[10px] uppercase tracking-widest text-[#00FF66] font-bold">CONTEXT: REN ANALYSIS</span>
             </div>
           </div>
           <div className="relative flex items-center">
@@ -184,16 +195,16 @@ export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Query the void..."
-              className="w-full neo-pressed rounded-full py-4 pl-7 pr-16 text-[13px] text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-orange-500/30 transition-all font-sans"
+              placeholder="ENTER QUERY..."
+              className="w-full bg-[#050505] border-2 border-[#333] py-4 pl-6 pr-16 text-sm text-[#eee] placeholder:text-[#555] focus:outline-none focus:border-[#00E5FF] transition-colors font-mono font-bold tracking-widest uppercase"
               disabled={isLoading}
             />
             <button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              className="absolute right-3 w-11 h-11 rounded-full flex items-center justify-center neo-convex text-zinc-500 hover:text-orange-400 disabled:opacity-50 disabled:hover:text-zinc-500 transition-all cursor-pointer"
+              className="absolute right-2 w-12 h-12 bg-[#00E5FF] border border-[#000] flex items-center justify-center text-[#000] hover:bg-[#fff] disabled:opacity-50 disabled:bg-[#333] disabled:text-[#888] transition-colors cursor-pointer"
             >
-              <Send className="w-4 h-4" strokeWidth={1.5} />
+              <Send className="w-5 h-5" strokeWidth={2} />
             </button>
           </div>
         </div>

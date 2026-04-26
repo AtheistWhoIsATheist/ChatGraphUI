@@ -376,19 +376,19 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
   }, [nodes, links, onNodeSelect]);
 
   return (
-    <div className="w-full h-full relative bg-[#050505]">
+    <div className="w-full h-full relative border-l-4 border-l-[#333] bg-[#050505]">
       <div ref={mountRef} className="absolute inset-0 outline-none" style={{ cursor: 'crosshair' }} />
       {hoveredNode && (
-         <div className="absolute top-4 right-4 z-20 bg-black/80 border border-white/10 p-4 rounded-xl min-w-[200px] max-w-xs backdrop-blur-md text-white pointer-events-none transition-opacity shadow-2xl shadow-black/50">
-            <div className="text-[9px] uppercase font-bold tracking-[0.2em] text-cyan-400 mb-1.5">{hoveredNode.type}</div>
-            <div className="font-light text-base leading-snug break-words mb-3 text-zinc-100">{hoveredNode.label}</div>
+         <div className="absolute top-8 left-8 z-20 bg-[#000] border-4 border-[#FF3A00] p-6 min-w-[250px] max-w-sm pointer-events-none transition-opacity shadow-[10px_10px_0_rgba(255,58,0,0.3)] neo-flat">
+            <div className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#00E5FF] mb-2 bg-[#00E5FF]/10 inline-block px-2 py-1 border border-[#00E5FF]/30">{hoveredNode.type}</div>
+            <div className="font-mono font-bold text-lg leading-snug break-words mb-4 text-[#eee]">{hoveredNode.label}</div>
             
-            <div className="flex flex-col gap-1.5 mt-2 border-t border-white/10 pt-3">
+            <div className="flex flex-col gap-2 mt-4 border-t-4 border-[#333] pt-4">
                {/* Global attributes */}
                {getVoidQuotient(hoveredNode) !== undefined && (
-                 <div className="flex justify-between items-baseline gap-3 text-[11px]">
-                   <span className="text-zinc-500 uppercase tracking-widest text-[9px]">Void Quotient</span>
-                   <span className="font-mono text-zinc-300">{getVoidQuotient(hoveredNode).toFixed(3)}</span>
+                 <div className="flex justify-between items-baseline gap-3 text-[11px] font-mono">
+                   <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Void Quotient</span>
+                   <span className="text-[#FFD700] text-sm">{getVoidQuotient(hoveredNode).toFixed(3)}</span>
                  </div>
                )}
                
@@ -396,15 +396,15 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
                {hoveredNode.type.toUpperCase() === 'THINKER' && (hoveredNode as any).properties && (
                  <>
                    {((hoveredNode as any).properties.era) && (
-                     <div className="flex justify-between items-baseline gap-3 text-[11px]">
-                       <span className="text-zinc-500 uppercase tracking-widest text-[9px]">Era</span>
-                       <span className="text-zinc-300 text-right">{(hoveredNode as any).properties.era}</span>
+                     <div className="flex justify-between items-baseline gap-3 text-[11px] font-mono">
+                       <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Era</span>
+                       <span className="text-[#ccc] text-sm text-right">{(hoveredNode as any).properties.era}</span>
                      </div>
                    )}
                    {((hoveredNode as any).properties.quote_count) !== undefined && (
-                     <div className="flex justify-between items-baseline gap-3 text-[11px]">
-                       <span className="text-zinc-500 uppercase tracking-widest text-[9px]">Quotes</span>
-                       <span className="font-mono text-zinc-300 text-right">{(hoveredNode as any).properties.quote_count}</span>
+                     <div className="flex justify-between items-baseline gap-3 text-[11px] font-mono">
+                       <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Quotes</span>
+                       <span className="text-[#00FF66] text-sm text-right">{(hoveredNode as any).properties.quote_count}</span>
                      </div>
                    )}
                  </>
@@ -413,19 +413,19 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
                {hoveredNode.type.toUpperCase() === 'CLAIM' && (hoveredNode as any).properties && (
                  <>
                    {((hoveredNode as any).properties.confidence) !== undefined && (
-                     <div className="flex justify-between items-baseline gap-3 text-[11px]">
-                       <span className="text-zinc-500 uppercase tracking-widest text-[9px]">Confidence</span>
-                       <span className="font-mono text-cyan-400 text-right">{((hoveredNode as any).properties.confidence * 100).toFixed(0)}%</span>
+                     <div className="flex justify-between items-baseline gap-3 text-[11px] font-mono">
+                       <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Confidence</span>
+                       <span className="text-[#00E5FF] font-bold text-sm text-right">{((hoveredNode as any).properties.confidence * 100).toFixed(0)}%</span>
                      </div>
                    )}
                    {((hoveredNode as any).properties.epistemic_status) && (
-                     <div className="flex justify-between items-baseline gap-3 text-[11px]">
-                       <span className="text-zinc-500 uppercase tracking-widest text-[9px]">Status</span>
-                       <span className="text-zinc-300 uppercase tracking-wider text-[9px] text-right">{(hoveredNode as any).properties.epistemic_status}</span>
+                     <div className="flex justify-between items-baseline gap-3 text-[11px] font-mono">
+                       <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Status</span>
+                       <span className="text-[#ccc] uppercase tracking-wider text-[10px] text-right font-bold">{(hoveredNode as any).properties.epistemic_status}</span>
                      </div>
                    )}
                    {((hoveredNode as any).properties.content) && (
-                     <div className="mt-2 text-xs text-zinc-400 leading-relaxed italic border-l-2 border-cyan-500/30 pl-3 py-1">
+                     <div className="mt-4 text-xs font-mono text-[#ccc] leading-relaxed italic border-l-2 border-[#FF3A00] pl-3 py-2 bg-[#111]">
                        "{(hoveredNode as any).properties.content.length > 150 ? (hoveredNode as any).properties.content.slice(0, 150) + '...' : (hoveredNode as any).properties.content}"
                      </div>
                    )}

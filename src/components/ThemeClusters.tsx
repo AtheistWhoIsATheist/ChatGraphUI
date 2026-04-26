@@ -187,31 +187,31 @@ Identify the high-level insight connecting these concepts. Treat this as a Phase
   };
 
   return (
-    <div className="w-full h-full flex bg-[#0a0a0a] text-zinc-100 font-sans">
-      <div className="flex-1 flex flex-col p-8 overflow-hidden relative">
-        <div className="flex-shrink-0 mb-6">
-          <h1 className="text-2xl font-light tracking-tight text-emerald-400">Theme Topological Clusters</h1>
-          <p className="text-sm text-zinc-500 mt-2 max-w-2xl leading-relaxed">
+    <div className="w-full h-full flex bg-[#000] text-[#eee] font-mono relative">
+      <div className="flex-1 flex flex-col p-8 overflow-hidden relative z-10">
+        <div className="flex-shrink-0 mb-8 pb-6 border-b-2 border-[#333]">
+          <h1 className="text-3xl font-black tracking-widest uppercase text-[#FF3A00]">Theme Topological Clusters</h1>
+          <p className="text-sm font-bold text-[#888] mt-4 uppercase tracking-widest max-w-2xl leading-relaxed">
             Force-directed visualization of THEME node relationships. Clusters indicate highly correlated phenomenological experiences within the archive. Click on a node to select its cluster for AI synthesis.
           </p>
         </div>
-        <div className="flex-1 bg-black rounded-xl border border-white/10 overflow-hidden relative">
-          <svg ref={d3Container} className="w-full h-full cursor-move" />
+        <div className="flex-1 bg-black border-2 border-[#333] overflow-hidden relative neo-flat shadow-[8px_8px_0_rgba(255,58,0,0.1)]">
+          <svg ref={d3Container} className="w-full h-full cursor-move bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-opacity-20 blend-overlay" />
         </div>
       </div>
       
       {/* Right Sidebar for Synthesis */}
-      <div className="w-80 bg-zinc-900 border-l border-white/10 flex flex-col pt-8">
-         <div className="px-6 pb-6 border-b border-white/10">
-            <h2 className="text-sm font-semibold tracking-widest uppercase text-emerald-400 mb-2 flex items-center gap-2">
-              <Sparkles className="w-4 h-4" /> Cluster Insights
+      <div className="w-96 bg-[#050505] border-l-2 border-[#333] flex flex-col relative z-20">
+         <div className="px-8 py-8 border-b-2 border-[#333]">
+            <h2 className="text-sm font-black tracking-widest uppercase text-[#00E5FF] mb-4 flex items-center gap-3">
+              <Sparkles className="w-5 h-5 animate-pulse" /> Cluster Insights
             </h2>
             {selectedGroup !== null ? (
-              <div className="mt-4">
-                <p className="text-xs text-zinc-400 mb-2">Selected Cluster {selectedGroup}:</p>
-                <div className="flex flex-wrap gap-1 mb-4">
+              <div className="mt-6">
+                <p className="text-xs font-bold text-[#888] uppercase tracking-[0.2em] mb-4">Selected Cluster {selectedGroup}:</p>
+                <div className="flex flex-wrap gap-2 mb-6">
                   {themeNodes.filter(n => n.group === selectedGroup).map(n => (
-                    <span key={n.id} className="text-[10px] bg-white/5 border border-white/10 px-2 py-1 rounded text-zinc-300">
+                    <span key={n.id} className="text-[10px] font-bold uppercase tracking-widest bg-[#111] border border-[#333] px-3 py-1.5 text-[#ccc] neo-flat hover:border-[#00E5FF] transition-colors">
                       {n.id}
                     </span>
                   ))}
@@ -219,25 +219,26 @@ Identify the high-level insight connecting these concepts. Treat this as a Phase
                 <button
                   onClick={synthesizeGroup}
                   disabled={isSynthesizing || !ai}
-                  className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-medium py-2 rounded flex items-center justify-center gap-2 transition-colors"
+                  className="w-full bg-[#00E5FF] hover:bg-[#fff] disabled:opacity-50 disabled:hover:bg-[#00E5FF] disabled:hover:text-[#000] text-[#000] text-xs font-black tracking-widest uppercase py-4 border-2 border-[#00E5FF] flex items-center justify-center gap-3 transition-colors neo-flat shadow-[4px_4px_0_rgba(0,229,255,0.4)] disabled:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                 >
-                  {isSynthesizing ? <Loader2 className="w-3 h-3 animate-spin"/> : <Sparkles className="w-3 h-3" />}
+                  {isSynthesizing ? <Loader2 className="w-4 h-4 animate-spin"/> : <Sparkles className="w-4 h-4" />}
                   {ai ? 'Synthesize Narrative' : 'API Key Required'}
                 </button>
-                {!ai && <p className="text-[10px] text-red-400 mt-2">VITE_GEMINI_API_KEY environment variable missing.</p>}
+                {!ai && <p className="text-[10px] font-bold text-[#FF3A00] mt-4 uppercase tracking-widest p-3 bg-[#FF3A00]/10 border border-[#FF3A00]/30">VITE_GEMINI_API_KEY environment variable missing.</p>}
               </div>
             ) : (
-              <p className="text-xs text-zinc-500 italic mt-4">Select a node in the graph to view cluster details.</p>
+              <p className="text-xs font-bold text-[#555] uppercase tracking-[0.2em] mt-6 p-4 border border-dashed border-[#555] text-center">Select a node in the graph to view cluster details.</p>
             )}
          </div>
-         <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+         <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
            {isSynthesizing && (
-             <div className="flex items-center justify-center h-full text-zinc-500">
-               <Loader2 className="w-6 h-6 animate-spin" />
+             <div className="flex flex-col items-center justify-center h-full text-[#888] gap-4">
+               <Loader2 className="w-8 h-8 animate-spin text-[#00E5FF]" />
+               <span className="text-[10px] uppercase font-bold tracking-[0.2em]">Synthesizing Void Logic...</span>
              </div>
            )}
            {synthesis && !isSynthesizing && (
-             <div className="prose prose-invert prose-p:text-xs prose-headings:text-sm prose-a:text-emerald-400 max-w-none">
+             <div className="prose prose-invert prose-p:text-sm prose-p:leading-relaxed prose-p:font-mono prose-headings:font-serif prose-headings:text-[#FF3A00] prose-a:text-[#00E5FF] max-w-none">
                <Markdown>{synthesis}</Markdown>
              </div>
            )}

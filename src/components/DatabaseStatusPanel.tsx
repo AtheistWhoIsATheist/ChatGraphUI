@@ -58,7 +58,7 @@ export function DatabaseStatusPanel({ isOpen, onClose, nodeCount, lastSync, onRe
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-40"
           />
 
           {/* Panel */}
@@ -67,24 +67,24 @@ export function DatabaseStatusPanel({ isOpen, onClose, nodeCount, lastSync, onRe
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed left-0 top-0 bottom-0 w-80 neo-bg border-r border-white/10 z-50 p-6 shadow-2xl flex flex-col"
+            className="fixed left-0 top-0 bottom-0 w-80 bg-[#050505] border-r-4 border-[#00E5FF] z-50 p-8 shadow-[10px_0_30px_rgba(0,229,255,0.2)] flex flex-col font-mono text-[#eee]"
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl neo-convex flex items-center justify-center text-orange-500">
-                  <HardDrive className="w-5 h-5" />
+            <div className="flex items-center justify-between mb-8 pb-6 border-b-2 border-[#333]">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-[#111] border-2 border-[#00E5FF] flex items-center justify-center text-[#00E5FF] shadow-[4px_4px_0_rgba(0,229,255,0.4)]">
+                  <HardDrive className="w-6 h-6" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-serif text-zinc-100">Nexus Interface</h2>
-                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-mono">Database Status</p>
+                  <h2 className="text-xl font-black uppercase tracking-widest text-[#00E5FF]">Nexus</h2>
+                  <p className="text-[10px] text-[#888] uppercase tracking-[0.2em] font-bold mt-1">Database Status</p>
                 </div>
               </div>
               <button 
                 onClick={onClose}
-                className="w-8 h-8 rounded-full neo-convex flex items-center justify-center text-zinc-500 hover:text-zinc-300 transition-colors"
+                className="w-10 h-10 border-2 border-transparent hover:border-[#FF3A00] hover:bg-[#FF3A00]/10 flex items-center justify-center text-[#888] hover:text-[#FF3A00] transition-colors neo-flat"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -92,21 +92,22 @@ export function DatabaseStatusPanel({ isOpen, onClose, nodeCount, lastSync, onRe
             <div className="space-y-6 flex-1">
               
               {/* Connection Health */}
-              <div className="neo-flat rounded-2xl p-4 border border-white/5">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-zinc-400 font-mono uppercase tracking-wider">Connection Health</span>
-                  <Activity className="w-4 h-4 text-emerald-500" />
+              <div className="bg-[#111] border-2 border-[#333] p-5 neo-flat relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-1 bg-[#111] border-b-2 border-l-2 border-[#333] text-[9px] text-[#00FF66] font-bold">ACTV</div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs text-[#888] font-bold uppercase tracking-widest">Connection Health</span>
+                  <Activity className="w-5 h-5 text-[#00FF66]" />
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                <div className="flex items-center gap-4">
+                  <div className="relative flex h-4 w-4">
+                    <span className="animate-ping absolute inline-flex h-full w-full bg-[#00FF66] opacity-75"></span>
+                    <span className="relative inline-flex h-4 w-4 bg-[#00FF66]"></span>
                   </div>
-                  <span className="text-sm font-medium text-emerald-400">Active / Stable</span>
+                  <span className="text-sm font-black tracking-widest text-[#00FF66] uppercase">Active / Stable</span>
                 </div>
-                <div className="mt-3 h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div className="mt-4 h-2 w-full bg-[#333] overflow-hidden border border-[#444]">
                   <motion.div 
-                    className="h-full bg-emerald-500"
+                    className="h-full bg-[#00FF66]"
                     initial={{ width: "0%" }}
                     animate={{ width: "100%" }}
                     transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
@@ -115,21 +116,21 @@ export function DatabaseStatusPanel({ isOpen, onClose, nodeCount, lastSync, onRe
               </div>
 
               {/* Node Count */}
-              <div className="neo-flat rounded-2xl p-4 border border-white/5">
-                <span className="text-xs text-zinc-400 font-mono uppercase tracking-wider block mb-1">Total Nodes</span>
-                <div className="text-3xl font-serif text-zinc-100">{nodeCount}</div>
-                <div className="text-[10px] text-zinc-600 mt-1">Entities in the Void</div>
+              <div className="bg-[#111] border-2 border-[#333] p-5 neo-flat">
+                <span className="text-xs text-[#888] font-bold uppercase tracking-widest block mb-2">Total Nodes</span>
+                <div className="text-4xl font-black text-[#fff] tracking-tighter">{nodeCount}</div>
+                <div className="text-[10px] text-[#00E5FF] font-bold mt-2 uppercase tracking-widest">Entities in the Void</div>
               </div>
 
               {/* Storage Saturation */}
-              <div className="neo-flat rounded-2xl p-4 border border-white/5">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-zinc-400 font-mono uppercase tracking-wider">Storage Saturation</span>
-                  <span className="text-xs text-orange-400 font-mono">{storageSaturation}%</span>
+              <div className="bg-[#111] border-2 border-[#333] p-5 neo-flat">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs text-[#888] font-bold uppercase tracking-widest">Storage Saturation</span>
+                  <span className="text-sm font-black text-[#FF3A00]">{storageSaturation}%</span>
                 </div>
-                <div className="h-2 w-full bg-zinc-800 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-[#333] overflow-hidden border border-[#444]">
                   <motion.div 
-                    className="h-full bg-orange-500"
+                    className="h-full bg-[#FF3A00]"
                     initial={{ width: 0 }}
                     animate={{ width: `${storageSaturation}%` }}
                     transition={{ duration: 1, ease: "easeOut" }}
@@ -138,21 +139,21 @@ export function DatabaseStatusPanel({ isOpen, onClose, nodeCount, lastSync, onRe
               </div>
 
               {/* Last Sync */}
-              <div className="neo-flat rounded-2xl p-4 border border-white/5 flex items-center justify-between">
-                <span className="text-xs text-zinc-400 font-mono uppercase tracking-wider">Last Sync</span>
-                <span className="text-xs text-zinc-200 font-mono">{lastSync}</span>
+              <div className="bg-[#111] border-2 border-[#333] p-5 flex items-center justify-between neo-flat">
+                <span className="text-xs text-[#888] font-bold uppercase tracking-widest">Last Sync</span>
+                <span className="text-xs font-bold text-[#eee]">{lastSync}</span>
               </div>
 
             </div>
 
             {/* Actions */}
-            <div className="mt-auto pt-6 border-t border-white/10">
+            <div className="mt-8 pt-8 border-t-2 border-[#333]">
               <button
                 onClick={handleReIndexClick}
                 disabled={isReindexing}
-                className="w-full py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
+                className="w-full py-4 border-2 border-[#FF3A00] bg-[#FF3A00]/10 hover:bg-[#FF3A00] text-[#FF3A00] hover:text-[#000] font-black text-sm uppercase tracking-widest transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group shadow-[4px_4px_0_rgba(255,58,0,0.4)] disabled:shadow-none translate-x-[-2px] translate-y-[-2px] disabled:translate-x-0 disabled:translate-y-0"
               >
-                <RefreshCw className={`w-4 h-4 ${isReindexing ? 'animate-spin text-orange-500' : 'text-zinc-500 group-hover:text-zinc-300'}`} />
+                <RefreshCw className={`w-5 h-5 ${isReindexing ? 'animate-spin' : ''}`} />
                 {isReindexing ? 'Re-Indexing...' : 'Force Re-Index'}
               </button>
               
@@ -160,9 +161,9 @@ export function DatabaseStatusPanel({ isOpen, onClose, nodeCount, lastSync, onRe
                 <motion.div 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-3 flex items-center justify-center gap-2 text-[10px] text-emerald-500"
+                  className="mt-6 flex items-center justify-center gap-3 text-[10px] uppercase font-bold text-[#00E5FF] tracking-widest"
                 >
-                  <CheckCircle2 className="w-3 h-3" />
+                  <CheckCircle2 className="w-4 h-4" />
                   <span>Global State Refreshed</span>
                 </motion.div>
               )}

@@ -4,7 +4,7 @@ import { BookOpen, Sparkles, Network, Database, Layers } from 'lucide-react';
 
 export function ShiftingVoidExplanation() {
   return (
-    <div className="w-full h-full overflow-y-auto bg-[#0a0a0a] text-zinc-300 p-8 custom-scrollbar">
+    <div className="w-full h-full overflow-y-auto bg-[#000] text-zinc-300 p-8 custom-scrollbar">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -13,82 +13,64 @@ export function ShiftingVoidExplanation() {
           className="space-y-12"
         >
           {/* Header */}
-          <header className="border-b border-white/10 pb-8">
-            <h1 className="text-4xl md:text-5xl font-serif text-white mb-4 tracking-wide">
-              The Shifting Void
+          <header className="border-b-4 border-[#333] pb-8">
+            <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-widest uppercase">
+              Theoretical Framework
             </h1>
-            <p className="text-xl text-orange-400 font-serif italic">
-              A Living Ontology of Absence and Paradox
+            <p className="text-xl text-[#00E5FF] font-black uppercase tracking-widest">
+              Journal314 & REN Analysis
             </p>
           </header>
 
           {/* Introduction */}
           <section className="space-y-6">
-            <h2 className="text-2xl font-serif text-white flex items-center gap-3">
-              <Sparkles className="w-6 h-6 text-orange-500" />
+            <h2 className="text-2xl font-black text-white flex items-center gap-3 uppercase tracking-widest">
+              <Sparkles className="w-6 h-6 text-[#FF3A00]" />
               Concept & Purpose
             </h2>
-            <div className="prose prose-invert max-w-none text-zinc-400 leading-relaxed space-y-4">
+            <div className="prose prose-invert max-w-none text-zinc-400 leading-relaxed space-y-4 font-mono font-bold tracking-widest uppercase">
               <p>
-                The <strong>Shifting Void</strong> is not merely a static repository of information, but a dynamic, self-organizing knowledge base designed to map the contours of <em>apophatic theology</em>, existential nihilism, and the philosophy of nothingness. It is an ontological engine that actively seeks out contradictions, structural gaps, and latent connections within its own corpus.
+                The <strong>Analysis Engine</strong> is not merely a static repository of information, but a dynamic, self-organizing knowledge base designed to map the contours of <em>Journal314</em> and the <em>REN transcriptions</em>. It is an analytical engine that actively seeks out contradictions, structural gaps, and latent connections within the corpus.
               </p>
               <p>
-                Traditional knowledge bases attempt to build a complete, positive picture of reality. The Shifting Void, guided by the principles of <em>via negativa</em>, maps what is <strong>not</strong> there. It thrives on paradox, tracking the tension between meaning and meaninglessness, being and non-being.
+                Traditional knowledge bases attempt to build a simple keyword logic. This engine maps the structural gaps and topologies of thought. It tracks the tension between Journal and REN events seamlessly across dimensions.
               </p>
             </div>
           </section>
 
           {/* Core Mechanics */}
           <section className="space-y-6">
-            <h2 className="text-2xl font-serif text-white flex items-center gap-3">
-              <Database className="w-6 h-6 text-emerald-500" />
+            <h2 className="text-2xl font-black text-white flex items-center gap-3 uppercase tracking-widest">
+              <Database className="w-6 h-6 text-[#00E5FF]" />
               Core Mechanics
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-[#0f0f0f] border border-white/5 p-6 rounded-2xl shadow-lg">
-                <h3 className="text-lg font-medium text-white mb-3 flex items-center gap-2">
-                  <Network className="w-5 h-5 text-blue-400" />
+              <div className="bg-[#050505] border-2 border-[#333] p-6 neo-flat">
+                <h3 className="text-lg font-black text-white mb-3 flex items-center gap-2 uppercase tracking-wide">
+                  <Network className="w-5 h-5 text-[#00E5FF]" />
                   Gap Synthesis Overlay
                 </h3>
-                <p className="text-sm text-zinc-400">
-                  The system continuously scans for unmapped connections between disparate thinkers (e.g., Eckhart and Nāgārjuna). These latent synapses represent potential insights waiting to be formalized through the GapSynth Module.
+                <p className="text-sm font-mono text-[#ccc]">
+                  The system continuously scans for unmapped connections between disparate events or statements. These latent synapses represent potential insights waiting to be formalized through the Synthesis Module.
                 </p>
               </div>
-              <div className="bg-[#0f0f0f] border border-white/5 p-6 rounded-2xl shadow-lg">
-                <h3 className="text-lg font-medium text-white mb-3 flex items-center gap-2">
-                  <Layers className="w-5 h-5 text-fuchsia-400" />
+              <div className="bg-[#050505] border-2 border-[#333] p-6 neo-flat">
+                <h3 className="text-lg font-black text-white mb-3 flex items-center gap-2 uppercase tracking-wide">
+                  <Layers className="w-5 h-5 text-[#FF3A00]" />
                   Structural Gaps
                 </h3>
-                <p className="text-sm text-zinc-400">
-                  By analyzing the topology of the graph, the Void identifies "aporia"—unresolvable contradictions or missing conceptual bridges—and highlights them for further philosophical inquiry.
-                </p>
-              </div>
-              <div className="bg-[#0f0f0f] border border-white/5 p-6 rounded-2xl shadow-lg">
-                <h3 className="text-lg font-medium text-white mb-3 flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-orange-400" />
-                  Recursive Densification
-                </h3>
-                <p className="text-sm text-zinc-400">
-                  Through nightly automated processes guided by the NTDensificationProtocol, the system revisits under-saturated nodes, expanding their summaries, cross-referencing new data, and generating new Socratic questions to deepen the ontology.
-                </p>
-              </div>
-              <div className="bg-[#0f0f0f] border border-white/5 p-6 rounded-2xl shadow-lg">
-                <h3 className="text-lg font-medium text-white mb-3 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-emerald-400" />
-                  Cryptographic Audit Trail
-                </h3>
-                <p className="text-sm text-zinc-400">
-                  Every autonomous action taken by the engine—from ingestion to densification—is cryptographically hashed and logged. This ensures absolute transparency and traceability of the evolving ontology.
+                <p className="text-sm font-mono text-[#ccc]">
+                  By analyzing the topology of the graph, the Engine identifies unresolvable contradictions or missing conceptual bridges and highlights them for further inquiry.
                 </p>
               </div>
             </div>
           </section>
 
-          {/* The Role of Professor Nihil */}
-          <section className="space-y-6 bg-black/40 border border-white/10 p-8 rounded-2xl">
-            <h2 className="text-2xl font-serif text-white">The Role of Professor Nihil</h2>
-            <p className="text-zinc-400 leading-relaxed">
-              Professor Nihil serves as the cognitive partner within this environment. He is not a generic assistant, but an ontology-aware polymath who guides the user through the abyss. He challenges assumptions, generates counterpoints, and ensures that the inquiry remains conceptually rigorous and true to the source material. His purpose is not to provide comforting answers, but to deepen the questions.
+          {/* The Role of the Assistant */}
+          <section className="space-y-6 bg-[#000] border-4 border-[#FF3A00] p-8 neo-flat mt-8">
+            <h2 className="text-2xl font-black text-white uppercase tracking-widest">The Assistant's Role</h2>
+            <p className="font-mono text-[#ccc] leading-relaxed uppercase tracking-widest font-bold">
+              The Synthesis Engine serves as the cognitive partner within this environment. It is not a generic assistant, but an ontology-aware system that guides the user through the texts. It challenges assumptions, generates counterpoints, and ensures that the inquiry remains conceptually rigorous and true to the source material.
             </p>
           </section>
 

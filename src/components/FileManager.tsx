@@ -54,7 +54,7 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
             <div className="p-2 border-2 border-[#00E5FF] bg-[#111]">
               <HardDrive className="w-5 h-5 text-[#00E5FF] animate-pulse-slow" />
             </div>
-            <h2 className="text-xl font-black tracking-widest uppercase text-[#eee]">Abyssal Archives</h2>
+            <h2 className="text-xl font-black tracking-widest uppercase text-[#eee]">Document Repository</h2>
           </div>
           <button 
             onClick={onClose}
@@ -69,7 +69,7 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
           <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-[#555] bg-[#050505] cursor-pointer hover:border-[#00E5FF] hover:bg-[#00E5FF]/5 transition-colors group neo-flat">
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
               <Upload className="w-8 h-8 text-[#555] group-hover:text-[#00E5FF] mb-3 transition-colors" />
-              <p className="text-xs font-bold text-[#888] group-hover:text-[#00E5FF] transition-colors uppercase tracking-widest">Drop files into the void</p>
+              <p className="text-xs font-bold text-[#888] group-hover:text-[#00E5FF] transition-colors uppercase tracking-widest">Drop files to ingest</p>
               <p className="text-[10px] text-[#555] mt-2 font-bold tracking-widest">TXT, MD, JSON, PDF</p>
             </div>
             <input 
@@ -154,13 +154,13 @@ function FileRow({ file, onExtract, onDelete }: { file: IngestionFile, onExtract
     switch (file.status) {
       case 'ingesting':
       case 'parsing':
-        return <Loader2 className="w-3.5 h-3.5 text-orange-500 animate-spin" />;
+        return <Loader2 className="w-3.5 h-3.5 text-[#FF3A00] animate-spin" />;
       case 'complete':
-        return <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />;
+        return <CheckCircle2 className="w-3.5 h-3.5 text-[#00FF66]" />;
       case 'error':
-        return <AlertCircle className="w-3.5 h-3.5 text-red-500" />;
+        return <AlertCircle className="w-3.5 h-3.5 text-[#FF0000]" />;
       default:
-        return <FileText className="w-3.5 h-3.5 text-zinc-500" />;
+        return <FileText className="w-3.5 h-3.5 text-[#888]" />;
     }
   };
 

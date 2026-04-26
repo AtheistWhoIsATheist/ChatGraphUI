@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Microscope, Loader2, AlertTriangle, ChevronDown, ChevronUp, Download } from 'lucide-react';
+import { Microscope, Loader2, AlertTriangle, ChevronDown, ChevronUp, Download, BrainCircuit, Sparkles } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export function OEDiscriminator() {
