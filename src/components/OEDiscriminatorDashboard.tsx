@@ -9,7 +9,7 @@ import { cn } from '../lib/utils';
 const PATHWAYS_NODES = [
   // Occurrences (O-claims)
   { id: "o1", label: "Suffering / Death", type: "O", group: 0 },
-  { id: "o2", label: "Nothingness / Void", type: "O", group: 0 },
+  { id: "o2", label: "Unknown Origin / Blank", type: "O", group: 0 },
   { id: "o3", label: "Despair / Anxiety", type: "O", group: 0 },
   
   // Thinkers

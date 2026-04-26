@@ -51,7 +51,7 @@ export function RelatedVoids({ nodeId, onSelect }: RelatedVoidsProps) {
     <div className="h-full flex flex-col p-6 overflow-hidden">
       <div className="flex items-center gap-2 mb-6 text-orange-500">
         <Sparkles className="w-4 h-4" />
-        <span className="text-xs font-bold uppercase tracking-widest">Related Voids</span>
+        <span className="text-xs font-bold uppercase tracking-widest">Related Structural Nodes</span>
       </div>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4">

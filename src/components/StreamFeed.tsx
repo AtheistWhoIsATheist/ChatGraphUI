@@ -23,7 +23,7 @@ export function StreamFeed({ nodes, onNodeSelect, selectedNodeId }: { nodes: Nod
           <div className="p-2 bg-[#111] border-2 border-[#00E5FF]">
             <Eye className="w-5 h-5 text-[#00E5FF] animate-pulse-slow" />
           </div>
-          <h2 className="text-xl font-black tracking-widest uppercase text-[#00E5FF]">The Shifting Void</h2>
+          <h2 className="text-xl font-black tracking-widest uppercase text-[#00E5FF]">Data Feed</h2>
         </div>
         <div className="flex-1 overflow-hidden relative">
           <RevelationDigest />

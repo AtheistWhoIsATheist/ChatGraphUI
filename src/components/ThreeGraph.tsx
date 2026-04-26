@@ -387,7 +387,7 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
                {/* Global attributes */}
                {getVoidQuotient(hoveredNode) !== undefined && (
                  <div className="flex justify-between items-baseline gap-3 text-[11px] font-mono">
-                   <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Void Quotient</span>
+                   <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Analysis Quotient</span>
                    <span className="text-[#FFD700] text-sm">{getVoidQuotient(hoveredNode).toFixed(3)}</span>
                  </div>
                )}

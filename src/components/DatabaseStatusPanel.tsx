@@ -119,7 +119,7 @@ export function DatabaseStatusPanel({ isOpen, onClose, nodeCount, lastSync, onRe
               <div className="bg-[#111] border-2 border-[#333] p-5 neo-flat">
                 <span className="text-xs text-[#888] font-bold uppercase tracking-widest block mb-2">Total Nodes</span>
                 <div className="text-4xl font-black text-[#fff] tracking-tighter">{nodeCount}</div>
-                <div className="text-[10px] text-[#00E5FF] font-bold mt-2 uppercase tracking-widest">Entities in the Void</div>
+                <div className="text-[10px] text-[#00E5FF] font-bold mt-2 uppercase tracking-widest">Entities Tracked</div>
               </div>
 
               {/* Storage Saturation */}

@@ -6,7 +6,7 @@ export function DocumentViewer({ node }: { node: Node }) {
   if (!node.blocks || node.blocks.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-zinc-600 font-mono text-sm">
-        [FRAGMENT MISSING FROM THE VOID]
+        [FRAGMENT MISSING FROM DATABASE]
       </div>
     );
   }

@@ -1,4 +1,4 @@
-import { corpusNodes } from './src/data/corpus.ts';
+import { corpusNodes } from './src/data/corpus.js';
 
 const duplicateTags = corpusNodes.filter(n => {
   if (!n.metadata || !n.metadata.tags) return false;

@@ -335,7 +335,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* Right Sidebar - Professor Nihil & Intelligence Cards */}
+      {/* Right Sidebar - Synthesis Engine & Intelligence Cards */}
       <AnimatePresence>
         {isRightSidebarOpen && (
           <motion.div 

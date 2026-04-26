@@ -307,7 +307,7 @@ export function VoidEditor({ initialBlocks, nodes, onChange, readOnly = false }:
                   ))}
                   {nodes.filter(n => n.label.toLowerCase().includes(linkMenu.query.toLowerCase())).length === 0 && (
                     <div className="px-3 py-4 text-center text-zinc-600 text-xs italic">
-                      No matching voids found...
+                      No matching entities found...
                     </div>
                   )}
               </div>

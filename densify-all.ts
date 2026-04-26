@@ -1,5 +1,5 @@
-import { getNodesForDensification, getNodesCollection, connectDB } from './src/backend/db';
-import { densificationPrompt } from './src/backend/ai-prompts';
+import { getNodesForDensification, getNodesCollection, connectDB } from './src/backend/db.js';
+import { densificationPrompt } from './src/backend/ai-prompts.js';
 import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
 

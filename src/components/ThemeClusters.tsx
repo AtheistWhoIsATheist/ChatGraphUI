@@ -12,7 +12,7 @@ const themeNodes = [
   { id: "Ego Dissolution", group: 1, radius: 25 },
   { id: "Ontological Abyss", group: 1, radius: 30 },
   { id: "Meaning Vacuum", group: 1, radius: 20 },
-  { id: "Void-Contact", group: 1, radius: 35 },
+  { id: "Event Convergence", group: 1, radius: 35 },
   { id: "Groundlessness", group: 1, radius: 28 },
   
   { id: "Temporal Rupture", group: 2, radius: 15 },
@@ -30,7 +30,7 @@ const themeNodes = [
 
 const themeLinks = [
   { source: "Ego Dissolution", target: "Ontological Abyss", value: 5 },
-  { source: "Ego Dissolution", target: "Void-Contact", value: 4 },
+  { source: "Ego Dissolution", target: "Event Convergence", value: 4 },
   { source: "Ontological Abyss", target: "Groundlessness", value: 6 },
   { source: "Groundlessness", target: "Meaning Vacuum", value: 3 },
   { source: "Temporal Rupture", target: "Silence/Apophasis", value: 4 },
@@ -40,7 +40,7 @@ const themeLinks = [
   { source: "Ascetic Renunciation", target: "Kenosis", value: 5 },
   { source: "Kenosis", target: "Ego Dissolution", value: 4 },
   { source: "Paradox Sustained", target: "Transcendent Echo", value: 4 },
-  { source: "Paradox Sustained", target: "Void-Contact", value: 3 },
+  { source: "Paradox Sustained", target: "Event Convergence", value: 3 },
 ];
 
 export function ThemeClusters() {
@@ -168,9 +168,9 @@ export function ThemeClusters() {
     setSynthesis(null);
 
     try {
-      const prompt = `As a Philosophical Densifier executing the Recursive Densification Protocol (RDP), synthesize an overarching phenomenological narrative for the following cluster of themes from the Nihiltheism Graph: ${groupNodes.join(', ')}. 
+      const prompt = `As a Structural Analyst, synthesize an overarching phenomenological narrative for the following cluster of themes from the Analysis Graph: ${groupNodes.join(', ')}. 
       
-Identify the high-level insight connecting these concepts. Treat this as a Phase 3 Synthesis & Genealogy task. Maintain apophatic discipline (void as operator, not entity). Output a highly dense, academic synthesis in Markdown.`;
+Identify the high-level insight connecting these concepts. Treat this as a Phase 3 Synthesis & Genealogy task. Output a highly dense, academic synthesis in Markdown.`;
       
       const response = await ai.models.generateContent({
           model: 'gemini-2.5-pro',
@@ -234,7 +234,7 @@ Identify the high-level insight connecting these concepts. Treat this as a Phase
            {isSynthesizing && (
              <div className="flex flex-col items-center justify-center h-full text-[#888] gap-4">
                <Loader2 className="w-8 h-8 animate-spin text-[#00E5FF]" />
-               <span className="text-[10px] uppercase font-bold tracking-[0.2em]">Synthesizing Void Logic...</span>
+               <span className="text-[10px] uppercase font-bold tracking-[0.2em]">Synthesizing Structural Logic...</span>
              </div>
            )}
            {synthesis && !isSynthesizing && (

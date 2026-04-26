@@ -24,9 +24,9 @@ export function AISynthesisPanel() {
     try {
       const prompt = `
         Analyze the following phenomenological report or philosophical text.
-        1. Extract the key Entities (THINKERS, CONCEPTS, THEMES, AXIOMS).
-        2. Synthesize an overarching narrative or high-level insight connecting these nodes.
-        3. Determine the Integration Level (Descriptive Nihilism, Liminal Phase, Nihiltheistic Integration, Mystical Synthesis).
+        1. Extract the key Entities (EVENTS, ENTITIES, LOCATIONS, THEMES).
+        2. Synthesize an overarching narrative or high-level insight connecting these nodes across Journal314 and REN.
+        3. Determine the Integration Level (Isolated Observation, Pattern Recognition, Structural Causality, Unified Theory).
 
         Format the output in Markdown. At the end, provide a JSON block enclosed in \`\`\`json containing the extracted nodes in this format:
         [{"id": "Concept Name", "type": "THEME", "confidence": 0.9}]
@@ -95,7 +95,7 @@ export function AISynthesisPanel() {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               className="w-full h-full bg-[#050505] border-2 border-[#333] p-6 text-sm font-mono text-[#ccc] resize-none focus:outline-none focus:border-[#00E5FF] transition-colors relative z-10 custom-scrollbar"
-              placeholder="AWAITING INPUT... (e.g., 'In the end, there is nothing but darkness and the self dissolving into it. The void is not empty—it is full of what cannot be named.')"
+              placeholder="AWAITING INPUT... (e.g., 'Journal 314 Entry: The static returns at 03:00. REN transcript correlates with loss of signal.')"
             />
           </div>
           <button 

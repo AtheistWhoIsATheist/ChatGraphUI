@@ -24,7 +24,7 @@ export function SystemTopology() {
 
         {/* Top Row: Archive & RIP */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative mt-24">
-          {/* Abyssal Archive */}
+          {/* Document Repository */}
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="neo-flat p-8 relative overflow-hidden group hover:border-[#00E5FF]">
             <div className="absolute top-0 left-0 w-2 h-full bg-[#00E5FF] group-hover:scale-y-110 transition-transform" />
             <div className="flex items-center gap-4 mb-8 border-b border-[#333] pb-4">

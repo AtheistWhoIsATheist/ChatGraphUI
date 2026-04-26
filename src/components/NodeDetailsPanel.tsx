@@ -68,12 +68,12 @@ export function NodeDetailsPanel({ node }: NodeDetailsPanelProps) {
           </div>
         )}
 
-        {/* Relation to the Void */}
+        {/* Structural Significance */}
         {node.metadata?.relation_to_void && (
           <div className="bg-[#000] p-6 border-2 border-[#FFD700] neo-flat relative transition-colors hover:bg-[#FFD700]/5">
             <div className="flex items-center gap-3 mb-4 border-b-2 border-[#222] pb-3">
               <Hash className="w-5 h-5 text-[#FFD700]" />
-              <h4 className="text-xs font-bold uppercase tracking-widest text-[#eee]">Relation to the Void</h4>
+              <h4 className="text-xs font-bold uppercase tracking-widest text-[#eee]">Structural Significance</h4>
             </div>
             <p className="text-sm font-mono text-[#ccc] leading-relaxed">
               {node.metadata.relation_to_void}

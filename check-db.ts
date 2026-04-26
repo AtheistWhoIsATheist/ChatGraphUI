@@ -1,4 +1,4 @@
-import { getDb, connectDB } from './src/backend/db';
+import { getDb, connectDB } from './src/backend/db.js';
 
 async function check() {
   await connectDB();

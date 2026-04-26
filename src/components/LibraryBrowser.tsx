@@ -111,7 +111,7 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
       <div className="flex items-center justify-between mb-12 relative z-10 border-b-2 border-[#333] pb-6">
         <div>
           <h2 className="text-3xl font-black text-[#fff] tracking-widest uppercase">The Library</h2>
-          <p className="text-xs font-bold text-[#FF3A00] uppercase tracking-[0.2em] mt-2 border-l-2 border-[#FF3A00] pl-3">The Void of Raw Information</p>
+          <p className="text-xs font-bold text-[#FF3A00] uppercase tracking-[0.2em] mt-2 border-l-2 border-[#FF3A00] pl-3">Raw Information Repository</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="relative group">
@@ -119,7 +119,7 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
             <div className="absolute -inset-1 bg-gradient-to-r from-[#00E5FF] to-transparent opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
             <input 
               type="text" 
-              placeholder="SEARCH THE VOID..." 
+              placeholder="SEARCH REPOSITORY..." 
               className="bg-[#050505] border-2 border-[#333] hover:border-[#00E5FF] focus:border-[#00E5FF] py-3 pl-12 pr-4 text-xs font-bold tracking-widest uppercase text-[#eee] placeholder:text-[#555] focus:outline-none w-72 transition-colors neo-flat relative z-10"
             />
           </div>
@@ -335,7 +335,7 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
                       value={newTags}
                       onChange={(e) => setNewTags(e.target.value)}
                       className="w-full bg-[#050505] border-2 border-[#333] px-5 py-4 text-sm font-bold text-[#eee] placeholder:text-[#555] focus:outline-none focus:border-[#00E5FF] hover:border-[#666] transition-colors neo-flat"
-                      placeholder="VOID, ARCHITECTURE, SILENCE"
+                      placeholder="JOURNAL, ENTRY, LOG"
                     />
                   </div>
                 </div>
@@ -346,7 +346,7 @@ export function LibraryBrowser({ nodes, addNode, onNodeSelect, selectedNodeId }:
                   onClick={handleAdd}
                   className="px-8 py-4 border-2 border-[#FF3A00] bg-[#FF3A00] hover:bg-[#fff] hover:border-[#fff] text-[#000] font-black text-sm tracking-widest uppercase transition-colors neo-flat shadow-[6px_6px_0_rgba(255,58,0,0.3)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                 >
-                  Ingest into Void
+                  Ingest Document
                 </button>
               </div>
             </motion.div>

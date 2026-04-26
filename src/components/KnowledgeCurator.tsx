@@ -147,7 +147,7 @@ export function KnowledgeCurator() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             disabled={crisisMode || isStreaming}
-            placeholder={crisisMode ? "INPUT DISABLED DURING CRISIS MODE..." : "ASK ABOUT THE VOID, PARADOX, OR APOPHATIC THEOLOGY..."}
+            placeholder={crisisMode ? "INPUT DISABLED DURING CRISIS MODE..." : "QUERY JOURNAL OR REN TRANSCRIPTS..."}
             className={cn(
               "flex-1 p-5 bg-[#050505] border-2 font-bold text-sm text-[#eee] placeholder:text-[#555] resize-none min-h-[80px] max-h-[160px] outline-none transition-colors custom-scrollbar tracking-wide uppercase neo-flat",
               crisisMode 

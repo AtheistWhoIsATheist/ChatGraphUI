@@ -953,7 +953,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
       </div>
       </div>
 
-      {/* --- SEMANTIC EXPANSION ENGINE (VOID-REVEAL) --- */}
+      {/* --- SEMANTIC EXPANSION ENGINE (ANALYSIS-REVEAL) --- */}
       <AnimatePresence>
         {expandedNodeId && (() => {
           const expandedNode = nodes.find(n => n.id === expandedNodeId);
@@ -993,7 +993,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                   <div>
                     <div className="flex items-center gap-2 text-orange-500 mb-2">
                       <Activity className="w-4 h-4" />
-                      <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Void Data Stream</span>
+                      <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Data Stream</span>
                     </div>
                     <h2 className="text-3xl font-light text-white leading-tight">
                       {expandedNode?.label}
