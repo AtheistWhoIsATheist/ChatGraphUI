@@ -3,106 +3,196 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Outfit:wght@300;400;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  --font-serif: "Cormorant Garamond", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: "Cinzel Decorative", ui-serif, Georgia, serif;
   
-  --animate-spin-slow: spin-slow 12s linear infinite;
-  --animate-pulse-slow: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-spin-slow: spin-slow 20s linear infinite;
+  --animate-pulse-slow: pulse-slow 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-glitch: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+  --animate-scanline: scanline 8s linear infinite;
 
   @keyframes spin-slow {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
   }
   @keyframes pulse-slow {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.05); }
+    0%, 100% { opacity: 0.1; }
+    50% { opacity: 0.8; }
+  }
+  @keyframes glitch {
+    0% { transform: translate(0) }
+    20% { transform: translate(-2px, 1px) }
+    40% { transform: translate(-1px, -1px) }
+    60% { transform: translate(2px, 1px) }
+    80% { transform: translate(1px, -1px) }
+    100% { transform: translate(0) }
+  }
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
   }
 }
 
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
+    height: 6px;
   }
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
+    background: #000;
+    border-left: 1px solid #333;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #292929;
-    border-radius: 10px;
+    background: #FF3A00;
+    border-radius: 0;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #333333;
+    background: #00E5FF;
   }
   
   .neo-bg {
-    background-color: #1a1a1a;
+    background-color: #030303;
+    background-image: 
+      linear-gradient(rgba(255, 58, 0, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 58, 0, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
   }
   
   .neo-flat {
-    background: #1a1a1a;
-    box-shadow: 8px 8px 16px #0d0d0d, -8px -8px 16px #272727;
-    border: 1px solid rgba(255,255,255,0.02);
+    background: #000;
+    border: 2px solid #333;
+    box-shadow: 6px 6px 0px rgba(255, 58, 0, 0.3);
+    border-radius: 0;
+    transition: all 0.2s ease;
+  }
+  .neo-flat:hover {
+    border-color: #FF3A00;
+    box-shadow: 8px 8px 0px rgba(0, 229, 255, 0.3);
+    transform: translate(-2px, -2px);
   }
 
   .neo-flat-sm {
-    background: #1a1a1a;
-    box-shadow: 4px 4px 8px #0d0d0d, -4px -4px 8px #272727;
-    border: 1px solid rgba(255,255,255,0.02);
+    background: #050505;
+    border: 1px solid #444;
+    box-shadow: 3px 3px 0px rgba(255, 58, 0, 0.2);
+    border-radius: 0;
   }
   
   .neo-pressed {
-    background: #1a1a1a;
-    box-shadow: inset 6px 6px 12px #0d0d0d, inset -6px -6px 12px #272727;
-    border: 1px solid rgba(0,0,0,0.1);
+    background: #111;
+    border: 2px solid #FF3A00;
+    box-shadow: inset 4px 4px 10px rgba(0,0,0,0.8);
+    border-radius: 0;
+    color: #FF3A00;
   }
   
   .neo-convex {
-    background: linear-gradient(145deg, #1c1c1c, #171717);
-    box-shadow: 8px 8px 16px #0d0d0d, -8px -8px 16px #272727;
-    border: 1px solid rgba(255,255,255,0.02);
+    background: #080808;
+    border: 1px solid #333;
+    box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.05);
+    border-radius: 0;
+    transition: all 0.15s ease;
+  }
+  .neo-convex:hover {
+    background: #FF3A00;
+    color: #000;
+    border-color: #FF3A00;
+    box-shadow: 4px 4px 0px #00E5FF;
+    transform: translate(-1px, -1px);
   }
 
   .neo-frosted {
-    background: rgba(26, 26, 26, 0.4);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid #FF3A00;
+    box-shadow: 0 0 20px rgba(255, 58, 0, 0.1);
+    border-radius: 0;
   }
 
   .neo-dim {
-    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border: 1px dashed rgba(255, 58, 0, 0.3);
     background: transparent;
-    color: rgba(113, 113, 122, 0.5);
+    color: rgba(255, 255, 255, 0.5);
+    border-radius: 0;
   }
 
   .parallax-bg {
     background-image: 
-      radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.05) 1px, transparent 0),
-      radial-gradient(circle at 50% 50%, rgba(200, 106, 42, 0.02) 0%, transparent 50%);
+      radial-gradient(circle at 2px 2px, rgba(0, 229, 255, 0.15) 1px, transparent 0),
+      radial-gradient(circle at 50% 50%, rgba(255, 58, 0, 0.05) 0%, transparent 50%);
     background-size: 40px 40px, 100% 100%;
   }
 
   .neo-concave {
-    background: linear-gradient(145deg, #171717, #1c1c1c);
-    box-shadow: 8px 8px 16px #0d0d0d, -8px -8px 16px #272727;
-    border: 1px solid rgba(255,255,255,0.02);
+    background: #000;
+    border: 2px solid #222;
+    box-shadow: inset 4px 4px 15px rgba(0,0,0,0.8);
+    border-radius: 0;
   }
 
   .hairline {
-    stroke-width: 1px;
+    stroke-width: 1.5px;
   }
 }
 
+/* global noise texture */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9999;
+}
+
 body {
-  background-color: #1a1a1a;
-  color: #d4d4d8;
+  background-color: #000;
+  color: #fff;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+  text-transform: none;
 }
+
+.text-orange-500 {
+  color: #FF3A00;
+}
+.text-orange-400 {
+  color: #FF5E2C;
+}
+.text-zinc-500 {
+  color: #666;
+}
+.text-zinc-600 {
+  color: #444;
+}
+.text-zinc-400 {
+  color: #888;
+}
+.text-zinc-300 {
+  color: #aaa;
+}
+.text-zinc-200 {
+  color: #ccc;
+}
+.text-zinc-100 {
+  color: #eee;
+}
+
+/* Overlay scanline artifact */
+.scanline-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; height: 10px;
+  background: linear-gradient(to bottom, transparent, rgba(0, 229, 255, 0.2), transparent);
+  pointer-events: none;
+  z-index: 9998;
+  animation: scanline 6s linear infinite;
+}
+

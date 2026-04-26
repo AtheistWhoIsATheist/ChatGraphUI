@@ -140,7 +140,8 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-[#0a0a0a] text-zinc-100 overflow-hidden font-sans selection:bg-orange-500/30">
+    <div className="flex h-screen w-full bg-[#000] text-zinc-100 overflow-hidden font-sans selection:bg-[#FF3A00]/50 relative">
+      <div className="scanline-overlay"></div>
       
       {/* Rupture Sequence */}
       <AnimatePresence>
@@ -156,16 +157,16 @@ function App() {
               transition={{ duration: 2, ease: "easeOut" }}
               className="text-center space-y-6"
             >
-              <h1 className="text-4xl md:text-6xl font-serif tracking-widest text-white/90 uppercase">
+              <h1 className="text-4xl md:text-6xl font-serif tracking-widest text-[#FF3A00] uppercase animate-glitch">
                 The Void-Graph Protocol
               </h1>
-              <p className="text-zinc-500 tracking-[0.3em] uppercase text-sm">
+              <p className="text-zinc-500 font-mono tracking-[0.3em] uppercase text-sm">
                 Professor Nihil & the Nihiltheistic Ontology
               </p>
               <motion.div 
                 animate={{ scaleX: [0, 1] }} 
                 transition={{ duration: 1.5, delay: 1, ease: "circOut" }}
-                className="h-[1px] w-full bg-gradient-to-r from-transparent via-orange-500/50 to-transparent"
+                className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#FF3A00] to-transparent"
               />
             </motion.div>
           </motion.div>
@@ -203,16 +204,16 @@ function App() {
             >
               <X className="w-4 h-4" />
             </button>
-            <div className="w-10 h-10 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-8 shadow-[0_0_15px_rgba(249,115,22,0.15)]">
-              <span className="font-serif italic text-orange-500 font-bold">V</span>
+            <div className="w-10 h-10 bg-black border-2 border-[#FF3A00] flex items-center justify-center mb-8 shadow-[4px_4px_0px_rgba(255,58,0,0.5)]">
+              <span className="font-serif text-[#FF3A00] font-bold text-xl animate-pulse-slow">V</span>
             </div>
             
             <nav className="flex-1 flex flex-col gap-4">
               <button 
                 onClick={() => setViewMode('deep_ingestion')}
                 className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'deep_ingestion' ? "neo-pressed text-orange-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'deep_ingestion' ? "neo-pressed" : "neo-convex text-zinc-500"
                 )}
                 title="Phase 1: Deep Ingestion (The Source)"
               >
@@ -221,8 +222,8 @@ function App() {
               <button 
                 onClick={() => setViewMode('engine')}
                 className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'engine' ? "neo-pressed text-orange-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'engine' ? "neo-pressed" : "neo-convex text-zinc-500"
                 )}
                 title="Phase 2: The Engine [Ω]"
               >
@@ -231,8 +232,8 @@ function App() {
               <button 
                 onClick={() => setViewMode('3d_engine')}
                 className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === '3d_engine' ? "neo-pressed text-blue-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === '3d_engine' ? "neo-pressed" : "neo-convex text-zinc-500"
                 )}
                 title="Phase 2.5: 3D Topology (Three.js)"
               >
@@ -241,8 +242,8 @@ function App() {
               <button 
                 onClick={() => setViewMode('stream')}
                 className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'stream' ? "neo-pressed text-orange-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'stream' ? "neo-pressed" : "neo-convex text-zinc-500"
                 )}
                 title="Phase 3: The Stream"
               >
@@ -251,8 +252,8 @@ function App() {
               <button 
                 onClick={() => setViewMode('discriminator')}
                 className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'discriminator' ? "neo-pressed text-fuchsia-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'discriminator' ? "neo-pressed" : "neo-convex text-zinc-500"
                 )}
                 title="Phase 4: O-E Discriminator"
               >
@@ -261,8 +262,8 @@ function App() {
               <button 
                 onClick={() => setViewMode('oe_analytics')}
                 className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'oe_analytics' ? "neo-pressed text-fuchsia-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'oe_analytics' ? "neo-pressed" : "neo-convex text-zinc-500"
                 )}
                 title="Phase 4.5: O-E Analytics Dashboard"
               >
@@ -271,8 +272,8 @@ function App() {
               <button 
                 onClick={() => setViewMode('gaps')}
                 className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'gaps' ? "neo-pressed text-orange-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'gaps' ? "neo-pressed" : "neo-convex text-zinc-500"
                 )}
                 title="Phase 5: Gaps"
               >
@@ -281,8 +282,8 @@ function App() {
               <button 
                 onClick={() => setViewMode('theme_clusters')}
                 className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'theme_clusters' ? "neo-pressed text-emerald-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'theme_clusters' ? "neo-pressed" : "neo-convex text-zinc-500"
                 )}
                 title="Phase 6: Theme Topological Clusters"
               >
@@ -291,8 +292,8 @@ function App() {
               <button 
                 onClick={() => setViewMode('ai_synthesis')}
                 className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
-                  viewMode === 'ai_synthesis' ? "neo-pressed text-cyan-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                  "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
+                  viewMode === 'ai_synthesis' ? "neo-pressed" : "neo-convex text-zinc-500"
                 )}
                 title="Phase 7: AI Synthesis Panel"
               >
@@ -303,8 +304,8 @@ function App() {
                 <button 
                   onClick={() => setIsFileManagerOpen(!isFileManagerOpen)}
                   className={cn(
-                    "w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer",
-                    isFileManagerOpen ? "neo-pressed text-orange-400" : "neo-convex text-zinc-500 hover:text-zinc-300"
+                    "w-12 h-12 flex items-center justify-center transition-all cursor-pointer",
+                    isFileManagerOpen ? "neo-pressed" : "neo-convex text-zinc-500"
                   )}
                   title="Abyssal Archives (File Manager)"
                 >
