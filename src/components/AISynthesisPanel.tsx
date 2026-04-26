@@ -69,75 +69,87 @@ export function AISynthesisPanel() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#0a0a0a] text-zinc-100 p-8 overflow-hidden font-sans">
-      <div className="flex-shrink-0 mb-6 flex items-center gap-3">
-        <Sparkles className="w-6 h-6 text-fuchsia-400" />
-        <h1 className="text-2xl font-light tracking-tight text-zinc-100">AI Entity Extraction & Synthesis</h1>
+    <div className="w-full h-full flex flex-col bg-[#000] text-[#eee] p-8 font-mono relative overflow-hidden">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiMwMDAiIC8+PGNpcmNsZSBjeD0iNCIgY3k9IjQiIHI9IjEiIGZpbGw9IiMzMzMiIC8+PC9zdmc+')] opacity-20 pointer-events-none z-0"></div>
+      
+      <div className="flex-shrink-0 mb-8 flex items-center gap-4 relative z-10 border-b-2 border-[#333] pb-6">
+        <div className="p-3 bg-[#111] border-2 border-[#00E5FF]">
+          <Sparkles className="w-8 h-8 text-[#00E5FF] animate-pulse-slow" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-serif font-black tracking-widest uppercase text-[#00E5FF]">AxiomForge</h1>
+          <div className="text-xs font-bold uppercase tracking-[0.2em] text-[#FF3A00] mt-2">AI Entity Extraction & Synthesis Protocol</div>
+        </div>
       </div>
       
-      <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0 overflow-y-auto custom-scrollbar">
+      <div className="flex flex-col lg:flex-row gap-8 flex-1 min-h-0 relative z-10">
         {/* Left Column - Input */}
-        <div className="flex-1 flex flex-col gap-4">
-          <p className="text-sm text-zinc-400 leading-relaxed">
-            Paste a phenomenological fieldwork report, journal entry, or philosophical text. 
-            The AI model will synthesize overarching themes, extract entities (nodes), and calculate integration levels.
+        <div className="flex-1 flex flex-col gap-6">
+          <p className="text-sm text-[#888] leading-relaxed tracking-wider border-l-2 border-[#FF3A00] pl-4">
+            Input phenomenological fieldwork, journal entry, or philosophical anomaly. 
+            The AxiomForge will synthesize overarching themes, extract node entities, and calculate integration resonance.
           </p>
-          <textarea 
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            className="w-full flex-1 min-h-[300px] bg-zinc-900/50 border border-white/10 rounded-xl p-4 text-sm font-mono text-zinc-300 resize-none focus:outline-none focus:border-fuchsia-500/50 transition-colors"
-            placeholder="Enter text for analysis... (e.g., 'In the end, there is nothing but darkness and the self dissolving into it. The void is not empty—it is full of what cannot be named.')"
-          />
+          <div className="flex-1 relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#00E5FF] to-transparent opacity-0 group-hover:opacity-20 transition-opacity"></div>
+            <textarea 
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              className="w-full h-full bg-[#050505] border-2 border-[#333] p-6 text-sm font-mono text-[#ccc] resize-none focus:outline-none focus:border-[#00E5FF] transition-colors relative z-10 custom-scrollbar"
+              placeholder="AWAITING INPUT... (e.g., 'In the end, there is nothing but darkness and the self dissolving into it. The void is not empty—it is full of what cannot be named.')"
+            />
+          </div>
           <button 
             onClick={handleExtractionAndSynthesis}
             disabled={isProcessing || !inputText.trim() || !ai}
-            className="bg-fuchsia-600 hover:bg-fuchsia-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
+            className="bg-[#000] disabled:opacity-50 disabled:cursor-not-allowed text-[#00E5FF] font-bold font-mono tracking-widest uppercase py-4 px-6 border-2 border-[#00E5FF] flex items-center justify-center gap-3 transition-all hover:bg-[#00E5FF] hover:text-[#000] shadow-[6px_6px_0px_rgba(0,229,255,0.2)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
           >
             {isProcessing ? (
-              <span className="flex items-center gap-2"><Cpu className="w-4 h-4 animate-pulse" /> Processing...</span>
+              <span className="flex items-center gap-3"><Cpu className="w-5 h-5 animate-pulse" /> Processing...</span>
             ) : (
-              <span className="flex items-center gap-2"><Workflow className="w-4 h-4" /> {ai ? "Extract & Synthesize" : "API Key Required"}</span>
+              <span className="flex items-center gap-3"><Workflow className="w-5 h-5" /> {ai ? "Extract & Synthesize" : "API Key Required"}</span>
             )}
           </button>
         </div>
 
         {/* Right Column - Results */}
-        <div className="flex-1 bg-zinc-900/40 border border-white/5 rounded-xl p-6 overflow-y-auto custom-scrollbar flex flex-col gap-6">
+        <div className="flex-1 bg-[#050505] border-2 border-[#333] p-8 overflow-y-auto custom-scrollbar flex flex-col gap-8 relative">
           {!result && !isProcessing && (
-             <div className="h-full flex items-center justify-center text-zinc-600 flex-col gap-3">
-                <FileText className="w-10 h-10 opacity-50" />
-                <p className="text-sm">Awaiting text for synthesis...</p>
+             <div className="absolute inset-0 flex items-center justify-center text-[#444] flex-col gap-4">
+                <FileText className="w-16 h-16 opacity-30" />
+                <p className="text-sm font-bold tracking-widest uppercase">Awaiting Raw Substrate...</p>
              </div>
           )}
           
           {isProcessing && (
-             <div className="h-full flex items-center justify-center flex-col gap-4">
-                <div className="w-12 h-12 rounded-full border-2 border-fuchsia-500/20 border-t-fuchsia-500 animate-spin" />
-                <p className="text-sm text-fuchsia-400 font-mono animate-pulse">Running semantic extraction...</p>
+             <div className="absolute inset-0 flex items-center justify-center flex-col gap-6">
+                <div className="w-16 h-16 border-4 border-[#333] border-t-[#00E5FF] animate-spin" />
+                <p className="text-sm tracking-widest font-bold uppercase text-[#00E5FF] font-mono animate-pulse">Running semantic extraction...</p>
              </div>
           )}
 
           {result && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-6">
-               <div className="prose prose-invert prose-sm prose-p:leading-relaxed prose-a:text-fuchsia-400 prose-headings:font-light max-w-none">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-8 relative z-10">
+               <div className="prose prose-invert prose-sm prose-p:leading-relaxed prose-a:text-[#00E5FF] prose-headings:font-serif prose-headings:text-[#FF3A00] max-w-none font-mono">
                  <Markdown>{result}</Markdown>
                </div>
                
                {extractedNodes.length > 0 && (
-                 <div className="mt-4 pt-6 border-t border-white/10">
-                    <h3 className="text-sm uppercase tracking-widest text-zinc-500 mb-4 flex items-center gap-2">
-                       <Database className="w-4 h-4" /> Extracted Graph Nodes
+                 <div className="mt-8 pt-8 border-t-2 border-[#333]">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#888] mb-6 flex items-center gap-3">
+                       <Database className="w-5 h-5 text-[#00E5FF]" /> Extracted Graph Nodes
                     </h3>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-4">
                        {extractedNodes.map((node, i) => (
-                         <div key={i} className="px-3 py-1.5 bg-black border border-white/10 rounded-lg flex items-center gap-2">
+                         <div key={i} className="px-4 py-2 bg-[#111] border border-[#444] flex items-center gap-3 relative overflow-hidden group hover:border-[#00E5FF]">
+                            <div className="absolute top-0 right-0 p-1 bg-[#111] border-b border-l border-[#333] text-[9px] text-[#FF3A00] font-mono">
+                              C={(node.confidence * 100).toFixed(0)}%
+                            </div>
                             <span className={cn(
-                              "text-[10px] font-bold uppercase",
-                              node.type === 'THEME' ? 'text-emerald-400' :
-                              node.type === 'THINKER' ? 'text-purple-400' : 'text-orange-400'
+                              "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5",
+                              node.type === 'THEME' ? 'bg-[#ff3a00]/20 text-[#ff3a00]' :
+                              node.type === 'THINKER' ? 'bg-[#00e5ff]/20 text-[#00e5ff]' : 'bg-[#fff]/10 text-[#fff]'
                             )}>{node.type}</span>
-                            <span className="text-sm text-zinc-200">{node.id}</span>
-                            <span className="text-[10px] text-zinc-600">{(node.confidence * 100).toFixed(0)}%</span>
+                            <span className="text-sm font-bold text-[#eee] tracking-tight">{node.id}</span>
                          </div>
                        ))}
                     </div>

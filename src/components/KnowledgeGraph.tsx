@@ -503,30 +503,30 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
               className="flex flex-col gap-4"
             >
               {/* Scented Search */}
-              <div className="pointer-events-auto bg-black/40 backdrop-blur-md border border-white/10 p-2 rounded-2xl shadow-xl w-64 flex items-center gap-2">
-                <Search className="w-4 h-4 text-zinc-400 ml-2" />
+              <div className="pointer-events-auto bg-[#000] border-2 border-[#333] hover:border-[#00E5FF] transition-colors p-3 w-64 flex items-center gap-3 neo-flat">
+                <Search className="w-5 h-5 text-[#00E5FF]" />
                 <input 
                   type="text" 
                   placeholder="Scented Search..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-transparent border-none outline-none text-sm text-zinc-200 placeholder:text-zinc-600 w-full"
+                  className="bg-transparent border-none outline-none text-sm text-[#eee] placeholder:text-[#555] w-full font-mono uppercase tracking-widest"
                 />
                 {searchQuery && (
-                  <button onClick={() => setSearchQuery('')} className="p-1 hover:bg-white/10 rounded-full">
-                    <X className="w-3 h-3 text-zinc-400" />
+                  <button onClick={() => setSearchQuery('')} className="p-1 hover:bg-[#111]">
+                    <X className="w-4 h-4 text-[#888]" />
                   </button>
                 )}
               </div>
 
               {/* Filter Group */}
-              <div className="pointer-events-auto bg-black/40 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl w-64">
-                <div className="flex items-center gap-2 mb-3 text-xs font-medium text-zinc-400 uppercase tracking-wider">
-                  <Filter className="w-3 h-3" /> Filters
+              <div className="pointer-events-auto bg-[#000] border-2 border-[#333] p-5 w-64 neo-flat">
+                <div className="flex items-center gap-2 mb-4 text-xs font-bold text-[#FF3A00] uppercase tracking-[0.2em]">
+                  <Filter className="w-4 h-4" /> Filters
                 </div>
                 
                 {/* Type Filters */}
-                <div className="flex flex-wrap gap-1.5 mb-3">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {['concept', 'thinker', 'treatise', 'question', 'axiom', 'praxis'].map(type => (
                     <button
                       key={type}
@@ -536,10 +536,10 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                         setActiveTypes(next);
                       }}
                       className={cn(
-                        "text-[10px] uppercase px-2.5 py-1 rounded-full border transition-all duration-300",
+                        "text-[10px] uppercase px-3 py-1 font-bold tracking-widest border-2 transition-all cursor-pointer",
                         activeTypes.has(type) 
-                          ? "bg-orange-500/20 border-orange-500 text-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.2)]" 
-                          : "bg-zinc-900/50 border-white/5 text-zinc-500 hover:border-white/20"
+                          ? "bg-[#FF3A00] border-[#FF3A00] text-[#000] shadow-[3px_3px_0px_rgba(255,58,0,0.4)] translate-x-[-2px] translate-y-[-2px]" 
+                          : "bg-[#050505] border-[#333] text-[#888] hover:border-[#FF3A00] hover:text-[#fff]"
                       )}
                     >
                       {type}
@@ -548,7 +548,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                 </div>
 
                 {/* Status Filters */}
-                <div className="flex flex-wrap gap-1.5 border-t border-white/5 pt-3">
+                <div className="flex flex-wrap gap-2 border-t-2 border-[#111] pt-4">
                   {['VERIFIED', 'INFERENCE', 'HYPOTHESIS'].map(status => (
                     <button
                       key={status}
@@ -558,10 +558,10 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                         setActiveStatuses(next);
                       }}
                       className={cn(
-                        "text-[10px] uppercase px-2.5 py-1 rounded-full border transition-all duration-300",
+                        "text-[10px] uppercase px-3 py-1 font-bold tracking-widest border-2 transition-all cursor-pointer",
                         activeStatuses.has(status)
-                          ? "bg-blue-500/20 border-blue-500 text-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.2)]"
-                          : "bg-zinc-900/50 border-white/5 text-zinc-500 hover:border-white/20"
+                          ? "bg-[#00E5FF] border-[#00E5FF] text-[#000] shadow-[3px_3px_0px_rgba(0,229,255,0.4)] translate-x-[-2px] translate-y-[-2px]"
+                          : "bg-[#050505] border-[#333] text-[#888] hover:border-[#00E5FF] hover:text-[#fff]"
                       )}
                     >
                       {status}
@@ -571,52 +571,52 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
               </div>
 
               {/* Action Toggles */}
-              <div className="pointer-events-auto flex flex-col gap-2">
+              <div className="pointer-events-auto flex flex-col gap-3">
                 <button
                   onClick={() => setClusterMode(!clusterMode)}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-xl border backdrop-blur-md transition-all duration-300 shadow-lg",
+                    "flex items-center gap-3 px-5 py-3 border-2 transition-all duration-300 font-bold",
                     clusterMode 
-                      ? "bg-orange-500 text-black border-orange-400 font-semibold" 
-                      : "bg-black/40 border-white/10 text-zinc-400 hover:bg-white/5"
+                      ? "bg-[#FF3A00] text-[#000] border-[#FF3A00] shadow-[4px_4px_0px_rgba(255,58,0,0.5)] translate-x-[-2px] translate-y-[-2px]" 
+                      : "bg-[#050505] border-[#333] text-[#888] hover:border-[#FF3A00] hover:text-[#fff]"
                   )}
                 >
-                  <Atom className={cn("w-4 h-4", clusterMode && "animate-spin-slow")} />
-                  <span className="text-xs uppercase tracking-wider">Cluster Mode</span>
+                  <Atom className={cn("w-5 h-5", clusterMode && "animate-spin-slow")} />
+                  <span className="text-xs uppercase tracking-widest">Cluster Mode</span>
                 </button>
 
                 <button
                   onClick={() => setShowLatent(!showLatent)}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-xl border backdrop-blur-md transition-all duration-300 shadow-lg",
+                    "flex items-center gap-3 px-5 py-3 border-2 transition-all duration-300 font-bold",
                     showLatent 
-                      ? "bg-emerald-500 text-black border-emerald-400 font-semibold" 
-                      : "bg-black/40 border-white/10 text-zinc-400 hover:bg-white/5"
+                      ? "bg-[#00E5FF] text-[#000] border-[#00E5FF] shadow-[4px_4px_0px_rgba(0,229,255,0.5)] translate-x-[-2px] translate-y-[-2px]" 
+                      : "bg-[#050505] border-[#333] text-[#888] hover:border-[#00E5FF] hover:text-[#fff]"
                   )}
                 >
-                  <Sparkles className={cn("w-4 h-4", showLatent && "animate-pulse")} />
-                  <span className="text-xs uppercase tracking-wider">Gap Synthesis Overlay</span>
+                  <Sparkles className={cn("w-5 h-5", showLatent && "animate-pulse")} />
+                  <span className="text-xs uppercase tracking-widest">Gap Synthesis</span>
                 </button>
 
                 <button
                   onClick={() => setStructuralIntegrity(!structuralIntegrity)}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-xl border backdrop-blur-md transition-all duration-300 shadow-lg",
+                    "flex items-center gap-3 px-5 py-3 border-2 transition-all duration-300 font-bold",
                     structuralIntegrity 
-                      ? "bg-blue-500 text-black border-blue-400 font-semibold" 
-                      : "bg-black/40 border-white/10 text-zinc-400 hover:bg-white/5"
+                      ? "bg-[#FF3A00] text-[#000] border-[#FF3A00] shadow-[4px_4px_0px_rgba(255,58,0,0.5)] translate-x-[-2px] translate-y-[-2px]" 
+                      : "bg-[#050505] border-[#333] text-[#888] hover:border-[#FF3A00] hover:text-[#fff]"
                   )}
                 >
-                  <Network className={cn("w-4 h-4", structuralIntegrity && "animate-pulse")} />
-                  <span className="text-xs uppercase tracking-wider">Structural Integrity</span>
+                  <Network className={cn("w-5 h-5", structuralIntegrity && "animate-pulse")} />
+                  <span className="text-xs uppercase tracking-widest">Structural Integrity</span>
                 </button>
 
                 {/* Gravity Slider */}
-                <div className="bg-black/40 backdrop-blur-md border border-white/10 p-3 rounded-xl shadow-lg flex flex-col gap-2">
-                  <div className="flex items-center justify-between text-xs text-zinc-400 uppercase tracking-wider">
-                    <div className="flex items-center gap-1.5">
-                      <SlidersHorizontal className="w-3 h-3" />
-                      <span>Gravity</span>
+                <div className="bg-[#050505] border-2 border-[#333] p-4 flex flex-col gap-3 font-mono font-bold tracking-widest neo-flat">
+                  <div className="flex items-center justify-between text-xs text-[#00E5FF] uppercase">
+                    <div className="flex items-center gap-2">
+                      <SlidersHorizontal className="w-4 h-4" />
+                      <span>Gravity Collapse</span>
                     </div>
                     <span>{gravity}%</span>
                   </div>
@@ -626,7 +626,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                     max="100" 
                     value={gravity} 
                     onChange={(e) => setGravity(parseInt(e.target.value))}
-                    className="w-full accent-orange-500 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer"
+                    className="w-full accent-[#FF3A00] h-1 bg-[#222] appearance-none cursor-pointer"
                   />
                 </div>
               </div>
@@ -642,29 +642,29 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-6 left-6 z-40 w-80 bg-black/80 backdrop-blur-xl border border-orange-500/30 rounded-2xl p-5 shadow-2xl"
+            className="absolute bottom-6 left-6 z-40 w-80 bg-[#050505] border-2 border-[#00E5FF] p-6 neo-flat shadow-[8px_8px_0px_rgba(0,229,255,0.2)]"
           >
-            <div className="flex items-center gap-2 mb-3 text-orange-500">
-              <Sparkles className="w-4 h-4" />
+            <div className="flex items-center gap-3 mb-4 text-[#00E5FF]">
+              <Sparkles className="w-5 h-5 animate-pulse" />
               <span className="text-xs font-bold uppercase tracking-widest">Latent Discovery</span>
             </div>
             
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="bg-white/5 rounded-lg p-3 border border-white/5">
-                <div className="text-[10px] text-zinc-500 uppercase mb-1">Centrality</div>
-                <div className="text-2xl font-light text-white">{selectedInsights.degree}</div>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-[#111] border border-[#333] p-4 text-center">
+                <div className="text-[10px] text-[#FF3A00] uppercase font-bold tracking-widest mb-2">Centrality</div>
+                <div className="text-3xl font-serif font-black text-white">{selectedInsights.degree}</div>
               </div>
-              <div className={cn("rounded-lg p-3 border", selectedInsights.isSingularity ? "bg-red-500/10 border-red-500/30" : "bg-emerald-500/10 border-emerald-500/30")}>
-                <div className="text-[10px] text-zinc-500 uppercase mb-1">Status</div>
-                <div className={cn("text-xs font-medium", selectedInsights.isSingularity ? "text-red-400" : "text-emerald-400")}>
+              <div className={cn("border p-4 text-center flex flex-col justify-center", selectedInsights.isSingularity ? "bg-[#ff3a00]/10 border-[#ff3a00]" : "bg-[#00e5ff]/10 border-[#00e5ff]")}>
+                <div className="text-[10px] text-[#888] uppercase font-bold tracking-widest mb-2">Status</div>
+                <div className={cn("text-xs font-black tracking-widest", selectedInsights.isSingularity ? "text-[#FF3A00]" : "text-[#00E5FF]")}>
                   {selectedInsights.isSingularity ? "SINGULARITY" : "CONNECTED"}
                 </div>
               </div>
             </div>
 
             {selectedInsights.suggestion && (
-              <div className="text-xs text-zinc-400 bg-white/5 p-3 rounded-lg border border-white/5 leading-relaxed">
-                <strong className="text-zinc-300 block mb-1">AI Recommendation:</strong>
+              <div className="text-xs text-[#ccc] bg-[#000] p-4 border border-[#333] leading-relaxed font-mono">
+                <strong className="text-[#00E5FF] block mb-2 uppercase tracking-widest text-[10px]">AI Recommendation:</strong>
                 {selectedInsights.suggestion}
               </div>
             )}

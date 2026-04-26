@@ -70,56 +70,58 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
   }, [baseAuditLogs, searchQuery, actionFilter]);
 
   return (
-    <div className="flex flex-col h-full bg-[#0a0a0a] border-l border-white/5 overflow-hidden">
-      <div className="p-6 border-b border-white/10 bg-[#0f0f0f]">
+    <div className="flex flex-col h-full bg-[#000] border-l-2 border-[#333] overflow-hidden font-mono text-[#eee]">
+      <div className="p-6 border-b-2 border-[#333] bg-[#050505]">
         <div className="flex items-center gap-3 mb-2">
-          <ShieldCheck className="w-5 h-5 text-emerald-500" />
-          <h2 className="text-lg font-medium text-zinc-100">Audit Trail</h2>
+          <ShieldCheck className="w-6 h-6 text-[#00E5FF] animate-pulse" />
+          <h2 className="text-xl font-black tracking-widest uppercase">Audit Trail</h2>
         </div>
-        <p className="text-xs text-zinc-500 uppercase tracking-widest">
+        <p className="text-xs font-bold text-[#FF3A00] uppercase tracking-[0.2em]">
           Cryptographic Provenance
         </p>
       </div>
 
-      <div className="p-6 border-b border-white/5 bg-black/20">
+      <div className="p-6 border-b-2 border-[#333] bg-[#000]">
         <div className="flex items-center gap-3 mb-4">
-          <Database className="w-4 h-4 text-orange-500" />
-          <h3 className="text-sm font-medium text-zinc-300 truncate">{node.label}</h3>
+          <Database className="w-5 h-5 text-[#FF3A00]" />
+          <h3 className="text-sm font-bold text-[#ccc] truncate">{node.label}</h3>
         </div>
-        <div className="grid grid-cols-2 gap-4 text-xs mb-4">
-          <div>
-            <span className="text-zinc-600 block mb-1">Node ID</span>
-            <span className="text-zinc-400 font-mono truncate block">{node.id}</span>
+        <div className="grid grid-cols-2 gap-4 text-xs mb-6">
+          <div className="bg-[#111] p-3 border border-[#333]">
+            <span className="text-[#888] font-bold uppercase tracking-widest block mb-1">Node ID</span>
+            <span className="text-[#eee] font-mono truncate block">{node.id}</span>
           </div>
-          <div>
-            <span className="text-zinc-600 block mb-1">Status</span>
-            <span className="text-orange-400 font-medium">{node.status || 'DENSIFIED'}</span>
+          <div className="bg-[#111] p-3 border border-[#333]">
+            <span className="text-[#888] font-bold uppercase tracking-widest block mb-1">Status</span>
+            <span className="text-[#00E5FF] font-black tracking-widest uppercase">{node.status || 'DENSIFIED'}</span>
           </div>
         </div>
 
         {/* Search and Filter Controls */}
-        <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-white/5">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+        <div className="flex flex-col gap-4 mt-4 pt-6 border-t-2 border-[#222]">
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#00E5FF] to-transparent opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888] z-10" />
             <input
               type="text"
-              placeholder="Search logs, actors, or hashes..."
+              placeholder="SEARCH LOGS, ACTORS, HASHES..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-black/40 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500/50 transition-colors"
+              className="relative z-10 w-full bg-[#050505] border-2 border-[#333] neo-flat pl-10 pr-4 py-3 text-xs text-[#eee] placeholder:text-[#555] font-bold uppercase tracking-widest focus:outline-none focus:border-[#00E5FF] transition-colors"
             />
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-2">
-            <Filter className="w-4 h-4 text-zinc-500 shrink-0" />
+          <div className="flex items-center gap-3 overflow-x-auto custom-scrollbar pb-2">
+            <Filter className="w-4 h-4 text-[#FF3A00] shrink-0" />
             {uniqueActions.map(action => (
               <button
                 key={action}
                 onClick={() => setActionFilter(action)}
-                className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-wider whitespace-nowrap transition-colors ${
+                className={cn(
+                  "px-3 py-1 text-[10px] uppercase font-bold tracking-widest whitespace-nowrap transition-colors border-2 neo-flat",
                   actionFilter === action 
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                    : 'bg-white/5 text-zinc-500 border border-white/5 hover:bg-white/10'
-                }`}
+                    ? 'bg-[#00E5FF] text-[#000] border-[#00E5FF] shadow-[2px_2px_0px_rgba(0,229,255,0.4)] translate-x-[-1px] translate-y-[-1px]' 
+                    : 'bg-[#050505] text-[#888] border-[#333] hover:text-[#fff] hover:border-[#00E5FF]'
+                )}
               >
                 {action.replace(/_/g, ' ')}
               </button>
@@ -129,21 +131,20 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar p-6 relative">
-        {/* Decorative Hex Grid Backdrop */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 pointer-events-none"></div>
         
         {filteredLogs.length === 0 ? (
-          <div className="text-center text-zinc-500 text-sm mt-8">
+          <div className="text-center text-[#555] text-sm mt-8 uppercase tracking-[0.2em] font-bold">
             No audit logs match your search criteria.
           </div>
         ) : (
-          <div className="space-y-8 relative">
+          <div className="space-y-8 relative z-10">
             {/* Pulsing Timeline Line */}
-            <div className="absolute left-[19px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-emerald-500/20 to-transparent">
+            <div className="absolute left-[19px] top-0 bottom-0 w-1 bg-[#333]">
               <motion.div 
-                animate={{ opacity: [0.1, 0.5, 0.1], scaleY: [0.8, 1, 0.8] }}
-                transition={{ duration: 4, repeat: Infinity }}
-                className="w-full h-full bg-emerald-500/40"
+                animate={{ scaleY: [0, 1] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                className="w-full h-1/2 bg-[#00E5FF] origin-top"
               />
             </div>
 
@@ -156,42 +157,36 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
                 className="relative flex gap-6 group"
               >
                 {/* Cryptographic Key Icon */}
-                <div className="relative z-10 flex items-center justify-center w-10 h-10 rounded-xl border border-white/10 bg-[#0f0f0f] text-zinc-500 group-hover:text-emerald-400 group-hover:border-emerald-500/40 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-all duration-500 shadow-2xl overflow-hidden">
-                  <Fingerprint className="w-4 h-4" />
-                  <motion.div 
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 border border-t-emerald-500/30 border-r-transparent border-b-transparent border-l-transparent rounded-full opacity-0 group-hover:opacity-100" 
-                  />
+                <div className="relative z-10 flex items-center justify-center w-10 h-10 border-2 border-[#333] bg-[#050505] text-[#888] group-hover:text-[#00E5FF] group-hover:border-[#00E5FF] transition-colors neo-flat">
+                  <Fingerprint className="w-5 h-5" />
                 </div>
                 
-                <div className="flex-1 p-5 rounded-2xl border border-white/5 bg-zinc-900/40 backdrop-blur-sm shadow-2xl group-hover:border-emerald-500/20 group-hover:bg-zinc-900/60 transition-all duration-500">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500/80">
+                <div className="flex-1 p-5 border-2 border-[#333] bg-[#000] neo-flat group-hover:border-[#00E5FF] transition-colors">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-black uppercase tracking-[0.2em] text-[#00E5FF] bg-[#00E5FF]/10 px-2 py-1 border border-[#00E5FF]/30">
                         {log.action.replace(/_/g, ' ')}
                       </span>
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
                     </div>
-                    <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 font-mono">
-                      <Clock className="w-3 h-3 text-zinc-600" />
+                    <div className="flex items-center gap-2 text-[10px] text-[#888] font-bold tracking-widest bg-[#111] px-2 py-1 border border-[#333]">
+                      <Clock className="w-3 h-3 text-[#555]" />
                       {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                     </div>
                   </div>
                   
-                  <p className="text-sm text-zinc-400 mb-4 leading-relaxed font-serif italic">
+                  <p className="text-sm text-[#ccc] mb-6 leading-relaxed font-mono uppercase tracking-wide">
                     {log.details}
                   </p>
                   
-                  <div className="space-y-2 pt-4 border-t border-white/5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">Operator Proxy</span>
-                      <span className="text-[11px] text-zinc-300 font-medium">{log.actor}</span>
+                  <div className="space-y-3 pt-4 border-t-2 border-[#222]">
+                    <div className="flex items-center justify-between bg-[#050505] border border-[#333] p-2">
+                      <span className="text-[9px] text-[#888] uppercase tracking-[0.2em] font-bold">Operator Proxy</span>
+                      <span className="text-[10px] text-[#00E5FF] font-black tracking-widest uppercase">{log.actor}</span>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[9px] text-zinc-600 uppercase tracking-widest font-bold">SHA-256 Provenance</span>
-                      <div className="flex items-center gap-2 px-2 py-1 bg-black/40 border border-white/5 rounded font-mono text-[9px] text-zinc-500 group-hover:text-emerald-500 transition-colors">
-                        <ShieldCheck className="w-3 h-3 opacity-50" />
+                    <div className="flex flex-col gap-2">
+                      <span className="text-[9px] text-[#888] uppercase tracking-[0.2em] font-bold">SHA-256 Provenance</span>
+                      <div className="flex items-center gap-3 p-2 bg-[#050505] border border-[#333] font-mono text-[10px] text-[#555] group-hover:text-[#00E5FF] transition-colors">
+                        <ShieldCheck className="w-4 h-4 opacity-50" />
                         <span className="truncate">{log.hash}</span>
                       </div>
                     </div>
