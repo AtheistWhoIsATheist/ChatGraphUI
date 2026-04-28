@@ -187,31 +187,31 @@ Identify the high-level insight connecting these concepts. Treat this as a Phase
   };
 
   return (
-    <div className="w-full h-full flex bg-[#000] text-[#eee] font-mono relative">
+    <div className="w-full h-full flex bg-zinc-950 text-zinc-100 font-mono relative">
       <div className="flex-1 flex flex-col p-8 overflow-hidden relative z-10">
-        <div className="flex-shrink-0 mb-8 pb-6 border-b-2 border-[#333]">
-          <h1 className="text-3xl font-black tracking-widest uppercase text-[#FF3A00]">Theme Topological Clusters</h1>
-          <p className="text-sm font-bold text-[#888] mt-4 uppercase tracking-widest max-w-2xl leading-relaxed">
+        <div className="flex-shrink-0 mb-8 pb-6 border-b-2 border-white/5">
+          <h1 className="text-3xl font-semibold tracking-widest  text-zinc-200">Theme Topological Clusters</h1>
+          <p className="text-sm font-bold text-zinc-400 mt-4  tracking-widest max-w-2xl leading-relaxed">
             Force-directed visualization of THEME node relationships. Clusters indicate highly correlated phenomenological experiences within the archive. Click on a node to select its cluster for AI synthesis.
           </p>
         </div>
-        <div className="flex-1 bg-black border-2 border-[#333] overflow-hidden relative neo-flat shadow-[8px_8px_0_rgba(255,58,0,0.1)]">
+        <div className="flex-1 bg-black border border-white/5 overflow-hidden relative rounded-xl transition duration-300 backdrop-blur-md shadow-xl">
           <svg ref={d3Container} className="w-full h-full cursor-move bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-opacity-20 blend-overlay" />
         </div>
       </div>
       
       {/* Right Sidebar for Synthesis */}
-      <div className="w-96 bg-[#050505] border-l-2 border-[#333] flex flex-col relative z-20">
-         <div className="px-8 py-8 border-b-2 border-[#333]">
-            <h2 className="text-sm font-black tracking-widest uppercase text-[#00E5FF] mb-4 flex items-center gap-3">
+      <div className="w-96 bg-zinc-900/40 border-l-2 border-white/5 flex flex-col relative z-20">
+         <div className="px-8 py-8 border-b-2 border-white/5">
+            <h2 className="text-sm font-semibold tracking-widest  text-zinc-300 mb-4 flex items-center gap-3">
               <Sparkles className="w-5 h-5 animate-pulse" /> Cluster Insights
             </h2>
             {selectedGroup !== null ? (
               <div className="mt-6">
-                <p className="text-xs font-bold text-[#888] uppercase tracking-[0.2em] mb-4">Selected Cluster {selectedGroup}:</p>
+                <p className="text-xs font-bold text-zinc-400  tracking-widest mb-4">Selected Cluster {selectedGroup}:</p>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {themeNodes.filter(n => n.group === selectedGroup).map(n => (
-                    <span key={n.id} className="text-[10px] font-bold uppercase tracking-widest bg-[#111] border border-[#333] px-3 py-1.5 text-[#ccc] neo-flat hover:border-[#00E5FF] transition-colors">
+                    <span key={n.id} className="text-[10px] font-bold  tracking-widest bg-white/5 border border-white/5 px-3 py-1.5 text-zinc-300 rounded-xl transition duration-300 backdrop-blur-md hover:border-white/10 transition-colors">
                       {n.id}
                     </span>
                   ))}
@@ -219,26 +219,26 @@ Identify the high-level insight connecting these concepts. Treat this as a Phase
                 <button
                   onClick={synthesizeGroup}
                   disabled={isSynthesizing || !ai}
-                  className="w-full bg-[#00E5FF] hover:bg-[#fff] disabled:opacity-50 disabled:hover:bg-[#00E5FF] disabled:hover:text-[#000] text-[#000] text-xs font-black tracking-widest uppercase py-4 border-2 border-[#00E5FF] flex items-center justify-center gap-3 transition-colors neo-flat shadow-[4px_4px_0_rgba(0,229,255,0.4)] disabled:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                  className="w-full bg-zinc-800 text-white border-transparent hover:bg-zinc-700 hover:bg-[#fff] disabled:opacity-50 disabled:hover:bg-zinc-800 text-white border-transparent hover:bg-zinc-700 disabled:hover:text-zinc-950 text-zinc-950 text-xs font-semibold tracking-widest  py-4 border border-white/10 flex items-center justify-center gap-3 transition-colors rounded-xl transition duration-300 backdrop-blur-md shadow-xl disabled:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                 >
                   {isSynthesizing ? <Loader2 className="w-4 h-4 animate-spin"/> : <Sparkles className="w-4 h-4" />}
                   {ai ? 'Synthesize Narrative' : 'API Key Required'}
                 </button>
-                {!ai && <p className="text-[10px] font-bold text-[#FF3A00] mt-4 uppercase tracking-widest p-3 bg-[#FF3A00]/10 border border-[#FF3A00]/30">VITE_GEMINI_API_KEY environment variable missing.</p>}
+                {!ai && <p className="text-[10px] font-bold text-zinc-200 mt-4  tracking-widest p-3 bg-white/10 border border-white/10">VITE_GEMINI_API_KEY environment variable missing.</p>}
               </div>
             ) : (
-              <p className="text-xs font-bold text-[#555] uppercase tracking-[0.2em] mt-6 p-4 border border-dashed border-[#555] text-center">Select a node in the graph to view cluster details.</p>
+              <p className="text-xs font-bold text-zinc-500  tracking-widest mt-6 p-4 border border-dashed border-white/20 text-center">Select a node in the graph to view cluster details.</p>
             )}
          </div>
          <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
            {isSynthesizing && (
-             <div className="flex flex-col items-center justify-center h-full text-[#888] gap-4">
-               <Loader2 className="w-8 h-8 animate-spin text-[#00E5FF]" />
-               <span className="text-[10px] uppercase font-bold tracking-[0.2em]">Synthesizing Structural Logic...</span>
+             <div className="flex flex-col items-center justify-center h-full text-zinc-400 gap-4">
+               <Loader2 className="w-8 h-8 animate-spin text-zinc-300" />
+               <span className="text-[10px]  font-bold tracking-widest">Synthesizing Structural Logic...</span>
              </div>
            )}
            {synthesis && !isSynthesizing && (
-             <div className="prose prose-invert prose-p:text-sm prose-p:leading-relaxed prose-p:font-mono prose-headings:font-serif prose-headings:text-[#FF3A00] prose-a:text-[#00E5FF] max-w-none">
+             <div className="prose prose-invert prose-p:text-sm prose-p:leading-relaxed prose-p:font-mono prose-headings:font-serif prose-headings:text-zinc-200 prose-a:text-zinc-300 max-w-none">
                <Markdown>{synthesis}</Markdown>
              </div>
            )}

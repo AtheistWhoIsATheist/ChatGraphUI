@@ -46,19 +46,19 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
     });
 
   return (
-    <div className="flex flex-col h-full bg-[#000] border-r-2 border-[#333] font-mono">
+    <div className="flex flex-col h-full bg-zinc-950 border-r-2 border-white/5 font-mono">
       {/* Header */}
-      <div className="p-6 border-b-2 border-[#333] bg-[#050505] relative z-10 shadow-[0px_4px_20px_rgba(0,0,0,0.5)]">
+      <div className="p-6 border-b-2 border-white/5 bg-zinc-900/40 relative z-10 shadow-xl">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 border-2 border-[#00E5FF] bg-[#111]">
-              <HardDrive className="w-5 h-5 text-[#00E5FF] animate-pulse-slow" />
+            <div className="p-2 border border-white/10 bg-white/5">
+              <HardDrive className="w-5 h-5 text-zinc-300 animate-pulse-slow" />
             </div>
-            <h2 className="text-xl font-black tracking-widest uppercase text-[#eee]">Document Repository</h2>
+            <h2 className="text-xl font-semibold tracking-widest  text-zinc-100">Document Repository</h2>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 text-[#888] hover:text-[#fff] hover:bg-[#FF3A00] border-2 border-transparent hover:border-[#FF3A00] transition-colors neo-flat"
+            className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-200 text-black border-transparent hover:bg-zinc-300 border border-transparent hover:border-white/10 transition-colors rounded-xl transition duration-300 backdrop-blur-md"
           >
             <X className="w-5 h-5" />
           </button>
@@ -66,11 +66,11 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
 
         <div className="space-y-6">
           {/* Upload Area */}
-          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-[#555] bg-[#050505] cursor-pointer hover:border-[#00E5FF] hover:bg-[#00E5FF]/5 transition-colors group neo-flat">
+          <label className="flex flex-col items-center justify-center w-full h-32 border border-dashed border-white/20 bg-zinc-900/40 cursor-pointer hover:border-white/10 hover:bg-white/10 transition-colors group rounded-xl transition duration-300 backdrop-blur-md">
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              <Upload className="w-8 h-8 text-[#555] group-hover:text-[#00E5FF] mb-3 transition-colors" />
-              <p className="text-xs font-bold text-[#888] group-hover:text-[#00E5FF] transition-colors uppercase tracking-widest">Drop files to ingest</p>
-              <p className="text-[10px] text-[#555] mt-2 font-bold tracking-widest">TXT, MD, JSON, PDF</p>
+              <Upload className="w-8 h-8 text-zinc-500 group-hover:text-zinc-300 mb-3 transition-colors" />
+              <p className="text-xs font-bold text-zinc-400 group-hover:text-zinc-300 transition-colors  tracking-widest">Drop files to ingest</p>
+              <p className="text-[10px] text-zinc-500 mt-2 font-bold tracking-widest">TXT, MD, JSON, PDF</p>
             </div>
             <input 
               type="file" 
@@ -84,25 +84,25 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
           {/* Search & Sort */}
           <div className="flex gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
               <input 
                 placeholder="SEARCH ARCHIVES..."
                 value={filter}
                 onChange={e => setFilter(e.target.value)}
-                className="w-full bg-[#000] border-2 border-[#333] pl-10 pr-4 py-3 text-xs text-[#eee] placeholder:text-[#555] focus:outline-none focus:border-[#00E5FF] transition-colors neo-flat uppercase tracking-widest font-bold"
+                className="w-full bg-zinc-950 border border-white/5 pl-10 pr-4 py-3 text-xs text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-white/10 transition-colors rounded-xl transition duration-300 backdrop-blur-md  tracking-widest font-bold"
               />
             </div>
             <div className="relative">
               <select 
                 onChange={e => setSortBy(e.target.value as keyof IngestionFile)}
-                className="appearance-none bg-[#000] border-2 border-[#333] pl-4 pr-10 py-3 text-[10px] font-bold tracking-widest uppercase text-[#888] focus:outline-none focus:border-[#00E5FF] transition-colors cursor-pointer h-full neo-flat"
+                className="appearance-none bg-zinc-950 border border-white/5 pl-4 pr-10 py-3 text-[10px] font-bold tracking-widest  text-zinc-400 focus:outline-none focus:border-white/10 transition-colors cursor-pointer h-full rounded-xl transition duration-300 backdrop-blur-md"
               >
                 <option value="uploadDate">Date</option>
                 <option value="name">Name</option>
                 <option value="size">Size</option>
                 <option value="status">Status</option>
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#555] pointer-events-none" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
             </div>
           </div>
 
@@ -110,7 +110,7 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
             <button 
               onClick={() => files.filter(f => f.status === 'idle').forEach(onExtract)}
               disabled={files.filter(f => f.status === 'idle').length === 0}
-              className="flex-1 flex items-center justify-center gap-3 py-3 bg-[#00E5FF] border-2 border-[#00E5FF] text-[10px] font-black uppercase tracking-[0.2em] text-[#000] hover:bg-[#fff] hover:border-[#fff] disabled:opacity-50 disabled:cursor-not-allowed transition-colors neo-flat shadow-[4px_4px_0px_rgba(0,229,255,0.4)] disabled:shadow-none translate-x-[0px]"
+              className="flex-1 flex items-center justify-center gap-3 py-3 bg-zinc-800 text-white border-transparent hover:bg-zinc-700 border border-white/10 text-[10px] font-semibold  tracking-widest text-zinc-950 hover:bg-[#fff] hover:border-[#fff] disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-xl transition duration-300 backdrop-blur-md shadow-xl disabled:shadow-none translate-x-[0px]"
             >
               <Sparkles className="w-4 h-4" />
               Extract All
@@ -118,7 +118,7 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
             <button 
               onClick={() => setFiles([])}
               disabled={files.length === 0}
-              className="px-6 py-3 bg-[#000] border-2 border-[#333] text-[10px] uppercase font-bold tracking-widest text-[#888] hover:text-[#000] hover:bg-[#FF3A00] hover:border-[#FF3A00] disabled:opacity-50 disabled:cursor-not-allowed transition-colors neo-flat"
+              className="px-6 py-3 bg-zinc-950 border border-white/5 text-[10px]  font-bold tracking-widest text-zinc-400 hover:text-zinc-950 hover:bg-zinc-200 text-black border-transparent hover:bg-zinc-300 hover:border-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-xl transition duration-300 backdrop-blur-md"
             >
               Clear
             </button>
@@ -132,7 +132,7 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
         {sorted.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-[#333] relative z-10">
             <FileText className="w-16 h-16 mb-6 opacity-20" />
-            <p className="text-sm font-bold uppercase tracking-[0.2em]">The archives are empty</p>
+            <p className="text-sm font-bold  tracking-widest">The archives are empty</p>
           </div>
         ) : (
           sorted.map(file => (
@@ -154,13 +154,13 @@ function FileRow({ file, onExtract, onDelete }: { file: IngestionFile, onExtract
     switch (file.status) {
       case 'ingesting':
       case 'parsing':
-        return <Loader2 className="w-3.5 h-3.5 text-[#FF3A00] animate-spin" />;
+        return <Loader2 className="w-3.5 h-3.5 text-zinc-200 animate-spin" />;
       case 'complete':
-        return <CheckCircle2 className="w-3.5 h-3.5 text-[#00FF66]" />;
+        return <CheckCircle2 className="w-3.5 h-3.5 text-zinc-300" />;
       case 'error':
         return <AlertCircle className="w-3.5 h-3.5 text-[#FF0000]" />;
       default:
-        return <FileText className="w-3.5 h-3.5 text-[#888]" />;
+        return <FileText className="w-3.5 h-3.5 text-zinc-400" />;
     }
   };
 
@@ -173,26 +173,26 @@ function FileRow({ file, onExtract, onDelete }: { file: IngestionFile, onExtract
   };
 
   return (
-    <div className="group flex items-center gap-4 p-4 bg-[#050505] border-2 border-[#333] neo-flat hover:border-[#00E5FF] transition-colors relative z-10">
-      <div className="w-10 h-10 bg-[#111] border border-[#222] flex items-center justify-center shrink-0">
+    <div className="group flex items-center gap-4 p-4 bg-zinc-900/40 border border-white/5 rounded-xl transition duration-300 backdrop-blur-md hover:border-white/10 transition-colors relative z-10">
+      <div className="w-10 h-10 bg-white/5 border border-[#222] flex items-center justify-center shrink-0">
         {getStatusIcon()}
       </div>
       
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm font-bold text-[#ccc] truncate font-mono tracking-tight" title={file.name}>{file.name}</p>
-          <span className="text-[10px] font-bold text-[#666] whitespace-nowrap bg-[#111] px-2 border border-[#222]">{formatSize(file.size)}</span>
+          <p className="text-sm font-bold text-zinc-300 truncate font-mono tracking-tight" title={file.name}>{file.name}</p>
+          <span className="text-[10px] font-bold text-[#666] whitespace-nowrap bg-white/5 px-2 border border-[#222]">{formatSize(file.size)}</span>
         </div>
         <div className="flex items-center gap-3 mt-2">
           <span className={cn(
-            "text-[9px] uppercase tracking-widest font-black",
-            file.status === 'complete' ? "text-[#00FF66]" : 
-            file.status === 'error' ? "text-[#FF3A00]" : "text-[#00E5FF]"
+            "text-[9px]  tracking-widest font-semibold",
+            file.status === 'complete' ? "text-zinc-300" : 
+            file.status === 'error' ? "text-zinc-200" : "text-zinc-300"
           )}>
             {file.status}
           </span>
           <span className="text-[9px] text-[#444]">—</span>
-          <span className="text-[10px] font-bold text-[#888] tracking-widest">
+          <span className="text-[10px] font-bold text-zinc-400 tracking-widest">
             {new Date(file.uploadDate).toLocaleDateString()}
           </span>
         </div>
@@ -202,7 +202,7 @@ function FileRow({ file, onExtract, onDelete }: { file: IngestionFile, onExtract
         {file.status === 'idle' && (
           <button 
             onClick={onExtract}
-            className="p-2 bg-[#00E5FF]/10 text-[#00E5FF] hover:bg-[#00E5FF] hover:text-[#000] transition-colors border border-[#00E5FF]/50 neo-flat"
+            className="p-2 bg-white/10 text-zinc-300 hover:bg-zinc-800 text-white border-transparent hover:bg-zinc-700 hover:text-zinc-950 transition-colors border border-white/10 rounded-xl transition duration-300 backdrop-blur-md"
             title="Extract Knowledge"
           >
             <Sparkles className="w-4 h-4" />
@@ -210,7 +210,7 @@ function FileRow({ file, onExtract, onDelete }: { file: IngestionFile, onExtract
         )}
         <button 
           onClick={onDelete}
-          className="p-2 bg-[#FF3A00]/10 text-[#FF3A00] hover:bg-[#FF3A00] hover:text-[#000] transition-colors border border-[#FF3A00]/50 neo-flat"
+          className="p-2 bg-white/10 text-zinc-200 hover:bg-zinc-200 text-black border-transparent hover:bg-zinc-300 hover:text-zinc-950 transition-colors border border-white/10 rounded-xl transition duration-300 backdrop-blur-md"
           title="Delete"
         >
           <Trash2 className="w-4 h-4" />

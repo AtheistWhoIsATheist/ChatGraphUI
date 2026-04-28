@@ -82,23 +82,23 @@ export function OEDashboard() {
   }, [viewWidth, viewHeight]);
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#000] text-[#eee] p-8 overflow-hidden font-mono relative">
+    <div className="w-full h-full flex flex-col bg-zinc-950 text-zinc-100 p-8 overflow-hidden font-mono relative">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiMwMDAiIC8+PGNpcmNsZSBjeD0iNCIgY3k9IjQiIHI9IjEiIGZpbGw9IiMzMzMiIC8+PC9zdmc+')] opacity-20 pointer-events-none z-0"></div>
 
-      <div className="flex-shrink-0 flex items-center gap-4 mb-4 pb-6 border-b-2 border-[#333] relative z-10">
-        <div className="p-3 bg-[#111] border-2 border-[#a21caf]">
+      <div className="flex-shrink-0 flex items-center gap-4 mb-4 pb-6 border-b-2 border-white/5 relative z-10">
+        <div className="p-3 bg-white/5 border border-[#a21caf]">
           <Database className="w-8 h-8 text-[#d946ef] animate-pulse-slow" />
         </div>
         <div>
-          <h1 className="text-3xl font-serif font-black tracking-widest uppercase text-[#d946ef]">O-E System Analytics</h1>
-          <div className="text-xs font-bold uppercase tracking-[0.2em] text-[#FF3A00] mt-2">Visualizing Semantic Drift</div>
+          <h1 className="text-3xl font-serif font-semibold tracking-widest  text-[#d946ef]">O-E System Analytics</h1>
+          <div className="text-xs font-bold  tracking-widest text-zinc-200 mt-2">Visualizing Semantic Drift</div>
         </div>
       </div>
-      <p className="text-sm text-[#888] mb-8 max-w-3xl leading-relaxed flex-shrink-0 border-l-2 border-[#d946ef] pl-4 relative z-10">
+      <p className="text-sm text-zinc-400 mb-8 max-w-3xl leading-relaxed flex-shrink-0 border-l-2 border-[#d946ef] pl-4 relative z-10">
         Visualizing semantic drift: analyzing the frequency of terms and triggers involved in structural elevation mapping across the corpus.
       </p>
 
-      <div className="flex gap-4 mb-8 border-b-2 border-[#333] pb-4 relative z-10 overflow-x-auto custom-scrollbar">
+      <div className="flex gap-4 mb-8 border-b-2 border-white/5 pb-4 relative z-10 overflow-x-auto custom-scrollbar">
         {[
           { id: 'terms', icon: Hash, title: 'Term Frequency', color: '#d946ef' },
           { id: 'triggers', icon: TrendingUp, title: 'Trigger Modality', color: '#6366f1' },
@@ -109,10 +109,10 @@ export function OEDashboard() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
             className={cn(
-              "px-5 py-3 text-sm font-bold tracking-widest uppercase transition-colors flex items-center gap-3 border-2 whitespace-nowrap neo-flat",
+              "px-5 py-3 text-sm font-bold tracking-widest  transition-colors flex items-center gap-3 border whitespace-nowrap rounded-xl transition duration-300 backdrop-blur-md",
               activeTab === tab.id
-                ? `bg-[#111] text-[${tab.color}] border-[${tab.color}] shadow-[4px_4px_0_rgba(255,255,255,0.1)] translate-y-[-2px] translate-x-[-2px]`
-                : "bg-[#050505] text-[#888] border-transparent hover:border-[#555] hover:text-[#eee]"
+                ? `bg-white/5 text-[${tab.color}] border-[${tab.color}] shadow-xl translate-y-[-2px] translate-x-[-2px]`
+                : "bg-zinc-900/40 text-zinc-400 border-transparent hover:border-white/20 hover:text-zinc-100"
             )}
             style={activeTab === tab.id ? { color: tab.color, borderColor: tab.color } : {}}
           >
@@ -121,16 +121,16 @@ export function OEDashboard() {
         ))}
       </div>
 
-      <div className="flex-1 overflow-hidden relative z-10 bg-[#050505] border-2 border-[#333] flex flex-col pt-4 neo-flat">
+      <div className="flex-1 overflow-hidden relative z-10 bg-zinc-900/40 border border-white/5 flex flex-col pt-4 rounded-xl transition duration-300 backdrop-blur-md">
         {activeTab === 'terms' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex flex-col p-6">
-            <h3 className="text-sm font-bold text-[#d946ef] uppercase tracking-widest mb-6">Top Analytical Terms Ingested</h3>
+            <h3 className="text-sm font-bold text-[#d946ef]  tracking-widest mb-6">Top Analytical Terms Ingested</h3>
             <div className="flex-1 min-h-0 relative">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={oeTermFrequencies.slice(0, 20)} layout="vertical" margin={{ top: 0, right: 30, left: 40, bottom: 0 }}>
                   <XAxis type="number" hide />
                   <YAxis dataKey="term" type="category" axisLine={false} tickLine={false} tick={{ fill: '#888', fontSize: 12, fontFamily: 'monospace' }} />
-                  <Tooltip cursor={{ fill: '#111' }} contentStyle={{ backgroundColor: '#000', border: '2px solid #333', borderRadius: '0', fontFamily: 'monospace', textTransform: 'uppercase' }} />
+                  <Tooltip cursor={{ fill: '#111' }} contentStyle={{ backgroundColor: '#000', border: '2px solid #333', borderRadius: '0', fontFamily: 'monospace', textTransform: '' }} />
                   <Bar dataKey="count" radius={[0, 0, 0, 0]}>
                     {oeTermFrequencies.slice(0, 20).map((entry, index) => (
                       <Cell key={`cell-\${index}`} fill={index < 3 ? '#d946ef' : '#a21caf'} />
@@ -144,13 +144,13 @@ export function OEDashboard() {
 
         {activeTab === 'triggers' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex flex-col p-6">
-            <h3 className="text-sm font-bold text-[#6366f1] uppercase tracking-widest mb-6">Frequent Elevation Triggers</h3>
+            <h3 className="text-sm font-bold text-[#6366f1]  tracking-widest mb-6">Frequent Elevation Triggers</h3>
             <div className="flex-1 min-h-0 relative">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={oeTriggerFrequencies.slice(0, 20)} layout="vertical" margin={{ top: 0, right: 30, left: 40, bottom: 0 }}>
                   <XAxis type="number" hide />
                   <YAxis dataKey="trigger" type="category" axisLine={false} tickLine={false} tick={{ fill: '#888', fontSize: 12, fontFamily: 'monospace' }} />
-                  <Tooltip cursor={{ fill: '#111' }} contentStyle={{ backgroundColor: '#000', border: '2px solid #333', borderRadius: '0', fontFamily: 'monospace', textTransform: 'uppercase' }} />
+                  <Tooltip cursor={{ fill: '#111' }} contentStyle={{ backgroundColor: '#000', border: '2px solid #333', borderRadius: '0', fontFamily: 'monospace', textTransform: '' }} />
                   <Bar dataKey="count" radius={[0, 0, 0, 0]}>
                     {oeTriggerFrequencies.slice(0, 20).map((entry, index) => (
                       <Cell key={`cell-\${index}`} fill={index < 3 ? '#6366f1' : '#4338ca'} />
@@ -166,20 +166,20 @@ export function OEDashboard() {
            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full overflow-y-auto custom-scrollbar p-6">
               <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
                 {oeGraphSample.map((edge, idx) => (
-                  <div key={idx} className="bg-[#000] border-2 border-[#333] p-5 flex flex-col gap-4 relative group hover:border-[#00E5FF] transition-colors neo-flat">
-                    <div className="text-[10px] text-[#00E5FF] uppercase font-bold tracking-widest bg-[#00E5FF]/10 self-start px-2 py-1 border border-[#00E5FF]/30">Connection Type</div>
-                    <div className="text-sm font-bold text-[#eee] break-all max-w-[90%] font-mono">{edge.type}</div>
+                  <div key={idx} className="bg-zinc-950 border border-white/5 p-5 flex flex-col gap-4 relative group hover:border-white/10 transition-colors rounded-xl transition duration-300 backdrop-blur-md">
+                    <div className="text-[10px] text-zinc-300  font-bold tracking-widest bg-white/10 self-start px-2 py-1 border border-white/10">Connection Type</div>
+                    <div className="text-sm font-bold text-zinc-100 break-all max-w-[90%] font-mono">{edge.type}</div>
                     
                     <div className="flex items-start justify-between mt-2 pt-4 border-t-2 border-[#222]">
                       <div className="flex flex-col w-[45%]">
-                        <span className="text-[10px] text-[#888] font-bold uppercase tracking-widest">Source</span>
+                        <span className="text-[10px] text-zinc-400 font-bold  tracking-widest">Source</span>
                         <span className="text-xs text-[#ddd] break-words mt-1">{edge.source.split(':').pop() || edge.source}</span>
                       </div>
                       
-                      <div className="text-[#FF3A00] font-bold translate-y-2">→</div>
+                      <div className="text-zinc-200 font-bold translate-y-2">→</div>
                       
                       <div className="flex flex-col w-[45%] text-right">
-                        <span className="text-[10px] text-[#888] font-bold uppercase tracking-widest">Target</span>
+                        <span className="text-[10px] text-zinc-400 font-bold  tracking-widest">Target</span>
                         <span className="text-xs text-[#d946ef] break-words mt-1">{edge.target.split(':').pop() || edge.target}</span>
                       </div>
                     </div>
@@ -191,9 +191,9 @@ export function OEDashboard() {
 
         {activeTab === 'pathways' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full h-full flex flex-col p-6">
-            <h3 className="text-sm font-bold text-[#FF3A00] uppercase tracking-widest mb-2">Occurrence (O) to Elevation (E) Pathways</h3>
-            <p className="text-xs font-mono text-[#888] mb-6 border-l-2 border-[#FF3A00] pl-3">Tracing semantic flow from base phenomenon to its culmination through specific thinkers.</p>
-            <div className="flex-1 min-h-0 relative border-2 border-[#333] bg-[#000] overflow-hidden p-6 flex flex-col neo-flat">
+            <h3 className="text-sm font-bold text-zinc-200  tracking-widest mb-2">Occurrence (O) to Elevation (E) Pathways</h3>
+            <p className="text-xs font-mono text-zinc-400 mb-6 border-l-2 border-white/10 pl-3">Tracing semantic flow from base phenomenon to its culmination through specific thinkers.</p>
+            <div className="flex-1 min-h-0 relative border border-white/5 bg-zinc-950 overflow-hidden p-6 flex flex-col rounded-xl transition duration-300 backdrop-blur-md">
               <svg width="100%" height="100%" viewBox={`0 0 ${viewWidth} ${viewHeight}`} preserveAspectRatio="xMidYMid meet">
                 
                 {/* 1. Links (Bez Curves) */}
@@ -293,12 +293,12 @@ export function OEDashboard() {
               </svg>
             </div>
             {hoveredNodeId && (
-              <div className="absolute bottom-10 right-10 bg-[#000] p-6 border-2 border-[#FF3A00] shadow-[6px_6px_0_rgba(255,58,0,0.3)] max-w-sm transition-opacity z-10 pointer-events-none neo-flat">
-                 <div className="text-[10px] text-[#FF3A00] uppercase tracking-widest font-bold mb-2">
+              <div className="absolute bottom-10 right-10 bg-zinc-950 p-6 border border-white/10 shadow-xl max-w-sm transition-opacity z-10 pointer-events-none rounded-xl transition duration-300 backdrop-blur-md">
+                 <div className="text-[10px] text-zinc-200  tracking-widest font-bold mb-2">
                    {PATHWAYS_NODES.find(n => n.id === hoveredNodeId)?.type === 'O' ? 'Occurrence (Base)' : PATHWAYS_NODES.find(n => n.id === hoveredNodeId)?.type === 'E' ? 'Elevation (Culmination)' : 'Thinker (Operator)'}
                  </div>
-                 <div className="font-bold font-mono text-[#eee] text-lg mb-3 border-b-2 border-[#333] pb-2">{PATHWAYS_NODES.find(n => n.id === hoveredNodeId)?.label}</div>
-                 <div className="text-xs font-mono text-[#888] leading-relaxed">
+                 <div className="font-bold font-mono text-zinc-100 text-lg mb-3 border-b-2 border-white/5 pb-2">{PATHWAYS_NODES.find(n => n.id === hoveredNodeId)?.label}</div>
+                 <div className="text-xs font-mono text-zinc-400 leading-relaxed">
                     Transitions are calculated based on sequential contextual drift within classified text segments linked to this node.
                  </div>
               </div>

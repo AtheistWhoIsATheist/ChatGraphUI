@@ -62,7 +62,7 @@ export function formatSynthesisText(text: string): React.ReactNode[] {
         currentString = '';
       }
       nodes.push(
-        <span key={`marker-${i}`} className="inline-block px-2 py-0.5 rounded bg-[rgba(255,255,255,0.03)] text-[#8a9099] border border-[rgba(255,255,255,0.06)] text-[11px] font-semibold uppercase tracking-wider">
+        <span key={`marker-${i}`} className="inline-block px-2 py-0.5 rounded bg-[rgba(255,255,255,0.03)] text-[#8a9099] border border-[rgba(255,255,255,0.06)] text-[11px] font-semibold  tracking-wider">
           [INFERRED]
         </span>
       );
@@ -73,7 +73,7 @@ export function formatSynthesisText(text: string): React.ReactNode[] {
         currentString = '';
       }
       nodes.push(
-        <span key={`marker-${i}`} className="inline-block px-2 py-0.5 rounded bg-[rgba(255,255,255,0.03)] text-[#b0b8c1] border border-[rgba(255,255,255,0.06)] text-[11px] font-semibold uppercase tracking-wider">
+        <span key={`marker-${i}`} className="inline-block px-2 py-0.5 rounded bg-[rgba(255,255,255,0.03)] text-[#b0b8c1] border border-[rgba(255,255,255,0.06)] text-[11px] font-semibold  tracking-wider">
           [SPECULATIVE]
         </span>
       );

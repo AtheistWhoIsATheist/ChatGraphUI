@@ -71,30 +71,30 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
   }, [baseAuditLogs, searchQuery, actionFilter]);
 
   return (
-    <div className="flex flex-col h-full bg-[#000] border-l-2 border-[#333] overflow-hidden font-mono text-[#eee]">
-      <div className="p-6 border-b-2 border-[#333] bg-[#050505]">
+    <div className="flex flex-col h-full bg-zinc-950 border-l-2 border-white/5 overflow-hidden font-mono text-zinc-100">
+      <div className="p-6 border-b-2 border-white/5 bg-zinc-900/40">
         <div className="flex items-center gap-3 mb-2">
-          <ShieldCheck className="w-6 h-6 text-[#00E5FF] animate-pulse" />
-          <h2 className="text-xl font-black tracking-widest uppercase">Audit Trail</h2>
+          <ShieldCheck className="w-6 h-6 text-zinc-300 animate-pulse" />
+          <h2 className="text-xl font-semibold tracking-widest ">Audit Trail</h2>
         </div>
-        <p className="text-xs font-bold text-[#FF3A00] uppercase tracking-[0.2em]">
+        <p className="text-xs font-bold text-zinc-200  tracking-widest">
           Cryptographic Provenance
         </p>
       </div>
 
-      <div className="p-6 border-b-2 border-[#333] bg-[#000]">
+      <div className="p-6 border-b-2 border-white/5 bg-zinc-950">
         <div className="flex items-center gap-3 mb-4">
-          <Database className="w-5 h-5 text-[#FF3A00]" />
-          <h3 className="text-sm font-bold text-[#ccc] truncate">{node.label}</h3>
+          <Database className="w-5 h-5 text-zinc-200" />
+          <h3 className="text-sm font-bold text-zinc-300 truncate">{node.label}</h3>
         </div>
         <div className="grid grid-cols-2 gap-4 text-xs mb-6">
-          <div className="bg-[#111] p-3 border border-[#333]">
-            <span className="text-[#888] font-bold uppercase tracking-widest block mb-1">Node ID</span>
-            <span className="text-[#eee] font-mono truncate block">{node.id}</span>
+          <div className="bg-white/5 p-3 border border-white/5">
+            <span className="text-zinc-400 font-bold  tracking-widest block mb-1">Node ID</span>
+            <span className="text-zinc-100 font-mono truncate block">{node.id}</span>
           </div>
-          <div className="bg-[#111] p-3 border border-[#333]">
-            <span className="text-[#888] font-bold uppercase tracking-widest block mb-1">Status</span>
-            <span className="text-[#00E5FF] font-black tracking-widest uppercase">{node.status || 'DENSIFIED'}</span>
+          <div className="bg-white/5 p-3 border border-white/5">
+            <span className="text-zinc-400 font-bold  tracking-widest block mb-1">Status</span>
+            <span className="text-zinc-300 font-semibold tracking-widest ">{node.status || 'DENSIFIED'}</span>
           </div>
         </div>
 
@@ -102,26 +102,26 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
         <div className="flex flex-col gap-4 mt-4 pt-6 border-t-2 border-[#222]">
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-[#00E5FF] to-transparent opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none"></div>
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888] z-10" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 z-10" />
             <input
               type="text"
               placeholder="SEARCH LOGS, ACTORS, HASHES..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="relative z-10 w-full bg-[#050505] border-2 border-[#333] neo-flat pl-10 pr-4 py-3 text-xs text-[#eee] placeholder:text-[#555] font-bold uppercase tracking-widest focus:outline-none focus:border-[#00E5FF] transition-colors"
+              className="relative z-10 w-full bg-zinc-900/40 border border-white/5 rounded-xl transition duration-300 backdrop-blur-md pl-10 pr-4 py-3 text-xs text-zinc-100 placeholder:text-zinc-500 font-bold  tracking-widest focus:outline-none focus:border-white/10 transition-colors"
             />
           </div>
           <div className="flex items-center gap-3 overflow-x-auto custom-scrollbar pb-2">
-            <Filter className="w-4 h-4 text-[#FF3A00] shrink-0" />
+            <Filter className="w-4 h-4 text-zinc-200 shrink-0" />
             {uniqueActions.map(action => (
               <button
                 key={action}
                 onClick={() => setActionFilter(action)}
                 className={cn(
-                  "px-3 py-1 text-[10px] uppercase font-bold tracking-widest whitespace-nowrap transition-colors border-2 neo-flat",
+                  "px-3 py-1 text-[10px]  font-bold tracking-widest whitespace-nowrap transition-colors border rounded-xl transition duration-300 backdrop-blur-md",
                   actionFilter === action 
-                    ? 'bg-[#00E5FF] text-[#000] border-[#00E5FF] shadow-[2px_2px_0px_rgba(0,229,255,0.4)] translate-x-[-1px] translate-y-[-1px]' 
-                    : 'bg-[#050505] text-[#888] border-[#333] hover:text-[#fff] hover:border-[#00E5FF]'
+                    ? 'bg-zinc-800 text-white border-transparent hover:bg-zinc-700 text-zinc-950 border-white/10 shadow-xl translate-x-[-1px] translate-y-[-1px]' 
+                    : 'bg-zinc-900/40 text-zinc-400 border-white/5 hover:text-white hover:border-white/10'
                 )}
               >
                 {action.replace(/_/g, ' ')}
@@ -135,7 +135,7 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 pointer-events-none"></div>
         
         {filteredLogs.length === 0 ? (
-          <div className="text-center text-[#555] text-sm mt-8 uppercase tracking-[0.2em] font-bold">
+          <div className="text-center text-zinc-500 text-sm mt-8  tracking-widest font-bold">
             No audit logs match your search criteria.
           </div>
         ) : (
@@ -145,7 +145,7 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
               <motion.div 
                 animate={{ scaleY: [0, 1] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                className="w-full h-1/2 bg-[#00E5FF] origin-top"
+                className="w-full h-1/2 bg-zinc-800 text-white border-transparent hover:bg-zinc-700 origin-top"
               />
             </div>
 
@@ -158,35 +158,35 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
                 className="relative flex gap-6 group"
               >
                 {/* Cryptographic Key Icon */}
-                <div className="relative z-10 flex items-center justify-center w-10 h-10 border-2 border-[#333] bg-[#050505] text-[#888] group-hover:text-[#00E5FF] group-hover:border-[#00E5FF] transition-colors neo-flat">
+                <div className="relative z-10 flex items-center justify-center w-10 h-10 border border-white/5 bg-zinc-900/40 text-zinc-400 group-hover:text-zinc-300 group-hover:border-white/10 transition-colors rounded-xl transition duration-300 backdrop-blur-md">
                   <Fingerprint className="w-5 h-5" />
                 </div>
                 
-                <div className="flex-1 p-5 border-2 border-[#333] bg-[#000] neo-flat group-hover:border-[#00E5FF] transition-colors">
+                <div className="flex-1 p-5 border border-white/5 bg-zinc-950 rounded-xl transition duration-300 backdrop-blur-md group-hover:border-white/10 transition-colors">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <span className="text-xs font-black uppercase tracking-[0.2em] text-[#00E5FF] bg-[#00E5FF]/10 px-2 py-1 border border-[#00E5FF]/30">
+                      <span className="text-xs font-semibold  tracking-widest text-zinc-300 bg-white/10 px-2 py-1 border border-white/10">
                         {log.action.replace(/_/g, ' ')}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] text-[#888] font-bold tracking-widest bg-[#111] px-2 py-1 border border-[#333]">
-                      <Clock className="w-3 h-3 text-[#555]" />
+                    <div className="flex items-center gap-2 text-[10px] text-zinc-400 font-bold tracking-widest bg-white/5 px-2 py-1 border border-white/5">
+                      <Clock className="w-3 h-3 text-zinc-500" />
                       {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                     </div>
                   </div>
                   
-                  <p className="text-sm text-[#ccc] mb-6 leading-relaxed font-mono uppercase tracking-wide">
+                  <p className="text-sm text-zinc-300 mb-6 leading-relaxed font-mono  tracking-wide">
                     {log.details}
                   </p>
                   
                   <div className="space-y-3 pt-4 border-t-2 border-[#222]">
-                    <div className="flex items-center justify-between bg-[#050505] border border-[#333] p-2">
-                      <span className="text-[9px] text-[#888] uppercase tracking-[0.2em] font-bold">Operator Proxy</span>
-                      <span className="text-[10px] text-[#00E5FF] font-black tracking-widest uppercase">{log.actor}</span>
+                    <div className="flex items-center justify-between bg-zinc-900/40 border border-white/5 p-2">
+                      <span className="text-[9px] text-zinc-400  tracking-widest font-bold">Operator Proxy</span>
+                      <span className="text-[10px] text-zinc-300 font-semibold tracking-widest ">{log.actor}</span>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <span className="text-[9px] text-[#888] uppercase tracking-[0.2em] font-bold">SHA-256 Provenance</span>
-                      <div className="flex items-center gap-3 p-2 bg-[#050505] border border-[#333] font-mono text-[10px] text-[#555] group-hover:text-[#00E5FF] transition-colors">
+                      <span className="text-[9px] text-zinc-400  tracking-widest font-bold">SHA-256 Provenance</span>
+                      <div className="flex items-center gap-3 p-2 bg-zinc-900/40 border border-white/5 font-mono text-[10px] text-zinc-500 group-hover:text-zinc-300 transition-colors">
                         <ShieldCheck className="w-4 h-4 opacity-50" />
                         <span className="truncate">{log.hash}</span>
                       </div>

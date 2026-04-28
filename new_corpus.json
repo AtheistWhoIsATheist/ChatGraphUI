@@ -1,0 +1,1229 @@
+{
+  "nodes": [
+    {
+      "id": "THINKER_emile_cioran",
+      "label": "Emile Cioran",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.548,
+        "absorption": 0.483,
+        "aperture": 0.6,
+        "dread": 0.533,
+        "quote_count": 470
+      },
+      "position": {
+        "x": -0.33,
+        "y": 2,
+        "z": 0.67
+      }
+    },
+    {
+      "id": "THINKER_ernest_becker",
+      "label": "Ernest Becker",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.473,
+        "absorption": 0.5,
+        "aperture": 0.433,
+        "dread": 0.6,
+        "quote_count": 326
+      },
+      "position": {
+        "x": 0,
+        "y": -1.33,
+        "z": 2
+      }
+    },
+    {
+      "id": "THINKER_thomas_kempis",
+      "label": "Thomas à Kempis",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.462,
+        "absorption": 0.517,
+        "aperture": 0.483,
+        "dread": 0.533,
+        "quote_count": 181
+      },
+      "position": {
+        "x": 0.33,
+        "y": -0.33,
+        "z": 0.67
+      }
+    },
+    {
+      "id": "THINKER_evelyn_underhill",
+      "label": "Evelyn Underhill",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.565,
+        "absorption": 0.45,
+        "aperture": 0.617,
+        "dread": 0.417,
+        "quote_count": 179
+      },
+      "position": {
+        "x": -1,
+        "y": 2.33,
+        "z": -1.67
+      }
+    },
+    {
+      "id": "THINKER_kierkegaard",
+      "label": "Kierkegaard",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.475,
+        "absorption": 0.5,
+        "aperture": 0.467,
+        "dread": 0.567,
+        "quote_count": 174
+      },
+      "position": {
+        "x": 0,
+        "y": -0.67,
+        "z": 1.33
+      }
+    },
+    {
+      "id": "THINKER_st_john_of_the_cross",
+      "label": "St. John of the Cross",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.545,
+        "absorption": 0.467,
+        "aperture": 0.667,
+        "dread": 0.467,
+        "quote_count": 158
+      },
+      "position": {
+        "x": -0.67,
+        "y": 3.33,
+        "z": -0.67
+      }
+    },
+    {
+      "id": "THINKER_nietzsche",
+      "label": "Nietzsche",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.462,
+        "absorption": 0.517,
+        "aperture": 0.483,
+        "dread": 0.533,
+        "quote_count": 146
+      },
+      "position": {
+        "x": 0.33,
+        "y": -0.33,
+        "z": 0.67
+      }
+    },
+    {
+      "id": "THINKER_lev_shestov",
+      "label": "Lev Shestov",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.475,
+        "absorption": 0.5,
+        "aperture": 0.467,
+        "dread": 0.567,
+        "quote_count": 142
+      },
+      "position": {
+        "x": 0,
+        "y": -0.67,
+        "z": 1.33
+      }
+    },
+    {
+      "id": "THINKER_teresa_of_vila",
+      "label": "Teresa of Ávila",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.545,
+        "absorption": 0.467,
+        "aperture": 0.667,
+        "dread": 0.467,
+        "quote_count": 141
+      },
+      "position": {
+        "x": -0.67,
+        "y": 3.33,
+        "z": -0.67
+      }
+    },
+    {
+      "id": "THINKER_paul_tillich",
+      "label": "Paul Tillich",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 134
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_aldous_huxley",
+      "label": "Aldous Huxley",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 131
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_mitchell_heisman",
+      "label": "Mitchell Heisman",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.438,
+        "absorption": 0.55,
+        "aperture": 0.383,
+        "dread": 0.533,
+        "quote_count": 116
+      },
+      "position": {
+        "x": 1,
+        "y": -2.33,
+        "z": 0.67
+      }
+    },
+    {
+      "id": "THINKER_martin_heidegger",
+      "label": "Martin Heidegger",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 105
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_tolstoy",
+      "label": "Tolstoy",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 103
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_thomas_ligotti",
+      "label": "Thomas Ligotti",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 84
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_fr_seraphim_rose",
+      "label": "Fr. Seraphim Rose",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 83
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_miguel_de_molinos",
+      "label": "Miguel de Molinos",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.583,
+        "absorption": 0.4,
+        "aperture": 0.7,
+        "dread": 0.4,
+        "quote_count": 77
+      },
+      "position": {
+        "x": -2,
+        "y": 4,
+        "z": -2
+      }
+    },
+    {
+      "id": "THINKER_a_w_tozer",
+      "label": "A.W. Tozer",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 77
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_pascal",
+      "label": "Pascal",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 76
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_edgar_saltus",
+      "label": "Edgar Saltus",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 72
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_miguel_de_unamuno",
+      "label": "Miguel de Unamuno",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 69
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_augustine",
+      "label": "Augustine",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 64
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_plato_socrates",
+      "label": "Plato/Socrates",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 63
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_william_james",
+      "label": "William James",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 59
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_taoism",
+      "label": "Taoism",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.6,
+        "absorption": 0.433,
+        "aperture": 0.683,
+        "dread": 0.4,
+        "quote_count": 54
+      },
+      "position": {
+        "x": -1.33,
+        "y": 3.67,
+        "z": -2
+      }
+    },
+    {
+      "id": "THINKER_buddhism",
+      "label": "Buddhism",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.583,
+        "absorption": 0.4,
+        "aperture": 0.7,
+        "dread": 0.4,
+        "quote_count": 50
+      },
+      "position": {
+        "x": -2,
+        "y": 4,
+        "z": -2
+      }
+    },
+    {
+      "id": "THINKER_jesus_christ",
+      "label": "Jesus Christ",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 44
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_meister_eckhart",
+      "label": "Meister Eckhart",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.545,
+        "absorption": 0.467,
+        "aperture": 0.667,
+        "dread": 0.467,
+        "quote_count": 39
+      },
+      "position": {
+        "x": -0.67,
+        "y": 3.33,
+        "z": -0.67
+      }
+    },
+    {
+      "id": "THINKER_gk_chesterton",
+      "label": "GK Chesterton",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 38
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_therese_of_lisieux",
+      "label": "Therese of Lisieux",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 34
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_martin_luther",
+      "label": "Martin Luther",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 33
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_albert_camus",
+      "label": "Albert Camus",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.438,
+        "absorption": 0.55,
+        "aperture": 0.383,
+        "dread": 0.533,
+        "quote_count": 33
+      },
+      "position": {
+        "x": 1,
+        "y": -2.33,
+        "z": 0.67
+      }
+    },
+    {
+      "id": "THINKER_swami_vivekananda",
+      "label": "Swami Vivekananda",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 30
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_peter_wessel_zapffe",
+      "label": "Peter Wessel Zapffe",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 28
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_herman_t_nnessen",
+      "label": "Herman Tønnessen",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 27
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_bertrand_russell",
+      "label": "Bertrand Russell",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 26
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_thomas_keating",
+      "label": "Thomas Keating",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 26
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_thomas_merton",
+      "label": "Thomas Merton",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.583,
+        "absorption": 0.4,
+        "aperture": 0.7,
+        "dread": 0.4,
+        "quote_count": 26
+      },
+      "position": {
+        "x": -2,
+        "y": 4,
+        "z": -2
+      }
+    },
+    {
+      "id": "THINKER_john_shelby_spong",
+      "label": "John Shelby Spong",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 26
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_hinduism",
+      "label": "Hinduism",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 25
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_schopenhauer",
+      "label": "Schopenhauer",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 23
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_ecclesiastes",
+      "label": "Ecclesiastes",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.438,
+        "absorption": 0.55,
+        "aperture": 0.383,
+        "dread": 0.533,
+        "quote_count": 17
+      },
+      "position": {
+        "x": 1,
+        "y": -2.33,
+        "z": 0.67
+      }
+    },
+    {
+      "id": "THINKER_will_durant",
+      "label": "Will Durant",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 17
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_c_s_lewis",
+      "label": "C.S. Lewis",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 17
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_montaigne",
+      "label": "Montaigne",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 15
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_huston_smith",
+      "label": "Huston Smith",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 14
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_timothy_leary",
+      "label": "Timothy Leary",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 8
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_john_bunyan",
+      "label": "John Bunyan",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 5
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_angela_of_foligno",
+      "label": "Angela of Foligno",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 3
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_thomas_aquinas",
+      "label": "Thomas Aquinas",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 2
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_william_lane_craig",
+      "label": "William Lane Craig",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 2
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THINKER_pseudo_dionysius",
+      "label": "Pseudo-Dionysius",
+      "type": "thinker",
+      "properties": {
+        "void_quotient": 0.5,
+        "absorption": 0.5,
+        "aperture": 0.5,
+        "dread": 0.5,
+        "quote_count": 1
+      },
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    {
+      "id": "THEME_existential_dread",
+      "label": "Existential Dread",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 8,
+        "y": 4,
+        "z": 12
+      }
+    },
+    {
+      "id": "THEME_anxiety",
+      "label": "Anxiety",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 6,
+        "y": 2,
+        "z": 10
+      }
+    },
+    {
+      "id": "THEME_lack_of_objective_meaning_value_purpose",
+      "label": "Lack of Objective Meaning, Value, Purpose",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -4,
+        "y": 8,
+        "z": 6
+      }
+    },
+    {
+      "id": "THEME_skepticism_of_knowledge",
+      "label": "Skepticism of Knowledge",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 4,
+        "y": -4,
+        "z": 6
+      }
+    },
+    {
+      "id": "THEME_limitations_of_language",
+      "label": "Limitations of Language",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 2,
+        "y": -6,
+        "z": 4
+      }
+    },
+    {
+      "id": "THEME_dual_nature_of_humans",
+      "label": "Dual Nature of Humans",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 0,
+        "y": 4,
+        "z": 4
+      }
+    },
+    {
+      "id": "THEME_renunciation_of_worldly_endeavors_contemplative_lifestyle",
+      "label": "Renunciation of Worldly Endeavors/Contemplative Lifestyle",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -6,
+        "y": 10,
+        "z": 2
+      }
+    },
+    {
+      "id": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
+      "label": "Ego Dissolution, Authenticity, True-Self, Oneness/Union",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -10,
+        "y": 8,
+        "z": -4
+      }
+    },
+    {
+      "id": "THEME_mystical_and_nihilistic_experiences",
+      "label": "Mystical and Nihilistic Experiences",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -8,
+        "y": 12,
+        "z": 4
+      }
+    },
+    {
+      "id": "THEME_divine_presence_and_suffering",
+      "label": "Divine Presence and Suffering",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -4,
+        "y": 14,
+        "z": 6
+      }
+    },
+    {
+      "id": "THEME_role_of_senses_and_silence",
+      "label": "Role of Senses and Silence",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 2,
+        "y": 10,
+        "z": -4
+      }
+    },
+    {
+      "id": "THEME_conceptualization_of_god",
+      "label": "Conceptualization of God",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -2,
+        "y": 12,
+        "z": 2
+      }
+    },
+    {
+      "id": "THEME_inner_turmoil_and_growth",
+      "label": "Inner Turmoil and Growth",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 0,
+        "y": 6,
+        "z": 8
+      }
+    },
+    {
+      "id": "THEME_human_nature_and_temptation",
+      "label": "Human Nature and Temptation",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 0,
+        "y": 2,
+        "z": 6
+      }
+    },
+    {
+      "id": "THEME_righteousness_and_purification",
+      "label": "Righteousness and Purification",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -2,
+        "y": 8,
+        "z": 4
+      }
+    },
+    {
+      "id": "THEME_internal_recollection",
+      "label": "Internal Recollection",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -4,
+        "y": 6,
+        "z": 0
+      }
+    },
+    {
+      "id": "THEME_challenges_in_spiritual_path",
+      "label": "Challenges in Spiritual Path",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 2,
+        "y": 4,
+        "z": 8
+      }
+    },
+    {
+      "id": "THEME_perseverance_in_recollection",
+      "label": "Perseverance in Recollection",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -2,
+        "y": 4,
+        "z": 2
+      }
+    },
+    {
+      "id": "THEME_benefits_of_recollection_over_physical_penances",
+      "label": "Benefits of Recollection Over Physical Penances",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -6,
+        "y": 4,
+        "z": -2
+      }
+    },
+    {
+      "id": "THEME_caution_against_rigid_penances",
+      "label": "Caution Against Rigid Penances",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 0,
+        "y": 2,
+        "z": 0
+      }
+    },
+    {
+      "id": "THEME_misconceptions_about_spiritual_practices",
+      "label": "Misconceptions About Spiritual Practices",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 4,
+        "y": 0,
+        "z": 6
+      }
+    },
+    {
+      "id": "THEME_pursuit_of_god_s_will_and_humility",
+      "label": "Pursuit of God's Will and Humility",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -4,
+        "y": 10,
+        "z": 4
+      }
+    },
+    {
+      "id": "THEME_approach_to_spiritual_practices",
+      "label": "Approach to Spiritual Practices",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 0,
+        "y": 8,
+        "z": -2
+      }
+    },
+    {
+      "id": "THEME_divine_presence_in_human_imperfection",
+      "label": "Divine Presence in Human Imperfection",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": -6,
+        "y": 12,
+        "z": 6
+      }
+    },
+    {
+      "id": "THEME_avoiding_sensible_pleasures",
+      "label": "Avoiding Sensible Pleasures",
+      "type": "theme",
+      "properties": {},
+      "position": {
+        "x": 6,
+        "y": 2,
+        "z": 4
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "THINKER_emile_cioran",
+      "target": "THEME_existential_dread",
+      "type": "RESONANCE",
+      "properties": {
+        "score": 0.81
+      }
+    },
+    {
+      "source": "THINKER_kierkegaard",
+      "target": "THEME_anxiety",
+      "type": "RESONANCE",
+      "properties": {
+        "score": 0.79
+      }
+    },
+    {
+      "source": "THINKER_st_john_of_the_cross",
+      "target": "THEME_divine_presence_and_suffering",
+      "type": "RESONANCE",
+      "properties": {
+        "score": 0.85
+      }
+    },
+    {
+      "source": "THINKER_meister_eckhart",
+      "target": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
+      "type": "RESONANCE",
+      "properties": {
+        "score": 0.83
+      }
+    },
+    {
+      "source": "THINKER_buddhism",
+      "target": "THEME_mystical_and_nihilistic_experiences",
+      "type": "RESONANCE",
+      "properties": {
+        "score": 0.78
+      }
+    },
+    {
+      "source": "THINKER_pascal",
+      "target": "THEME_anxiety",
+      "type": "RESONANCE",
+      "properties": {
+        "score": 0.76
+      }
+    },
+    {
+      "source": "THINKER_nietzsche",
+      "target": "THEME_lack_of_objective_meaning_value_purpose",
+      "type": "TENSION",
+      "properties": {
+        "score": 0.72
+      }
+    },
+    {
+      "source": "THINKER_tolstoy",
+      "target": "THEME_divine_presence_and_suffering",
+      "type": "RESONANCE",
+      "properties": {
+        "score": 0.74
+      }
+    }
+  ]
+}

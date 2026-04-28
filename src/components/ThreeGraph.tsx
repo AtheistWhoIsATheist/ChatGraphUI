@@ -11,10 +11,10 @@ function getVoidQuotient(node: Node) {
 }
 
 const voidColor = (vq: number): THREE.Color => {
-  if (vq >= 0.75) return new THREE.Color(0x00e5ff); // Cyber Cyan
-  if (vq >= 0.50) return new THREE.Color(0xbd00ff); // Mystic Purple
-  if (vq >= 0.25) return new THREE.Color(0xff9500); // Dread Amber
-  return new THREE.Color(0xe0e0e0);                 // Bone White
+  if (vq >= 0.75) return new THREE.Color(0xe4e4e7); // zinc-200
+  if (vq >= 0.50) return new THREE.Color(0xa1a1aa); // zinc-400
+  if (vq >= 0.25) return new THREE.Color(0x71717a); // zinc-500
+  return new THREE.Color(0x52525b);                 // zinc-600
 };
 
 const baseScale = (nodeType: string, count: number, vq: number): number => {
@@ -34,8 +34,8 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
     if (!mountRef.current) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x050505);
-    scene.fog = new THREE.FogExp2(0x050505, 0.018); // BUG-FIX: Adjusted fog density
+    scene.background = new THREE.Color(0x09090b);
+    scene.fog = new THREE.FogExp2(0x09090b, 0.018); // BUG-FIX: Adjusted fog density
 
     const camera = new THREE.PerspectiveCamera(70, mountRef.current.clientWidth / mountRef.current.clientHeight, 0.1, 2000);
     camera.position.set(0, 8, 28);
@@ -44,7 +44,7 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x050505); // BUG-FIX: Explicit clear color
+    renderer.setClearColor(0x09090b); // BUG-FIX: Explicit clear color
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -61,11 +61,11 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
     controls.panSpeed = 0.5;
     controls.target.set(0, 0, 0);
 
-    const ambientLight = new THREE.AmbientLight(0x0a0a12, 0.5);
+    const ambientLight = new THREE.AmbientLight(0x18181b, 1.2);
     scene.add(ambientLight);
     
     // BUG-FIX: Add point light correctly to scene and camera for depth
-    const pointLight = new THREE.PointLight(0x00e5ff, 0.5, 80, 1.5);
+    const pointLight = new THREE.PointLight(0xffffff, 0.4, 80, 1.5);
     camera.add(pointLight);
     scene.add(camera);
 
@@ -145,9 +145,9 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
                );
                const tubeGeo = new THREE.TubeGeometry(curve, 20, 0.01 + score * 0.015, 6, false);
                const tubeMat = new THREE.MeshBasicMaterial({
-                 color: 0x00e5ff,
+                 color: 0x71717a,
                  transparent: true,
-                 opacity: typeof score === 'number' && !isNaN(score) ? score * 0.65 : 0.4,
+                 opacity: typeof score === 'number' && !isNaN(score) ? score * 0.4 : 0.2,
                  blending: THREE.AdditiveBlending,
                  depthWrite: false,
                });
@@ -158,9 +158,9 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
             } else if (type === 'TENSION' || type === 'PARADOX' || type === 'OBJECTION') {
                const geo = new THREE.BufferGeometry().setFromPoints([start, end]);
                const mat = new THREE.LineDashedMaterial({
-                 color: 0xff9500,
+                 color: 0x52525b,
                  transparent: true,
-                 opacity: typeof score === 'number' && !isNaN(score) ? 0.35 + score * 0.35 : 0.6,
+                 opacity: typeof score === 'number' && !isNaN(score) ? 0.2 + score * 0.15 : 0.3,
                  dashSize: 0.5,
                  gapSize: 0.25,
                });
@@ -172,9 +172,9 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
             } else {
                const geo = new THREE.BufferGeometry().setFromPoints([start, end]);
                const mat = new THREE.LineBasicMaterial({
-                 color: 0x444455,
+                 color: 0x27272a,
                  transparent: true,
-                 opacity: 0.12,
+                 opacity: 0.2,
                });
                const line = new THREE.LineSegments(geo, mat);
                line.renderOrder = 1;
@@ -376,19 +376,19 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
   }, [nodes, links, onNodeSelect]);
 
   return (
-    <div className="w-full h-full relative border-l-4 border-l-[#333] bg-[#050505]">
+    <div className="w-full h-full relative  border-l-[#333] bg-zinc-900/50">
       <div ref={mountRef} className="absolute inset-0 outline-none" style={{ cursor: 'crosshair' }} />
       {hoveredNode && (
-         <div className="absolute top-8 left-8 z-20 bg-[#000] border-4 border-[#FF3A00] p-6 min-w-[250px] max-w-sm pointer-events-none transition-opacity shadow-[10px_10px_0_rgba(255,58,0,0.3)] neo-flat">
-            <div className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#00E5FF] mb-2 bg-[#00E5FF]/10 inline-block px-2 py-1 border border-[#00E5FF]/30">{hoveredNode.type}</div>
-            <div className="font-mono font-bold text-lg leading-snug break-words mb-4 text-[#eee]">{hoveredNode.label}</div>
+         <div className="absolute top-8 left-8 z-20 bg-zinc-950 border border-white/10 p-6 min-w-[250px] max-w-sm pointer-events-none transition-opacity shadow-2xl rounded-xl backdrop-blur-md transition-all">
+            <div className="text-[10px]  font-bold tracking-widest text-zinc-300 mb-2 bg-white/10 inline-block px-2 py-1 border border-white/10">{hoveredNode.type}</div>
+            <div className="font-mono font-bold text-lg leading-snug break-words mb-4 text-white">{hoveredNode.label}</div>
             
-            <div className="flex flex-col gap-2 mt-4 border-t-4 border-[#333] pt-4">
+            <div className="flex flex-col gap-2 mt-4 border-t border-white/5 pt-4">
                {/* Global attributes */}
                {getVoidQuotient(hoveredNode) !== undefined && (
                  <div className="flex justify-between items-baseline gap-3 text-[11px] font-mono">
-                   <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Analysis Quotient</span>
-                   <span className="text-[#FFD700] text-sm">{getVoidQuotient(hoveredNode).toFixed(3)}</span>
+                   <span className="text-zinc-400  tracking-widest text-[10px] font-bold">Analysis Quotient</span>
+                   <span className="text-zinc-200 text-sm">{getVoidQuotient(hoveredNode).toFixed(3)}</span>
                  </div>
                )}
                
@@ -397,14 +397,14 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
                  <>
                    {((hoveredNode as any).properties.era) && (
                      <div className="flex justify-between items-baseline gap-3 text-[11px] font-mono">
-                       <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Era</span>
-                       <span className="text-[#ccc] text-sm text-right">{(hoveredNode as any).properties.era}</span>
+                       <span className="text-zinc-400  tracking-widest text-[10px] font-bold">Era</span>
+                       <span className="text-zinc-300 text-sm text-right">{(hoveredNode as any).properties.era}</span>
                      </div>
                    )}
                    {((hoveredNode as any).properties.quote_count) !== undefined && (
                      <div className="flex justify-between items-baseline gap-3 text-[11px] font-mono">
-                       <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Quotes</span>
-                       <span className="text-[#00FF66] text-sm text-right">{(hoveredNode as any).properties.quote_count}</span>
+                       <span className="text-zinc-400  tracking-widest text-[10px] font-bold">Quotes</span>
+                       <span className="text-zinc-200 text-sm text-right">{(hoveredNode as any).properties.quote_count}</span>
                      </div>
                    )}
                  </>
@@ -414,18 +414,18 @@ export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], link
                  <>
                    {((hoveredNode as any).properties.confidence) !== undefined && (
                      <div className="flex justify-between items-baseline gap-3 text-[11px] font-mono">
-                       <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Confidence</span>
-                       <span className="text-[#00E5FF] font-bold text-sm text-right">{((hoveredNode as any).properties.confidence * 100).toFixed(0)}%</span>
+                       <span className="text-zinc-400  tracking-widest text-[10px] font-bold">Confidence</span>
+                       <span className="text-zinc-300 font-bold text-sm text-right">{((hoveredNode as any).properties.confidence * 100).toFixed(0)}%</span>
                      </div>
                    )}
                    {((hoveredNode as any).properties.epistemic_status) && (
                      <div className="flex justify-between items-baseline gap-3 text-[11px] font-mono">
-                       <span className="text-[#888] uppercase tracking-widest text-[10px] font-bold">Status</span>
-                       <span className="text-[#ccc] uppercase tracking-wider text-[10px] text-right font-bold">{(hoveredNode as any).properties.epistemic_status}</span>
+                       <span className="text-zinc-400  tracking-widest text-[10px] font-bold">Status</span>
+                       <span className="text-zinc-300  tracking-wider text-[10px] text-right font-bold">{(hoveredNode as any).properties.epistemic_status}</span>
                      </div>
                    )}
                    {((hoveredNode as any).properties.content) && (
-                     <div className="mt-4 text-xs font-mono text-[#ccc] leading-relaxed italic border-l-2 border-[#FF3A00] pl-3 py-2 bg-[#111]">
+                     <div className="mt-4 text-xs font-mono text-zinc-300 leading-relaxed italic border-l-2 border-white/10 pl-3 py-2 bg-white/5">
                        "{(hoveredNode as any).properties.content.length > 150 ? (hoveredNode as any).properties.content.slice(0, 150) + '...' : (hoveredNode as any).properties.content}"
                      </div>
                    )}

@@ -41,7 +41,7 @@ export function RelatedVoids({ nodeId, onSelect }: RelatedVoidsProps) {
 
   if (!nodeId) {
     return (
-      <div className="p-8 text-center text-zinc-600 text-xs font-mono uppercase tracking-widest">
+      <div className="p-8 text-center text-zinc-600 text-xs font-mono  tracking-widest">
         Select a node to reveal connections...
       </div>
     );
@@ -49,9 +49,9 @@ export function RelatedVoids({ nodeId, onSelect }: RelatedVoidsProps) {
 
   return (
     <div className="h-full flex flex-col p-6 overflow-hidden">
-      <div className="flex items-center gap-2 mb-6 text-orange-500">
+      <div className="flex items-center gap-2 mb-6 text-zinc-200">
         <Sparkles className="w-4 h-4" />
-        <span className="text-xs font-bold uppercase tracking-widest">Related Structural Nodes</span>
+        <span className="text-xs font-bold  tracking-widest">Related Structural Nodes</span>
       </div>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4">
@@ -70,8 +70,8 @@ export function RelatedVoids({ nodeId, onSelect }: RelatedVoidsProps) {
               className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-orange-500/30 transition-all cursor-pointer group"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[9px] uppercase tracking-widest text-zinc-500">{node.type}</span>
-                <ArrowRight className="w-3 h-3 text-zinc-600 group-hover:text-orange-500 transition-colors" />
+                <span className="text-[9px]  tracking-widest text-zinc-500">{node.type}</span>
+                <ArrowRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-200 transition-colors" />
               </div>
               <h4 className="text-sm font-serif text-zinc-300 group-hover:text-zinc-100 transition-colors">
                 {node.label}

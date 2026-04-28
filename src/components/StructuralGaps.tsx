@@ -102,7 +102,7 @@ export function StructuralGaps({
   return (
     <div className="w-full h-full flex flex-col bg-[#0a0a0a] text-zinc-100 p-8 overflow-hidden">
       <div className="flex items-center gap-3 mb-2">
-        <MapIcon className="w-6 h-6 text-orange-500" />
+        <MapIcon className="w-6 h-6 text-zinc-200" />
         <h1 className="text-2xl font-light tracking-tight">
           GapSynth Module
         </h1>
@@ -120,7 +120,7 @@ export function StructuralGaps({
           className={cn(
             "px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2",
             activeTab === "patterns"
-              ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
+              ? "bg-orange-500/20 text-zinc-300 border border-orange-500/30"
               : "bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-zinc-200",
           )}
         >
@@ -172,7 +172,7 @@ export function StructuralGaps({
                     onClick={() => onNodeSelect(node)}
                   >
                     <div className="flex justify-between items-start mb-2">
-                      <span className="text-[10px] uppercase tracking-widest text-red-400 font-bold">
+                      <span className="text-[10px]  tracking-widest text-red-400 font-bold">
                         {node.type}
                       </span>
                       <span className="text-xs text-zinc-500">0 Links</span>
@@ -196,7 +196,7 @@ export function StructuralGaps({
 
             <div>
               <h2 className="text-lg font-medium text-zinc-300 mb-4 flex items-center gap-2">
-                <LinkIcon className="w-4 h-4 text-orange-400" /> Underconnected
+                <LinkIcon className="w-4 h-4 text-zinc-300" /> Underconnected
                 Motifs
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -209,7 +209,7 @@ export function StructuralGaps({
                     onClick={() => onNodeSelect(node)}
                   >
                     <div className="flex justify-between items-start mb-2">
-                      <span className="text-[10px] uppercase tracking-widest text-orange-400 font-bold">
+                      <span className="text-[10px]  tracking-widest text-zinc-300 font-bold">
                         {node.type}
                       </span>
                       <span className="text-xs text-zinc-500">
@@ -249,7 +249,7 @@ export function StructuralGaps({
                   className="flex-1 cursor-pointer group"
                   onClick={() => onNodeSelect(sug.source)}
                 >
-                  <div className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1">
+                  <div className="text-[10px]  tracking-widest text-zinc-500 mb-1">
                     {sug.source.type}
                   </div>
                   <div className="text-base font-medium text-zinc-300 group-hover:text-emerald-400 transition-colors">
@@ -259,7 +259,7 @@ export function StructuralGaps({
 
                 <div className="flex flex-col items-center px-8 text-zinc-500">
                   <ArrowRight className="w-5 h-5 mb-1 text-emerald-500/50" />
-                  <span className="text-[10px] uppercase tracking-wider text-emerald-500/70 text-center max-w-[200px]">
+                  <span className="text-[10px]  tracking-wider text-emerald-500/70 text-center max-w-[200px]">
                     {sug.reason}
                   </span>
                 </div>
@@ -268,7 +268,7 @@ export function StructuralGaps({
                   className="flex-1 text-right cursor-pointer group"
                   onClick={() => onNodeSelect(sug.target)}
                 >
-                  <div className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1">
+                  <div className="text-[10px]  tracking-widest text-zinc-500 mb-1">
                     {sug.target.type}
                   </div>
                   <div className="text-base font-medium text-zinc-300 group-hover:text-emerald-400 transition-colors">
@@ -309,7 +309,7 @@ export function StructuralGaps({
                     </span>
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-widest text-blue-400 font-bold mb-1">
+                    <div className="text-[10px]  tracking-widest text-blue-400 font-bold mb-1">
                       {node.type}
                     </div>
                     <h3 className="text-lg font-medium text-zinc-200 group-hover:text-white transition-colors">

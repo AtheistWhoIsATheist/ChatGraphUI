@@ -32,10 +32,10 @@ function TheoryOverlay() {
     <>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="absolute bottom-6 right-6 z-40 px-6 py-4 bg-[#FF3A00] border-2 border-[#FF3A00] text-[#000] hover:bg-[#fff] hover:border-[#fff] transition-colors flex items-center gap-3 shadow-[6px_6px_0_rgba(255,58,0,0.3)] hover:shadow-none hover:translate-y-[2px] hover:translate-x-[2px] neo-flat"
+        className="absolute bottom-6 right-6 z-40 px-6 py-4 bg-zinc-100 border border-white/10 text-black hover:bg-[#fff] hover:border-[#fff] transition-colors flex items-center gap-3 shadow-2xl hover:shadow-none hover:translate-y-[2px] hover:translate-x-[2px] rounded-2xl transition hover:bg-white/5 disabled:opacity-50 hover:-translate-y-1 hover:shadow-xl backdrop-blur-md"
       >
         <BookOpen className="w-5 h-5" />
-        <span className="text-sm font-black uppercase tracking-widest">Theoretical Framework</span>
+        <span className="text-sm font-semibold  tracking-widest">Theoretical Framework</span>
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -43,11 +43,11 @@ function TheoryOverlay() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-24 right-6 z-40 w-[600px] max-h-[70vh] overflow-hidden bg-[#000] border-4 border-[#00E5FF] shadow-[10px_10px_0_rgba(0,229,255,0.2)] flex flex-col neo-flat"
+            className="absolute bottom-24 right-6 z-40 w-[600px] max-h-[70vh] overflow-hidden bg-zinc-950 border border-white/10 shadow-2xl flex flex-col rounded-2xl transition hover:bg-white/5 disabled:opacity-50 hover:-translate-y-1 hover:shadow-xl backdrop-blur-md"
           >
-            <div className="p-4 flex justify-between items-center border-b-4 border-[#333] bg-[#050505]">
-              <h3 className="text-[#00E5FF] font-black uppercase tracking-widest">Theoretical Framework</h3>
-              <button onClick={() => setIsOpen(false)} className="p-2 text-[#888] hover:text-[#FF3A00] hover:bg-[#FF3A00]/10 border-2 border-transparent hover:border-[#FF3A00] transition-colors neo-flat">
+            <div className="p-4 flex justify-between items-center border-b border-white/5 bg-zinc-900/50">
+              <h3 className="text-zinc-300 font-semibold  tracking-widest">Theoretical Framework</h3>
+              <button onClick={() => setIsOpen(false)} className="p-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-100/10 border border-transparent hover:border-white/10 transition-colors rounded-2xl transition hover:bg-white/5 disabled:opacity-50 hover:-translate-y-1 hover:shadow-xl backdrop-blur-md">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -140,7 +140,7 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-[#000] text-zinc-100 overflow-hidden font-sans selection:bg-[#FF3A00]/50 relative">
+    <div className="flex h-screen w-full bg-zinc-950 text-zinc-100 overflow-hidden font-sans selection:bg-zinc-100/50 relative">
       {/* Rupture Sequence */}
       <AnimatePresence>
         {showRupture && (
@@ -155,10 +155,10 @@ function App() {
               transition={{ duration: 2, ease: "easeOut" }}
               className="text-center space-y-6"
             >
-              <h1 className="text-4xl md:text-6xl font-serif tracking-widest text-[#FF3A00] uppercase animate-glitch">
+              <h1 className="text-4xl md:text-6xl font-serif tracking-widest text-zinc-200  animate-glitch">
                 Journal314 & REN Analysis Engine
               </h1>
-              <p className="text-zinc-500 font-mono tracking-[0.3em] uppercase text-sm">
+              <p className="text-zinc-500 font-mono tracking-widest  text-sm">
                 Structural Textual Analysis
               </p>
               <motion.div 
@@ -179,7 +179,7 @@ function App() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -50, opacity: 0 }}
             onClick={() => setIsLeftSidebarOpen(true)}
-            className="fixed left-0 top-1/2 -translate-y-1/2 z-30 w-10 h-20 bg-[#000] border-y-4 border-r-4 border-[#333] flex items-center justify-center text-[#888] hover:text-[#00E5FF] hover:border-[#00E5FF] transition-colors neo-flat group"
+            className="fixed left-0 top-1/2 -translate-y-1/2 z-30 w-10 h-20 bg-zinc-950 border-y-2 border-r-2 border-white/5 flex items-center justify-center text-zinc-400 hover:text-zinc-300 hover:border-white/10 transition-colors rounded-2xl transition hover:bg-white/5 disabled:opacity-50 hover:-translate-y-1 hover:shadow-xl backdrop-blur-md group"
           >
             <Menu className="w-6 h-6 group-hover:scale-110 transition-transform" />
           </motion.button>
@@ -194,16 +194,16 @@ function App() {
             animate={{ x: 0 }}
             exit={{ x: -80 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="w-24 border-r-4 border-[#333] bg-[#050505] flex flex-col items-center py-6 z-20 shadow-[10px_0_0_rgba(0,0,0,0.5)] relative"
+            className="w-24 border-r-2 border-white/5 bg-zinc-900/50 flex flex-col items-center py-6 z-20 shadow-2xl relative"
           >
             <button 
               onClick={() => setIsLeftSidebarOpen(false)}
-              className="absolute top-2 right-2 p-1 text-[#555] hover:text-[#FF3A00] transition-colors"
+              className="absolute top-2 right-2 p-1 text-zinc-500 hover:text-zinc-200 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
-            <div className="w-12 h-12 bg-[#000] border-4 border-[#FF3A00] flex items-center justify-center mb-8 shadow-[6px_6px_0_rgba(255,58,0,0.5)] neo-flat">
-              <span className="font-serif text-[#FF3A00] font-black text-2xl animate-pulse-slow">V</span>
+            <div className="w-12 h-12 bg-zinc-950 border border-white/10 flex items-center justify-center mb-8 shadow-2xl rounded-2xl transition hover:bg-white/5 disabled:opacity-50 hover:-translate-y-1 hover:shadow-xl backdrop-blur-md">
+              <span className="font-serif text-zinc-200 font-semibold text-2xl animate-pulse-slow">V</span>
             </div>
             
             <nav className="flex-1 flex flex-col gap-6">
@@ -222,10 +222,10 @@ function App() {
                   key={item.id}
                   onClick={() => setViewMode(item.id as ViewMode)}
                   className={cn(
-                    "w-14 h-14 flex items-center justify-center transition-all cursor-pointer border-2 neo-flat",
+                    "w-14 h-14 flex items-center justify-center transition-all cursor-pointer border rounded-2xl transition hover:bg-white/5 disabled:opacity-50 hover:-translate-y-1 hover:shadow-xl backdrop-blur-md",
                     viewMode === item.id 
-                      ? "bg-[#00E5FF] border-[#00E5FF] text-[#000] shadow-[4px_4px_0_rgba(0,229,255,0.3)] translate-y-[-2px] translate-x-[-2px]" 
-                      : "bg-[#111] border-transparent text-[#888] hover:border-[#00E5FF] hover:text-[#00E5FF] hover:bg-[#00E5FF]/10"
+                      ? "bg-white/10 border-white/10 text-black shadow-2xl translate-y-[-2px] translate-x-[-2px]" 
+                      : "bg-white/5 border-transparent text-zinc-400 hover:border-white/10 hover:text-zinc-300 hover:bg-white/10/10"
                   )}
                   title={item.title}
                 >
@@ -233,14 +233,14 @@ function App() {
                 </button>
               ))}
 
-              <div className="mt-auto flex flex-col gap-4 border-t-2 border-[#333] pt-6">
+              <div className="mt-auto flex flex-col gap-4 border-t-2 border-white/5 pt-6">
                 <button 
                   onClick={() => setIsFileManagerOpen(!isFileManagerOpen)}
                   className={cn(
-                    "w-14 h-14 flex items-center justify-center transition-all cursor-pointer border-2 neo-flat",
+                    "w-14 h-14 flex items-center justify-center transition-all cursor-pointer border rounded-2xl transition hover:bg-white/5 disabled:opacity-50 hover:-translate-y-1 hover:shadow-xl backdrop-blur-md",
                     isFileManagerOpen 
-                      ? "bg-[#FF3A00] border-[#FF3A00] text-[#000] shadow-[4px_4px_0_rgba(255,58,0,0.3)] translate-y-[-2px] translate-x-[-2px]" 
-                      : "bg-[#111] border-transparent text-[#888] hover:border-[#FF3A00] hover:text-[#FF3A00] hover:bg-[#FF3A00]/10"
+                      ? "bg-zinc-100 border-white/10 text-black shadow-2xl translate-y-[-2px] translate-x-[-2px]" 
+                      : "bg-white/5 border-transparent text-zinc-400 hover:border-white/10 hover:text-zinc-200 hover:bg-zinc-100/10"
                   )}
                   title="Document Ingestion Manager"
                 >
@@ -328,7 +328,7 @@ function App() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 50, opacity: 0 }}
             onClick={() => setIsRightSidebarOpen(true)}
-            className="fixed right-0 top-1/2 -translate-y-1/2 z-30 w-10 h-20 bg-[#000] border-y-4 border-l-4 border-[#333] flex items-center justify-center text-[#888] hover:text-[#00E5FF] hover:border-[#00E5FF] transition-colors neo-flat group"
+            className="fixed right-0 top-1/2 -translate-y-1/2 z-30 w-10 h-20 bg-zinc-950 border-y-2 border-l-2 border-white/5 flex items-center justify-center text-zinc-400 hover:text-zinc-300 hover:border-white/10 transition-colors rounded-2xl transition hover:bg-white/5 disabled:opacity-50 hover:-translate-y-1 hover:shadow-xl backdrop-blur-md group"
           >
             <Menu className="w-6 h-6 group-hover:scale-110 transition-transform" />
           </motion.button>
@@ -343,11 +343,11 @@ function App() {
             animate={{ x: 0 }}
             exit={{ x: 400 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="w-[400px] border-l-4 border-[#333] bg-[#050505] flex flex-col z-20 shadow-[-10px_0_0_rgba(0,0,0,0.5)] relative"
+            className="w-[400px] border-l-2 border-white/5 bg-zinc-900/50 flex flex-col z-20 shadow-2xl relative"
           >
             <button 
               onClick={() => setIsRightSidebarOpen(false)}
-              className="absolute top-2 left-2 p-1 text-[#555] hover:text-[#FF3A00] transition-colors z-50"
+              className="absolute top-2 left-2 p-1 text-zinc-500 hover:text-zinc-200 transition-colors z-50"
             >
               <X className="w-5 h-5" />
             </button>
@@ -355,26 +355,26 @@ function App() {
             {/* Sidebar Mode Toggle */}
             <div className="absolute -left-[3.5rem] top-24 flex flex-col gap-4 z-50">
               {[
-                { id: 'chat', icon: MessageSquare, color: 'text-[#FF3A00]', activeBorder: 'border-[#FF3A00]' },
-                { id: 'intelligence', icon: Layers, color: 'text-[#FFD700]', activeBorder: 'border-[#FFD700]' },
-                { id: 'insights', icon: Zap, color: 'text-[#00FF66]', activeBorder: 'border-[#00FF66]' },
-                { id: 'details', icon: Info, color: 'text-[#00E5FF]', activeBorder: 'border-[#00E5FF]' },
+                { id: 'chat', icon: MessageSquare, color: 'text-zinc-200', activeBorder: 'border-white/10' },
+                { id: 'intelligence', icon: Layers, color: 'text-zinc-300', activeBorder: 'border-[#FFD700]' },
+                { id: 'insights', icon: Zap, color: 'text-zinc-300', activeBorder: 'border-[#00FF66]' },
+                { id: 'details', icon: Info, color: 'text-zinc-300', activeBorder: 'border-white/10' },
                 { id: 'audit', icon: ShieldCheck, color: 'text-[#ff00ff]', activeBorder: 'border-[#ff00ff]' }
               ].map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setSidebarMode(item.id as SidebarMode)}
                   className={cn(
-                    "w-14 h-14 flex items-center justify-center transition-all border-y-4 border-l-4 border-r-0 relative neo-flat",
+                    "w-14 h-14 flex items-center justify-center transition-all border-y-2 border-l-2 border-r-0 relative rounded-2xl transition hover:bg-white/5 disabled:opacity-50 hover:-translate-y-1 hover:shadow-xl backdrop-blur-md",
                     sidebarMode === item.id 
-                      ? `bg-[#050505] ${item.activeBorder} ${item.color} -ml-2 w-16 z-20` 
-                      : "bg-[#111] border-[#333] text-[#555] hover:text-[#fff] hover:border-[#555] hover:bg-[#222]"
+                      ? `bg-zinc-900/50 ${item.activeBorder} ${item.color} -ml-2 w-16 z-20` 
+                      : "bg-white/5 border-white/5 text-zinc-500 hover:text-white hover:border-white/20 hover:bg-white/10"
                   )}
                   title={item.id}
                 >
                   <item.icon className="w-6 h-6" strokeWidth={sidebarMode === item.id ? 3 : 2} />
                   {sidebarMode === item.id && (
-                    <div className={cn("absolute right-[-4px] top-0 bottom-0 w-2 bg-[#050505] z-30", item.activeBorder.replace('border-', 'bg-'))} />
+                    <div className={cn("absolute right-[-4px] top-0 bottom-0 w-2 bg-zinc-900/50 z-30", item.activeBorder.replace('border-', 'bg-'))} />
                   )}
                 </button>
               ))}

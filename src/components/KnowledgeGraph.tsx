@@ -15,26 +15,27 @@ import { blocksToString } from '../utils/voidUtils';
 // --- TYPES & CONSTANTS ---
 
 const NODE_COLORS: Record<NodeType, string> = {
-  treatise: '#f97316', // Orange-500
-  journal: '#eab308',  // Yellow-500
-  thinker: '#3b82f6',  // Blue-500
-  concept: '#ef4444',  // Red-500
-  fragment: '#a8a29e', // Stone-400
-  methodology: '#8b5cf6', // Violet-500
-  claim: '#ec4899',    // Pink-500
-  experience: '#10b981', // Emerald-500
-  library_item: '#64748b', // Slate-500
-  summary: '#14b8a6',  // Teal-500
-  question: '#f43f5e', // Rose-500
-  praxis: '#84cc16',   // Lime-500
-  axiom: '#d946ef',    // Fuchsia-500
+  treatise: '#a1a1aa', // zinc-400
+  journal: '#d4d4d8',  // zinc-300
+  thinker: '#e4e4e7',  // zinc-200
+  theme: '#52525b',    // zinc-600
+  concept: '#71717a',  // zinc-500
+  fragment: '#3f3f46', // zinc-700
+  methodology: '#a1a1aa', // zinc-400
+  claim: '#d4d4d8',    // zinc-300
+  experience: '#e4e4e7', // zinc-200
+  library_item: '#52525b', // zinc-600
+  summary: '#71717a',  // zinc-500
+  question: '#3f3f46', // zinc-700
+  praxis: '#a1a1aa',   // zinc-400
+  axiom: '#d4d4d8',    // zinc-300
   ...NT_NODE_COLORS,
 };
 
 const getHierarchicalColor = (node: Node) => {
   if (node.id === 'void') return '#ffffff'; // The Singularity is pure light
-  if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) return '#f97316'; // Foundations are warm
-  if (node.type === 'methodology' || node.id.includes('series') || node.id.includes('codex')) return '#8b5cf6'; // Operations are violet
+  if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) return '#e4e4e7'; // zinc-200
+  if (node.type === 'methodology' || node.id.includes('series') || node.id.includes('codex')) return '#a1a1aa'; // zinc-400
   return NODE_COLORS[node.type] || '#71717a';
 };
 
@@ -262,7 +263,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
       width,
       dashArray,
       isFlowing,
-      color: isSelected || isHovered ? "#f97316" : (isNeighbor ? "rgba(249,115,22,0.4)" : (isFoundational ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.25)")),
+      color: isSelected || isHovered ? "#e4e4e7" : (isNeighbor ? "rgba(255,255,255,0.4)" : (isFoundational ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.05)")),
       isActive: isSelected || isHovered
     };
   };
@@ -460,14 +461,14 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 px-6 py-2 bg-black/60 backdrop-blur-2xl border border-orange-500/40 rounded-full shadow-[0_0_30px_rgba(249,115,22,0.2)]"
+            className="absolute top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 px-6 py-2 bg-black/60 backdrop-blur-2xl border border-orange-500/40 rounded-full shadow-2xl"
           >
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-orange-500 animate-pulse" />
-              <span className="text-[10px] uppercase font-black tracking-[0.3em] text-orange-100">Sovereign Inquiry Active</span>
+              <Zap className="w-4 h-4 text-zinc-200 animate-pulse" />
+              <span className="text-[10px]  font-semibold tracking-widest text-orange-100">Sovereign Inquiry Active</span>
             </div>
             <div className="w-px h-4 bg-white/10" />
-            <div className="text-[10px] uppercase font-bold tracking-widest text-zinc-400">
+            <div className="text-[10px]  font-bold tracking-widest text-zinc-400">
               {nodes.find(n => n.id === selectedNodeId)?.label}
             </div>
             <button 
@@ -487,7 +488,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
         <div className="pointer-events-auto flex items-center gap-2">
           <button
             onClick={() => setIsToolbarOpen(!isToolbarOpen)}
-            className="p-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-xl shadow-xl text-zinc-400 hover:text-orange-500 hover:bg-white/5 transition-colors"
+            className="p-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-xl shadow-xl text-zinc-400 hover:text-zinc-200 hover:bg-white/5 transition-colors"
             title="Toggle Toolbar"
           >
             <SlidersHorizontal className="w-4 h-4" />
@@ -503,25 +504,25 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
               className="flex flex-col gap-4"
             >
               {/* Scented Search */}
-              <div className="pointer-events-auto bg-[#000] border-2 border-[#333] hover:border-[#00E5FF] transition-colors p-3 w-64 flex items-center gap-3 neo-flat">
-                <Search className="w-5 h-5 text-[#00E5FF]" />
+              <div className="pointer-events-auto bg-zinc-950 border border-white/5 hover:border-white/10 transition-colors p-3 w-64 flex items-center gap-3 rounded-2xl transition hover:bg-white/5 backdrop-blur-md">
+                <Search className="w-5 h-5 text-zinc-300" />
                 <input 
                   type="text" 
                   placeholder="Scented Search..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-transparent border-none outline-none text-sm text-[#eee] placeholder:text-[#555] w-full font-mono uppercase tracking-widest"
+                  className="bg-transparent border-none outline-none text-sm text-zinc-100 placeholder:text-zinc-500 w-full font-mono  tracking-widest"
                 />
                 {searchQuery && (
-                  <button onClick={() => setSearchQuery('')} className="p-1 hover:bg-[#111]">
-                    <X className="w-4 h-4 text-[#888]" />
+                  <button onClick={() => setSearchQuery('')} className="p-1 hover:bg-white/5">
+                    <X className="w-4 h-4 text-zinc-400" />
                   </button>
                 )}
               </div>
 
               {/* Filter Group */}
-              <div className="pointer-events-auto bg-[#000] border-2 border-[#333] p-5 w-64 neo-flat">
-                <div className="flex items-center gap-2 mb-4 text-xs font-bold text-[#FF3A00] uppercase tracking-[0.2em]">
+              <div className="pointer-events-auto bg-zinc-950 border border-white/5 p-5 w-64 rounded-2xl transition hover:bg-white/5 backdrop-blur-md">
+                <div className="flex items-center gap-2 mb-4 text-xs font-bold text-zinc-200  tracking-widest">
                   <Filter className="w-4 h-4" /> Filters
                 </div>
                 
@@ -536,10 +537,10 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                         setActiveTypes(next);
                       }}
                       className={cn(
-                        "text-[10px] uppercase px-3 py-1 font-bold tracking-widest border-2 transition-all cursor-pointer",
+                        "text-[10px]  px-3 py-1 font-bold tracking-widest border transition-all cursor-pointer",
                         activeTypes.has(type) 
-                          ? "bg-[#FF3A00] border-[#FF3A00] text-[#000] shadow-[3px_3px_0px_rgba(255,58,0,0.4)] translate-x-[-2px] translate-y-[-2px]" 
-                          : "bg-[#050505] border-[#333] text-[#888] hover:border-[#FF3A00] hover:text-[#fff]"
+                          ? "bg-zinc-100 text-black border-white/10 text-zinc-950 shadow-2xl translate-x-[-2px] translate-y-[-2px]" 
+                          : "bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
                       )}
                     >
                       {type}
@@ -558,10 +559,10 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                         setActiveStatuses(next);
                       }}
                       className={cn(
-                        "text-[10px] uppercase px-3 py-1 font-bold tracking-widest border-2 transition-all cursor-pointer",
+                        "text-[10px]  px-3 py-1 font-bold tracking-widest border transition-all cursor-pointer",
                         activeStatuses.has(status)
-                          ? "bg-[#00E5FF] border-[#00E5FF] text-[#000] shadow-[3px_3px_0px_rgba(0,229,255,0.4)] translate-x-[-2px] translate-y-[-2px]"
-                          : "bg-[#050505] border-[#333] text-[#888] hover:border-[#00E5FF] hover:text-[#fff]"
+                          ? "bg-white/10 border-white/10 text-zinc-950 shadow-2xl translate-x-[-2px] translate-y-[-2px]"
+                          : "bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
                       )}
                     >
                       {status}
@@ -575,45 +576,45 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                 <button
                   onClick={() => setClusterMode(!clusterMode)}
                   className={cn(
-                    "flex items-center gap-3 px-5 py-3 border-2 transition-all duration-300 font-bold",
+                    "flex items-center gap-3 px-5 py-3 border transition-all duration-300 font-bold",
                     clusterMode 
-                      ? "bg-[#FF3A00] text-[#000] border-[#FF3A00] shadow-[4px_4px_0px_rgba(255,58,0,0.5)] translate-x-[-2px] translate-y-[-2px]" 
-                      : "bg-[#050505] border-[#333] text-[#888] hover:border-[#FF3A00] hover:text-[#fff]"
+                      ? "bg-zinc-100 text-black text-zinc-950 border-white/10 shadow-2xl translate-x-[-2px] translate-y-[-2px]" 
+                      : "bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
                   )}
                 >
                   <Atom className={cn("w-5 h-5", clusterMode && "animate-spin-slow")} />
-                  <span className="text-xs uppercase tracking-widest">Cluster Mode</span>
+                  <span className="text-xs  tracking-widest">Cluster Mode</span>
                 </button>
 
                 <button
                   onClick={() => setShowLatent(!showLatent)}
                   className={cn(
-                    "flex items-center gap-3 px-5 py-3 border-2 transition-all duration-300 font-bold",
+                    "flex items-center gap-3 px-5 py-3 border transition-all duration-300 font-bold",
                     showLatent 
-                      ? "bg-[#00E5FF] text-[#000] border-[#00E5FF] shadow-[4px_4px_0px_rgba(0,229,255,0.5)] translate-x-[-2px] translate-y-[-2px]" 
-                      : "bg-[#050505] border-[#333] text-[#888] hover:border-[#00E5FF] hover:text-[#fff]"
+                      ? "bg-white/10 text-zinc-950 border-white/10 shadow-2xl translate-x-[-2px] translate-y-[-2px]" 
+                      : "bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
                   )}
                 >
                   <Sparkles className={cn("w-5 h-5", showLatent && "animate-pulse")} />
-                  <span className="text-xs uppercase tracking-widest">Gap Synthesis</span>
+                  <span className="text-xs  tracking-widest">Gap Synthesis</span>
                 </button>
 
                 <button
                   onClick={() => setStructuralIntegrity(!structuralIntegrity)}
                   className={cn(
-                    "flex items-center gap-3 px-5 py-3 border-2 transition-all duration-300 font-bold",
+                    "flex items-center gap-3 px-5 py-3 border transition-all duration-300 font-bold",
                     structuralIntegrity 
-                      ? "bg-[#FF3A00] text-[#000] border-[#FF3A00] shadow-[4px_4px_0px_rgba(255,58,0,0.5)] translate-x-[-2px] translate-y-[-2px]" 
-                      : "bg-[#050505] border-[#333] text-[#888] hover:border-[#FF3A00] hover:text-[#fff]"
+                      ? "bg-zinc-100 text-black text-zinc-950 border-white/10 shadow-2xl translate-x-[-2px] translate-y-[-2px]" 
+                      : "bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
                   )}
                 >
                   <Network className={cn("w-5 h-5", structuralIntegrity && "animate-pulse")} />
-                  <span className="text-xs uppercase tracking-widest">Structural Integrity</span>
+                  <span className="text-xs  tracking-widest">Structural Integrity</span>
                 </button>
 
                 {/* Gravity Slider */}
-                <div className="bg-[#050505] border-2 border-[#333] p-4 flex flex-col gap-3 font-mono font-bold tracking-widest neo-flat">
-                  <div className="flex items-center justify-between text-xs text-[#00E5FF] uppercase">
+                <div className="bg-zinc-900/50 border border-white/5 p-4 flex flex-col gap-3 font-mono font-bold tracking-widest rounded-2xl transition hover:bg-white/5 backdrop-blur-md">
+                  <div className="flex items-center justify-between text-xs text-zinc-300 ">
                     <div className="flex items-center gap-2">
                       <SlidersHorizontal className="w-4 h-4" />
                       <span>Gravity Collapse</span>
@@ -626,7 +627,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                     max="100" 
                     value={gravity} 
                     onChange={(e) => setGravity(parseInt(e.target.value))}
-                    className="w-full accent-[#FF3A00] h-1 bg-[#222] appearance-none cursor-pointer"
+                    className="w-full accent-[#FF3A00] h-1 bg-white/10 appearance-none cursor-pointer"
                   />
                 </div>
               </div>
@@ -642,29 +643,29 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-6 left-6 z-40 w-80 bg-[#050505] border-2 border-[#00E5FF] p-6 neo-flat shadow-[8px_8px_0px_rgba(0,229,255,0.2)]"
+            className="absolute bottom-6 left-6 z-40 w-80 bg-zinc-900/50 border border-white/10 p-6 rounded-2xl transition hover:bg-white/5 backdrop-blur-md shadow-2xl"
           >
-            <div className="flex items-center gap-3 mb-4 text-[#00E5FF]">
+            <div className="flex items-center gap-3 mb-4 text-zinc-300">
               <Sparkles className="w-5 h-5 animate-pulse" />
-              <span className="text-xs font-bold uppercase tracking-widest">Latent Discovery</span>
+              <span className="text-xs font-bold  tracking-widest">Latent Discovery</span>
             </div>
             
             <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-[#111] border border-[#333] p-4 text-center">
-                <div className="text-[10px] text-[#FF3A00] uppercase font-bold tracking-widest mb-2">Centrality</div>
-                <div className="text-3xl font-serif font-black text-white">{selectedInsights.degree}</div>
+              <div className="bg-white/5 border border-white/5 p-4 text-center">
+                <div className="text-[10px] text-zinc-200  font-bold tracking-widest mb-2">Centrality</div>
+                <div className="text-3xl font-serif font-semibold text-white">{selectedInsights.degree}</div>
               </div>
               <div className={cn("border p-4 text-center flex flex-col justify-center", selectedInsights.isSingularity ? "bg-[#ff3a00]/10 border-[#ff3a00]" : "bg-[#00e5ff]/10 border-[#00e5ff]")}>
-                <div className="text-[10px] text-[#888] uppercase font-bold tracking-widest mb-2">Status</div>
-                <div className={cn("text-xs font-black tracking-widest", selectedInsights.isSingularity ? "text-[#FF3A00]" : "text-[#00E5FF]")}>
+                <div className="text-[10px] text-zinc-400  font-bold tracking-widest mb-2">Status</div>
+                <div className={cn("text-xs font-semibold tracking-widest", selectedInsights.isSingularity ? "text-zinc-200" : "text-zinc-300")}>
                   {selectedInsights.isSingularity ? "SINGULARITY" : "CONNECTED"}
                 </div>
               </div>
             </div>
 
             {selectedInsights.suggestion && (
-              <div className="text-xs text-[#ccc] bg-[#000] p-4 border border-[#333] leading-relaxed font-mono">
-                <strong className="text-[#00E5FF] block mb-2 uppercase tracking-widest text-[10px]">AI Recommendation:</strong>
+              <div className="text-xs text-zinc-300 bg-zinc-950 p-4 border border-white/5 leading-relaxed font-mono">
+                <strong className="text-zinc-300 block mb-2  tracking-widest text-[10px]">AI Recommendation:</strong>
                 {selectedInsights.suggestion}
               </div>
             )}
@@ -917,7 +918,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                   {/* Node Shape */}
                   <div 
                     className={cn(
-                      "rounded-full shadow-[0_0_20px_rgba(0,0,0,0.8)] border-2 transition-all duration-500",
+                      "rounded-full shadow-2xl border transition-all duration-500",
                       isSelected ? "animate-pulse" : "group-hover:scale-110",
                       matchesSearch && "shadow-[0_0_40px_white] ring-4 ring-white/20"
                     )}
@@ -938,9 +939,9 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
 
                   {/* Label (Dynamic Density) */}
                   <div className={cn(
-                    "absolute top-full mt-3 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-xl border border-white/10 text-[10px] uppercase font-bold tracking-widest transition-all duration-500 pointer-events-none",
+                    "absolute top-full mt-3 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-xl border border-white/10 text-[10px]  font-bold tracking-widest transition-all duration-500 pointer-events-none",
                     (isHovered || isSelected || matchesSearch || scale.radius > 30) 
-                      ? "opacity-100 translate-y-0 text-white border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.3)] bg-orange-950/20" 
+                      ? "opacity-100 translate-y-0 text-white border-orange-500 shadow-2xl bg-orange-950/20" 
                       : (isDeeplyDimmed ? "opacity-0 -translate-y-2 scale-90" : "opacity-30 translate-y-0 text-zinc-400")
                   )}>
                     {node.label}
@@ -991,9 +992,9 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                 {/* Header */}
                 <div className="p-8 border-b border-white/5 flex justify-between items-start">
                   <div>
-                    <div className="flex items-center gap-2 text-orange-500 mb-2">
+                    <div className="flex items-center gap-2 text-zinc-200 mb-2">
                       <Activity className="w-4 h-4" />
-                      <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Data Stream</span>
+                      <span className="text-[10px]  tracking-widest font-bold">Data Stream</span>
                     </div>
                     <h2 className="text-3xl font-light text-white leading-tight">
                       {expandedNode?.label}
@@ -1019,7 +1020,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                   <div className="mt-12 space-y-6">
                     {expandedNode?.metadata?.deconstruction_residue && (
                       <div className="p-4 bg-orange-500/5 border border-orange-500/20 rounded-lg">
-                        <div className="text-[10px] text-orange-500/70 uppercase tracking-widest mb-2 font-bold">Deconstruction Residue</div>
+                        <div className="text-[10px] text-zinc-200/70  tracking-widest mb-2 font-bold">Deconstruction Residue</div>
                         <div className="text-sm text-zinc-300 italic leading-relaxed">
                           "{expandedNode.metadata.deconstruction_residue}"
                         </div>
@@ -1027,18 +1028,18 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                     )}
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/5">
-                        <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-1">Gravity</div>
-                        <div className="text-2xl font-light text-orange-400">{gravityCount}</div>
+                        <div className="text-[10px] text-zinc-600  tracking-widest mb-1">Gravity</div>
+                        <div className="text-2xl font-light text-zinc-300">{gravityCount}</div>
                       </div>
                       <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/5">
-                        <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-1">Status</div>
+                        <div className="text-[10px] text-zinc-600  tracking-widest mb-1">Status</div>
                         <div className="text-sm text-zinc-300 mt-2">{expandedNode?.status}</div>
                       </div>
                     </div>
 
                     {synapses.length > 0 && (
                       <div>
-                        <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-3">Synapses</div>
+                        <div className="text-[10px] text-zinc-600  tracking-widest mb-3">Synapses</div>
                         <div className="space-y-2">
                           {synapses.map(synapse => (
                             <div 
@@ -1047,7 +1048,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                               className="p-3 bg-black/40 border border-white/5 rounded-lg hover:border-white/20 transition-colors cursor-pointer flex justify-between items-center"
                             >
                               <span className="text-sm text-zinc-300">{synapse.label}</span>
-                              <span className="text-[9px] uppercase tracking-wider text-zinc-600 border border-white/5 px-1.5 py-0.5 rounded">{synapse.type}</span>
+                              <span className="text-[9px]  tracking-wider text-zinc-600 border border-white/5 px-1.5 py-0.5 rounded">{synapse.type}</span>
                             </div>
                           ))}
                         </div>
@@ -1055,7 +1056,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                     )}
 
                     <div>
-                      <div className="text-[10px] text-zinc-600 uppercase tracking-widest mb-3">Tags</div>
+                      <div className="text-[10px] text-zinc-600  tracking-widest mb-3">Tags</div>
                       <div className="flex flex-wrap gap-2">
                         {expandedNode?.metadata?.tags?.map((tag, i) => (
                           <motion.span
@@ -1063,7 +1064,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: i * 0.1 }}
-                            className="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded text-[10px] uppercase text-zinc-400"
+                            className="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded text-[10px]  text-zinc-400"
                           >
                             {tag}
                           </motion.span>

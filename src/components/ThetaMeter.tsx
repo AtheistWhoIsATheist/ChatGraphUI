@@ -37,7 +37,7 @@ export function ThetaMeter({ theta, size = 'md', animated = true, showTrend = fa
 
   return (
     <div className="w-full flex flex-col gap-2">
-      <div className={cn("w-full bg-[#111111] rounded-sm overflow-hidden relative shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]", heightClass)}>
+      <div className={cn("w-full bg-[#111111] rounded-sm overflow-hidden relative shadow-xl", heightClass)}>
         <motion.div
           className="h-full rounded-sm"
           initial={false}

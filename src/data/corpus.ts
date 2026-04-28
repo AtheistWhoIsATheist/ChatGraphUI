@@ -9,6 +9,7 @@ export type NodeType =
   | "treatise"
   | "journal"
   | "thinker"
+  | "theme"
   | "concept"
   | "fragment"
   | "methodology"
@@ -18,7 +19,7 @@ export type NodeType =
   | "summary"
   | "question"
   | "praxis"
-  | "axiom"
+  | "axiom" | "passage" | "elevation_level" | "term"
   | NTNodeType;
 
 export type NodeStatus =
@@ -53,6 +54,9 @@ export interface Node {
   saturation_level?: number;
   last_audited_date?: Date | string;
   revision_count?: number;
+  properties?: any;
+  position?: { x: number, y: number, z: number };
+  quote_count?: number;
   audit_logs?: {
     id: string;
     timestamp: string;
@@ -84,6 +88,7 @@ export interface Link {
   source: string;
   target: string;
   label?: string;
+  properties?: any;
   type?:
     | "explores"
     | "culminates"
@@ -92,6 +97,9 @@ export interface Link {
     | "confronts"
     | "paradox"
     | "objection"
+    | "resonance"
+    | "tension"
+    | "attribution" | "O_TO_E_transition" | "uses_term" | "classified_as" | "authored"
     | NTEdgeType;
 }
 
@@ -102,7 +110,4485 @@ const createBlock = (content: string): VoidBlock => ({
   metadata: { lastEdited: Date.now(), sentiment: "neutral" },
 });
 
-export const corpusNodes: Node[] = [
+export const corpusNodes: Node[] = [\n{
+  "id": "THINKER_emile_cioran",
+  "label": "Emile Cioran",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.548,
+    "absorption": 0.483,
+    "aperture": 0.6,
+    "dread": 0.533,
+    "quote_count": 470
+  },
+  "position": {
+    "x": -0.33,
+    "y": 2,
+    "z": 0.67
+  },
+  "quote_count": 470
+},\n{
+  "id": "THINKER_ernest_becker",
+  "label": "Ernest Becker",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.473,
+    "absorption": 0.5,
+    "aperture": 0.433,
+    "dread": 0.6,
+    "quote_count": 326
+  },
+  "position": {
+    "x": 0,
+    "y": -1.33,
+    "z": 2
+  },
+  "quote_count": 326
+},\n{
+  "id": "THINKER_thomas_kempis",
+  "label": "Thomas à Kempis",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.462,
+    "absorption": 0.517,
+    "aperture": 0.483,
+    "dread": 0.533,
+    "quote_count": 181
+  },
+  "position": {
+    "x": 0.33,
+    "y": -0.33,
+    "z": 0.67
+  },
+  "quote_count": 181
+},\n{
+  "id": "THINKER_evelyn_underhill",
+  "label": "Evelyn Underhill",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.565,
+    "absorption": 0.45,
+    "aperture": 0.617,
+    "dread": 0.417,
+    "quote_count": 179
+  },
+  "position": {
+    "x": -1,
+    "y": 2.33,
+    "z": -1.67
+  },
+  "quote_count": 179
+},\n{
+  "id": "THINKER_kierkegaard",
+  "label": "Kierkegaard",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.475,
+    "absorption": 0.5,
+    "aperture": 0.467,
+    "dread": 0.567,
+    "quote_count": 174
+  },
+  "position": {
+    "x": 0,
+    "y": -0.67,
+    "z": 1.33
+  },
+  "quote_count": 174
+},\n{
+  "id": "THINKER_st_john_of_the_cross",
+  "label": "St. John of the Cross",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.545,
+    "absorption": 0.467,
+    "aperture": 0.667,
+    "dread": 0.467,
+    "quote_count": 158
+  },
+  "position": {
+    "x": -0.67,
+    "y": 3.33,
+    "z": -0.67
+  },
+  "quote_count": 158
+},\n{
+  "id": "THINKER_nietzsche",
+  "label": "Nietzsche",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.462,
+    "absorption": 0.517,
+    "aperture": 0.483,
+    "dread": 0.533,
+    "quote_count": 146
+  },
+  "position": {
+    "x": 0.33,
+    "y": -0.33,
+    "z": 0.67
+  },
+  "quote_count": 146
+},\n{
+  "id": "THINKER_lev_shestov",
+  "label": "Lev Shestov",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.475,
+    "absorption": 0.5,
+    "aperture": 0.467,
+    "dread": 0.567,
+    "quote_count": 142
+  },
+  "position": {
+    "x": 0,
+    "y": -0.67,
+    "z": 1.33
+  },
+  "quote_count": 142
+},\n{
+  "id": "THINKER_teresa_of_vila",
+  "label": "Teresa of Ávila",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.545,
+    "absorption": 0.467,
+    "aperture": 0.667,
+    "dread": 0.467,
+    "quote_count": 141
+  },
+  "position": {
+    "x": -0.67,
+    "y": 3.33,
+    "z": -0.67
+  },
+  "quote_count": 141
+},\n{
+  "id": "THINKER_paul_tillich",
+  "label": "Paul Tillich",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 134
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 134
+},\n{
+  "id": "THINKER_aldous_huxley",
+  "label": "Aldous Huxley",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 131
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 131
+},\n{
+  "id": "THINKER_mitchell_heisman",
+  "label": "Mitchell Heisman",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.438,
+    "absorption": 0.55,
+    "aperture": 0.383,
+    "dread": 0.533,
+    "quote_count": 116
+  },
+  "position": {
+    "x": 1,
+    "y": -2.33,
+    "z": 0.67
+  },
+  "quote_count": 116
+},\n{
+  "id": "THINKER_martin_heidegger",
+  "label": "Martin Heidegger",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 105
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 105
+},\n{
+  "id": "THINKER_tolstoy",
+  "label": "Tolstoy",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 103
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 103
+},\n{
+  "id": "THINKER_thomas_ligotti",
+  "label": "Thomas Ligotti",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 84
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 84
+},\n{
+  "id": "THINKER_fr_seraphim_rose",
+  "label": "Fr. Seraphim Rose",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 83
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 83
+},\n{
+  "id": "THINKER_miguel_de_molinos",
+  "label": "Miguel de Molinos",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.583,
+    "absorption": 0.4,
+    "aperture": 0.7,
+    "dread": 0.4,
+    "quote_count": 77
+  },
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 77
+},\n{
+  "id": "THINKER_a_w_tozer",
+  "label": "A.W. Tozer",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 77
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 77
+},\n{
+  "id": "THINKER_pascal",
+  "label": "Pascal",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 76
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 76
+},\n{
+  "id": "THINKER_edgar_saltus",
+  "label": "Edgar Saltus",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 72
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 72
+},\n{
+  "id": "THINKER_miguel_de_unamuno",
+  "label": "Miguel de Unamuno",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 69
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 69
+},\n{
+  "id": "THINKER_augustine",
+  "label": "Augustine",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 64
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 64
+},\n{
+  "id": "THINKER_plato_socrates",
+  "label": "Plato/Socrates",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 63
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 63
+},\n{
+  "id": "THINKER_william_james",
+  "label": "William James",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 59
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 59
+},\n{
+  "id": "THINKER_taoism",
+  "label": "Taoism",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.6,
+    "absorption": 0.433,
+    "aperture": 0.683,
+    "dread": 0.4,
+    "quote_count": 54
+  },
+  "position": {
+    "x": -1.33,
+    "y": 3.67,
+    "z": -2
+  },
+  "quote_count": 54
+},\n{
+  "id": "THINKER_buddhism",
+  "label": "Buddhism",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.583,
+    "absorption": 0.4,
+    "aperture": 0.7,
+    "dread": 0.4,
+    "quote_count": 50
+  },
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 50
+},\n{
+  "id": "THINKER_jesus_christ",
+  "label": "Jesus Christ",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 44
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 44
+},\n{
+  "id": "THINKER_meister_eckhart",
+  "label": "Meister Eckhart",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.545,
+    "absorption": 0.467,
+    "aperture": 0.667,
+    "dread": 0.467,
+    "quote_count": 39
+  },
+  "position": {
+    "x": -0.67,
+    "y": 3.33,
+    "z": -0.67
+  },
+  "quote_count": 39
+},\n{
+  "id": "THINKER_gk_chesterton",
+  "label": "GK Chesterton",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 38
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 38
+},\n{
+  "id": "THINKER_therese_of_lisieux",
+  "label": "Therese of Lisieux",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 34
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 34
+},\n{
+  "id": "THINKER_martin_luther",
+  "label": "Martin Luther",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 33
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 33
+},\n{
+  "id": "THINKER_albert_camus",
+  "label": "Albert Camus",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.438,
+    "absorption": 0.55,
+    "aperture": 0.383,
+    "dread": 0.533,
+    "quote_count": 33
+  },
+  "position": {
+    "x": 1,
+    "y": -2.33,
+    "z": 0.67
+  },
+  "quote_count": 33
+},\n{
+  "id": "THINKER_swami_vivekananda",
+  "label": "Swami Vivekananda",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 30
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 30
+},\n{
+  "id": "THINKER_peter_wessel_zapffe",
+  "label": "Peter Wessel Zapffe",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 28
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 28
+},\n{
+  "id": "THINKER_herman_t_nnessen",
+  "label": "Herman Tønnessen",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 27
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 27
+},\n{
+  "id": "THINKER_bertrand_russell",
+  "label": "Bertrand Russell",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 26
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 26
+},\n{
+  "id": "THINKER_thomas_keating",
+  "label": "Thomas Keating",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 26
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 26
+},\n{
+  "id": "THINKER_thomas_merton",
+  "label": "Thomas Merton",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.583,
+    "absorption": 0.4,
+    "aperture": 0.7,
+    "dread": 0.4,
+    "quote_count": 26
+  },
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 26
+},\n{
+  "id": "THINKER_john_shelby_spong",
+  "label": "John Shelby Spong",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 26
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 26
+},\n{
+  "id": "THINKER_hinduism",
+  "label": "Hinduism",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 25
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 25
+},\n{
+  "id": "THINKER_schopenhauer",
+  "label": "Schopenhauer",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 23
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 23
+},\n{
+  "id": "THINKER_ecclesiastes",
+  "label": "Ecclesiastes",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.438,
+    "absorption": 0.55,
+    "aperture": 0.383,
+    "dread": 0.533,
+    "quote_count": 17
+  },
+  "position": {
+    "x": 1,
+    "y": -2.33,
+    "z": 0.67
+  },
+  "quote_count": 17
+},\n{
+  "id": "THINKER_will_durant",
+  "label": "Will Durant",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 17
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 17
+},\n{
+  "id": "THINKER_c_s_lewis",
+  "label": "C.S. Lewis",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 17
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 17
+},\n{
+  "id": "THINKER_montaigne",
+  "label": "Montaigne",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 15
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 15
+},\n{
+  "id": "THINKER_huston_smith",
+  "label": "Huston Smith",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 14
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 14
+},\n{
+  "id": "THINKER_timothy_leary",
+  "label": "Timothy Leary",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 8
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 8
+},\n{
+  "id": "THINKER_john_bunyan",
+  "label": "John Bunyan",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 5
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 5
+},\n{
+  "id": "THINKER_angela_of_foligno",
+  "label": "Angela of Foligno",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 3
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 3
+},\n{
+  "id": "THINKER_thomas_aquinas",
+  "label": "Thomas Aquinas",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 2
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 2
+},\n{
+  "id": "THINKER_william_lane_craig",
+  "label": "William Lane Craig",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 2
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 2
+},\n{
+  "id": "THINKER_pseudo_dionysius",
+  "label": "Pseudo-Dionysius",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 1
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 1
+},\n{
+  "id": "THEME_existential_dread",
+  "label": "Existential Dread",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 8,
+    "y": 4,
+    "z": 12
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_anxiety",
+  "label": "Anxiety",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 6,
+    "y": 2,
+    "z": 10
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_lack_of_objective_meaning_value_purpose",
+  "label": "Lack of Objective Meaning, Value, Purpose",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 8,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_skepticism_of_knowledge",
+  "label": "Skepticism of Knowledge",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 4,
+    "y": -4,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_limitations_of_language",
+  "label": "Limitations of Language",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 2,
+    "y": -6,
+    "z": 4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_dual_nature_of_humans",
+  "label": "Dual Nature of Humans",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 4,
+    "z": 4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_renunciation_of_worldly_endeavors_contemplative_lifestyle",
+  "label": "Renunciation of Worldly Endeavors/Contemplative Lifestyle",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -6,
+    "y": 10,
+    "z": 2
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
+  "label": "Ego Dissolution, Authenticity, True-Self, Oneness/Union",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -10,
+    "y": 8,
+    "z": -4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_mystical_and_nihilistic_experiences",
+  "label": "Mystical and Nihilistic Experiences",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -8,
+    "y": 12,
+    "z": 4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_divine_presence_and_suffering",
+  "label": "Divine Presence and Suffering",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 14,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_role_of_senses_and_silence",
+  "label": "Role of Senses and Silence",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 2,
+    "y": 10,
+    "z": -4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_conceptualization_of_god",
+  "label": "Conceptualization of God",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -2,
+    "y": 12,
+    "z": 2
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_inner_turmoil_and_growth",
+  "label": "Inner Turmoil and Growth",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 6,
+    "z": 8
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_human_nature_and_temptation",
+  "label": "Human Nature and Temptation",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 2,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_righteousness_and_purification",
+  "label": "Righteousness and Purification",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -2,
+    "y": 8,
+    "z": 4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_internal_recollection",
+  "label": "Internal Recollection",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 6,
+    "z": 0
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_challenges_in_spiritual_path",
+  "label": "Challenges in Spiritual Path",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 2,
+    "y": 4,
+    "z": 8
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_perseverance_in_recollection",
+  "label": "Perseverance in Recollection",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": 2
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_benefits_of_recollection_over_physical_penances",
+  "label": "Benefits of Recollection Over Physical Penances",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -6,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_caution_against_rigid_penances",
+  "label": "Caution Against Rigid Penances",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 2,
+    "z": 0
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_misconceptions_about_spiritual_practices",
+  "label": "Misconceptions About Spiritual Practices",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 4,
+    "y": 0,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_pursuit_of_god_s_will_and_humility",
+  "label": "Pursuit of God's Will and Humility",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 10,
+    "z": 4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_approach_to_spiritual_practices",
+  "label": "Approach to Spiritual Practices",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 8,
+    "z": -2
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_divine_presence_in_human_imperfection",
+  "label": "Divine Presence in Human Imperfection",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": -6,
+    "y": 12,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_avoiding_sensible_pleasures",
+  "label": "Avoiding Sensible Pleasures",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {},
+  "position": {
+    "x": 6,
+    "y": 2,
+    "z": 4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THINKER_emile_cioran",
+  "label": "Emile Cioran",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.548,
+    "absorption": 0.483,
+    "aperture": 0.6,
+    "dread": 0.533,
+    "quote_count": 470
+  },
+  "position": {
+    "x": -0.33,
+    "y": 2,
+    "z": 0.67
+  },
+  "quote_count": 470
+},\n{
+  "id": "THINKER_ernest_becker",
+  "label": "Ernest Becker",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.473,
+    "absorption": 0.5,
+    "aperture": 0.433,
+    "dread": 0.6,
+    "quote_count": 326
+  },
+  "position": {
+    "x": 0,
+    "y": -1.33,
+    "z": 2
+  },
+  "quote_count": 326
+},\n{
+  "id": "THINKER_thomas_kempis",
+  "label": "Thomas à Kempis",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.462,
+    "absorption": 0.517,
+    "aperture": 0.483,
+    "dread": 0.533,
+    "quote_count": 181
+  },
+  "position": {
+    "x": 0.33,
+    "y": -0.33,
+    "z": 0.67
+  },
+  "quote_count": 181
+},\n{
+  "id": "THINKER_evelyn_underhill",
+  "label": "Evelyn Underhill",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.565,
+    "absorption": 0.45,
+    "aperture": 0.617,
+    "dread": 0.417,
+    "quote_count": 179
+  },
+  "position": {
+    "x": -1,
+    "y": 2.33,
+    "z": -1.67
+  },
+  "quote_count": 179
+},\n{
+  "id": "THINKER_kierkegaard",
+  "label": "Kierkegaard",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.475,
+    "absorption": 0.5,
+    "aperture": 0.467,
+    "dread": 0.567,
+    "quote_count": 174
+  },
+  "position": {
+    "x": 0,
+    "y": -0.67,
+    "z": 1.33
+  },
+  "quote_count": 174
+},\n{
+  "id": "THINKER_st_john_of_the_cross",
+  "label": "St. John of the Cross",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.545,
+    "absorption": 0.467,
+    "aperture": 0.667,
+    "dread": 0.467,
+    "quote_count": 158
+  },
+  "position": {
+    "x": -0.67,
+    "y": 3.33,
+    "z": -0.67
+  },
+  "quote_count": 158
+},\n{
+  "id": "THINKER_nietzsche",
+  "label": "Nietzsche",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.462,
+    "absorption": 0.517,
+    "aperture": 0.483,
+    "dread": 0.533,
+    "quote_count": 146
+  },
+  "position": {
+    "x": 0.33,
+    "y": -0.33,
+    "z": 0.67
+  },
+  "quote_count": 146
+},\n{
+  "id": "THINKER_lev_shestov",
+  "label": "Lev Shestov",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.475,
+    "absorption": 0.5,
+    "aperture": 0.467,
+    "dread": 0.567,
+    "quote_count": 142
+  },
+  "position": {
+    "x": 0,
+    "y": -0.67,
+    "z": 1.33
+  },
+  "quote_count": 142
+},\n{
+  "id": "THINKER_teresa_of_vila",
+  "label": "Teresa of Ávila",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.545,
+    "absorption": 0.467,
+    "aperture": 0.667,
+    "dread": 0.467,
+    "quote_count": 141
+  },
+  "position": {
+    "x": -0.67,
+    "y": 3.33,
+    "z": -0.67
+  },
+  "quote_count": 141
+},\n{
+  "id": "THINKER_paul_tillich",
+  "label": "Paul Tillich",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 134
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 134
+},\n{
+  "id": "THINKER_aldous_huxley",
+  "label": "Aldous Huxley",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 131
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 131
+},\n{
+  "id": "THINKER_mitchell_heisman",
+  "label": "Mitchell Heisman",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.438,
+    "absorption": 0.55,
+    "aperture": 0.383,
+    "dread": 0.533,
+    "quote_count": 116
+  },
+  "position": {
+    "x": 1,
+    "y": -2.33,
+    "z": 0.67
+  },
+  "quote_count": 116
+},\n{
+  "id": "THINKER_martin_heidegger",
+  "label": "Martin Heidegger",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 105
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 105
+},\n{
+  "id": "THINKER_tolstoy",
+  "label": "Tolstoy",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 103
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 103
+},\n{
+  "id": "THINKER_thomas_ligotti",
+  "label": "Thomas Ligotti",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 84
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 84
+},\n{
+  "id": "THINKER_fr_seraphim_rose",
+  "label": "Fr. Seraphim Rose",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 83
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 83
+},\n{
+  "id": "THINKER_miguel_de_molinos",
+  "label": "Miguel de Molinos",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.583,
+    "absorption": 0.4,
+    "aperture": 0.7,
+    "dread": 0.4,
+    "quote_count": 77
+  },
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 77
+},\n{
+  "id": "THINKER_a_w_tozer",
+  "label": "A.W. Tozer",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 77
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 77
+},\n{
+  "id": "THINKER_pascal",
+  "label": "Pascal",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 76
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 76
+},\n{
+  "id": "THINKER_edgar_saltus",
+  "label": "Edgar Saltus",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 72
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 72
+},\n{
+  "id": "THINKER_miguel_de_unamuno",
+  "label": "Miguel de Unamuno",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 69
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 69
+},\n{
+  "id": "THINKER_augustine",
+  "label": "Augustine",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 64
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 64
+},\n{
+  "id": "THINKER_plato_socrates",
+  "label": "Plato/Socrates",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 63
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 63
+},\n{
+  "id": "THINKER_william_james",
+  "label": "William James",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 59
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 59
+},\n{
+  "id": "THINKER_taoism",
+  "label": "Taoism",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.6,
+    "absorption": 0.433,
+    "aperture": 0.683,
+    "dread": 0.4,
+    "quote_count": 54
+  },
+  "position": {
+    "x": -1.33,
+    "y": 3.67,
+    "z": -2
+  },
+  "quote_count": 54
+},\n{
+  "id": "THINKER_buddhism",
+  "label": "Buddhism",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.583,
+    "absorption": 0.4,
+    "aperture": 0.7,
+    "dread": 0.4,
+    "quote_count": 50
+  },
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 50
+},\n{
+  "id": "THINKER_jesus_christ",
+  "label": "Jesus Christ",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 44
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 44
+},\n{
+  "id": "THINKER_meister_eckhart",
+  "label": "Meister Eckhart",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.545,
+    "absorption": 0.467,
+    "aperture": 0.667,
+    "dread": 0.467,
+    "quote_count": 39
+  },
+  "position": {
+    "x": -0.67,
+    "y": 3.33,
+    "z": -0.67
+  },
+  "quote_count": 39
+},\n{
+  "id": "THINKER_gk_chesterton",
+  "label": "GK Chesterton",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 38
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 38
+},\n{
+  "id": "THINKER_therese_of_lisieux",
+  "label": "Therese of Lisieux",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 34
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 34
+},\n{
+  "id": "THINKER_martin_luther",
+  "label": "Martin Luther",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 33
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 33
+},\n{
+  "id": "THINKER_albert_camus",
+  "label": "Albert Camus",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.438,
+    "absorption": 0.55,
+    "aperture": 0.383,
+    "dread": 0.533,
+    "quote_count": 33
+  },
+  "position": {
+    "x": 1,
+    "y": -2.33,
+    "z": 0.67
+  },
+  "quote_count": 33
+},\n{
+  "id": "THINKER_swami_vivekananda",
+  "label": "Swami Vivekananda",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 30
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 30
+},\n{
+  "id": "THINKER_peter_wessel_zapffe",
+  "label": "Peter Wessel Zapffe",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 28
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 28
+},\n{
+  "id": "THINKER_herman_t_nnessen",
+  "label": "Herman Tønnessen",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 27
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 27
+},\n{
+  "id": "THINKER_bertrand_russell",
+  "label": "Bertrand Russell",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 26
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 26
+},\n{
+  "id": "THINKER_thomas_keating",
+  "label": "Thomas Keating",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 26
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 26
+},\n{
+  "id": "THINKER_thomas_merton",
+  "label": "Thomas Merton",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.583,
+    "absorption": 0.4,
+    "aperture": 0.7,
+    "dread": 0.4,
+    "quote_count": 26
+  },
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 26
+},\n{
+  "id": "THINKER_john_shelby_spong",
+  "label": "John Shelby Spong",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 26
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 26
+},\n{
+  "id": "THINKER_hinduism",
+  "label": "Hinduism",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 25
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 25
+},\n{
+  "id": "THINKER_schopenhauer",
+  "label": "Schopenhauer",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 23
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 23
+},\n{
+  "id": "THINKER_ecclesiastes",
+  "label": "Ecclesiastes",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.438,
+    "absorption": 0.55,
+    "aperture": 0.383,
+    "dread": 0.533,
+    "quote_count": 17
+  },
+  "position": {
+    "x": 1,
+    "y": -2.33,
+    "z": 0.67
+  },
+  "quote_count": 17
+},\n{
+  "id": "THINKER_will_durant",
+  "label": "Will Durant",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 17
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 17
+},\n{
+  "id": "THINKER_c_s_lewis",
+  "label": "C.S. Lewis",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 17
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 17
+},\n{
+  "id": "THINKER_montaigne",
+  "label": "Montaigne",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 15
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 15
+},\n{
+  "id": "THINKER_huston_smith",
+  "label": "Huston Smith",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 14
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 14
+},\n{
+  "id": "THINKER_timothy_leary",
+  "label": "Timothy Leary",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 8
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 8
+},\n{
+  "id": "THINKER_john_bunyan",
+  "label": "John Bunyan",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 5
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 5
+},\n{
+  "id": "THINKER_angela_of_foligno",
+  "label": "Angela of Foligno",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 3
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 3
+},\n{
+  "id": "THINKER_thomas_aquinas",
+  "label": "Thomas Aquinas",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 2
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 2
+},\n{
+  "id": "THINKER_william_lane_craig",
+  "label": "William Lane Craig",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 2
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 2
+},\n{
+  "id": "THINKER_pseudo_dionysius",
+  "label": "Pseudo-Dionysius",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 1
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 1
+},\n{
+  "id": "THEME_existential_dread",
+  "label": "Existential Dread",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 8,
+    "y": 4,
+    "z": 12
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_anxiety",
+  "label": "Anxiety",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 6,
+    "y": 2,
+    "z": 10
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_lack_of_objective_meaning_value_purpose",
+  "label": "Lack of Objective Meaning, Value, Purpose",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 8,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_skepticism_of_knowledge",
+  "label": "Skepticism of Knowledge",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 4,
+    "y": -4,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_limitations_of_language",
+  "label": "Limitations of Language",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 2,
+    "y": -6,
+    "z": 4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_dual_nature_of_humans",
+  "label": "Dual Nature of Humans",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 4,
+    "z": 4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_renunciation_of_worldly_endeavors_contemplative_lifestyle",
+  "label": "Renunciation of Worldly Endeavors/Contemplative Lifestyle",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -6,
+    "y": 10,
+    "z": 2
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
+  "label": "Ego Dissolution, Authenticity, True-Self, Oneness/Union",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -10,
+    "y": 8,
+    "z": -4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_mystical_and_nihilistic_experiences",
+  "label": "Mystical and Nihilistic Experiences",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -8,
+    "y": 12,
+    "z": 4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_divine_presence_and_suffering",
+  "label": "Divine Presence and Suffering",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 14,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_role_of_senses_and_silence",
+  "label": "Role of Senses and Silence",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 2,
+    "y": 10,
+    "z": -4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_conceptualization_of_god",
+  "label": "Conceptualization of God",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -2,
+    "y": 12,
+    "z": 2
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_inner_turmoil_and_growth",
+  "label": "Inner Turmoil and Growth",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 6,
+    "z": 8
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_human_nature_and_temptation",
+  "label": "Human Nature and Temptation",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 2,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_righteousness_and_purification",
+  "label": "Righteousness and Purification",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -2,
+    "y": 8,
+    "z": 4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_internal_recollection",
+  "label": "Internal Recollection",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 6,
+    "z": 0
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_challenges_in_spiritual_path",
+  "label": "Challenges in Spiritual Path",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 2,
+    "y": 4,
+    "z": 8
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_perseverance_in_recollection",
+  "label": "Perseverance in Recollection",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": 2
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_benefits_of_recollection_over_physical_penances",
+  "label": "Benefits of Recollection Over Physical Penances",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -6,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_caution_against_rigid_penances",
+  "label": "Caution Against Rigid Penances",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 2,
+    "z": 0
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_misconceptions_about_spiritual_practices",
+  "label": "Misconceptions About Spiritual Practices",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 4,
+    "y": 0,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_pursuit_of_god_s_will_and_humility",
+  "label": "Pursuit of God's Will and Humility",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 10,
+    "z": 4
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_approach_to_spiritual_practices",
+  "label": "Approach to Spiritual Practices",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 8,
+    "z": -2
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_divine_presence_in_human_imperfection",
+  "label": "Divine Presence in Human Imperfection",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -6,
+    "y": 12,
+    "z": 6
+  },
+  "quote_count": 0
+},\n{
+  "id": "THEME_avoiding_sensible_pleasures",
+  "label": "Avoiding Sensible Pleasures",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 6,
+    "y": 2,
+    "z": 4
+  },
+  "quote_count": 0
+},
+{
+  "id": "THINKER_emile_cioran",
+  "label": "Emile Cioran",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.548,
+    "absorption": 0.483,
+    "aperture": 0.6,
+    "dread": 0.533,
+    "quote_count": 470
+  },
+  "position": {
+    "x": -0.33,
+    "y": 2,
+    "z": 0.67
+  },
+  "quote_count": 470
+},
+{
+  "id": "THINKER_ernest_becker",
+  "label": "Ernest Becker",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.473,
+    "absorption": 0.5,
+    "aperture": 0.433,
+    "dread": 0.6,
+    "quote_count": 326
+  },
+  "position": {
+    "x": 0,
+    "y": -1.33,
+    "z": 2
+  },
+  "quote_count": 326
+},
+{
+  "id": "THINKER_thomas_kempis",
+  "label": "Thomas à Kempis",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.462,
+    "absorption": 0.517,
+    "aperture": 0.483,
+    "dread": 0.533,
+    "quote_count": 181
+  },
+  "position": {
+    "x": 0.33,
+    "y": -0.33,
+    "z": 0.67
+  },
+  "quote_count": 181
+},
+{
+  "id": "THINKER_evelyn_underhill",
+  "label": "Evelyn Underhill",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.565,
+    "absorption": 0.45,
+    "aperture": 0.617,
+    "dread": 0.417,
+    "quote_count": 179
+  },
+  "position": {
+    "x": -1,
+    "y": 2.33,
+    "z": -1.67
+  },
+  "quote_count": 179
+},
+{
+  "id": "THINKER_kierkegaard",
+  "label": "Kierkegaard",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.475,
+    "absorption": 0.5,
+    "aperture": 0.467,
+    "dread": 0.567,
+    "quote_count": 174
+  },
+  "position": {
+    "x": 0,
+    "y": -0.67,
+    "z": 1.33
+  },
+  "quote_count": 174
+},
+{
+  "id": "THINKER_st_john_of_the_cross",
+  "label": "St. John of the Cross",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.545,
+    "absorption": 0.467,
+    "aperture": 0.667,
+    "dread": 0.467,
+    "quote_count": 158
+  },
+  "position": {
+    "x": -0.67,
+    "y": 3.33,
+    "z": -0.67
+  },
+  "quote_count": 158
+},
+{
+  "id": "THINKER_nietzsche",
+  "label": "Nietzsche",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.462,
+    "absorption": 0.517,
+    "aperture": 0.483,
+    "dread": 0.533,
+    "quote_count": 146
+  },
+  "position": {
+    "x": 0.33,
+    "y": -0.33,
+    "z": 0.67
+  },
+  "quote_count": 146
+},
+{
+  "id": "THINKER_lev_shestov",
+  "label": "Lev Shestov",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.475,
+    "absorption": 0.5,
+    "aperture": 0.467,
+    "dread": 0.567,
+    "quote_count": 142
+  },
+  "position": {
+    "x": 0,
+    "y": -0.67,
+    "z": 1.33
+  },
+  "quote_count": 142
+},
+{
+  "id": "THINKER_teresa_of_vila",
+  "label": "Teresa of Ávila",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.545,
+    "absorption": 0.467,
+    "aperture": 0.667,
+    "dread": 0.467,
+    "quote_count": 141
+  },
+  "position": {
+    "x": -0.67,
+    "y": 3.33,
+    "z": -0.67
+  },
+  "quote_count": 141
+},
+{
+  "id": "THINKER_paul_tillich",
+  "label": "Paul Tillich",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 134
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 134
+},
+{
+  "id": "THINKER_aldous_huxley",
+  "label": "Aldous Huxley",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 131
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 131
+},
+{
+  "id": "THINKER_mitchell_heisman",
+  "label": "Mitchell Heisman",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.438,
+    "absorption": 0.55,
+    "aperture": 0.383,
+    "dread": 0.533,
+    "quote_count": 116
+  },
+  "position": {
+    "x": 1,
+    "y": -2.33,
+    "z": 0.67
+  },
+  "quote_count": 116
+},
+{
+  "id": "THINKER_martin_heidegger",
+  "label": "Martin Heidegger",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 105
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 105
+},
+{
+  "id": "THINKER_tolstoy",
+  "label": "Tolstoy",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 103
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 103
+},
+{
+  "id": "THINKER_thomas_ligotti",
+  "label": "Thomas Ligotti",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 84
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 84
+},
+{
+  "id": "THINKER_fr_seraphim_rose",
+  "label": "Fr. Seraphim Rose",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 83
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 83
+},
+{
+  "id": "THINKER_miguel_de_molinos",
+  "label": "Miguel de Molinos",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.583,
+    "absorption": 0.4,
+    "aperture": 0.7,
+    "dread": 0.4,
+    "quote_count": 77
+  },
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 77
+},
+{
+  "id": "THINKER_a_w_tozer",
+  "label": "A.W. Tozer",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 77
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 77
+},
+{
+  "id": "THINKER_pascal",
+  "label": "Pascal",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 76
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 76
+},
+{
+  "id": "THINKER_edgar_saltus",
+  "label": "Edgar Saltus",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 72
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 72
+},
+{
+  "id": "THINKER_miguel_de_unamuno",
+  "label": "Miguel de Unamuno",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 69
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 69
+},
+{
+  "id": "THINKER_augustine",
+  "label": "Augustine",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 64
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 64
+},
+{
+  "id": "THINKER_plato_socrates",
+  "label": "Plato/Socrates",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 63
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 63
+},
+{
+  "id": "THINKER_william_james",
+  "label": "William James",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 59
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 59
+},
+{
+  "id": "THINKER_taoism",
+  "label": "Taoism",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.6,
+    "absorption": 0.433,
+    "aperture": 0.683,
+    "dread": 0.4,
+    "quote_count": 54
+  },
+  "position": {
+    "x": -1.33,
+    "y": 3.67,
+    "z": -2
+  },
+  "quote_count": 54
+},
+{
+  "id": "THINKER_buddhism",
+  "label": "Buddhism",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.583,
+    "absorption": 0.4,
+    "aperture": 0.7,
+    "dread": 0.4,
+    "quote_count": 50
+  },
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 50
+},
+{
+  "id": "THINKER_jesus_christ",
+  "label": "Jesus Christ",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 44
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 44
+},
+{
+  "id": "THINKER_meister_eckhart",
+  "label": "Meister Eckhart",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.545,
+    "absorption": 0.467,
+    "aperture": 0.667,
+    "dread": 0.467,
+    "quote_count": 39
+  },
+  "position": {
+    "x": -0.67,
+    "y": 3.33,
+    "z": -0.67
+  },
+  "quote_count": 39
+},
+{
+  "id": "THINKER_gk_chesterton",
+  "label": "GK Chesterton",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 38
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 38
+},
+{
+  "id": "THINKER_therese_of_lisieux",
+  "label": "Therese of Lisieux",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 34
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 34
+},
+{
+  "id": "THINKER_martin_luther",
+  "label": "Martin Luther",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 33
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 33
+},
+{
+  "id": "THINKER_albert_camus",
+  "label": "Albert Camus",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.438,
+    "absorption": 0.55,
+    "aperture": 0.383,
+    "dread": 0.533,
+    "quote_count": 33
+  },
+  "position": {
+    "x": 1,
+    "y": -2.33,
+    "z": 0.67
+  },
+  "quote_count": 33
+},
+{
+  "id": "THINKER_swami_vivekananda",
+  "label": "Swami Vivekananda",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 30
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 30
+},
+{
+  "id": "THINKER_peter_wessel_zapffe",
+  "label": "Peter Wessel Zapffe",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 28
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 28
+},
+{
+  "id": "THINKER_herman_t_nnessen",
+  "label": "Herman Tønnessen",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 27
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 27
+},
+{
+  "id": "THINKER_bertrand_russell",
+  "label": "Bertrand Russell",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 26
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 26
+},
+{
+  "id": "THINKER_thomas_keating",
+  "label": "Thomas Keating",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 26
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 26
+},
+{
+  "id": "THINKER_thomas_merton",
+  "label": "Thomas Merton",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.583,
+    "absorption": 0.4,
+    "aperture": 0.7,
+    "dread": 0.4,
+    "quote_count": 26
+  },
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 26
+},
+{
+  "id": "THINKER_john_shelby_spong",
+  "label": "John Shelby Spong",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 26
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 26
+},
+{
+  "id": "THINKER_hinduism",
+  "label": "Hinduism",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 25
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 25
+},
+{
+  "id": "THINKER_schopenhauer",
+  "label": "Schopenhauer",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 23
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 23
+},
+{
+  "id": "THINKER_ecclesiastes",
+  "label": "Ecclesiastes",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.438,
+    "absorption": 0.55,
+    "aperture": 0.383,
+    "dread": 0.533,
+    "quote_count": 17
+  },
+  "position": {
+    "x": 1,
+    "y": -2.33,
+    "z": 0.67
+  },
+  "quote_count": 17
+},
+{
+  "id": "THINKER_will_durant",
+  "label": "Will Durant",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 17
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 17
+},
+{
+  "id": "THINKER_c_s_lewis",
+  "label": "C.S. Lewis",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 17
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 17
+},
+{
+  "id": "THINKER_montaigne",
+  "label": "Montaigne",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 15
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 15
+},
+{
+  "id": "THINKER_huston_smith",
+  "label": "Huston Smith",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 14
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 14
+},
+{
+  "id": "THINKER_timothy_leary",
+  "label": "Timothy Leary",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 8
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 8
+},
+{
+  "id": "THINKER_john_bunyan",
+  "label": "John Bunyan",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 5
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 5
+},
+{
+  "id": "THINKER_angela_of_foligno",
+  "label": "Angela of Foligno",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 3
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 3
+},
+{
+  "id": "THINKER_thomas_aquinas",
+  "label": "Thomas Aquinas",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 2
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 2
+},
+{
+  "id": "THINKER_william_lane_craig",
+  "label": "William Lane Craig",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 2
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 2
+},
+{
+  "id": "THINKER_pseudo_dionysius",
+  "label": "Pseudo-Dionysius",
+  "type": "thinker",
+  "blocks": [],
+  "metadata": {
+    "geometry": "circle"
+  },
+  "properties": {
+    "void_quotient": 0.5,
+    "absorption": 0.5,
+    "aperture": 0.5,
+    "dread": 0.5,
+    "quote_count": 1
+  },
+  "position": {
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  "quote_count": 1
+},
+{
+  "id": "THEME_existential_dread",
+  "label": "Existential Dread",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 8,
+    "y": 4,
+    "z": 12
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_anxiety",
+  "label": "Anxiety",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 6,
+    "y": 2,
+    "z": 10
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_lack_of_objective_meaning_value_purpose",
+  "label": "Lack of Objective Meaning, Value, Purpose",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 8,
+    "z": 6
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_skepticism_of_knowledge",
+  "label": "Skepticism of Knowledge",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 4,
+    "y": -4,
+    "z": 6
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_limitations_of_language",
+  "label": "Limitations of Language",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 2,
+    "y": -6,
+    "z": 4
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_dual_nature_of_humans",
+  "label": "Dual Nature of Humans",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 4,
+    "z": 4
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_renunciation_of_worldly_endeavors_contemplative_lifestyle",
+  "label": "Renunciation of Worldly Endeavors/Contemplative Lifestyle",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -6,
+    "y": 10,
+    "z": 2
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
+  "label": "Ego Dissolution, Authenticity, True-Self, Oneness/Union",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -10,
+    "y": 8,
+    "z": -4
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_mystical_and_nihilistic_experiences",
+  "label": "Mystical and Nihilistic Experiences",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -8,
+    "y": 12,
+    "z": 4
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_divine_presence_and_suffering",
+  "label": "Divine Presence and Suffering",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 14,
+    "z": 6
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_role_of_senses_and_silence",
+  "label": "Role of Senses and Silence",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 2,
+    "y": 10,
+    "z": -4
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_conceptualization_of_god",
+  "label": "Conceptualization of God",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -2,
+    "y": 12,
+    "z": 2
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_inner_turmoil_and_growth",
+  "label": "Inner Turmoil and Growth",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 6,
+    "z": 8
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_human_nature_and_temptation",
+  "label": "Human Nature and Temptation",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 2,
+    "z": 6
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_righteousness_and_purification",
+  "label": "Righteousness and Purification",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -2,
+    "y": 8,
+    "z": 4
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_internal_recollection",
+  "label": "Internal Recollection",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 6,
+    "z": 0
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_challenges_in_spiritual_path",
+  "label": "Challenges in Spiritual Path",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 2,
+    "y": 4,
+    "z": 8
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_perseverance_in_recollection",
+  "label": "Perseverance in Recollection",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -2,
+    "y": 4,
+    "z": 2
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_benefits_of_recollection_over_physical_penances",
+  "label": "Benefits of Recollection Over Physical Penances",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -6,
+    "y": 4,
+    "z": -2
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_caution_against_rigid_penances",
+  "label": "Caution Against Rigid Penances",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 2,
+    "z": 0
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_misconceptions_about_spiritual_practices",
+  "label": "Misconceptions About Spiritual Practices",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 4,
+    "y": 0,
+    "z": 6
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_pursuit_of_god_s_will_and_humility",
+  "label": "Pursuit of God's Will and Humility",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -4,
+    "y": 10,
+    "z": 4
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_approach_to_spiritual_practices",
+  "label": "Approach to Spiritual Practices",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 0,
+    "y": 8,
+    "z": -2
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_divine_presence_in_human_imperfection",
+  "label": "Divine Presence in Human Imperfection",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": -6,
+    "y": 12,
+    "z": 6
+  },
+  "quote_count": 0
+},
+{
+  "id": "THEME_avoiding_sensible_pleasures",
+  "label": "Avoiding Sensible Pleasures",
+  "type": "theme",
+  "blocks": [],
+  "metadata": {
+    "geometry": "diamond"
+  },
+  "properties": {},
+  "position": {
+    "x": 6,
+    "y": 2,
+    "z": 4
+  },
+  "quote_count": 0
+},
   {
     id: "mac_alpha",
     label: "MAC_α (Minimum Apophatic Condition)",
@@ -742,7 +5228,183 @@ export const corpusNodes: Node[] = [
   }
 ];
 
-export const corpusLinks: Link[] = [
+export const corpusLinks: Link[] = [\n{
+  "source": "THINKER_emile_cioran",
+  "target": "THEME_existential_dread",
+  "type": "resonance",
+  "properties": {
+    "score": 0.81
+  }
+},\n{
+  "source": "THINKER_kierkegaard",
+  "target": "THEME_anxiety",
+  "type": "resonance",
+  "properties": {
+    "score": 0.79
+  }
+},\n{
+  "source": "THINKER_st_john_of_the_cross",
+  "target": "THEME_divine_presence_and_suffering",
+  "type": "resonance",
+  "properties": {
+    "score": 0.85
+  }
+},\n{
+  "source": "THINKER_meister_eckhart",
+  "target": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
+  "type": "resonance",
+  "properties": {
+    "score": 0.83
+  }
+},\n{
+  "source": "THINKER_buddhism",
+  "target": "THEME_mystical_and_nihilistic_experiences",
+  "type": "resonance",
+  "properties": {
+    "score": 0.78
+  }
+},\n{
+  "source": "THINKER_pascal",
+  "target": "THEME_anxiety",
+  "type": "resonance",
+  "properties": {
+    "score": 0.76
+  }
+},\n{
+  "source": "THINKER_nietzsche",
+  "target": "THEME_lack_of_objective_meaning_value_purpose",
+  "type": "tension",
+  "properties": {
+    "score": 0.72
+  }
+},\n{
+  "source": "THINKER_tolstoy",
+  "target": "THEME_divine_presence_and_suffering",
+  "type": "resonance",
+  "properties": {
+    "score": 0.74
+  }
+},\n{
+  "source": "THINKER_emile_cioran",
+  "target": "THEME_existential_dread",
+  "type": "resonance",
+  "properties": {
+    "score": 0.81
+  }
+},\n{
+  "source": "THINKER_kierkegaard",
+  "target": "THEME_anxiety",
+  "type": "resonance",
+  "properties": {
+    "score": 0.79
+  }
+},\n{
+  "source": "THINKER_st_john_of_the_cross",
+  "target": "THEME_divine_presence_and_suffering",
+  "type": "resonance",
+  "properties": {
+    "score": 0.85
+  }
+},\n{
+  "source": "THINKER_meister_eckhart",
+  "target": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
+  "type": "resonance",
+  "properties": {
+    "score": 0.83
+  }
+},\n{
+  "source": "THINKER_buddhism",
+  "target": "THEME_mystical_and_nihilistic_experiences",
+  "type": "resonance",
+  "properties": {
+    "score": 0.78
+  }
+},\n{
+  "source": "THINKER_pascal",
+  "target": "THEME_anxiety",
+  "type": "resonance",
+  "properties": {
+    "score": 0.76
+  }
+},\n{
+  "source": "THINKER_nietzsche",
+  "target": "THEME_lack_of_objective_meaning_value_purpose",
+  "type": "tension",
+  "properties": {
+    "score": 0.72
+  }
+},\n{
+  "source": "THINKER_tolstoy",
+  "target": "THEME_divine_presence_and_suffering",
+  "type": "resonance",
+  "properties": {
+    "score": 0.74
+  }
+},
+{
+  "source": "THINKER_emile_cioran",
+  "target": "THEME_existential_dread",
+  "type": "resonance",
+  "properties": {
+    "score": 0.81
+  }
+},
+{
+  "source": "THINKER_kierkegaard",
+  "target": "THEME_anxiety",
+  "type": "resonance",
+  "properties": {
+    "score": 0.79
+  }
+},
+{
+  "source": "THINKER_st_john_of_the_cross",
+  "target": "THEME_divine_presence_and_suffering",
+  "type": "resonance",
+  "properties": {
+    "score": 0.85
+  }
+},
+{
+  "source": "THINKER_meister_eckhart",
+  "target": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
+  "type": "resonance",
+  "properties": {
+    "score": 0.83
+  }
+},
+{
+  "source": "THINKER_buddhism",
+  "target": "THEME_mystical_and_nihilistic_experiences",
+  "type": "resonance",
+  "properties": {
+    "score": 0.78
+  }
+},
+{
+  "source": "THINKER_pascal",
+  "target": "THEME_anxiety",
+  "type": "resonance",
+  "properties": {
+    "score": 0.76
+  }
+},
+{
+  "source": "THINKER_nietzsche",
+  "target": "THEME_lack_of_objective_meaning_value_purpose",
+  "type": "tension",
+  "properties": {
+    "score": 0.72
+  }
+},
+{
+  "source": "THINKER_tolstoy",
+  "target": "THEME_divine_presence_and_suffering",
+  "type": "resonance",
+  "properties": {
+    "score": 0.74
+  }
+},
   { source: "mac_alpha", target: "void", label: "conditions", type: "explores" },
   { source: "aif", target: "void", label: "measures", type: "explores" },
   { source: "s_100", target: "ren", label: "targets", type: "explores" },

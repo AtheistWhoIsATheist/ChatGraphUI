@@ -3,151 +3,129 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Noto Serif", "Palatino Linotype", Book+Antiqua, Palatino, serif;
-  --font-mono: "Noto Serif", "Palatino Linotype", Book+Antiqua, Palatino, serif;
-  --font-serif: "Noto Serif", "Palatino Linotype", Book+Antiqua, Palatino, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: "Inter", ui-sans-serif, system-ui, sans-serif;
   
   --animate-spin-slow: spin-slow 20s linear infinite;
   --animate-pulse-slow: pulse-slow 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-glitch: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+  --animate-glitch: pulse-slow 3s cubic-bezier(.25, .46, .45, .94) both infinite;
 
   @keyframes spin-slow {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
   }
   @keyframes pulse-slow {
-    0%, 100% { opacity: 0.1; }
-    50% { opacity: 0.8; }
-  }
-  @keyframes glitch {
-    0% { transform: translate(0) }
-    20% { transform: translate(-2px, 1px) }
-    40% { transform: translate(-1px, -1px) }
-    60% { transform: translate(2px, 1px) }
-    80% { transform: translate(1px, -1px) }
-    100% { transform: translate(0) }
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
   }
 }
 
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
   }
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: #000;
-    border-left: 1px solid #333;
+    background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #FF3A00;
-    border-radius: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #00E5FF;
+    background: rgba(255, 255, 255, 0.3);
   }
   
   .neo-bg {
     background-color: #030303;
-    background-image: 
-      linear-gradient(rgba(255, 58, 0, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 58, 0, 0.03) 1px, transparent 1px);
-    background-size: 30px 30px;
+    background-image: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
   }
   
   .neo-flat {
-    background: #000;
-    border: 2px solid #333;
-    box-shadow: 6px 6px 0px rgba(255, 58, 0, 0.3);
-    border-radius: 0;
-    transition: all 0.2s ease;
+    background: rgba(15, 15, 15, 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .neo-flat:hover {
-    border-color: #FF3A00;
-    box-shadow: 8px 8px 0px rgba(0, 229, 255, 0.3);
-    transform: translate(-2px, -2px);
+    background: rgba(25, 25, 25, 0.6);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
   }
 
   .neo-flat-sm {
-    background: #050505;
-    border: 1px solid #444;
-    box-shadow: 3px 3px 0px rgba(255, 58, 0, 0.2);
-    border-radius: 0;
+    background: rgba(20, 20, 20, 0.4);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
   }
   
   .neo-pressed {
-    background: #111;
-    border: 2px solid #FF3A00;
-    box-shadow: inset 4px 4px 10px rgba(0,0,0,0.8);
-    border-radius: 0;
-    color: #FF3A00;
+    background: rgba(10, 10, 10, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.8);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.9);
   }
   
   .neo-convex {
-    background: #080808;
-    border: 1px solid #333;
-    box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.05);
-    border-radius: 0;
-    transition: all 0.15s ease;
+    background: linear-gradient(145deg, rgba(30, 30, 30, 0.6), rgba(10, 10, 10, 0.6));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    border-radius: 16px;
+    transition: all 0.3s ease;
   }
   .neo-convex:hover {
-    background: #FF3A00;
-    color: #000;
-    border-color: #FF3A00;
-    box-shadow: 4px 4px 0px #00E5FF;
-    transform: translate(-1px, -1px);
+    background: linear-gradient(145deg, rgba(40, 40, 40, 0.7), rgba(15, 15, 15, 0.7));
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 255, 255, 0.05);
+    transform: translateY(-1px);
   }
 
   .neo-frosted {
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    border: 1px solid #FF3A00;
-    box-shadow: 0 0 20px rgba(255, 58, 0, 0.1);
-    border-radius: 0;
+    background: rgba(10, 10, 10, 0.4);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
   }
 
   .neo-dim {
-    border: 1px dashed rgba(255, 58, 0, 0.3);
-    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.2);
     color: rgba(255, 255, 255, 0.5);
-    border-radius: 0;
+    border-radius: 12px;
   }
 
   .parallax-bg {
-    background-image: 
-      radial-gradient(circle at 2px 2px, rgba(0, 229, 255, 0.15) 1px, transparent 0),
-      radial-gradient(circle at 50% 50%, rgba(255, 58, 0, 0.05) 0%, transparent 50%);
-    background-size: 40px 40px, 100% 100%;
+    background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 80%);
+    background-size: 100% 100%;
   }
 
   .neo-concave {
-    background: #000;
-    border: 2px solid #222;
-    box-shadow: inset 4px 4px 15px rgba(0,0,0,0.8);
-    border-radius: 0;
+    background: rgba(5, 5, 5, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.8);
+    border-radius: 16px;
   }
 
   .hairline {
-    stroke-width: 1.5px;
+    stroke-width: 1px;
   }
 }
 
-/* global noise texture */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-  opacity: 0.03;
-  pointer-events: none;
-  z-index: 9999;
-}
-
 body {
-  background-color: #000;
+  background-color: #030303;
   color: #fff;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -157,10 +135,10 @@ body {
 }
 
 .text-orange-500 {
-  color: #FF3A00;
+  color: #fff;
 }
 .text-orange-400 {
-  color: #FF5E2C;
+  color: rgba(255, 255, 255, 0.8);
 }
 .text-zinc-500 {
   color: #666;

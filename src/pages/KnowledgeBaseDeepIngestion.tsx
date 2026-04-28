@@ -157,10 +157,10 @@ export default function KnowledgeBaseDeepIngestion() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#000] font-mono relative overflow-y-auto custom-scrollbar p-8">
+    <div className="flex flex-col h-full bg-zinc-950 font-mono relative overflow-y-auto custom-scrollbar p-8">
       <div className="max-w-6xl mx-auto w-full relative z-10">
-        <h1 className="text-4xl font-serif font-black tracking-tighter text-[#FF3A00] uppercase border-b-4 border-[#FF3A00] pb-2 inline-block">Knowledge Base :: Deep Ingestion</h1>
-        <div className="text-sm text-[#00E5FF] font-mono uppercase tracking-[0.2em] mt-3 bg-[#0a0a0a] inline-block px-3 py-1 border border-[#00E5FF]/30">
+        <h1 className="text-4xl font-serif font-semibold tracking-tighter text-zinc-200  border-b border-white/10 pb-2 inline-block">Knowledge Base :: Deep Ingestion</h1>
+        <div className="text-sm text-zinc-300 font-mono  tracking-widest mt-3 bg-[#0a0a0a] inline-block px-3 py-1 border border-white/10">
           Status: Clinical Pipeline Active • Mode: Bulk Densification
         </div>
 
@@ -171,14 +171,14 @@ export default function KnowledgeBaseDeepIngestion() {
             e.preventDefault();
             enqueueFiles(Array.from(e.dataTransfer.files));
           }}
-          className="mt-12 border-2 border-dashed border-[#FF3A00]/50 p-12 bg-black flex flex-col items-center justify-center gap-6 transition-colors hover:border-[#FF3A00] hover:bg-[#FF3A00]/5 relative group overflow-hidden"
+          className="mt-12 border border-dashed border-white/10 p-12 bg-black flex flex-col items-center justify-center gap-6 transition-colors hover:border-white/10 hover:bg-white/10 relative group overflow-hidden"
         >
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiAvPgo8cmVjdCB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjMzMzIiAvPgo8L3N2Zz4=')] opacity-30 pointer-events-none"></div>
           <div className="text-center z-10">
-            <div className="text-2xl font-bold font-serif text-[#fff] tracking-widest uppercase group-hover:text-[#FF3A00] transition-colors">Drop Files Into The Void</div>
-            <div className="text-[#888] font-mono text-sm mt-3 uppercase tracking-wider">Supports: .txt .md .pdf .csv .json .docx</div>
+            <div className="text-2xl font-bold font-serif text-white tracking-widest  group-hover:text-zinc-200 transition-colors">Drop Files Into The Void</div>
+            <div className="text-zinc-400 font-mono text-sm mt-3  tracking-wider">Supports: .txt .md .pdf .csv .json .docx</div>
           </div>
-          <label className="cursor-pointer px-8 py-3 bg-[#000] border-2 border-[#FF3A00] text-[#FF3A00] font-bold tracking-widest uppercase hover:bg-[#FF3A00] hover:text-[#000] transition-all shadow-[6px_6px_0px_rgba(255,58,0,0.3)] hover:shadow-[4px_4px_0px_rgba(255,58,0,0.8)] z-10">
+          <label className="cursor-pointer px-8 py-3 bg-zinc-950 border border-white/10 text-zinc-200 font-bold tracking-widest  hover:bg-zinc-200 text-black border-transparent hover:bg-zinc-300 hover:text-zinc-950 transition-all shadow-xl hover:shadow-xl z-10">
             Select Files
             <input
               type="file"
@@ -193,18 +193,18 @@ export default function KnowledgeBaseDeepIngestion() {
         {/* Queue */}
         <div className="mt-12 space-y-6">
           {queue.length === 0 ? (
-            <div className="text-[#666] p-8 border-l-4 border-[#333] font-mono uppercase tracking-widest bg-[#050505]">
+            <div className="text-[#666] p-8 border-l border-white/5 font-mono  tracking-widest bg-zinc-900/40">
               System Null. The Engine is Idle.
             </div>
           ) : (
             <div className="grid gap-6">
               {queue.map((it) => (
-                <div key={it.id} className="neo-flat p-6 relative overflow-hidden group">
-                  <div className="absolute top-0 left-0 bottom-0 w-1 bg-[#333] group-hover:bg-[#FF3A00] transition-colors"></div>
+                <div key={it.id} className="rounded-xl transition duration-300 backdrop-blur-md p-6 relative overflow-hidden group">
+                  <div className="absolute top-0 left-0 bottom-0 w-1 bg-[#333] group-hover:bg-zinc-200 text-black border-transparent hover:bg-zinc-300 transition-colors"></div>
                   <div className="flex justify-between gap-4 items-start pl-4">
                     <div>
-                      <div className="font-bold text-xl text-[#eee] tracking-tight">{it.file.name}</div>
-                      <div className="text-xs text-[#00E5FF] font-mono mt-2 uppercase tracking-widest">
+                      <div className="font-bold text-xl text-zinc-100 tracking-tight">{it.file.name}</div>
+                      <div className="text-xs text-zinc-300 font-mono mt-2  tracking-widest">
                         [{it.status}] :: {it.message}
                       </div>
                     </div>
@@ -212,7 +212,7 @@ export default function KnowledgeBaseDeepIngestion() {
                       {it.status === "AWAITING_REVIEW" && (
                         <button
                           onClick={() => openPreview(it.id)}
-                          className="px-4 py-2 bg-transparent border-2 border-[#00E5FF] text-[#00E5FF] hover:bg-[#00E5FF] hover:text-[#000] transition-colors text-xs font-bold font-mono uppercase tracking-widest shadow-[4px_4px_0px_rgba(0,229,255,0.2)] hover:shadow-none translate-x-[-2px] translate-y-[-2px] hover:translate-x-0 hover:translate-y-0"
+                          className="px-4 py-2 bg-transparent border border-white/10 text-zinc-300 hover:bg-zinc-800 text-white border-transparent hover:bg-zinc-700 hover:text-zinc-950 transition-colors text-xs font-bold font-mono  tracking-widest shadow-xl hover:shadow-none translate-x-[-2px] translate-y-[-2px] hover:translate-x-0 hover:translate-y-0"
                         >
                           Review Matrix
                         </button>
@@ -221,7 +221,7 @@ export default function KnowledgeBaseDeepIngestion() {
                   </div>
  
                   <div className="mt-6 pl-4">
-                    <div className="h-2 bg-[#111] w-full border border-[#333] overflow-hidden relative">
+                    <div className="h-2 bg-white/5 w-full border border-white/5 overflow-hidden relative">
                       <div 
                         className="h-full transition-all duration-500 relative" 
                         style={{ 
@@ -242,37 +242,37 @@ export default function KnowledgeBaseDeepIngestion() {
 
         {/* Preview Modal */}
         {activePreview && (
-          <div className="fixed inset-0 bg-[#000]/90 backdrop-blur-md z-50 flex items-center justify-center p-6 border-8 border-[#FF3A00]/20">
-            <div className="w-full max-w-5xl max-h-[90vh] flex flex-col bg-[#050505] border-2 border-[#FF3A00] shadow-[12px_12px_0px_rgba(255,58,0,0.4)] relative">
+          <div className="fixed inset-0 bg-zinc-950/90 backdrop-blur-md z-50 flex items-center justify-center p-6 border-8 border-white/10">
+            <div className="w-full max-w-5xl max-h-[90vh] flex flex-col bg-zinc-900/40 border border-white/10 shadow-xl relative">
               
               {/* Decorative corners */}
-              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00E5FF] -translate-x-3 -translate-y-3"></div>
-              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00E5FF] translate-x-3 translate-y-3"></div>
+              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-white/10 -translate-x-3 -translate-y-3"></div>
+              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-white/10 translate-x-3 translate-y-3"></div>
 
-              <div className="p-8 border-b-2 border-[#333] bg-[#000]">
-                <div className="text-3xl font-serif font-bold text-[#FF3A00] tracking-widest uppercase">Entity Review Protocol</div>
-                <div className="text-sm text-[#00E5FF] font-mono mt-2 flex items-center gap-3">
-                  <span className="w-2 h-2 bg-[#00E5FF] animate-pulse"></span>
+              <div className="p-8 border-b-2 border-white/5 bg-zinc-950">
+                <div className="text-3xl font-serif font-bold text-zinc-200 tracking-widest ">Entity Review Protocol</div>
+                <div className="text-sm text-zinc-300 font-mono mt-2 flex items-center gap-3">
+                  <span className="w-2 h-2 bg-zinc-800 text-white border-transparent hover:bg-zinc-700 animate-pulse"></span>
                   Target: {activePreview.file_name} • Verification Mandatory
                 </div>
               </div>
  
               <div className="p-8 overflow-y-auto custom-scrollbar flex-1 space-y-6 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiMwYTBhMGEiIC8+PGNpcmNsZSBjeD0iNCIgY3k9IjQiIHI9IjEiIGZpbGw9IiMxYTFhMWEiIC8+PC9zdmc+')]">
                 {activePreview.entities.map((e, idx) => (
-                  <div key={idx} className="bg-[#000] border border-[#333] p-6 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-2 bg-[#111] border-b border-l border-[#333] text-[10px] text-[#00E5FF] font-mono">
+                  <div key={idx} className="bg-zinc-950 border border-white/5 p-6 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-2 bg-white/5 border-b border-l border-white/5 text-[10px] text-zinc-300 font-mono">
                       CONFIDENCE: {(e.confidence * 100).toFixed(0)}%
                     </div>
                     <div className="flex justify-between gap-4">
                       <div className="flex-1">
-                        <div className="font-mono text-xs text-[#FF3A00] bg-[#111] inline-block px-2 py-1 mb-3 uppercase tracking-widest">
+                        <div className="font-mono text-xs text-zinc-200 bg-white/5 inline-block px-2 py-1 mb-3  tracking-widest">
                           [{e.kind}] • OP:{e.operation} • TRUTH_LOCK:{String(!!(e as any).hard_truth)}
                         </div>
                         <div className="text-xl font-bold text-white tracking-tight leading-tight">{e.name}</div>
                       </div>
                     </div>
  
-                    <div className="mt-4 text-sm text-[#aaa] whitespace-pre-wrap font-mono leading-relaxed border-l-2 border-[#FF3A00]/50 pl-4 bg-[#0a0a0a] p-3">
+                    <div className="mt-4 text-sm text-[#aaa] whitespace-pre-wrap font-mono leading-relaxed border-l-2 border-white/10 pl-4 bg-[#0a0a0a] p-3">
                       {"core_fracture" in e ? e.core_fracture.slice(0, 700) : e.statement.slice(0, 700)}
                       {("core_fracture" in e ? e.core_fracture.length : e.statement.length) > 700 ? "\n\n[WARNING: DATA TRUNCATED]" : ""}
                     </div>
@@ -280,16 +280,16 @@ export default function KnowledgeBaseDeepIngestion() {
                 ))}
               </div>
  
-              <div className="p-6 border-t-2 border-[#333] flex justify-end gap-6 bg-[#000]">
+              <div className="p-6 border-t-2 border-white/5 flex justify-end gap-6 bg-zinc-950">
                 <button 
                   onClick={() => setActivePreview(null)} 
-                  className="px-6 py-3 font-mono font-bold tracking-widest uppercase border border-[#666] text-[#888] hover:text-white hover:border-white transition-colors"
+                  className="px-6 py-3 font-mono font-bold tracking-widest  border border-[#666] text-zinc-400 hover:text-white hover:border-white transition-colors"
                 >
                   Abort
                 </button>
                 <button 
                   onClick={() => commitPreview(activePreview)} 
-                  className="px-8 py-3 font-mono font-bold tracking-widest uppercase bg-[#FF3A00] text-black border-2 border-[#FF3A00] hover:bg-black hover:text-[#FF3A00] transition-colors shadow-[4px_4px_0px_rgba(255,58,0,0.3)] hover:shadow-none translate-x-[-2px] translate-y-[-2px] hover:translate-x-0 hover:translate-y-0"
+                  className="px-8 py-3 font-mono font-bold tracking-widest  bg-zinc-200 text-black border-transparent hover:bg-zinc-300 text-black border border-white/10 hover:bg-black hover:text-zinc-200 transition-colors shadow-xl hover:shadow-none translate-x-[-2px] translate-y-[-2px] hover:translate-x-0 hover:translate-y-0"
                 >
                   Commit Densification
                 </button>

@@ -69,23 +69,23 @@ export function AISynthesisPanel() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#000] text-[#eee] p-8 font-mono relative overflow-hidden">
+    <div className="w-full h-full flex flex-col bg-zinc-950 text-zinc-100 p-8 font-mono relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiMwMDAiIC8+PGNpcmNsZSBjeD0iNCIgY3k9IjQiIHI9IjEiIGZpbGw9IiMzMzMiIC8+PC9zdmc+')] opacity-20 pointer-events-none z-0"></div>
       
-      <div className="flex-shrink-0 mb-8 flex items-center gap-4 relative z-10 border-b-2 border-[#333] pb-6">
-        <div className="p-3 bg-[#111] border-2 border-[#00E5FF]">
-          <Sparkles className="w-8 h-8 text-[#00E5FF] animate-pulse-slow" />
+      <div className="flex-shrink-0 mb-8 flex items-center gap-4 relative z-10 border-b-2 border-white/5 pb-6">
+        <div className="p-3 bg-white/5 border border-white/10">
+          <Sparkles className="w-8 h-8 text-zinc-300 animate-pulse-slow" />
         </div>
         <div>
-          <h1 className="text-3xl font-serif font-black tracking-widest uppercase text-[#00E5FF]">AxiomForge</h1>
-          <div className="text-xs font-bold uppercase tracking-[0.2em] text-[#FF3A00] mt-2">AI Entity Extraction & Synthesis Protocol</div>
+          <h1 className="text-3xl font-serif font-semibold tracking-widest  text-zinc-300">AxiomForge</h1>
+          <div className="text-xs font-bold  tracking-widest text-zinc-200 mt-2">AI Entity Extraction & Synthesis Protocol</div>
         </div>
       </div>
       
       <div className="flex flex-col lg:flex-row gap-8 flex-1 min-h-0 relative z-10">
         {/* Left Column - Input */}
         <div className="flex-1 flex flex-col gap-6">
-          <p className="text-sm text-[#888] leading-relaxed tracking-wider border-l-2 border-[#FF3A00] pl-4">
+          <p className="text-sm text-zinc-400 leading-relaxed tracking-wider border-l-2 border-white/10 pl-4">
             Input phenomenological fieldwork, journal entry, or philosophical anomaly. 
             The AxiomForge will synthesize overarching themes, extract node entities, and calculate integration resonance.
           </p>
@@ -94,14 +94,14 @@ export function AISynthesisPanel() {
             <textarea 
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              className="w-full h-full bg-[#050505] border-2 border-[#333] p-6 text-sm font-mono text-[#ccc] resize-none focus:outline-none focus:border-[#00E5FF] transition-colors relative z-10 custom-scrollbar"
+              className="w-full h-full bg-zinc-900/40 border border-white/5 p-6 text-sm font-mono text-zinc-300 resize-none focus:outline-none focus:border-white/10 transition-colors relative z-10 custom-scrollbar"
               placeholder="AWAITING INPUT... (e.g., 'Journal 314 Entry: The static returns at 03:00. REN transcript correlates with loss of signal.')"
             />
           </div>
           <button 
             onClick={handleExtractionAndSynthesis}
             disabled={isProcessing || !inputText.trim() || !ai}
-            className="bg-[#000] disabled:opacity-50 disabled:cursor-not-allowed text-[#00E5FF] font-bold font-mono tracking-widest uppercase py-4 px-6 border-2 border-[#00E5FF] flex items-center justify-center gap-3 transition-all hover:bg-[#00E5FF] hover:text-[#000] shadow-[6px_6px_0px_rgba(0,229,255,0.2)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+            className="bg-zinc-950 disabled:opacity-50 disabled:cursor-not-allowed text-zinc-300 font-bold font-mono tracking-widest  py-4 px-6 border border-white/10 flex items-center justify-center gap-3 transition-all hover:bg-zinc-800 text-white border-transparent hover:bg-zinc-700 hover:text-zinc-950 shadow-xl hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
           >
             {isProcessing ? (
               <span className="flex items-center gap-3"><Cpu className="w-5 h-5 animate-pulse" /> Processing...</span>
@@ -112,44 +112,44 @@ export function AISynthesisPanel() {
         </div>
 
         {/* Right Column - Results */}
-        <div className="flex-1 bg-[#050505] border-2 border-[#333] p-8 overflow-y-auto custom-scrollbar flex flex-col gap-8 relative">
+        <div className="flex-1 bg-zinc-900/40 border border-white/5 p-8 overflow-y-auto custom-scrollbar flex flex-col gap-8 relative">
           {!result && !isProcessing && (
              <div className="absolute inset-0 flex items-center justify-center text-[#444] flex-col gap-4">
                 <FileText className="w-16 h-16 opacity-30" />
-                <p className="text-sm font-bold tracking-widest uppercase">Awaiting Raw Substrate...</p>
+                <p className="text-sm font-bold tracking-widest ">Awaiting Raw Substrate...</p>
              </div>
           )}
           
           {isProcessing && (
              <div className="absolute inset-0 flex items-center justify-center flex-col gap-6">
-                <div className="w-16 h-16 border-4 border-[#333] border-t-[#00E5FF] animate-spin" />
-                <p className="text-sm tracking-widest font-bold uppercase text-[#00E5FF] font-mono animate-pulse">Running semantic extraction...</p>
+                <div className="w-16 h-16 border border-white/5 border-t-[#00E5FF] animate-spin" />
+                <p className="text-sm tracking-widest font-bold  text-zinc-300 font-mono animate-pulse">Running semantic extraction...</p>
              </div>
           )}
 
           {result && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-8 relative z-10">
-               <div className="prose prose-invert prose-sm prose-p:leading-relaxed prose-a:text-[#00E5FF] prose-headings:font-serif prose-headings:text-[#FF3A00] max-w-none font-mono">
+               <div className="prose prose-invert prose-sm prose-p:leading-relaxed prose-a:text-zinc-300 prose-headings:font-serif prose-headings:text-zinc-200 max-w-none font-mono">
                  <Markdown>{result}</Markdown>
                </div>
                
                {extractedNodes.length > 0 && (
-                 <div className="mt-8 pt-8 border-t-2 border-[#333]">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#888] mb-6 flex items-center gap-3">
-                       <Database className="w-5 h-5 text-[#00E5FF]" /> Extracted Graph Nodes
+                 <div className="mt-8 pt-8 border-t-2 border-white/5">
+                    <h3 className="text-sm font-bold  tracking-widest text-zinc-400 mb-6 flex items-center gap-3">
+                       <Database className="w-5 h-5 text-zinc-300" /> Extracted Graph Nodes
                     </h3>
                     <div className="flex flex-wrap gap-4">
                        {extractedNodes.map((node, i) => (
-                         <div key={i} className="px-4 py-2 bg-[#111] border border-[#444] flex items-center gap-3 relative overflow-hidden group hover:border-[#00E5FF]">
-                            <div className="absolute top-0 right-0 p-1 bg-[#111] border-b border-l border-[#333] text-[9px] text-[#FF3A00] font-mono">
+                         <div key={i} className="px-4 py-2 bg-white/5 border border-white/10 flex items-center gap-3 relative overflow-hidden group hover:border-white/10">
+                            <div className="absolute top-0 right-0 p-1 bg-white/5 border-b border-l border-white/5 text-[9px] text-zinc-200 font-mono">
                               C={(node.confidence * 100).toFixed(0)}%
                             </div>
                             <span className={cn(
-                              "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5",
+                              "text-[10px] font-bold  tracking-widest px-2 py-0.5",
                               node.type === 'THEME' ? 'bg-[#ff3a00]/20 text-[#ff3a00]' :
-                              node.type === 'THINKER' ? 'bg-[#00e5ff]/20 text-[#00e5ff]' : 'bg-[#fff]/10 text-[#fff]'
+                              node.type === 'THINKER' ? 'bg-[#00e5ff]/20 text-[#00e5ff]' : 'bg-[#fff]/10 text-white'
                             )}>{node.type}</span>
-                            <span className="text-sm font-bold text-[#eee] tracking-tight">{node.id}</span>
+                            <span className="text-sm font-bold text-zinc-100 tracking-tight">{node.id}</span>
                          </div>
                        ))}
                     </div>

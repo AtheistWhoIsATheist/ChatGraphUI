@@ -127,7 +127,7 @@ export function VoidEditor({ initialBlocks, nodes, onChange, readOnly = false }:
   return (
     <div className={cn(
       "relative w-full h-full flex flex-col transition-all duration-500",
-      focusMode ? "fixed inset-0 z-50 bg-[#050505] p-20" : ""
+      focusMode ? "fixed inset-0 z-50 bg-zinc-900/40 p-20" : ""
     )}>
       {/* Focus Mode Overlay */}
       {focusMode && (
@@ -146,7 +146,7 @@ export function VoidEditor({ initialBlocks, nodes, onChange, readOnly = false }:
             className={cn(
               "group relative rounded-xl transition-all duration-300 border border-transparent",
               activeBlockId === block.id 
-                ? "bg-white/[0.02] backdrop-blur-sm border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.1)]" 
+                ? "bg-white/[0.02] backdrop-blur-sm border-orange-500/30 shadow-xl" 
                 : "hover:bg-white/[0.01]"
             )}
           >
@@ -155,7 +155,7 @@ export function VoidEditor({ initialBlocks, nodes, onChange, readOnly = false }:
               <div className="absolute -left-10 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
                 <button 
                   onClick={() => addBlock(block.id)}
-                  className="p-1.5 text-zinc-600 hover:text-orange-400 rounded hover:bg-white/5"
+                  className="p-1.5 text-zinc-600 hover:text-zinc-300 rounded hover:bg-white/5"
                 >
                   <GripVertical className="w-3 h-3" />
                 </button>
@@ -170,7 +170,7 @@ export function VoidEditor({ initialBlocks, nodes, onChange, readOnly = false }:
 
             {/* Content Area */}
             <div className="p-4 pl-6 relative">
-              {block.type === 'heading' && <Hash className="absolute left-2 top-5 w-3 h-3 text-orange-500/50" />}
+              {block.type === 'heading' && <Hash className="absolute left-2 top-5 w-3 h-3 text-zinc-200/50" />}
               {block.type === 'code' && <Code className="absolute left-2 top-5 w-3 h-3 text-blue-500/50" />}
               {block.type === 'todo' && <CheckSquare className="absolute left-2 top-5 w-3 h-3 text-emerald-500/50" />}
               
@@ -232,7 +232,7 @@ export function VoidEditor({ initialBlocks, nodes, onChange, readOnly = false }:
             onClick={() => addBlock(blocks[blocks.length - 1].id)}
             className="h-20 flex items-center justify-center text-zinc-700 hover:text-zinc-500 cursor-text transition-colors"
           >
-            <span className="text-xs font-mono uppercase tracking-widest opacity-0 hover:opacity-100">Click to append</span>
+            <span className="text-xs font-mono  tracking-widest opacity-0 hover:opacity-100">Click to append</span>
           </div>
         )}
       </div>
@@ -247,9 +247,9 @@ export function VoidEditor({ initialBlocks, nodes, onChange, readOnly = false }:
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               style={{ top: slashMenu.y, left: slashMenu.x }}
-              className="fixed z-50 w-48 bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col"
+              className="fixed z-50 w-48 bg-white/5 border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col"
             >
-              <div className="px-3 py-2 text-[10px] text-zinc-500 uppercase tracking-widest border-b border-white/5 bg-white/[0.02]">
+              <div className="px-3 py-2 text-[10px] text-zinc-500  tracking-widest border-b border-white/5 bg-white/[0.02]">
                 Block Type
               </div>
               {[
@@ -282,9 +282,9 @@ export function VoidEditor({ initialBlocks, nodes, onChange, readOnly = false }:
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               style={{ top: linkMenu.y, left: linkMenu.x }}
-              className="fixed z-50 w-64 bg-[#111] border border-orange-500/30 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-64"
+              className="fixed z-50 w-64 bg-white/5 border border-orange-500/30 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-64"
             >
-              <div className="px-3 py-2 text-[10px] text-orange-500 uppercase tracking-widest border-b border-white/5 bg-orange-500/[0.05] flex items-center gap-2">
+              <div className="px-3 py-2 text-[10px] text-zinc-200  tracking-widest border-b border-white/5 bg-orange-500/[0.05] flex items-center gap-2">
                 <LinkIcon className="w-3 h-3" />
                 Link to Node
               </div>
