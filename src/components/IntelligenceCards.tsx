@@ -110,9 +110,18 @@ export function IntelligenceCards({ nodes, links, onNodeSelect }: IntelligenceCa
                   {community.summary}
                 </div>
               ) : (
-                <div className="text-xs text-zinc-500 font-bold  tracking-widest mb-4">
-                  AWAITING SYNTHESIS...
-                </div>
+                <button
+                  onClick={() => handleSynthesize(community)}
+                  disabled={synthesizingId === community.id}
+                  className="w-full text-left text-xs bg-white/5 hover:bg-white/10 p-2 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer font-bold tracking-widest mb-4 flex items-center justify-between group rounded-lg"
+                >
+                  <span>{synthesizingId === community.id ? 'SYNTHESIZING...' : 'AWAITING SYNTHESIS... Click here to synthesize.'}</span>
+                  {synthesizingId === community.id ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-[#FF00FF]" />
+                  ) : (
+                    <Sparkles className="w-4 h-4 group-hover:text-[#FF00FF]" />
+                  )}
+                </button>
               )}
 
               <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t-2 border-[#222]">
