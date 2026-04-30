@@ -1,14 +1,14 @@
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
-import { connectDB, getNodesCollection, getDb } from './src/backend/db';
-import { startCronJobs } from './src/backend/cron-jobs';
+import { connectDB, getNodesCollection, getDb } from './src/backend/db.js';
+import { startCronJobs } from './src/backend/cron-jobs.js';
 import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-import { nes2Router } from './src/backend/nes2-router';
+import { nes2Router } from './src/backend/nes2-router.js';
 
 async function startServer() {
   const app = express();

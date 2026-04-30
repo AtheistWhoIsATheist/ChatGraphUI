@@ -1,6 +1,6 @@
 import cron from 'node-cron';
-import { getNodesForDensification, getWeeklyChanges, getNodesCollection, getDigestsCollection } from './db';
-import { densificationPrompt, revelationDigestPrompt } from './ai-prompts';
+import { getNodesForDensification, getWeeklyChanges, getNodesCollection, getDigestsCollection } from './db.js';
+import { densificationPrompt, revelationDigestPrompt } from './ai-prompts.js';
 import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
 

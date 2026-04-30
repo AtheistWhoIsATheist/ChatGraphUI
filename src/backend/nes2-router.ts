@@ -1,5 +1,5 @@
 import express from 'express';
-import { ensureDirs, DIRS } from './nes2-fs';
+import { ensureDirs, DIRS } from './nes2-fs.js';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
