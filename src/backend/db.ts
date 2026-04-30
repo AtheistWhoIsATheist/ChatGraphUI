@@ -48,7 +48,7 @@ export async function connectDB() {
     if (count === 0) {
       console.log('[DB] Seeding initial corpus nodes and links...');
       const insertNode = db.prepare(`
-        INSERT INTO nodes (
+        INSERT OR IGNORE INTO nodes (
           id, label, type, status, summary, blocks, socratic_questions,
           metadata, saturation_level, revision_count, last_audited_date, audit_logs
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
