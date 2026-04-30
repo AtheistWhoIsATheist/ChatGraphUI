@@ -110,7 +110,7 @@ const createBlock = (content: string): VoidBlock => ({
   metadata: { lastEdited: Date.now(), sentiment: "neutral" },
 });
 
-export const corpusNodes: Node[] = [\n{
+export const corpusNodes: Node[] = [{
   "id": "THINKER_emile_cioran",
   "label": "Emile Cioran",
   "type": "thinker",
@@ -131,7 +131,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 470
-},\n{
+},{
   "id": "THINKER_ernest_becker",
   "label": "Ernest Becker",
   "type": "thinker",
@@ -152,7 +152,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 2
   },
   "quote_count": 326
-},\n{
+},{
   "id": "THINKER_thomas_kempis",
   "label": "Thomas à Kempis",
   "type": "thinker",
@@ -173,7 +173,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 181
-},\n{
+},{
   "id": "THINKER_evelyn_underhill",
   "label": "Evelyn Underhill",
   "type": "thinker",
@@ -194,7 +194,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -1.67
   },
   "quote_count": 179
-},\n{
+},{
   "id": "THINKER_kierkegaard",
   "label": "Kierkegaard",
   "type": "thinker",
@@ -215,7 +215,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 1.33
   },
   "quote_count": 174
-},\n{
+},{
   "id": "THINKER_st_john_of_the_cross",
   "label": "St. John of the Cross",
   "type": "thinker",
@@ -236,7 +236,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -0.67
   },
   "quote_count": 158
-},\n{
+},{
   "id": "THINKER_nietzsche",
   "label": "Nietzsche",
   "type": "thinker",
@@ -257,7 +257,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 146
-},\n{
+},{
   "id": "THINKER_lev_shestov",
   "label": "Lev Shestov",
   "type": "thinker",
@@ -278,7 +278,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 1.33
   },
   "quote_count": 142
-},\n{
+},{
   "id": "THINKER_teresa_of_vila",
   "label": "Teresa of Ávila",
   "type": "thinker",
@@ -299,7 +299,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -0.67
   },
   "quote_count": 141
-},\n{
+},{
   "id": "THINKER_paul_tillich",
   "label": "Paul Tillich",
   "type": "thinker",
@@ -320,7 +320,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 134
-},\n{
+},{
   "id": "THINKER_aldous_huxley",
   "label": "Aldous Huxley",
   "type": "thinker",
@@ -341,7 +341,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 131
-},\n{
+},{
   "id": "THINKER_mitchell_heisman",
   "label": "Mitchell Heisman",
   "type": "thinker",
@@ -362,7 +362,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 116
-},\n{
+},{
   "id": "THINKER_martin_heidegger",
   "label": "Martin Heidegger",
   "type": "thinker",
@@ -383,7 +383,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 105
-},\n{
+},{
   "id": "THINKER_tolstoy",
   "label": "Tolstoy",
   "type": "thinker",
@@ -404,7 +404,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 103
-},\n{
+},{
   "id": "THINKER_thomas_ligotti",
   "label": "Thomas Ligotti",
   "type": "thinker",
@@ -425,7 +425,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 84
-},\n{
+},{
   "id": "THINKER_fr_seraphim_rose",
   "label": "Fr. Seraphim Rose",
   "type": "thinker",
@@ -446,7 +446,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 83
-},\n{
+},{
   "id": "THINKER_miguel_de_molinos",
   "label": "Miguel de Molinos",
   "type": "thinker",
@@ -467,7 +467,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 77
-},\n{
+},{
   "id": "THINKER_a_w_tozer",
   "label": "A.W. Tozer",
   "type": "thinker",
@@ -488,7 +488,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 77
-},\n{
+},{
   "id": "THINKER_pascal",
   "label": "Pascal",
   "type": "thinker",
@@ -509,7 +509,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 76
-},\n{
+},{
   "id": "THINKER_edgar_saltus",
   "label": "Edgar Saltus",
   "type": "thinker",
@@ -530,7 +530,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 72
-},\n{
+},{
   "id": "THINKER_miguel_de_unamuno",
   "label": "Miguel de Unamuno",
   "type": "thinker",
@@ -551,7 +551,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 69
-},\n{
+},{
   "id": "THINKER_augustine",
   "label": "Augustine",
   "type": "thinker",
@@ -572,7 +572,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 64
-},\n{
+},{
   "id": "THINKER_plato_socrates",
   "label": "Plato/Socrates",
   "type": "thinker",
@@ -593,7 +593,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 63
-},\n{
+},{
   "id": "THINKER_william_james",
   "label": "William James",
   "type": "thinker",
@@ -614,7 +614,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 59
-},\n{
+},{
   "id": "THINKER_taoism",
   "label": "Taoism",
   "type": "thinker",
@@ -635,7 +635,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 54
-},\n{
+},{
   "id": "THINKER_buddhism",
   "label": "Buddhism",
   "type": "thinker",
@@ -656,7 +656,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 50
-},\n{
+},{
   "id": "THINKER_jesus_christ",
   "label": "Jesus Christ",
   "type": "thinker",
@@ -677,7 +677,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 44
-},\n{
+},{
   "id": "THINKER_meister_eckhart",
   "label": "Meister Eckhart",
   "type": "thinker",
@@ -698,7 +698,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -0.67
   },
   "quote_count": 39
-},\n{
+},{
   "id": "THINKER_gk_chesterton",
   "label": "GK Chesterton",
   "type": "thinker",
@@ -719,7 +719,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 38
-},\n{
+},{
   "id": "THINKER_therese_of_lisieux",
   "label": "Therese of Lisieux",
   "type": "thinker",
@@ -740,7 +740,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 34
-},\n{
+},{
   "id": "THINKER_martin_luther",
   "label": "Martin Luther",
   "type": "thinker",
@@ -761,7 +761,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 33
-},\n{
+},{
   "id": "THINKER_albert_camus",
   "label": "Albert Camus",
   "type": "thinker",
@@ -782,7 +782,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 33
-},\n{
+},{
   "id": "THINKER_swami_vivekananda",
   "label": "Swami Vivekananda",
   "type": "thinker",
@@ -803,7 +803,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 30
-},\n{
+},{
   "id": "THINKER_peter_wessel_zapffe",
   "label": "Peter Wessel Zapffe",
   "type": "thinker",
@@ -824,7 +824,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 28
-},\n{
+},{
   "id": "THINKER_herman_t_nnessen",
   "label": "Herman Tønnessen",
   "type": "thinker",
@@ -845,7 +845,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 27
-},\n{
+},{
   "id": "THINKER_bertrand_russell",
   "label": "Bertrand Russell",
   "type": "thinker",
@@ -866,7 +866,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 26
-},\n{
+},{
   "id": "THINKER_thomas_keating",
   "label": "Thomas Keating",
   "type": "thinker",
@@ -887,7 +887,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 26
-},\n{
+},{
   "id": "THINKER_thomas_merton",
   "label": "Thomas Merton",
   "type": "thinker",
@@ -908,7 +908,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 26
-},\n{
+},{
   "id": "THINKER_john_shelby_spong",
   "label": "John Shelby Spong",
   "type": "thinker",
@@ -929,7 +929,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 26
-},\n{
+},{
   "id": "THINKER_hinduism",
   "label": "Hinduism",
   "type": "thinker",
@@ -950,7 +950,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 25
-},\n{
+},{
   "id": "THINKER_schopenhauer",
   "label": "Schopenhauer",
   "type": "thinker",
@@ -971,7 +971,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 23
-},\n{
+},{
   "id": "THINKER_ecclesiastes",
   "label": "Ecclesiastes",
   "type": "thinker",
@@ -992,7 +992,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 17
-},\n{
+},{
   "id": "THINKER_will_durant",
   "label": "Will Durant",
   "type": "thinker",
@@ -1013,7 +1013,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 17
-},\n{
+},{
   "id": "THINKER_c_s_lewis",
   "label": "C.S. Lewis",
   "type": "thinker",
@@ -1034,7 +1034,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 17
-},\n{
+},{
   "id": "THINKER_montaigne",
   "label": "Montaigne",
   "type": "thinker",
@@ -1055,7 +1055,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 15
-},\n{
+},{
   "id": "THINKER_huston_smith",
   "label": "Huston Smith",
   "type": "thinker",
@@ -1076,7 +1076,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 14
-},\n{
+},{
   "id": "THINKER_timothy_leary",
   "label": "Timothy Leary",
   "type": "thinker",
@@ -1097,7 +1097,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 8
-},\n{
+},{
   "id": "THINKER_john_bunyan",
   "label": "John Bunyan",
   "type": "thinker",
@@ -1118,7 +1118,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 5
-},\n{
+},{
   "id": "THINKER_angela_of_foligno",
   "label": "Angela of Foligno",
   "type": "thinker",
@@ -1139,7 +1139,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 3
-},\n{
+},{
   "id": "THINKER_thomas_aquinas",
   "label": "Thomas Aquinas",
   "type": "thinker",
@@ -1160,7 +1160,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 2
-},\n{
+},{
   "id": "THINKER_william_lane_craig",
   "label": "William Lane Craig",
   "type": "thinker",
@@ -1181,7 +1181,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 2
-},\n{
+},{
   "id": "THINKER_pseudo_dionysius",
   "label": "Pseudo-Dionysius",
   "type": "thinker",
@@ -1202,7 +1202,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 1
-},\n{
+},{
   "id": "THEME_existential_dread",
   "label": "Existential Dread",
   "type": "theme",
@@ -1217,7 +1217,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 12
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_anxiety",
   "label": "Anxiety",
   "type": "theme",
@@ -1232,7 +1232,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 10
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_lack_of_objective_meaning_value_purpose",
   "label": "Lack of Objective Meaning, Value, Purpose",
   "type": "theme",
@@ -1247,7 +1247,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_skepticism_of_knowledge",
   "label": "Skepticism of Knowledge",
   "type": "theme",
@@ -1262,7 +1262,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_limitations_of_language",
   "label": "Limitations of Language",
   "type": "theme",
@@ -1277,7 +1277,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_dual_nature_of_humans",
   "label": "Dual Nature of Humans",
   "type": "theme",
@@ -1292,7 +1292,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_renunciation_of_worldly_endeavors_contemplative_lifestyle",
   "label": "Renunciation of Worldly Endeavors/Contemplative Lifestyle",
   "type": "theme",
@@ -1307,7 +1307,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 2
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
   "label": "Ego Dissolution, Authenticity, True-Self, Oneness/Union",
   "type": "theme",
@@ -1322,7 +1322,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_mystical_and_nihilistic_experiences",
   "label": "Mystical and Nihilistic Experiences",
   "type": "theme",
@@ -1337,7 +1337,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_divine_presence_and_suffering",
   "label": "Divine Presence and Suffering",
   "type": "theme",
@@ -1352,7 +1352,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_role_of_senses_and_silence",
   "label": "Role of Senses and Silence",
   "type": "theme",
@@ -1367,7 +1367,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_conceptualization_of_god",
   "label": "Conceptualization of God",
   "type": "theme",
@@ -1382,7 +1382,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 2
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_inner_turmoil_and_growth",
   "label": "Inner Turmoil and Growth",
   "type": "theme",
@@ -1397,7 +1397,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 8
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_human_nature_and_temptation",
   "label": "Human Nature and Temptation",
   "type": "theme",
@@ -1412,7 +1412,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_righteousness_and_purification",
   "label": "Righteousness and Purification",
   "type": "theme",
@@ -1427,7 +1427,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_internal_recollection",
   "label": "Internal Recollection",
   "type": "theme",
@@ -1442,7 +1442,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_challenges_in_spiritual_path",
   "label": "Challenges in Spiritual Path",
   "type": "theme",
@@ -1457,7 +1457,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 8
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_perseverance_in_recollection",
   "label": "Perseverance in Recollection",
   "type": "theme",
@@ -1472,7 +1472,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 2
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_benefits_of_recollection_over_physical_penances",
   "label": "Benefits of Recollection Over Physical Penances",
   "type": "theme",
@@ -1487,7 +1487,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_caution_against_rigid_penances",
   "label": "Caution Against Rigid Penances",
   "type": "theme",
@@ -1502,7 +1502,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_misconceptions_about_spiritual_practices",
   "label": "Misconceptions About Spiritual Practices",
   "type": "theme",
@@ -1517,7 +1517,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_pursuit_of_god_s_will_and_humility",
   "label": "Pursuit of God's Will and Humility",
   "type": "theme",
@@ -1532,7 +1532,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_approach_to_spiritual_practices",
   "label": "Approach to Spiritual Practices",
   "type": "theme",
@@ -1547,7 +1547,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_divine_presence_in_human_imperfection",
   "label": "Divine Presence in Human Imperfection",
   "type": "theme",
@@ -1562,7 +1562,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_avoiding_sensible_pleasures",
   "label": "Avoiding Sensible Pleasures",
   "type": "theme",
@@ -1577,7 +1577,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THINKER_emile_cioran",
   "label": "Emile Cioran",
   "type": "thinker",
@@ -1598,7 +1598,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 470
-},\n{
+},{
   "id": "THINKER_ernest_becker",
   "label": "Ernest Becker",
   "type": "thinker",
@@ -1619,7 +1619,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 2
   },
   "quote_count": 326
-},\n{
+},{
   "id": "THINKER_thomas_kempis",
   "label": "Thomas à Kempis",
   "type": "thinker",
@@ -1640,7 +1640,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 181
-},\n{
+},{
   "id": "THINKER_evelyn_underhill",
   "label": "Evelyn Underhill",
   "type": "thinker",
@@ -1661,7 +1661,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -1.67
   },
   "quote_count": 179
-},\n{
+},{
   "id": "THINKER_kierkegaard",
   "label": "Kierkegaard",
   "type": "thinker",
@@ -1682,7 +1682,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 1.33
   },
   "quote_count": 174
-},\n{
+},{
   "id": "THINKER_st_john_of_the_cross",
   "label": "St. John of the Cross",
   "type": "thinker",
@@ -1703,7 +1703,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -0.67
   },
   "quote_count": 158
-},\n{
+},{
   "id": "THINKER_nietzsche",
   "label": "Nietzsche",
   "type": "thinker",
@@ -1724,7 +1724,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 146
-},\n{
+},{
   "id": "THINKER_lev_shestov",
   "label": "Lev Shestov",
   "type": "thinker",
@@ -1745,7 +1745,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 1.33
   },
   "quote_count": 142
-},\n{
+},{
   "id": "THINKER_teresa_of_vila",
   "label": "Teresa of Ávila",
   "type": "thinker",
@@ -1766,7 +1766,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -0.67
   },
   "quote_count": 141
-},\n{
+},{
   "id": "THINKER_paul_tillich",
   "label": "Paul Tillich",
   "type": "thinker",
@@ -1787,7 +1787,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 134
-},\n{
+},{
   "id": "THINKER_aldous_huxley",
   "label": "Aldous Huxley",
   "type": "thinker",
@@ -1808,7 +1808,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 131
-},\n{
+},{
   "id": "THINKER_mitchell_heisman",
   "label": "Mitchell Heisman",
   "type": "thinker",
@@ -1829,7 +1829,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 116
-},\n{
+},{
   "id": "THINKER_martin_heidegger",
   "label": "Martin Heidegger",
   "type": "thinker",
@@ -1850,7 +1850,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 105
-},\n{
+},{
   "id": "THINKER_tolstoy",
   "label": "Tolstoy",
   "type": "thinker",
@@ -1871,7 +1871,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 103
-},\n{
+},{
   "id": "THINKER_thomas_ligotti",
   "label": "Thomas Ligotti",
   "type": "thinker",
@@ -1892,7 +1892,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 84
-},\n{
+},{
   "id": "THINKER_fr_seraphim_rose",
   "label": "Fr. Seraphim Rose",
   "type": "thinker",
@@ -1913,7 +1913,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 83
-},\n{
+},{
   "id": "THINKER_miguel_de_molinos",
   "label": "Miguel de Molinos",
   "type": "thinker",
@@ -1934,7 +1934,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 77
-},\n{
+},{
   "id": "THINKER_a_w_tozer",
   "label": "A.W. Tozer",
   "type": "thinker",
@@ -1955,7 +1955,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 77
-},\n{
+},{
   "id": "THINKER_pascal",
   "label": "Pascal",
   "type": "thinker",
@@ -1976,7 +1976,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 76
-},\n{
+},{
   "id": "THINKER_edgar_saltus",
   "label": "Edgar Saltus",
   "type": "thinker",
@@ -1997,7 +1997,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 72
-},\n{
+},{
   "id": "THINKER_miguel_de_unamuno",
   "label": "Miguel de Unamuno",
   "type": "thinker",
@@ -2018,7 +2018,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 69
-},\n{
+},{
   "id": "THINKER_augustine",
   "label": "Augustine",
   "type": "thinker",
@@ -2039,7 +2039,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 64
-},\n{
+},{
   "id": "THINKER_plato_socrates",
   "label": "Plato/Socrates",
   "type": "thinker",
@@ -2060,7 +2060,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 63
-},\n{
+},{
   "id": "THINKER_william_james",
   "label": "William James",
   "type": "thinker",
@@ -2081,7 +2081,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 59
-},\n{
+},{
   "id": "THINKER_taoism",
   "label": "Taoism",
   "type": "thinker",
@@ -2102,7 +2102,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 54
-},\n{
+},{
   "id": "THINKER_buddhism",
   "label": "Buddhism",
   "type": "thinker",
@@ -2123,7 +2123,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 50
-},\n{
+},{
   "id": "THINKER_jesus_christ",
   "label": "Jesus Christ",
   "type": "thinker",
@@ -2144,7 +2144,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 44
-},\n{
+},{
   "id": "THINKER_meister_eckhart",
   "label": "Meister Eckhart",
   "type": "thinker",
@@ -2165,7 +2165,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -0.67
   },
   "quote_count": 39
-},\n{
+},{
   "id": "THINKER_gk_chesterton",
   "label": "GK Chesterton",
   "type": "thinker",
@@ -2186,7 +2186,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 38
-},\n{
+},{
   "id": "THINKER_therese_of_lisieux",
   "label": "Therese of Lisieux",
   "type": "thinker",
@@ -2207,7 +2207,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 34
-},\n{
+},{
   "id": "THINKER_martin_luther",
   "label": "Martin Luther",
   "type": "thinker",
@@ -2228,7 +2228,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 33
-},\n{
+},{
   "id": "THINKER_albert_camus",
   "label": "Albert Camus",
   "type": "thinker",
@@ -2249,7 +2249,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 33
-},\n{
+},{
   "id": "THINKER_swami_vivekananda",
   "label": "Swami Vivekananda",
   "type": "thinker",
@@ -2270,7 +2270,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 30
-},\n{
+},{
   "id": "THINKER_peter_wessel_zapffe",
   "label": "Peter Wessel Zapffe",
   "type": "thinker",
@@ -2291,7 +2291,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 28
-},\n{
+},{
   "id": "THINKER_herman_t_nnessen",
   "label": "Herman Tønnessen",
   "type": "thinker",
@@ -2312,7 +2312,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 27
-},\n{
+},{
   "id": "THINKER_bertrand_russell",
   "label": "Bertrand Russell",
   "type": "thinker",
@@ -2333,7 +2333,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 26
-},\n{
+},{
   "id": "THINKER_thomas_keating",
   "label": "Thomas Keating",
   "type": "thinker",
@@ -2354,7 +2354,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 26
-},\n{
+},{
   "id": "THINKER_thomas_merton",
   "label": "Thomas Merton",
   "type": "thinker",
@@ -2375,7 +2375,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 26
-},\n{
+},{
   "id": "THINKER_john_shelby_spong",
   "label": "John Shelby Spong",
   "type": "thinker",
@@ -2396,7 +2396,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 26
-},\n{
+},{
   "id": "THINKER_hinduism",
   "label": "Hinduism",
   "type": "thinker",
@@ -2417,7 +2417,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 25
-},\n{
+},{
   "id": "THINKER_schopenhauer",
   "label": "Schopenhauer",
   "type": "thinker",
@@ -2438,7 +2438,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 23
-},\n{
+},{
   "id": "THINKER_ecclesiastes",
   "label": "Ecclesiastes",
   "type": "thinker",
@@ -2459,7 +2459,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0.67
   },
   "quote_count": 17
-},\n{
+},{
   "id": "THINKER_will_durant",
   "label": "Will Durant",
   "type": "thinker",
@@ -2480,7 +2480,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 17
-},\n{
+},{
   "id": "THINKER_c_s_lewis",
   "label": "C.S. Lewis",
   "type": "thinker",
@@ -2501,7 +2501,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 17
-},\n{
+},{
   "id": "THINKER_montaigne",
   "label": "Montaigne",
   "type": "thinker",
@@ -2522,7 +2522,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 15
-},\n{
+},{
   "id": "THINKER_huston_smith",
   "label": "Huston Smith",
   "type": "thinker",
@@ -2543,7 +2543,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 14
-},\n{
+},{
   "id": "THINKER_timothy_leary",
   "label": "Timothy Leary",
   "type": "thinker",
@@ -2564,7 +2564,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 8
-},\n{
+},{
   "id": "THINKER_john_bunyan",
   "label": "John Bunyan",
   "type": "thinker",
@@ -2585,7 +2585,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 5
-},\n{
+},{
   "id": "THINKER_angela_of_foligno",
   "label": "Angela of Foligno",
   "type": "thinker",
@@ -2606,7 +2606,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 3
-},\n{
+},{
   "id": "THINKER_thomas_aquinas",
   "label": "Thomas Aquinas",
   "type": "thinker",
@@ -2627,7 +2627,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 2
-},\n{
+},{
   "id": "THINKER_william_lane_craig",
   "label": "William Lane Craig",
   "type": "thinker",
@@ -2648,7 +2648,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 2
-},\n{
+},{
   "id": "THINKER_pseudo_dionysius",
   "label": "Pseudo-Dionysius",
   "type": "thinker",
@@ -2669,7 +2669,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 1
-},\n{
+},{
   "id": "THEME_existential_dread",
   "label": "Existential Dread",
   "type": "theme",
@@ -2684,7 +2684,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 12
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_anxiety",
   "label": "Anxiety",
   "type": "theme",
@@ -2699,7 +2699,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 10
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_lack_of_objective_meaning_value_purpose",
   "label": "Lack of Objective Meaning, Value, Purpose",
   "type": "theme",
@@ -2714,7 +2714,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_skepticism_of_knowledge",
   "label": "Skepticism of Knowledge",
   "type": "theme",
@@ -2729,7 +2729,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_limitations_of_language",
   "label": "Limitations of Language",
   "type": "theme",
@@ -2744,7 +2744,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_dual_nature_of_humans",
   "label": "Dual Nature of Humans",
   "type": "theme",
@@ -2759,7 +2759,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_renunciation_of_worldly_endeavors_contemplative_lifestyle",
   "label": "Renunciation of Worldly Endeavors/Contemplative Lifestyle",
   "type": "theme",
@@ -2774,7 +2774,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 2
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
   "label": "Ego Dissolution, Authenticity, True-Self, Oneness/Union",
   "type": "theme",
@@ -2789,7 +2789,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_mystical_and_nihilistic_experiences",
   "label": "Mystical and Nihilistic Experiences",
   "type": "theme",
@@ -2804,7 +2804,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_divine_presence_and_suffering",
   "label": "Divine Presence and Suffering",
   "type": "theme",
@@ -2819,7 +2819,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_role_of_senses_and_silence",
   "label": "Role of Senses and Silence",
   "type": "theme",
@@ -2834,7 +2834,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_conceptualization_of_god",
   "label": "Conceptualization of God",
   "type": "theme",
@@ -2849,7 +2849,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 2
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_inner_turmoil_and_growth",
   "label": "Inner Turmoil and Growth",
   "type": "theme",
@@ -2864,7 +2864,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 8
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_human_nature_and_temptation",
   "label": "Human Nature and Temptation",
   "type": "theme",
@@ -2879,7 +2879,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_righteousness_and_purification",
   "label": "Righteousness and Purification",
   "type": "theme",
@@ -2894,7 +2894,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_internal_recollection",
   "label": "Internal Recollection",
   "type": "theme",
@@ -2909,7 +2909,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_challenges_in_spiritual_path",
   "label": "Challenges in Spiritual Path",
   "type": "theme",
@@ -2924,7 +2924,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 8
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_perseverance_in_recollection",
   "label": "Perseverance in Recollection",
   "type": "theme",
@@ -2939,7 +2939,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 2
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_benefits_of_recollection_over_physical_penances",
   "label": "Benefits of Recollection Over Physical Penances",
   "type": "theme",
@@ -2954,7 +2954,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_caution_against_rigid_penances",
   "label": "Caution Against Rigid Penances",
   "type": "theme",
@@ -2969,7 +2969,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 0
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_misconceptions_about_spiritual_practices",
   "label": "Misconceptions About Spiritual Practices",
   "type": "theme",
@@ -2984,7 +2984,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_pursuit_of_god_s_will_and_humility",
   "label": "Pursuit of God's Will and Humility",
   "type": "theme",
@@ -2999,7 +2999,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 4
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_approach_to_spiritual_practices",
   "label": "Approach to Spiritual Practices",
   "type": "theme",
@@ -3014,7 +3014,7 @@ export const corpusNodes: Node[] = [\n{
     "z": -2
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_divine_presence_in_human_imperfection",
   "label": "Divine Presence in Human Imperfection",
   "type": "theme",
@@ -3029,7 +3029,7 @@ export const corpusNodes: Node[] = [\n{
     "z": 6
   },
   "quote_count": 0
-},\n{
+},{
   "id": "THEME_avoiding_sensible_pleasures",
   "label": "Avoiding Sensible Pleasures",
   "type": "theme",
@@ -5228,112 +5228,112 @@ export const corpusNodes: Node[] = [\n{
   }
 ];
 
-export const corpusLinks: Link[] = [\n{
+export const corpusLinks: Link[] = [{
   "source": "THINKER_emile_cioran",
   "target": "THEME_existential_dread",
   "type": "resonance",
   "properties": {
     "score": 0.81
   }
-},\n{
+},{
   "source": "THINKER_kierkegaard",
   "target": "THEME_anxiety",
   "type": "resonance",
   "properties": {
     "score": 0.79
   }
-},\n{
+},{
   "source": "THINKER_st_john_of_the_cross",
   "target": "THEME_divine_presence_and_suffering",
   "type": "resonance",
   "properties": {
     "score": 0.85
   }
-},\n{
+},{
   "source": "THINKER_meister_eckhart",
   "target": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
   "type": "resonance",
   "properties": {
     "score": 0.83
   }
-},\n{
+},{
   "source": "THINKER_buddhism",
   "target": "THEME_mystical_and_nihilistic_experiences",
   "type": "resonance",
   "properties": {
     "score": 0.78
   }
-},\n{
+},{
   "source": "THINKER_pascal",
   "target": "THEME_anxiety",
   "type": "resonance",
   "properties": {
     "score": 0.76
   }
-},\n{
+},{
   "source": "THINKER_nietzsche",
   "target": "THEME_lack_of_objective_meaning_value_purpose",
   "type": "tension",
   "properties": {
     "score": 0.72
   }
-},\n{
+},{
   "source": "THINKER_tolstoy",
   "target": "THEME_divine_presence_and_suffering",
   "type": "resonance",
   "properties": {
     "score": 0.74
   }
-},\n{
+},{
   "source": "THINKER_emile_cioran",
   "target": "THEME_existential_dread",
   "type": "resonance",
   "properties": {
     "score": 0.81
   }
-},\n{
+},{
   "source": "THINKER_kierkegaard",
   "target": "THEME_anxiety",
   "type": "resonance",
   "properties": {
     "score": 0.79
   }
-},\n{
+},{
   "source": "THINKER_st_john_of_the_cross",
   "target": "THEME_divine_presence_and_suffering",
   "type": "resonance",
   "properties": {
     "score": 0.85
   }
-},\n{
+},{
   "source": "THINKER_meister_eckhart",
   "target": "THEME_ego_dissolution_authenticity_true_self_oneness_union",
   "type": "resonance",
   "properties": {
     "score": 0.83
   }
-},\n{
+},{
   "source": "THINKER_buddhism",
   "target": "THEME_mystical_and_nihilistic_experiences",
   "type": "resonance",
   "properties": {
     "score": 0.78
   }
-},\n{
+},{
   "source": "THINKER_pascal",
   "target": "THEME_anxiety",
   "type": "resonance",
   "properties": {
     "score": 0.76
   }
-},\n{
+},{
   "source": "THINKER_nietzsche",
   "target": "THEME_lack_of_objective_meaning_value_purpose",
   "type": "tension",
   "properties": {
     "score": 0.72
   }
-},\n{
+},{
   "source": "THINKER_tolstoy",
   "target": "THEME_divine_presence_and_suffering",
   "type": "resonance",

@@ -14,7 +14,7 @@ import { blocksToString } from '../utils/voidUtils';
 
 // --- TYPES & CONSTANTS ---
 
-const NODE_COLORS: Record<NodeType, string> = {
+const NODE_COLORS: Partial<Record<NodeType, string>> = {
   treatise: '#a1a1aa', // zinc-400
   journal: '#d4d4d8',  // zinc-300
   thinker: '#e4e4e7',  // zinc-200

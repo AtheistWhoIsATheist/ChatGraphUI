@@ -9,6 +9,7 @@ import { ShiftingVoidExplanation } from './components/ShiftingVoidExplanation';
 import { AuditTrailPanel } from './components/AuditTrailPanel';
 import { NodeDetailsPanel } from './components/NodeDetailsPanel';
 import { FileManager } from './components/FileManager';
+import ButterbaseApp from './butterbase/ButterbaseApp';
 import KnowledgeBaseDeepIngestion from './pages/KnowledgeBaseDeepIngestion';
 import { OEDiscriminator } from './components/OEDiscriminator';
 import { OEDashboard } from './components/OEDiscriminatorDashboard';
@@ -23,7 +24,7 @@ import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { runIngestion, IngestionFile } from './utils/runIngestion';
 
-type ViewMode = 'engine' | 'stream' | 'gaps' | 'deep_ingestion' | 'discriminator' | '3d_engine' | 'oe_analytics' | 'theme_clusters' | 'ai_synthesis';
+type ViewMode = 'engine' | 'stream' | 'gaps' | 'deep_ingestion' | 'discriminator' | '3d_engine' | 'oe_analytics' | 'theme_clusters' | 'ai_synthesis' | 'butterbase';
 type SidebarMode = 'chat' | 'intelligence' | 'insights' | 'audit' | 'details';
 
 function TheoryOverlay() {
@@ -208,6 +209,7 @@ function App() {
             
             <nav className="flex-1 flex flex-col gap-6">
               {[
+                { id: 'butterbase', icon: Database, title: "Butterbase App" },
                 { id: 'deep_ingestion', icon: Database, title: "Journal314 Ingestion" },
                 { id: 'engine', icon: Cpu, title: "Journal314 / REN Graph Engine" },
                 { id: '3d_engine', icon: Box, title: "REN Topology (3D)" },
@@ -274,6 +276,11 @@ function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 relative overflow-hidden">
+        {viewMode === 'butterbase' && (
+          <div className="w-full h-full overflow-y-auto custom-scrollbar">
+            <ButterbaseApp />
+          </div>
+        )}
         {viewMode === 'deep_ingestion' && (
           <div className="w-full h-full overflow-y-auto custom-scrollbar">
             <KnowledgeBaseDeepIngestion />
