@@ -1,12 +1,12 @@
 import cron from 'node-cron';
-import { getNodesForDensification, getWeeklyChanges, getNodesCollection, getDigestsCollection } from './db.js';
-import { densificationPrompt, revelationDigestPrompt } from './ai-prompts.js';
+import { getNodesForDensification, getWeeklyChanges, getNodesCollection, getDigestsCollection } from './db.ts';
+import { densificationPrompt, revelationDigestPrompt } from './ai-prompts.ts';
 import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || 'placeholder' });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY?.trim() || 'placeholder' });
 
 export function startCronJobs() {
   // The Nightly Transmutation (node-cron): Runs at 03:00 AM every day

@@ -2,7 +2,7 @@ import { GoogleGenAI, GenerateContentResponse, Chat, ThinkingLevel } from "@goog
 import { KnowledgeDocument } from "../types";
 
 // The Architect's Key to the Void
-const apiKey = process.env.GEMINI_API_KEY || '';
+const apiKey = process.env.GEMINI_API_KEY?.trim() || "";
 const ai = new GoogleGenAI({ apiKey });
 
 // Transmuted to the latest, most capable models per the Immutable Laws

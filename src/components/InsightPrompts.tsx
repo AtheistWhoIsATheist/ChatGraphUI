@@ -47,7 +47,7 @@ export function InsightPrompts({
   const handleSynthesizePair = async (sourceTargetId: string, sourceLabel: string, targetLabel: string, reason: string) => {
     setSynthesizingId(sourceTargetId);
     try {
-      const apiKey = process.env.GEMINI_API_KEY;
+      const apiKey = process.env.GEMINI_API_KEY?.trim();
       if (!apiKey) {
         setSynthesisResults(prev => ({ ...prev, [sourceTargetId]: "Error: GEMINI_API_KEY not configured." }));
         return;

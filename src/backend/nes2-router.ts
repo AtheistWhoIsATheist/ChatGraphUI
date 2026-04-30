@@ -1,5 +1,5 @@
 import express from 'express';
-import { ensureDirs, DIRS } from './nes2-fs.js';
+import { ensureDirs, DIRS } from './nes2-fs.ts';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
@@ -11,7 +11,7 @@ export const nes2Router = express.Router();
 ensureDirs();
 
 function getAi() {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) throw new Error("GEMINI_API_KEY not set");
   return new GoogleGenAI({ apiKey });
 }

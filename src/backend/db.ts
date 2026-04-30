@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 import dotenv from 'dotenv';
-import { corpusNodes, corpusLinks } from '../data/corpus.js';
+import { corpusNodes, corpusLinks } from '../data/corpus.ts';
 
 dotenv.config();
 

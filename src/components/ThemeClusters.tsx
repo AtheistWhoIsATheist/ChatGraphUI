@@ -5,7 +5,7 @@ import { Sparkles, Loader2 } from 'lucide-react';
 import Markdown from 'react-markdown';
 
 // Initialize Gemini if key exists
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY?.trim();
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 const themeNodes = [

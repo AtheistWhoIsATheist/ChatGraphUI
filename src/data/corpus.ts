@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NTNodeType, NTEdgeType } from './nt_schema.js';
+import type { NTNodeType, NTEdgeType } from './nt_schema.ts';
 
 export type NodeType =
   | "treatise"

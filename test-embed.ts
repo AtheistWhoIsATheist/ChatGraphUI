@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY?.trim() });
 async function run() {
   const res = await ai.models.embedContent({
     model: 'text-embedding-004',

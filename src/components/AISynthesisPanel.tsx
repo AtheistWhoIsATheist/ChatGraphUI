@@ -6,7 +6,7 @@ import { cn } from '../lib/utils';
 import Markdown from 'react-markdown';
 
 // Initialize Gemini
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY?.trim();
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 export function AISynthesisPanel() {

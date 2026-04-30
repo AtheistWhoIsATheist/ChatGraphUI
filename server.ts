@@ -1,14 +1,14 @@
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
-import { connectDB, getNodesCollection, getDb } from './src/backend/db.js';
-import { startCronJobs } from './src/backend/cron-jobs.js';
+import { connectDB, getNodesCollection, getDb } from './src/backend/db.ts';
+import { startCronJobs } from './src/backend/cron-jobs.ts';
 import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-import { nes2Router } from './src/backend/nes2-router.js';
+import { nes2Router } from './src/backend/nes2-router.ts';
 
 async function startServer() {
   const app = express();
@@ -31,7 +31,7 @@ async function startServer() {
       const { getNodesForDensification } = await import('./src/backend/db');
       const { densificationPrompt } = await import('./src/backend/ai-prompts');
       
-      const apiKey = process.env.GEMINI_API_KEY;
+      const apiKey = process.env.GEMINI_API_KEY?.trim();
       if (!apiKey) {
         return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
       }
@@ -157,7 +157,7 @@ async function startServer() {
       const payload = req.body;
 
       if (mode === 'preview') {
-        const apiKey = process.env.GEMINI_API_KEY;
+        const apiKey = process.env.GEMINI_API_KEY?.trim();
         if (!apiKey) {
           return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
         }
@@ -250,8 +250,11 @@ async function startServer() {
             throw new Error("No entities extracted.");
           }
 
-        } catch (genErr) {
+        } catch (genErr: any) {
           console.error("Gemini Extraction Error:", genErr);
+          if (genErr?.message?.includes('API key not valid')) {
+            return res.status(401).json({ error: 'API key not valid. Please pass a valid API key in your Workspace settings.' });
+          }
           // Fallback to basic extraction if Gemini fails
           generated.entities = [
             {
@@ -364,7 +367,7 @@ async function startServer() {
       const { text, thinker, source_file } = req.body;
       if (!text) return res.status(400).json({ error: 'Text is required' });
 
-      const apiKey = process.env.GEMINI_API_KEY;
+      const apiKey = process.env.GEMINI_API_KEY?.trim();
       if (!apiKey) {
         return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
       }
@@ -448,7 +451,7 @@ async function startServer() {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: 'Text is required' });
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
     if (!apiKey) {
       return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
     }
@@ -617,7 +620,7 @@ async function startServer() {
         return res.status(500).json({ error: 'Database connection severed.' });
       }
 
-      const apiKey = process.env.GEMINI_API_KEY;
+      const apiKey = process.env.GEMINI_API_KEY?.trim();
       if (!apiKey) {
         return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
       }
@@ -724,7 +727,7 @@ async function startServer() {
         return res.status(400).json({ error: 'Invalid nodes data' });
       }
 
-      const apiKey = process.env.GEMINI_API_KEY;
+      const apiKey = process.env.GEMINI_API_KEY?.trim();
       if (!apiKey) {
         return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
       }

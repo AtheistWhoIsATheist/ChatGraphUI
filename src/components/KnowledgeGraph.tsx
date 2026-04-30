@@ -724,7 +724,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
 
             const sourceId = link.source.id;
             const targetId = link.target.id;
-            const linkId = `latent-${sourceId}-${targetId}`;
+            const linkId = `latent-${sourceId}-${targetId}-${i}`;
             
             const dx = link.target.x - link.source.x;
             const dy = link.target.y - link.source.y;
@@ -770,7 +770,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
 
             const sourceId = link.source.id;
             const targetId = link.target.id;
-            const linkId = `link-${sourceId}-${targetId}`;
+            const linkId = `link-${sourceId}-${targetId}-${i}`;
             const style = calculateLinkStyle(link);
 
             // Calculate Quadratic Bezier Control Point
