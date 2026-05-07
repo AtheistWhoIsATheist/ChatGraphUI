@@ -10,10 +10,13 @@ export const nes2Router = express.Router();
 // Ensure the directories exist
 ensureDirs();
 
-function getAi() {
+export let aiInstance: GoogleGenAI | null = null;
+export function getAi() {
+  if (aiInstance) return aiInstance;
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) throw new Error("GEMINI_API_KEY not set");
-  return new GoogleGenAI({ apiKey });
+  aiInstance = new GoogleGenAI({ apiKey });
+  return aiInstance;
 }
 
 // Helper to robustly JSON parse LLM responses

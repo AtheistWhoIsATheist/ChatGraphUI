@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { GoogleGenAI } from '@google/genai';
 import { Sparkles, Loader2 } from 'lucide-react';
 import Markdown from 'react-markdown';
+import { getGeminiClient } from '../lib/gemini';
 
-// Initialize Gemini if key exists
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY?.trim();
-const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
+const ai = getGeminiClient();
 
 const themeNodes = [
   { id: "Ego Dissolution", group: 1, radius: 25 },
@@ -173,7 +171,7 @@ export function ThemeClusters() {
 Identify the high-level insight connecting these concepts. Treat this as a Phase 3 Synthesis & Genealogy task. Output a highly dense, academic synthesis in Markdown.`;
       
       const response = await ai.models.generateContent({
-          model: 'gemini-2.5-pro',
+          model: 'gemini-3.1-pro-preview',
           contents: prompt,
       });
 

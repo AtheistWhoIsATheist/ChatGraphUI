@@ -1,9 +1,9 @@
 import { GoogleGenAI, GenerateContentResponse, Chat, ThinkingLevel } from "@google/genai";
 import { KnowledgeDocument } from "../types";
+import { getGeminiClient } from "../lib/gemini";
 
 // The Architect's Key to the Void
-const apiKey = process.env.GEMINI_API_KEY?.trim() || "";
-const ai = new GoogleGenAI({ apiKey });
+const ai = getGeminiClient();
 
 // Transmuted to the latest, most capable models per the Immutable Laws
 const CHAT_MODEL = 'gemini-3.1-pro-preview';
@@ -15,6 +15,7 @@ const EMBEDDING_MODEL = 'gemini-embedding-2-preview';
 const embeddingCache = new Map<string, number[]>();
 
 const getEmbedding = async (text: string): Promise<number[]> => {
+    if (!ai) return [];
     try {
         const response = await ai.models.embedContent({
             model: EMBEDDING_MODEL,
@@ -180,6 +181,10 @@ Before any synthesis is finalized, the **LV (Logic Validator)** must run the fol
             console.log(`[PEC-Engine] No relevant documents found. Relying on pure latent space.`);
         }
 
+        if (!ai) {
+            onChunk("The AI is currently offline. Please configure your GEMINI_API_KEY.");
+            return "The AI is currently offline. Please configure your GEMINI_API_KEY.";
+        }
         const chat: Chat = ai.chats.create({
             model: CHAT_MODEL,
             config: {
@@ -214,6 +219,7 @@ Before any synthesis is finalized, the **LV (Logic Validator)** must run the fol
  * Generates a rapid, piercing insight from the Flash model.
  */
 export const generateQuickInsight = async (prompt: string): Promise<string> => {
+    if (!ai) return "The oracle is disconnected. API key required.";
     try {
         const response = await ai.models.generateContent({
             model: FAST_MODEL,
@@ -233,6 +239,7 @@ export const generateQuickInsight = async (prompt: string): Promise<string> => {
  * Deep analysis of a single node/note.
  */
 export const analyzeNote = async (noteContent: string): Promise<string> => {
+    if (!ai) return "Analysis failed. API key required.";
     try {
         const response = await ai.models.generateContent({
             model: CHAT_MODEL,
@@ -252,6 +259,7 @@ export const analyzeNote = async (noteContent: string): Promise<string> => {
  * The Dialectical Forge: Collides two notes to generate a synthesis.
  */
 export const synthesizeNodes = async (noteA: { title: string; content: string }, noteB: { title: string; content: string }): Promise<string> => {
+    if (!ai) return "## Synthesis Failed\nAPI key required.";
     try {
         const response = await ai.models.generateContent({
             model: CHAT_MODEL,

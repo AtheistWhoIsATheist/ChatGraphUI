@@ -4,6 +4,7 @@ import { Node, Link } from '../data/corpus';
 import { Zap, ArrowRight, Sparkles, BrainCircuit, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
+import { getGeminiClient } from '../lib/gemini';
 import Markdown from 'react-markdown';
 
 export function InsightPrompts({ 
@@ -47,12 +48,11 @@ export function InsightPrompts({
   const handleSynthesizePair = async (sourceTargetId: string, sourceLabel: string, targetLabel: string, reason: string) => {
     setSynthesizingId(sourceTargetId);
     try {
-      const apiKey = process.env.GEMINI_API_KEY?.trim();
-      if (!apiKey) {
+      const ai = getGeminiClient();
+      if (!ai) {
         setSynthesisResults(prev => ({ ...prev, [sourceTargetId]: "Error: GEMINI_API_KEY not configured." }));
         return;
       }
-      const ai = new GoogleGenAI({ apiKey });
       const prompt = `
         SYSTEM_IDENTITY: PEC-Engine (Philosophical Exploration Catalyst).
         MISSION: Collide these two disparate concepts from our knowledge graph.

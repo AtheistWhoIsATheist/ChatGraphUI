@@ -1,12 +1,11 @@
 import cron from 'node-cron';
 import { getNodesForDensification, getWeeklyChanges, getNodesCollection, getDigestsCollection } from './db.ts';
 import { densificationPrompt, revelationDigestPrompt } from './ai-prompts.ts';
-import { GoogleGenAI, Type } from '@google/genai';
+import { Type } from '@google/genai';
+import { getAi } from './nes2-router.ts';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY?.trim() || 'placeholder' });
 
 export function startCronJobs() {
   // The Nightly Transmutation (node-cron): Runs at 03:00 AM every day
@@ -25,7 +24,7 @@ export function startCronJobs() {
         // Recursive Densification
         const prompt = densificationPrompt.replace('{node_data}', JSON.stringify(node));
         
-        const response = await ai.models.generateContent({
+        const response = await getAi().models.generateContent({
           model: 'gemini-3.1-pro-preview',
           contents: prompt,
           config: {
@@ -113,7 +112,7 @@ export function startCronJobs() {
       
       const prompt = revelationDigestPrompt.replace('{weekly_data}', JSON.stringify(weeklyData));
       
-      const response = await ai.models.generateContent({
+      const response = await getAi().models.generateContent({
         model: 'gemini-3.1-pro-preview',
         contents: prompt
       });

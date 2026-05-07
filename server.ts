@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import { nes2Router } from './src/backend/nes2-router.ts';
+import { nes2Router, getAi } from './src/backend/nes2-router.ts';
 
 async function startServer() {
   const app = express();
@@ -31,12 +31,7 @@ async function startServer() {
       const { getNodesForDensification } = await import('./src/backend/db');
       const { densificationPrompt } = await import('./src/backend/ai-prompts');
       
-      const apiKey = process.env.GEMINI_API_KEY?.trim();
-      if (!apiKey) {
-        return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
-      }
-
-      const ai = new GoogleGenAI({ apiKey });
+      let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
       const nodesCollection = getNodesCollection();
       if (!nodesCollection) {
         return res.status(500).json({ error: 'Database connection severed.' });
@@ -157,12 +152,7 @@ async function startServer() {
       const payload = req.body;
 
       if (mode === 'preview') {
-        const apiKey = process.env.GEMINI_API_KEY?.trim();
-        if (!apiKey) {
-          return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
-        }
-
-        const ai = new GoogleGenAI({ apiKey });
+        let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
         
         // Truncate to avoid massive timeouts, but take a very large chunk
         const rawText = payload.extracted?.text || '';
@@ -367,12 +357,7 @@ async function startServer() {
       const { text, thinker, source_file } = req.body;
       if (!text) return res.status(400).json({ error: 'Text is required' });
 
-      const apiKey = process.env.GEMINI_API_KEY?.trim();
-      if (!apiKey) {
-        return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
-      }
-
-      const ai = new GoogleGenAI({ apiKey });
+      let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
       const prompt = `
         You are the Journal314 Occurrence-Elevation Discriminator.
         Analyze the following text by ${thinker || 'Unknown'} from "${source_file || 'Unknown'}".
@@ -444,18 +429,14 @@ async function startServer() {
   });
 
   app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'The Void-Graph Protocol is active.', key: process.env.GEMINI_API_KEY });
+    res.json({ status: 'ok', message: 'The Void-Graph Protocol is active.', keyConfigured: !!process.env.GEMINI_API_KEY });
   });
 
   app.post('/api/extract-graph', async (req, res) => {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: 'Text is required' });
 
-    const apiKey = process.env.GEMINI_API_KEY?.trim();
-    if (!apiKey) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
-    }
-
+    let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
     try {
       const prompt = `
         You are a senior philosophical knowledge graph extractor.
@@ -488,7 +469,6 @@ async function startServer() {
         ${text}
       `;
 
-      const ai = new GoogleGenAI({ apiKey });
       const response = await ai.models.generateContent({
         model: 'gemini-3.1-pro-preview',
         contents: prompt,
@@ -620,12 +600,7 @@ async function startServer() {
         return res.status(500).json({ error: 'Database connection severed.' });
       }
 
-      const apiKey = process.env.GEMINI_API_KEY?.trim();
-      if (!apiKey) {
-        return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
-      }
-
-      const ai = new GoogleGenAI({ apiKey });
+      let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
 
       // The 7-Step Protocol
       const prompt = `
@@ -727,12 +702,7 @@ async function startServer() {
         return res.status(400).json({ error: 'Invalid nodes data' });
       }
 
-      const apiKey = process.env.GEMINI_API_KEY?.trim();
-      if (!apiKey) {
-        return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
-      }
-
-      const ai = new GoogleGenAI({ apiKey });
+      let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
       
       const nodeText = nodes.map((n: any) => `ID: ${n.id}, Label: ${n.label}, Tags: ${n.tags?.join(', ')}`).join('\n');
       

@@ -4,10 +4,9 @@ import { Cpu, FileText, Sparkles, AlertTriangle, Workflow } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { cn } from '../lib/utils';
 import Markdown from 'react-markdown';
+import { getGeminiClient } from '../lib/gemini';
 
-// Initialize Gemini
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY?.trim();
-const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
+const ai = getGeminiClient();
 
 export function AISynthesisPanel() {
   const [inputText, setInputText] = useState('');

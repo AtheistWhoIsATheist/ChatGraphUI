@@ -1,11 +1,10 @@
 import { getNodesForDensification, getNodesCollection, connectDB } from './src/backend/db.js';
 import { densificationPrompt } from './src/backend/ai-prompts.js';
 import { GoogleGenAI, Type } from '@google/genai';
+import { getAi } from './src/backend/nes2-router.ts';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY?.trim() || 'placeholder' });
 
 async function runDensification() {
   await connectDB();
@@ -33,7 +32,7 @@ async function runDensification() {
       const prompt = densificationPrompt.replace('{node_data}', JSON.stringify(node));
       
       try {
-        const response = await ai.models.generateContent({
+        const response = await getAi().models.generateContent({
           model: 'gemini-3.1-pro-preview',
           contents: prompt,
           config: {
