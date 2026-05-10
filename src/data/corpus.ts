@@ -1,5 +1,14 @@
 export type NodeType = 'concept' | 'thinker' | 'tradition' | 'methodology' | 'system' | 'library_item' | 'summary' | 'question' | 'event' | string;
 
+export type NodeStatus = 'RAW' | 'ACTIVE' | 'DENSIFIED' | 'ARCHIVED' | string;
+
+export interface VoidBlock {
+  id?: string;
+  type?: string;
+  content?: string;
+  [key: string]: any;
+}
+
 export interface Node {
   id: string;
   label: string;

@@ -52,8 +52,8 @@ export function AuditTrailPanel({ node }: AuditTrailPanelProps) {
     }
   ];
 
-  const uniqueActions = useMemo(() => {
-    const actions = new Set(baseAuditLogs.map(log => log.action));
+  const uniqueActions: string[] = useMemo(() => {
+    const actions = new Set<string>(baseAuditLogs.map((log: any) => String(log.action)));
     return ['ALL', ...Array.from(actions)];
   }, [baseAuditLogs]);
 
