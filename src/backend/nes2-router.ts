@@ -58,37 +58,47 @@ ${content}
 `;
     fs.writeFileSync(libraryPath, libraryEntry);
     
-    // Deconstruct & Synthesize using Knowledge Curator
-    const ai = getAi();
-    const prompt = `
-      You are the Knowledge Curator agent. Deconstruct the following artifact.
-      Artifact: ${content}
+    let data: any = {};
+    try {
+      const ai = getAi();
+      const prompt = `
+        You are the Knowledge Curator agent. Deconstruct the following artifact.
+        Artifact: ${content}
 
-      Tasks:
-      1. Strip all normative assumptions, theological bias, and deistic overlays.
-      2. Produce a pure philosophical summary.
-      3. Extract philosophical entities (concepts, thinkers, traditions).
-      4. Generate boundary-pushing questions reflecting the void.
+        Tasks:
+        1. Strip all normative assumptions, theological bias, and deistic overlays.
+        2. Produce a pure philosophical summary.
+        3. Extract philosophical entities (concepts, thinkers, traditions).
+        4. Generate boundary-pushing questions reflecting the void.
 
-      Return JSON:
-      {
-        "summary": "String",
-        "entities": [
-          { "name": "String", "type": "concept|thinker|tradition", "description": "String", "aliases": ["String"], "void_resonance_score": 0.5 }
-        ],
-        "questions": [
-          { "title": "String", "query": "String", "conceptual_origin": "String" }
-        ]
-      }
-    `;
+        Return JSON:
+        {
+          "summary": "String",
+          "entities": [
+            { "name": "String", "type": "concept|thinker|tradition", "description": "String", "aliases": ["String"], "void_resonance_score": 0.5 }
+          ],
+          "questions": [
+            { "title": "String", "query": "String", "conceptual_origin": "String" }
+          ]
+        }
+      `;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.1-pro-preview',
-      contents: prompt,
-      config: { responseMimeType: 'application/json' }
-    });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.1-pro-preview',
+        contents: prompt,
+        config: { responseMimeType: 'application/json' }
+      });
 
-    const data = parseAiJson(response.text || '{}');
+      data = parseAiJson(response.text || '{}');
+    } catch (e: any) {
+      console.error('[NES2 AI Extraction Error]:', e.message);
+      // Fallback gracefully without throwing
+      data = { 
+        summary: "Notice: AI extraction failed or API key invalid. Raw artifact ingested successfully.",
+        entities: [],
+        questions: []
+      };
+    }
     
     // Write Summary
     if (data.summary) {
