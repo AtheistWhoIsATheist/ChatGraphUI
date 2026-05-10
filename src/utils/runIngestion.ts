@@ -6,7 +6,7 @@ export interface IngestionFile {
   name: string;
   size: number;
   type: string;
-  status: 'idle' | 'ingesting' | 'parsing' | 'complete' | 'error';
+  status: 'loaded' | 'ingesting' | 'parsing' | 'ingested' | 'error';
   uploadDate: string;
   raw: File;
 }
@@ -45,7 +45,7 @@ export async function runIngestion(
     const result = mergeIntoGraph(accumulated, existingNodes, existingLinks);
     console.log(`[INGESTION] Merge complete. New nodes: ${result.delta.newNodes.length}, New links: ${result.delta.newLinks.length}`);
 
-    onStatusUpdate(file.id, 'complete');
+    onStatusUpdate(file.id, 'ingested');
 
     return result;
   } catch (error: any) {

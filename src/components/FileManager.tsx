@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FileText, Upload, Trash2, Search, Filter as FilterIcon, 
   ChevronDown, Loader2, CheckCircle2, AlertCircle, HardDrive, X, Sparkles, Zap
@@ -24,7 +24,7 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
       name: f.name,
       size: f.size,
       type: f.type,
-      status: "idle" as const,
+      status: "loaded" as const,
       uploadDate: new Date().toISOString(),
       raw: f
     }));
@@ -44,6 +44,16 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
       }
       return (valA as number) - (valB as number);
     });
+
+  useEffect(() => {
+    const isProcessing = files.some(f => f.status === 'ingesting' || f.status === 'parsing');
+    if (!isProcessing) {
+      const nextFile = files.find(f => f.status === 'loaded');
+      if (nextFile) {
+        onExtract(nextFile);
+      }
+    }
+  }, [files, onExtract]);
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 border-r-2 border-white/5 font-mono">
@@ -108,8 +118,8 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
 
           <div className="flex gap-4">
             <button 
-              onClick={() => files.filter(f => f.status === 'idle').forEach(onExtract)}
-              disabled={files.filter(f => f.status === 'idle').length === 0}
+              onClick={() => files.filter(f => f.status === 'loaded').forEach(onExtract)}
+              disabled={files.filter(f => f.status === 'loaded').length === 0}
               className="flex-1 flex items-center justify-center gap-3 py-3 bg-zinc-800 text-white border-transparent hover:bg-zinc-700 border border-white/10 text-[10px] font-semibold  tracking-widest text-zinc-950 hover:bg-[#fff] hover:border-[#fff] disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-xl transition duration-300 backdrop-blur-md shadow-xl disabled:shadow-none translate-x-[0px]"
             >
               <Sparkles className="w-4 h-4" />
@@ -155,7 +165,7 @@ function FileRow({ file, onExtract, onDelete }: { file: IngestionFile, onExtract
       case 'ingesting':
       case 'parsing':
         return <Loader2 className="w-3.5 h-3.5 text-zinc-200 animate-spin" />;
-      case 'complete':
+      case 'ingested':
         return <CheckCircle2 className="w-3.5 h-3.5 text-zinc-300" />;
       case 'error':
         return <AlertCircle className="w-3.5 h-3.5 text-[#FF0000]" />;
@@ -186,7 +196,7 @@ function FileRow({ file, onExtract, onDelete }: { file: IngestionFile, onExtract
         <div className="flex items-center gap-3 mt-2">
           <span className={cn(
             "text-[9px]  tracking-widest font-semibold",
-            file.status === 'complete' ? "text-zinc-300" : 
+            file.status === 'ingested' ? "text-zinc-300" : 
             file.status === 'error' ? "text-zinc-200" : "text-zinc-300"
           )}>
             {file.status}
@@ -199,7 +209,7 @@ function FileRow({ file, onExtract, onDelete }: { file: IngestionFile, onExtract
       </div>
 
       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        {file.status === 'idle' && (
+        {file.status === 'loaded' && (
           <button 
             onClick={onExtract}
             className="p-2 bg-white/10 text-zinc-300 hover:bg-zinc-800 text-white border-transparent hover:bg-zinc-700 hover:text-zinc-950 transition-colors border border-white/10 rounded-xl transition duration-300 backdrop-blur-md"

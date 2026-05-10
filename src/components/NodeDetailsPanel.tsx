@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Node } from '../data/corpus';
-import { Info, BookOpen, Link as LinkIcon, History, Hash, Box } from 'lucide-react';
+import { Info, BookOpen, Link as LinkIcon, History, Hash, Box, FileText, CheckCircle2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import Markdown from 'react-markdown';
 import { blocksToString } from '../utils/voidUtils';
@@ -11,6 +11,9 @@ interface NodeDetailsPanelProps {
 }
 
 export function NodeDetailsPanel({ node }: NodeDetailsPanelProps) {
+  const [exporting, setExporting] = useState(false);
+  const [exported, setExported] = useState(false);
+
   if (!node) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-zinc-950 rounded-xl transition duration-300 backdrop-blur-md">
@@ -23,12 +26,41 @@ export function NodeDetailsPanel({ node }: NodeDetailsPanelProps) {
     );
   }
 
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const res = await fetch('/api/export-node-md', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ node })
+      });
+      if (res.ok) {
+        setExported(true);
+        setTimeout(() => setExported(false), 3000);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-zinc-900/40 overflow-hidden">
       <div className="p-6 border-b border-white/5 bg-zinc-950">
-        <div className="flex items-center gap-3 mb-2">
-          <Info className="w-6 h-6 text-zinc-300" />
-          <h2 className="text-xl font-semibold  tracking-widest text-zinc-300">Node Details</h2>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-3">
+            <Info className="w-6 h-6 text-zinc-300" />
+            <h2 className="text-xl font-semibold  tracking-widest text-zinc-300">Node Details</h2>
+          </div>
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-zinc-300 text-xs font-bold tracking-widest rounded-xl transition-colors border border-white/10"
+          >
+            {exported ? <CheckCircle2 className="w-4 h-4 text-[#00FF66]" /> : <FileText className="w-4 h-4" />}
+            {exported ? 'Exported' : 'Export MD'}
+          </button>
         </div>
         <div className="inline-block px-2 py-1 mt-2 border border-white/10 bg-white/10">
            <p className="text-[10px] text-zinc-200 font-bold  tracking-widest">

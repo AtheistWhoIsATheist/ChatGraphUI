@@ -789,6 +789,51 @@ async function startServer() {
     }
   });
 
+  app.post('/api/export-node-md', async (req, res) => {
+    try {
+      const { node } = req.body;
+      if (!node || !node.label) {
+        return res.status(400).json({ error: 'Valid node data is required' });
+      }
+
+      const slugify = (text: string) => text.toString().toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\-]+/g, '')
+        .replace(/\-\-+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
+
+      const fileName = `${slugify(node.label)}.md`;
+      const dirPath = path.join(process.cwd(), 'Nihilismi Experientia Sacra 2', 'Entities');
+      
+      const fs = await import('fs');
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+      }
+
+      const filePath = path.join(dirPath, fileName);
+      
+      const frontmatter = `---
+label: ${node.label}
+type: ${node.type}
+tags: ${JSON.stringify(node.metadata?.tags || [])}
+date_exported: ${new Date().toISOString()}
+---
+
+# ${node.label}
+
+${node.summary || (node.blocks ? node.blocks.map((b: any) => b.content).join('\\n\\n') : '')}
+`;
+      
+      fs.writeFileSync(filePath, frontmatter, 'utf8');
+      
+      res.json({ success: true, message: `Node exported successfully to ${fileName}`, filePath });
+    } catch (error: any) {
+      console.error('[API] Error exporting node:', error);
+      res.status(500).json({ error: error.message || 'Internal server error' });
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
