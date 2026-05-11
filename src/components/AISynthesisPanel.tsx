@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Cpu, FileText, Sparkles, AlertTriangle, Workflow } from 'lucide-react';
+import { Cpu, FileText, Sparkles, AlertTriangle, Workflow, Undo } from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { cn } from '../lib/utils';
 import Markdown from 'react-markdown';
@@ -8,27 +8,48 @@ import { getGeminiClient } from '../lib/gemini';
 
 const ai = getGeminiClient();
 
-export function AISynthesisPanel() {
+import { Node as GraphNode, Link as GraphLink } from '../data/corpus';
+
+export interface AISynthesisPanelProps {
+  nodes: GraphNode[];
+  onIntegrate: (newNodes: GraphNode[], newLinks: GraphLink[]) => void;
+  onUndo: () => void;
+  canUndo: boolean;
+}
+
+export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, canUndo }: AISynthesisPanelProps) {
   const [inputText, setInputText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const [extractedNodes, setExtractedNodes] = useState<{id: string, type: string, confidence: number}[]>([]);
+  const [extractedNodes, setExtractedNodes] = useState<{id: string, label: string, type: string, confidence: number}[]>([]);
+  const [extractedLinks, setExtractedLinks] = useState<{source: string, target: string, type: string, confidence: number}[]>([]);
+  const [hasIntegrated, setHasIntegrated] = useState(false);
 
   const handleExtractionAndSynthesis = async () => {
     if (!inputText.trim() || !ai) return;
     setIsProcessing(true);
     setResult(null);
     setExtractedNodes([]);
+    setExtractedLinks([]);
+    setHasIntegrated(false);
 
     try {
       const prompt = `
         Analyze the following phenomenological report or philosophical text.
         1. Extract the key Entities (EVENTS, ENTITIES, LOCATIONS, THEMES).
-        2. Synthesize an overarching narrative or high-level insight connecting these nodes across Journal314 and REN.
-        3. Determine the Integration Level (Isolated Observation, Pattern Recognition, Structural Causality, Unified Theory).
+        2. Infer strong Links connecting these extracted entities.
+        3. Synthesize an overarching narrative or high-level insight connecting these nodes across Journal314 and REN.
+        4. Determine the Integration Level (Isolated Observation, Pattern Recognition, Structural Causality, Unified Theory).
 
-        Format the output in Markdown. At the end, provide a JSON block enclosed in \`\`\`json containing the extracted nodes in this format:
-        [{"id": "Concept Name", "type": "THEME", "confidence": 0.9}]
+        Format the output in Markdown. At the end, provide a JSON block enclosed in \`\`\`json containing the extracted nodes and links in this exact format:
+        {
+          "nodes": [
+            {"id": "concept_name", "label": "Concept Name", "type": "THEME", "confidence": 0.9}
+          ],
+          "links": [
+            {"source": "concept_name_1", "target": "concept_name_2", "type": "supports", "confidence": 0.8}
+          ]
+        }
         
         Text to analyze:
         "${inputText}"
@@ -42,19 +63,19 @@ export function AISynthesisPanel() {
       
       const text = response.text || '';
       
-      // Attempt to parse JSON nodes
+      // Attempt to parse JSON
       const jsonMatch = text.match(/\`\`\`json\n([\s\S]*?)\n\`\`\`/);
       
-      let nodes = [];
       let markdownText = text;
       
       if (jsonMatch && jsonMatch[1]) {
          try {
-           nodes = JSON.parse(jsonMatch[1]);
-           setExtractedNodes(nodes);
+           const parsed = JSON.parse(jsonMatch[1]);
+           if (parsed.nodes) setExtractedNodes(parsed.nodes);
+           if (parsed.links) setExtractedLinks(parsed.links);
            markdownText = text.replace(jsonMatch[0], ''); // remove JSON from the displayed markdown
          } catch (e) {
-           console.error("Failed to parse extracted JSON nodes", e);
+           console.error("Failed to parse extracted JSON", e);
          }
       }
 
@@ -67,18 +88,50 @@ export function AISynthesisPanel() {
     }
   };
 
+  const commitToGraph = () => {
+    if (extractedNodes.length === 0) return;
+    
+    const newGraphNodes: GraphNode[] = extractedNodes.map(n => ({
+      id: n.id,
+      label: n.label || n.id,
+      group: n.type === 'THEME' ? 1 : n.type === 'THINKER' ? 2 : 3,
+      type: n.type.toLowerCase(),
+      metadata: { source: 'AxiomForge Synthesis', timestamp: new Date().toISOString() }
+    }));
+
+    const newGraphLinks: GraphLink[] = extractedLinks.map(l => ({
+      source: l.source,
+      target: l.target,
+      type: l.type,
+      value: l.confidence || 0.5
+    }));
+
+    onIntegrate(newGraphNodes, newGraphLinks);
+    setHasIntegrated(true);
+  };
+
   return (
     <div className="w-full h-full flex flex-col bg-zinc-950 text-zinc-100 p-8 font-mono relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiMwMDAiIC8+PGNpcmNsZSBjeD0iNCIgY3k9IjQiIHI9IjEiIGZpbGw9IiMzMzMiIC8+PC9zdmc+')] opacity-20 pointer-events-none z-0"></div>
       
-      <div className="flex-shrink-0 mb-8 flex items-center gap-4 relative z-10 border-b-2 border-white/5 pb-6">
-        <div className="p-3 bg-white/5 border border-white/10">
-          <Sparkles className="w-8 h-8 text-zinc-300 animate-pulse-slow" />
+      <div className="flex-shrink-0 mb-8 flex items-center justify-between gap-4 relative z-10 border-b-2 border-white/5 pb-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white/5 border border-white/10">
+            <Sparkles className="w-8 h-8 text-zinc-300 animate-pulse-slow" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-serif font-semibold tracking-widest text-zinc-300">AxiomForge</h1>
+            <div className="text-xs font-bold tracking-widest text-zinc-200 mt-2">AI Entity Extraction & Synthesis Protocol</div>
+          </div>
         </div>
-        <div>
-          <h1 className="text-3xl font-serif font-semibold tracking-widest  text-zinc-300">AxiomForge</h1>
-          <div className="text-xs font-bold  tracking-widest text-zinc-200 mt-2">AI Entity Extraction & Synthesis Protocol</div>
-        </div>
+        {canUndo && (
+          <button
+            onClick={onUndo}
+            className="flex items-center gap-2 px-4 py-2 bg-zinc-800 text-white border border-white/20 hover:bg-zinc-700 hover:border-white/40 transition-colors rounded-xl text-xs font-bold tracking-widest"
+          >
+            <Undo className="w-4 h-4" /> Undo Last Integration
+          </button>
+        )}
       </div>
       
       <div className="flex flex-col lg:flex-row gap-8 flex-1 min-h-0 relative z-10">
@@ -152,6 +205,18 @@ export function AISynthesisPanel() {
                          </div>
                        ))}
                     </div>
+                    {!hasIntegrated ? (
+                      <button
+                        onClick={commitToGraph}
+                        className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-[#00E5FF]/10 text-[#00E5FF] hover:bg-[#00E5FF]/20 border border-[#00E5FF]/50 hover:border-[#00E5FF] font-mono text-xs tracking-widest font-bold transition-all rounded-lg"
+                      >
+                        <Database className="w-4 h-4" /> Inject into Core Graph
+                      </button>
+                    ) : (
+                      <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 font-mono text-xs tracking-widest font-bold rounded-lg">
+                        <Sparkles className="w-4 h-4" /> Successfully Integrated
+                      </div>
+                    )}
                  </div>
                )}
             </motion.div>

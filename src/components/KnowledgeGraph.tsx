@@ -49,6 +49,8 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
   const [gravity, setGravity] = useState(50);
   const [searchQuery, setSearchQuery] = useState('');
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+  const [hoveredLink, setHoveredLink] = useState<any>(null);
+  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [expandedNodeId, setExpandedNodeId] = useState<string | null>(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, k: 1 });
   const [isToolbarOpen, setIsToolbarOpen] = useState(true);
@@ -224,10 +226,16 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                           (sourceNode?.type === 'concept' && targetNode?.type === 'concept');
     
     const isSelected = selectedNodeId === sourceId || selectedNodeId === targetId;
-    const isHovered = hoveredNodeId === sourceId || hoveredNodeId === targetId;
-    const isFocusMode = !!selectedNodeId || !!hoveredNodeId;
+    
+    const isLinkHovered = hoveredLink && (
+      (typeof hoveredLink.source === 'string' ? hoveredLink.source : hoveredLink.source.id) === sourceId &&
+      (typeof hoveredLink.target === 'string' ? hoveredLink.target : hoveredLink.target.id) === targetId
+    );
+    
+    const isHovered = hoveredNodeId === sourceId || hoveredNodeId === targetId || isLinkHovered;
+    const isFocusMode = !!selectedNodeId || !!hoveredNodeId || !!hoveredLink;
     const isNeighbor = (sourceId === selectedNodeId || targetId === selectedNodeId) || 
-                       (sourceId === hoveredNodeId || targetId === hoveredNodeId);
+                       (sourceId === hoveredNodeId || targetId === hoveredNodeId) || isLinkHovered;
     
     // 1. Dynamic Weight & Opacity
     let opacity = structuralIntegrity ? 0.25 : 0.1;
@@ -283,6 +291,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
   const calculateNodeScale = (node: Node) => {
     const degree = nodeDegrees[node.id] || 0;
     const saturation = node.metadata?.saturation_level || 50;
+    const voidQuotient = node.metadata?.void_quotient || 0;
     
     // 1. Base Scale by Type/ID (Hierarchical)
     let baseRadius = 15;
@@ -297,7 +306,10 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
     // 3. Semantic Saturation
     const saturationMultiplier = 0.8 + (saturation / 100) * 0.4;
     
-    const finalRadius = (baseRadius + centralityBonus) * saturationMultiplier;
+    // 4. Void Quotient Impact
+    const voidMultiplier = 1.0 + (voidQuotient * 0.4);
+    
+    const finalRadius = (baseRadius + centralityBonus) * saturationMultiplier * voidMultiplier;
     
     // 4. Abyssal Integration Factor (AIF)
     const aif = (Math.min(degree, 10) / 10) * 0.4 + (saturation / 100) * 0.6;
@@ -786,7 +798,25 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
             const cy = my + (dx / dist) * (dist * curvature);
 
             return (
-              <g key={linkId}>
+              <g key={linkId}
+                 className="cursor-pointer pointer-events-auto"
+                 onMouseEnter={(e) => {
+                   setHoveredLink(link);
+                   setTooltipPos({ x: e.clientX, y: e.clientY });
+                 }}
+                 onMouseMove={(e) => {
+                   setTooltipPos({ x: e.clientX, y: e.clientY });
+                 }}
+                 onMouseLeave={() => setHoveredLink(null)}
+              >
+                {/* Thicker transparent path for easier hover targeting */}
+                <path 
+                  d={`M ${link.source.x} ${link.source.y} Q ${cx} ${cy} ${link.target.x} ${link.target.y}`}
+                  fill="none"
+                  stroke="transparent"
+                  strokeWidth={20}
+                />
+                
                 <motion.path
                   ref={(el) => { if (el) linkRefs.current.set(linkId, el as any); else linkRefs.current.delete(linkId); }}
                   initial={{ pathLength: 0, opacity: 0 }}
@@ -838,9 +868,14 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
             const hasSearchQuery = searchQuery && searchQuery.trim().length > 0;
             const matchesSearch = hasSearchQuery && node.label.toLowerCase().includes(searchQuery.toLowerCase());
             const isSelected = selectedNodeId === node.id;
-            const isHovered = hoveredNodeId === node.id;
+            const isHovered = hoveredNodeId === node.id || (
+              hoveredLink && (
+                (typeof hoveredLink.source === 'string' ? hoveredLink.source : hoveredLink.source.id) === node.id || 
+                (typeof hoveredLink.target === 'string' ? hoveredLink.target : hoveredLink.target.id) === node.id
+              )
+            );
             
-            const isFocusMode = !!selectedNodeId || !!hoveredNodeId;
+            const isFocusMode = !!selectedNodeId || !!hoveredNodeId || !!hoveredLink;
             const isConnectedToFocus = links.some(l => 
               (l.source?.id === node.id && (l.target?.id === selectedNodeId || l.target?.id === hoveredNodeId)) || 
               (l.target?.id === node.id && (l.source?.id === selectedNodeId || l.source?.id === hoveredNodeId))
@@ -1077,6 +1112,56 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
             </>
           );
         })()}
+      </AnimatePresence>
+      {/* End Graph Canvas */}
+      
+      {/* Tooltip for Hovered Link */}
+      <AnimatePresence>
+        {hoveredLink && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed z-[100] p-3 shadow-2xl bg-zinc-950/95 border border-white/20 rounded-xl pointer-events-none backdrop-blur-md"
+            style={{ 
+              left: tooltipPos.x + 15, 
+              top: tooltipPos.y + 15 
+            }}
+          >
+            <div className="text-[10px] uppercase font-bold text-zinc-400 tracking-widest mb-2 flex items-center gap-2">
+              <Link2Off className="w-3 h-3 text-zinc-500" /> Connection Detail
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <div className="text-zinc-200 flex justify-between gap-4">
+                <span className="text-zinc-500 text-xs">Type:</span> 
+                <span className="font-mono text-xs">{hoveredLink.type || hoveredLink.label || 'direct'}</span>
+              </div>
+              {hoveredLink.score !== undefined && (
+                <div className="text-zinc-200 flex justify-between gap-4">
+                  <span className="text-zinc-500 text-xs">Score:</span> 
+                  <span className="font-mono text-xs">{Number(hoveredLink.score).toFixed(3)}</span>
+                </div>
+              )}
+              {hoveredLink.weight !== undefined && hoveredLink.weight !== hoveredLink.score && (
+                <div className="text-zinc-200 flex justify-between gap-4">
+                  <span className="text-zinc-500 text-xs">Weight:</span> 
+                  <span className="font-mono text-xs">{Number(hoveredLink.weight).toFixed(3)}</span>
+                </div>
+              )}
+              <div className="mt-2 text-xs border-t border-white/5 pt-2">
+                <div className="text-zinc-300 max-w-[250px] truncate">
+                  {typeof hoveredLink.source === 'string' ? hoveredLink.source : hoveredLink.source.label || hoveredLink.source.id}
+                </div>
+                <div className="text-[#00e5ff] font-mono text-[9px] pl-2 leading-none border-l border-white/10 ml-1 py-1">
+                  connects to
+                </div>
+                <div className="text-zinc-300 max-w-[250px] truncate">
+                  {typeof hoveredLink.target === 'string' ? hoveredLink.target : hoveredLink.target.label || hoveredLink.target.id}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );

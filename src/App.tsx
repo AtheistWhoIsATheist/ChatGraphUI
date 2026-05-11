@@ -73,6 +73,7 @@ function App() {
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
   const [isFileManagerOpen, setIsFileManagerOpen] = useState(false);
   const [files, setFiles] = useState<IngestionFile[]>([]);
+  const [synthesisHistory, setSynthesisHistory] = useState<{nodes: Node[], links: Link[]}[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -323,7 +324,25 @@ function App() {
           <ThemeClusters />
         )}
         {viewMode === 'ai_synthesis' && (
-          <AISynthesisPanel />
+            <AISynthesisPanel 
+              nodes={nodes}
+              onIntegrate={(newNodes, newLinks) => {
+                setSynthesisHistory(prev => [...prev, { nodes: [...nodes], links: [...links] }]);
+                // Ensure unique IDs or basic structure is correct
+                setNodes(prev => [...prev, ...newNodes]);
+                setLinks(prev => [...prev, ...newLinks]);
+                // Optional: alert or toast
+              }}
+              onUndo={() => {
+                if (synthesisHistory.length > 0) {
+                  const last = synthesisHistory[synthesisHistory.length - 1];
+                  setNodes(last.nodes);
+                  setLinks(last.links);
+                  setSynthesisHistory(prev => prev.slice(0, -1));
+                }
+              }}
+              canUndo={synthesisHistory.length > 0}
+            />
         )}
       </main>
 
