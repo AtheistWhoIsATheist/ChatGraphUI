@@ -1,16 +1,18 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import * as d3 from 'd3';
-import { corpusNodes, corpusLinks, Node, NodeType, NodeStatus } from '../data/corpus';
+import { Node, NodeType } from '../data/corpus';
 import { NT_NODE_COLORS } from '../data/nt_schema';
 import { cn } from '../lib/utils';
 import { 
-  Maximize, RotateCcw, ZoomIn, ShieldAlert, CheckCircle2, 
-  HelpCircle, Activity, Sparkles, Network, BrainCircuit, 
-  Filter, Layers, X, Atom, Search, Zap, Link2Off, SlidersHorizontal
+  X, Zap, Link2Off
 } from 'lucide-react';
 import { useGraphLayout } from '../hooks/useGraphLayout';
-import { blocksToString } from '../utils/voidUtils';
+import { GraphToolbar } from './GraphToolbar';
+import { InsightOverlay } from './InsightOverlay';
+import { ExpansionPanel } from './ExpansionPanel';
+import { AddNodeModal } from './AddNodeModal';
+import { logOptimization } from '../utils/selfImprovement';
 
 // --- TYPES & CONSTANTS ---
 
@@ -41,7 +43,24 @@ const getHierarchicalColor = (node: Node) => {
 
 // --- COMPONENT ---
 
-export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selectedNodeId }: { nodes: Node[]; links: any[]; onNodeSelect: (node: Node) => void; selectedNodeId?: string }) {
+import { useAppStore } from '../store/appStore';
+
+export function KnowledgeGraph({ 
+  onNodeSelect: externalOnNodeSelect, 
+}: { 
+  onNodeSelect?: (node: Node) => void; 
+}) {
+  const { 
+    nodes, 
+    links: initialLinks, 
+    selectedNodeId, 
+    setSelectedNodeId, 
+    setSidebarMode, 
+    setRightSidebarOpen,
+    addNode, 
+    addLink 
+  } = useAppStore();
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 1200, height: 800 });
   const [clusterMode, setClusterMode] = useState(false);
@@ -55,6 +74,10 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
   const [transform, setTransform] = useState({ x: 0, y: 0, k: 1 });
   const [isToolbarOpen, setIsToolbarOpen] = useState(true);
   const [structuralIntegrity, setStructuralIntegrity] = useState(true);
+  
+  // Manual Node Add State
+  const [isAddingNode, setIsAddingNode] = useState(false);
+  const [newNode, setNewNode] = useState({ label: '', type: 'concept' });
   
   // Filters
   const [activeTypes, setActiveTypes] = useState<Set<string>>(new Set());
@@ -261,9 +284,20 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
     // 2. Connection Hierarchy (Visual Style)
     let dashArray = "none";
     let isFlowing = false;
-    if (link.type === 'explores' || link.type === 'documents') {
-      dashArray = "10,6"; 
+    let color = isSelected || isHovered ? "#e4e4e7" : (isNeighbor ? "rgba(255,255,255,0.4)" : (isFoundational ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.05)"));
+
+    if (link.type === 'explores') {
+      dashArray = "4,4"; 
       isFlowing = true;
+      width = width * 2; // Thicker for explores
+    } else if (link.type === 'documents') {
+      dashArray = "10,6";
+      isFlowing = true;
+    }
+
+    if (link.type === 'tension') {
+      color = isSelected || isHovered ? "#f87171" : "#7f1d1d"; // Reddish for tension
+      width = width * 1.5;
     }
     
     return {
@@ -271,7 +305,7 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
       width,
       dashArray,
       isFlowing,
-      color: isSelected || isHovered ? "#e4e4e7" : (isNeighbor ? "rgba(255,255,255,0.4)" : (isFoundational ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.05)")),
+      color,
       isActive: isSelected || isHovered
     };
   };
@@ -484,7 +518,10 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
               {nodes.find(n => n.id === selectedNodeId)?.label}
             </div>
             <button 
-              onClick={(e) => { e.stopPropagation(); onNodeSelect({ id: undefined } as any); }}
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                setSelectedNodeId(undefined); 
+              }}
               className="ml-2 p-1 hover:bg-white/10 rounded-full transition-colors"
             >
               <X className="w-3 h-3 text-zinc-500 hover:text-white" />
@@ -494,196 +531,31 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
       </AnimatePresence>
 
       {/* --- TOOLBAR (TOP LEFT) --- */}
-      <div className="absolute top-6 left-6 z-40 flex flex-col gap-4 pointer-events-none">
-        
-        {/* Toolbar Toggle */}
-        <div className="pointer-events-auto flex items-center gap-2">
-          <button
-            onClick={() => setIsToolbarOpen(!isToolbarOpen)}
-            className="p-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-xl shadow-xl text-zinc-400 hover:text-zinc-200 hover:bg-white/5 transition-colors"
-            title="Toggle Toolbar"
-          >
-            <SlidersHorizontal className="w-4 h-4" />
-          </button>
-        </div>
-
-        <AnimatePresence>
-          {isToolbarOpen && (
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="flex flex-col gap-4"
-            >
-              {/* Scented Search */}
-              <div className="pointer-events-auto bg-zinc-950 border border-white/5 hover:border-white/10 transition-colors p-3 w-64 flex items-center gap-3 rounded-2xl transition hover:bg-white/5 backdrop-blur-md">
-                <Search className="w-5 h-5 text-zinc-300" />
-                <input 
-                  type="text" 
-                  placeholder="Scented Search..." 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-transparent border-none outline-none text-sm text-zinc-100 placeholder:text-zinc-500 w-full font-mono  tracking-widest"
-                />
-                {searchQuery && (
-                  <button onClick={() => setSearchQuery('')} className="p-1 hover:bg-white/5">
-                    <X className="w-4 h-4 text-zinc-400" />
-                  </button>
-                )}
-              </div>
-
-              {/* Filter Group */}
-              <div className="pointer-events-auto bg-zinc-950 border border-white/5 p-5 w-64 rounded-2xl transition hover:bg-white/5 backdrop-blur-md">
-                <div className="flex items-center gap-2 mb-4 text-xs font-bold text-zinc-200  tracking-widest">
-                  <Filter className="w-4 h-4" /> Filters
-                </div>
-                
-                {/* Type Filters */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {['concept', 'thinker', 'treatise', 'question', 'axiom', 'praxis'].map(type => (
-                    <button
-                      key={type}
-                      onClick={() => {
-                        const next = new Set(activeTypes);
-                        next.has(type) ? next.delete(type) : next.add(type);
-                        setActiveTypes(next);
-                      }}
-                      className={cn(
-                        "text-[10px]  px-3 py-1 font-bold tracking-widest border transition-all cursor-pointer",
-                        activeTypes.has(type) 
-                          ? "bg-zinc-100 text-black border-white/10 text-zinc-950 shadow-2xl translate-x-[-2px] translate-y-[-2px]" 
-                          : "bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
-                      )}
-                    >
-                      {type}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Status Filters */}
-                <div className="flex flex-wrap gap-2 border-t-2 border-[#111] pt-4">
-                  {['VERIFIED', 'INFERENCE', 'HYPOTHESIS'].map(status => (
-                    <button
-                      key={status}
-                      onClick={() => {
-                        const next = new Set(activeStatuses);
-                        next.has(status) ? next.delete(status) : next.add(status);
-                        setActiveStatuses(next);
-                      }}
-                      className={cn(
-                        "text-[10px]  px-3 py-1 font-bold tracking-widest border transition-all cursor-pointer",
-                        activeStatuses.has(status)
-                          ? "bg-white/10 border-white/10 text-zinc-950 shadow-2xl translate-x-[-2px] translate-y-[-2px]"
-                          : "bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
-                      )}
-                    >
-                      {status}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Action Toggles */}
-              <div className="pointer-events-auto flex flex-col gap-3">
-                <button
-                  onClick={() => setClusterMode(!clusterMode)}
-                  className={cn(
-                    "flex items-center gap-3 px-5 py-3 border transition-all duration-300 font-bold",
-                    clusterMode 
-                      ? "bg-zinc-100 text-black text-zinc-950 border-white/10 shadow-2xl translate-x-[-2px] translate-y-[-2px]" 
-                      : "bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
-                  )}
-                >
-                  <Atom className={cn("w-5 h-5", clusterMode && "animate-spin-slow")} />
-                  <span className="text-xs  tracking-widest">Cluster Mode</span>
-                </button>
-
-                <button
-                  onClick={() => setShowLatent(!showLatent)}
-                  className={cn(
-                    "flex items-center gap-3 px-5 py-3 border transition-all duration-300 font-bold",
-                    showLatent 
-                      ? "bg-white/10 text-zinc-950 border-white/10 shadow-2xl translate-x-[-2px] translate-y-[-2px]" 
-                      : "bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
-                  )}
-                >
-                  <Sparkles className={cn("w-5 h-5", showLatent && "animate-pulse")} />
-                  <span className="text-xs  tracking-widest">Gap Synthesis</span>
-                </button>
-
-                <button
-                  onClick={() => setStructuralIntegrity(!structuralIntegrity)}
-                  className={cn(
-                    "flex items-center gap-3 px-5 py-3 border transition-all duration-300 font-bold",
-                    structuralIntegrity 
-                      ? "bg-zinc-100 text-black text-zinc-950 border-white/10 shadow-2xl translate-x-[-2px] translate-y-[-2px]" 
-                      : "bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
-                  )}
-                >
-                  <Network className={cn("w-5 h-5", structuralIntegrity && "animate-pulse")} />
-                  <span className="text-xs  tracking-widest">Structural Integrity</span>
-                </button>
-
-                {/* Gravity Slider */}
-                <div className="bg-zinc-900/50 border border-white/5 p-4 flex flex-col gap-3 font-mono font-bold tracking-widest rounded-2xl transition hover:bg-white/5 backdrop-blur-md">
-                  <div className="flex items-center justify-between text-xs text-zinc-300 ">
-                    <div className="flex items-center gap-2">
-                      <SlidersHorizontal className="w-4 h-4" />
-                      <span>Gravity Collapse</span>
-                    </div>
-                    <span>{gravity}%</span>
-                  </div>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
-                    value={gravity} 
-                    onChange={(e) => setGravity(parseInt(e.target.value))}
-                    className="w-full accent-[#FF3A00] h-1 bg-white/10 appearance-none cursor-pointer"
-                  />
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      <GraphToolbar 
+        isOpen={isToolbarOpen}
+        setIsOpen={setIsToolbarOpen}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        activeTypes={activeTypes}
+        setActiveTypes={setActiveTypes}
+        activeStatuses={activeStatuses}
+        setActiveStatuses={setActiveStatuses}
+        clusterMode={clusterMode}
+        setClusterMode={setClusterMode}
+        showLatent={showLatent}
+        setShowLatent={setShowLatent}
+        structuralIntegrity={structuralIntegrity}
+        setStructuralIntegrity={setStructuralIntegrity}
+        gravity={gravity}
+        setGravity={setGravity}
+        onAddNode={() => setIsAddingNode(true)}
+      />
 
       {/* --- INSIGHT GENERATOR (BOTTOM LEFT) --- */}
-      <AnimatePresence>
-        {selectedNodeId && selectedInsights && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-6 left-6 z-40 w-80 bg-zinc-900/50 border border-white/10 p-6 rounded-2xl transition hover:bg-white/5 backdrop-blur-md shadow-2xl"
-          >
-            <div className="flex items-center gap-3 mb-4 text-zinc-300">
-              <Sparkles className="w-5 h-5 animate-pulse" />
-              <span className="text-xs font-bold  tracking-widest">Latent Discovery</span>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-white/5 border border-white/5 p-4 text-center">
-                <div className="text-[10px] text-zinc-200  font-bold tracking-widest mb-2">Centrality</div>
-                <div className="text-3xl font-serif font-semibold text-white">{selectedInsights.degree}</div>
-              </div>
-              <div className={cn("border p-4 text-center flex flex-col justify-center", selectedInsights.isSingularity ? "bg-[#ff3a00]/10 border-[#ff3a00]" : "bg-[#00e5ff]/10 border-[#00e5ff]")}>
-                <div className="text-[10px] text-zinc-400  font-bold tracking-widest mb-2">Status</div>
-                <div className={cn("text-xs font-semibold tracking-widest", selectedInsights.isSingularity ? "text-zinc-200" : "text-zinc-300")}>
-                  {selectedInsights.isSingularity ? "SINGULARITY" : "CONNECTED"}
-                </div>
-              </div>
-            </div>
-
-            {selectedInsights.suggestion && (
-              <div className="text-xs text-zinc-300 bg-zinc-950 p-4 border border-white/5 leading-relaxed font-mono">
-                <strong className="text-zinc-300 block mb-2  tracking-widest text-[10px]">AI Recommendation:</strong>
-                {selectedInsights.suggestion}
-              </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <InsightOverlay 
+        selectedNodeId={selectedNodeId}
+        selectedInsights={selectedInsights}
+      />
 
       {/* Background Singularity (Aesthetic Anchor) */}
       <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden opacity-30 select-none">
@@ -914,7 +786,12 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
                   )}
                   onMouseEnter={() => setHoveredNodeId(node.id)}
                   onMouseLeave={() => setHoveredNodeId(null)}
-                  onClick={() => onNodeSelect(node)}
+                  onClick={() => {
+                    setSelectedNodeId(node.id);
+                    setSidebarMode('details');
+                    setRightSidebarOpen(true);
+                    externalOnNodeSelect?.(node);
+                  }}
                   onDoubleClick={() => setExpandedNodeId(node.id)}
                 >
                   {/* Elite Abyssal Aura (Layered) */}
@@ -990,131 +867,23 @@ export function KnowledgeGraph({ nodes, links: initialLinks, onNodeSelect, selec
       </div>
 
       {/* --- SEMANTIC EXPANSION ENGINE (ANALYSIS-REVEAL) --- */}
-      <AnimatePresence>
-        {expandedNodeId && (() => {
-          const expandedNode = nodes.find(n => n.id === expandedNodeId);
-          const expandedLinks = initialLinks.filter(l => 
-            (typeof l.source === 'string' ? l.source === expandedNodeId : (l.source as any).id === expandedNodeId) || 
-            (typeof l.target === 'string' ? l.target === expandedNodeId : (l.target as any).id === expandedNodeId)
-          );
-          const gravityCount = expandedLinks.length;
-          const synapses = expandedLinks.map(l => {
-            const sourceId = typeof l.source === 'string' ? l.source : (l.source as any).id;
-            const targetId = typeof l.target === 'string' ? l.target : (l.target as any).id;
-            const linkedNodeId = sourceId === expandedNodeId ? targetId : sourceId;
-            return nodes.find(n => n.id === linkedNodeId);
-          }).filter(Boolean) as Node[];
+      <ExpansionPanel 
+        expandedNodeId={expandedNodeId}
+        setExpandedNodeId={setExpandedNodeId}
+        nodes={nodes}
+        initialLinks={initialLinks}
+      />
 
-          return (
-            <>
-              {/* Backdrop */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setExpandedNodeId(null)}
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm z-40"
-              />
-              
-              {/* Info Blade */}
-              <motion.div 
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="absolute top-0 right-0 h-full w-[450px] bg-[#0f0f0f] border-l border-white/10 z-50 shadow-2xl flex flex-col"
-              >
-                {/* Header */}
-                <div className="p-8 border-b border-white/5 flex justify-between items-start">
-                  <div>
-                    <div className="flex items-center gap-2 text-zinc-200 mb-2">
-                      <Activity className="w-4 h-4" />
-                      <span className="text-[10px]  tracking-widest font-bold">Data Stream</span>
-                    </div>
-                    <h2 className="text-3xl font-light text-white leading-tight">
-                      {expandedNode?.label}
-                    </h2>
-                  </div>
-                  <button 
-                    onClick={() => setExpandedNodeId(null)}
-                    className="p-2 hover:bg-white/5 rounded-full transition-colors text-zinc-500 hover:text-white"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
+      {/* Manual Node Add Overlay */}
+      <AddNodeModal 
+        isOpen={isAddingNode}
+        onClose={() => setIsAddingNode(false)}
+        onAddNode={(node) => {
+          addNode(node);
+          logOptimization('refactor', 'Manually added node to graph', { nodeLabel: node.label });
+        }}
+      />
 
-                {/* Content */}
-                <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                  <div className="prose prose-invert prose-sm max-w-none">
-                    <div className="text-zinc-400 leading-relaxed whitespace-pre-wrap font-light text-base">
-                      {blocksToString(expandedNode?.blocks)}
-                    </div>
-                  </div>
-
-                  {/* Metadata Crystallization */}
-                  <div className="mt-12 space-y-6">
-                    {expandedNode?.metadata?.deconstruction_residue && (
-                      <div className="p-4 bg-orange-500/5 border border-orange-500/20 rounded-lg">
-                        <div className="text-[10px] text-zinc-200/70  tracking-widest mb-2 font-bold">Deconstruction Residue</div>
-                        <div className="text-sm text-zinc-300 italic leading-relaxed">
-                          "{expandedNode.metadata.deconstruction_residue}"
-                        </div>
-                      </div>
-                    )}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/5">
-                        <div className="text-[10px] text-zinc-600  tracking-widest mb-1">Gravity</div>
-                        <div className="text-2xl font-light text-zinc-300">{gravityCount}</div>
-                      </div>
-                      <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/5">
-                        <div className="text-[10px] text-zinc-600  tracking-widest mb-1">Status</div>
-                        <div className="text-sm text-zinc-300 mt-2">{expandedNode?.status}</div>
-                      </div>
-                    </div>
-
-                    {synapses.length > 0 && (
-                      <div>
-                        <div className="text-[10px] text-zinc-600  tracking-widest mb-3">Synapses</div>
-                        <div className="space-y-2">
-                          {synapses.map(synapse => (
-                            <div 
-                              key={synapse.id}
-                              onClick={() => setExpandedNodeId(synapse.id)}
-                              className="p-3 bg-black/40 border border-white/5 rounded-lg hover:border-white/20 transition-colors cursor-pointer flex justify-between items-center"
-                            >
-                              <span className="text-sm text-zinc-300">{synapse.label}</span>
-                              <span className="text-[9px]  tracking-wider text-zinc-600 border border-white/5 px-1.5 py-0.5 rounded">{synapse.type}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div>
-                      <div className="text-[10px] text-zinc-600  tracking-widest mb-3">Tags</div>
-                      <div className="flex flex-wrap gap-2">
-                        {expandedNode?.metadata?.tags?.map((tag, i) => (
-                          <motion.span
-                            key={tag}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: i * 0.1 }}
-                            className="px-3 py-1 bg-zinc-900 border border-zinc-800 rounded text-[10px]  text-zinc-400"
-                          >
-                            {tag}
-                          </motion.span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </>
-          );
-        })()}
-      </AnimatePresence>
-      {/* End Graph Canvas */}
-      
       {/* Tooltip for Hovered Link */}
       <AnimatePresence>
         {hoveredLink && (

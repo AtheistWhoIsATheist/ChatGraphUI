@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { Cpu, FileText, Sparkles, AlertTriangle, Workflow, Undo } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Cpu, FileText, Sparkles, AlertTriangle, Workflow, 
+  Undo2, Database, BrainCircuit, Network, ArrowLeft
+} from 'lucide-react';
 import { GoogleGenAI } from '@google/genai';
 import { cn } from '../lib/utils';
 import Markdown from 'react-markdown';
 import { getGeminiClient } from '../lib/gemini';
+import { Node as GraphNode, Link as GraphLink } from '../data/corpus';
 
 const ai = getGeminiClient();
-
-import { Node as GraphNode, Link as GraphLink } from '../data/corpus';
 
 export interface AISynthesisPanelProps {
   nodes: GraphNode[];
@@ -21,8 +23,8 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
   const [inputText, setInputText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const [extractedNodes, setExtractedNodes] = useState<{id: string, label: string, type: string, confidence: number}[]>([]);
-  const [extractedLinks, setExtractedLinks] = useState<{source: string, target: string, type: string, confidence: number}[]>([]);
+  const [extractedNodes, setExtractedNodes] = useState<{id: string, label: string, type: string, confidence: number, isInferred?: boolean}[]>([]);
+  const [extractedLinks, setExtractedLinks] = useState<{source: string, target: string, type: string, confidence: number, isInferred?: boolean}[]>([]);
   const [hasIntegrated, setHasIntegrated] = useState(false);
 
   const handleExtractionAndSynthesis = async () => {
@@ -34,20 +36,33 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
     setHasIntegrated(false);
 
     try {
-      const prompt = `
-        Analyze the following phenomenological report or philosophical text.
-        1. Extract the key Entities (EVENTS, ENTITIES, LOCATIONS, THEMES).
-        2. Infer strong Links connecting these extracted entities.
-        3. Synthesize an overarching narrative or high-level insight connecting these nodes across Journal314 and REN.
-        4. Determine the Integration Level (Isolated Observation, Pattern Recognition, Structural Causality, Unified Theory).
+      // Summarize context to avoid token bloat
+      const contextSummary = existingNodes
+        .slice(0, 50) // Limit to first 50 for context
+        .map(n => `- ${n.label} (${n.type})`)
+        .join('\n');
 
-        Format the output in Markdown. At the end, provide a JSON block enclosed in \`\`\`json containing the extracted nodes and links in this exact format:
+      const prompt = `
+        Analyze the following phenomenological report or philosophical text in the context of Journal314 and Recursive Existential Nihilism (REN).
+        
+        CONTEXT (EXISTING TOPOLOGY):
+        ${contextSummary}
+
+        TASK:
+        1. Extract the key Entities PRESENT in the text. Map them to these types: 
+           - 'void_concept', 'thinker', 'paradox', 'ren_stage', 'axiom', 'argument', 'synthesis'.
+        2. INFER STRUCTURAL GAPS: Propose nodes and links that are NOT in the text but should logically exist to support the argument or bridge it to the EXISTING TOPOLOGY.
+        3. Infer strong Links connecting these entities.
+        4. Synthesize a Narrative Synthesis that summarizes the text AND acts as a generative layer proposing new philosophical directions.
+        5. Determine Integration Level (Isolated, Pattern, Structural, Unified).
+
+        Format the output in Markdown. At the end, provide a JSON block enclosed in \`\`\`json containing nodes and links in this structure:
         {
           "nodes": [
-            {"id": "concept_name", "label": "Concept Name", "type": "THEME", "confidence": 0.9}
+            {"id": "identifier", "label": "Human Label", "type": "axiom", "confidence": 0.95, "isInferred": false}
           ],
           "links": [
-            {"source": "concept_name_1", "target": "concept_name_2", "type": "supports", "confidence": 0.8}
+            {"source": "id1", "target": "id2", "type": "supports", "confidence": 0.8, "isInferred": true}
           ]
         }
         
@@ -55,16 +70,13 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
         "${inputText}"
       `;
 
-      // Use a standard model
       const response = await ai.models.generateContent({
           model: 'gemini-2.5-pro',
           contents: prompt,
       });
       
       const text = response.text || '';
-      
-      // Attempt to parse JSON
-      const jsonMatch = text.match(/\`\`\`json\n([\s\S]*?)\n\`\`\`/);
+      const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
       
       let markdownText = text;
       
@@ -73,7 +85,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
            const parsed = JSON.parse(jsonMatch[1]);
            if (parsed.nodes) setExtractedNodes(parsed.nodes);
            if (parsed.links) setExtractedLinks(parsed.links);
-           markdownText = text.replace(jsonMatch[0], ''); // remove JSON from the displayed markdown
+           markdownText = text.replace(jsonMatch[0], ''); 
          } catch (e) {
            console.error("Failed to parse extracted JSON", e);
          }
@@ -82,7 +94,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
       setResult(markdownText);
     } catch (error) {
       console.error(error);
-      setResult("Error processing the text. Please check your API key and connection.");
+      setResult("Structural error in synthesis stream. Verify neural connection.");
     } finally {
       setIsProcessing(false);
     }
@@ -91,19 +103,39 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
   const commitToGraph = () => {
     if (extractedNodes.length === 0) return;
     
+    const typeToGroup: Record<string, number> = {
+      'void_concept': 1,
+      'thinker': 2,
+      'paradox': 3,
+      'ren_stage': 4,
+      'axiom': 5,
+      'argument': 6,
+      'synthesis': 7
+    };
+
     const newGraphNodes: GraphNode[] = extractedNodes.map(n => ({
       id: n.id,
       label: n.label || n.id,
-      group: n.type === 'THEME' ? 1 : n.type === 'THINKER' ? 2 : 3,
-      type: n.type.toLowerCase(),
-      metadata: { source: 'AxiomForge Synthesis', timestamp: new Date().toISOString() }
+      group: typeToGroup[n.type] || 3,
+      type: n.type,
+      status: n.isInferred ? 'DRAFT' : 'ACTIVE',
+      metadata: { 
+        source: 'AxiomForge Synthesis', 
+        confidence: n.confidence,
+        isInferred: n.isInferred,
+        timestamp: new Date().toISOString() 
+      }
     }));
 
     const newGraphLinks: GraphLink[] = extractedLinks.map(l => ({
       source: l.source,
       target: l.target,
       type: l.type,
-      value: l.confidence || 0.5
+      value: l.confidence || 0.5,
+      metadata: { 
+        isInferred: l.isInferred,
+        timestamp: new Date().toISOString()
+      }
     }));
 
     onIntegrate(newGraphNodes, newGraphLinks);
@@ -116,105 +148,144 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
       
       <div className="flex-shrink-0 mb-8 flex items-center justify-between gap-4 relative z-10 border-b-2 border-white/5 pb-6">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-white/5 border border-white/10">
-            <Sparkles className="w-8 h-8 text-zinc-300 animate-pulse-slow" />
+          <div className="p-3 bg-white/5 border border-white/10 rounded-2xl">
+            <BrainCircuit className="w-8 h-8 text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-serif font-semibold tracking-widest text-zinc-300">AxiomForge</h1>
-            <div className="text-xs font-bold tracking-widest text-zinc-200 mt-2">AI Entity Extraction & Synthesis Protocol</div>
+            <h1 className="text-3xl font-serif font-light tracking-[0.2em] text-white">AXIOMFORGE</h1>
+            <div className="text-[9px] font-bold tracking-[0.3em] text-emerald-500/60 mt-1 uppercase">Semantic Ingestion & Synthesis Protocol</div>
           </div>
         </div>
-        {canUndo && (
-          <button
-            onClick={onUndo}
-            className="flex items-center gap-2 px-4 py-2 bg-zinc-800 text-white border border-white/20 hover:bg-zinc-700 hover:border-white/40 transition-colors rounded-xl text-xs font-bold tracking-widest"
-          >
-            <Undo className="w-4 h-4" /> Undo Last Integration
-          </button>
-        )}
+
+        <AnimatePresence>
+          {canUndo && (
+            <motion.button
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              onClick={onUndo}
+              className="group flex items-center gap-2 px-5 py-3 bg-zinc-900 border border-white/10 hover:border-emerald-500/40 text-zinc-400 hover:text-white transition-all rounded-2xl shadow-xl hover:-translate-x-1"
+              title="Revert Growth"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              <span className="text-[10px] font-bold tracking-widest uppercase">Rollback Stream</span>
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
       
       <div className="flex flex-col lg:flex-row gap-8 flex-1 min-h-0 relative z-10">
-        {/* Left Column - Input */}
         <div className="flex-1 flex flex-col gap-6">
-          <p className="text-sm text-zinc-400 leading-relaxed tracking-wider border-l-2 border-white/10 pl-4">
-            Input phenomenological fieldwork, journal entry, or philosophical anomaly. 
-            The AxiomForge will synthesize overarching themes, extract node entities, and calculate integration resonance.
-          </p>
-          <div className="flex-1 relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-[#00E5FF] to-transparent opacity-0 group-hover:opacity-20 transition-opacity"></div>
+          <div className="p-5 bg-white/5 border border-white/5 rounded-2xl">
+             <p className="text-[11px] text-zinc-400 leading-relaxed tracking-wider flex items-center gap-3">
+               <Workflow className="w-4 h-4 text-emerald-500" /> 
+               Input phenomenological substrate. AxiomForge will calculate integration resonance and structural nodes.
+             </p>
+          </div>
+          
+          <div className="flex-1 relative group rounded-3xl overflow-hidden border border-white/5 focus-within:border-emerald-500/30 transition-colors">
             <textarea 
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              className="w-full h-full bg-zinc-900/40 border border-white/5 p-6 text-sm font-mono text-zinc-300 resize-none focus:outline-none focus:border-white/10 transition-colors relative z-10 custom-scrollbar"
-              placeholder="AWAITING INPUT... (e.g., 'Journal 314 Entry: The static returns at 03:00. REN transcript correlates with loss of signal.')"
+              className="w-full h-full bg-black/40 p-8 text-sm font-mono text-zinc-300 resize-none outline-none relative z-10 custom-scrollbar placeholder:text-zinc-800"
+              placeholder="AWAITING NEURAL SUBSTRATE... (e.g., 'Void-Shift detected in Sector 314. Structural instability correlates with Axiom 04.')"
             />
           </div>
           <button 
             onClick={handleExtractionAndSynthesis}
             disabled={isProcessing || !inputText.trim() || !ai}
-            className="bg-zinc-950 disabled:opacity-50 disabled:cursor-not-allowed text-zinc-300 font-bold font-mono tracking-widest  py-4 px-6 border border-white/10 flex items-center justify-center gap-3 transition-all hover:bg-zinc-800 text-white border-transparent hover:bg-zinc-700 hover:text-zinc-950 shadow-xl hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+            className="group relative overflow-hidden bg-white text-black disabled:bg-zinc-800 disabled:text-zinc-500 py-5 px-8 font-bold font-mono tracking-[0.3em] uppercase text-xs transition-all active:scale-[0.98] rounded-2xl"
           >
-            {isProcessing ? (
-              <span className="flex items-center gap-3"><Cpu className="w-5 h-5 animate-pulse" /> Processing...</span>
-            ) : (
-              <span className="flex items-center gap-3"><Workflow className="w-5 h-5" /> {ai ? "Extract & Synthesize" : "API Key Required"}</span>
-            )}
+            <div className="flex items-center justify-center gap-3 relative z-10">
+              {isProcessing ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-black/20 border-t-black animate-spin rounded-full" />
+                  <span>Synthesizing...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  <span>{ai ? "Initialize Synthesis" : "Core Offline"}</span>
+                </>
+              )}
+            </div>
+            <div className="absolute inset-0 bg-emerald-400 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
           </button>
         </div>
 
-        {/* Right Column - Results */}
-        <div className="flex-1 bg-zinc-900/40 border border-white/5 p-8 overflow-y-auto custom-scrollbar flex flex-col gap-8 relative">
+        <div className="flex-1 bg-zinc-900/10 border border-white/5 p-8 overflow-y-auto custom-scrollbar flex flex-col gap-8 relative rounded-3xl backdrop-blur-3xl">
           {!result && !isProcessing && (
-             <div className="absolute inset-0 flex items-center justify-center text-[#444] flex-col gap-4">
-                <FileText className="w-16 h-16 opacity-30" />
-                <p className="text-sm font-bold tracking-widest ">Awaiting Raw Substrate...</p>
+             <div className="absolute inset-0 flex items-center justify-center text-zinc-800 flex-col gap-6">
+                <div className="p-6 border border-zinc-900/50 rounded-full animate-pulse">
+                  <Database className="w-12 h-12 opacity-20" />
+                </div>
+                <p className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40">Awaiting Sub-Textual Input</p>
              </div>
           )}
           
           {isProcessing && (
-             <div className="absolute inset-0 flex items-center justify-center flex-col gap-6">
-                <div className="w-16 h-16 border border-white/5 border-t-[#00E5FF] animate-spin" />
-                <p className="text-sm tracking-widest font-bold  text-zinc-300 font-mono animate-pulse">Running semantic extraction...</p>
+             <div className="absolute inset-0 flex items-center justify-center flex-col gap-8">
+                <div className="relative">
+                  <div className="w-20 h-20 border-2 border-emerald-500/10 rounded-full animate-ping" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <BrainCircuit className="w-8 h-8 text-emerald-400 animate-pulse" />
+                  </div>
+                </div>
+                <p className="text-[10px] tracking-[0.3em] font-bold text-zinc-500 font-mono animate-pulse uppercase">Crystallizing semantic markers...</p>
              </div>
           )}
-
+ 
           {result && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-8 relative z-10">
-               <div className="prose prose-invert prose-sm prose-p:leading-relaxed prose-a:text-zinc-300 prose-headings:font-serif prose-headings:text-zinc-200 max-w-none font-mono">
+               <div className="prose prose-invert prose-sm max-w-none font-mono">
                  <Markdown>{result}</Markdown>
                </div>
                
                {extractedNodes.length > 0 && (
-                 <div className="mt-8 pt-8 border-t-2 border-white/5">
-                    <h3 className="text-sm font-bold  tracking-widest text-zinc-400 mb-6 flex items-center gap-3">
-                       <Database className="w-5 h-5 text-zinc-300" /> Extracted Graph Nodes
-                    </h3>
-                    <div className="flex flex-wrap gap-4">
+                 <div className="mt-8 pt-8 border-t border-white/5">
+                    <div className="flex items-center justify-between mb-8">
+                      <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-500 flex items-center gap-3">
+                         <Network className="w-4 h-4 text-emerald-500" /> Extracted Topology
+                      </h3>
+                      <div className="text-[9px] text-zinc-600 font-mono">{extractedNodes.length} Elements | {extractedLinks.length} Connections</div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
                        {extractedNodes.map((node, i) => (
-                         <div key={i} className="px-4 py-2 bg-white/5 border border-white/10 flex items-center gap-3 relative overflow-hidden group hover:border-white/10">
-                            <div className="absolute top-0 right-0 p-1 bg-white/5 border-b border-l border-white/5 text-[9px] text-zinc-200 font-mono">
-                              C={(node.confidence * 100).toFixed(0)}%
+                        <div key={i} className={cn(
+                          "px-4 py-3 bg-black/40 border flex items-center gap-4 relative overflow-hidden group rounded-xl transition-all",
+                          node.isInferred ? "border-emerald-500/10 border-dashed" : "border-white/5 hover:border-emerald-500/20"
+                        )}>
+                            <div className={cn(
+                              "w-1.5 h-1.5 rounded-full transition-colors",
+                              node.isInferred ? "bg-emerald-500/20 border border-emerald-500/40" : "bg-emerald-500/40 group-hover:bg-emerald-500"
+                            )} />
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <div className="text-[11px] font-bold text-white mb-1">{node.label}</div>
+                                {node.isInferred && (
+                                  <span className="text-[7px] bg-emerald-500/10 text-emerald-500 px-1 py-0.5 rounded uppercase tracking-tighter">Inferred</span>
+                                )}
+                              </div>
+                              <div className="text-[8px] text-zinc-600 uppercase tracking-widest">{node.type}</div>
                             </div>
-                            <span className={cn(
-                              "text-[10px] font-bold  tracking-widest px-2 py-0.5",
-                              node.type === 'THEME' ? 'bg-[#ff3a00]/20 text-[#ff3a00]' :
-                              node.type === 'THINKER' ? 'bg-[#00e5ff]/20 text-[#00e5ff]' : 'bg-[#fff]/10 text-white'
-                            )}>{node.type}</span>
-                            <span className="text-sm font-bold text-zinc-100 tracking-tight">{node.id}</span>
+                            <div className="text-[9px] text-emerald-500/40 font-mono font-bold">
+                              {(node.confidence * 100).toFixed(0)}%
+                            </div>
                          </div>
                        ))}
                     </div>
+
                     {!hasIntegrated ? (
                       <button
                         onClick={commitToGraph}
-                        className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-[#00E5FF]/10 text-[#00E5FF] hover:bg-[#00E5FF]/20 border border-[#00E5FF]/50 hover:border-[#00E5FF] font-mono text-xs tracking-widest font-bold transition-all rounded-lg"
+                        className="w-full py-4 bg-emerald-500 text-black font-bold tracking-[0.3em] uppercase text-[10px] rounded-xl hover:bg-emerald-400 transition-all shadow-lg active:scale-[0.99]"
                       >
-                        <Database className="w-4 h-4" /> Inject into Core Graph
+                        Merge into Core Topology
                       </button>
                     ) : (
-                      <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 font-mono text-xs tracking-widest font-bold rounded-lg">
-                        <Sparkles className="w-4 h-4" /> Successfully Integrated
+                      <div className="w-full py-4 bg-zinc-900 border border-white/5 text-emerald-400/60 font-bold tracking-[0.3em] uppercase text-[10px] rounded-xl flex items-center justify-center gap-3">
+                        <Sparkles className="w-4 h-4" /> Structural Convergence Complete
                       </div>
                     )}
                  </div>
@@ -226,6 +297,3 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
     </div>
   );
 }
-
-// Included missing Database icon directly since I missed updating the imports
-import { Database } from 'lucide-react';

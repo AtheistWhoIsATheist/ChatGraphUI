@@ -25,8 +25,8 @@ export interface Node {
 }
 
 export interface Link {
-  source: string;
-  target: string;
+  source: string | any;
+  target: string | any;
   type?: string;
   [key: string]: any;
 }

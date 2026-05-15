@@ -26,9 +26,18 @@ const baseScale = (nodeType: string, count: number, vq: number): number => {
   return 0.4; // PARADOX or default
 };
 
-export function ThreeGraph({ nodes, links, onNodeSelect }: { nodes: Node[], links: Link[], onNodeSelect?: (n: Node) => void }) {
+import { useAppStore } from '../store/appStore';
+
+export function ThreeGraph() {
+  const { nodes, links, setSelectedNodeId, setSidebarMode, setRightSidebarOpen } = useAppStore();
   const mountRef = useRef<HTMLDivElement>(null);
   const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
+
+  const onNodeSelect = (n: Node) => {
+    setSelectedNodeId(n.id);
+    setSidebarMode('details');
+    setRightSidebarOpen(true);
+  };
 
   useEffect(() => {
     if (!mountRef.current) return;

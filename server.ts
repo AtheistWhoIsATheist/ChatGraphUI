@@ -158,20 +158,20 @@ async function startServer() {
         const rawText = payload.extracted?.text || '';
         const textToAnalyze = rawText.substring(0, 100000); 
 
-        const prompt = `
-          You are the Nihiltheism Operations Engine. Extract fundamental philosophical entities and linkages from the following text document.
-          Identify at least 2 to 5 profound "RPEs" (Radical Philosophical Events) or "Axioms" from the reading.
-          
-          Document Name: ${payload.file_name}
+        const { ingestionPrompt } = await import('./src/backend/ai-prompts');
+        const db = getDb();
+        const existingNodes = db?.prepare('SELECT label, type FROM nodes LIMIT 100').all() || [];
+        const contextSummary = existingNodes.map((n: any) => `- ${n.label} (${n.type})`).join('\n');
 
-          Text:
-          ${textToAnalyze}
-        `;
+        const prompt = ingestionPrompt
+          .replace('{existing_nodes}', contextSummary)
+          .replace('{text_to_analyze}', textToAnalyze)
+          .replace('{file_name}', payload.file_name);
 
-        let generated = { entities: [] };
+        let generated = { entities: [], inferred_links: [] };
         try {
           const response = await ai.models.generateContent({
-            model: 'gemini-3.1-pro-preview',
+            model: 'gemini-2.0-flash', // Flash is better for high-throughput scrutiny
             contents: prompt,
             config: {
               responseMimeType: 'application/json',
@@ -186,15 +186,28 @@ async function startServer() {
                         kind: { type: Type.STRING },
                         name: { type: Type.STRING },
                         core_fracture: { type: Type.STRING },
-                        statement: { type: Type.STRING },
                         operation: { type: Type.STRING },
-                        confidence: { type: Type.NUMBER }
+                        confidence: { type: Type.NUMBER },
+                        isInferred: { type: Type.BOOLEAN }
                       },
-                      required: ["kind", "name", "operation", "confidence"]
+                      required: ["kind", "name", "operation", "confidence", "isInferred"]
+                    }
+                  },
+                  inferred_links: {
+                    type: Type.ARRAY,
+                    items: {
+                      type: Type.OBJECT,
+                      properties: {
+                        source: { type: Type.STRING },
+                        target: { type: Type.STRING },
+                        relation: { type: Type.STRING },
+                        isInferred: { type: Type.BOOLEAN }
+                      },
+                      required: ["source", "target", "relation", "isInferred"]
                     }
                   }
                 },
-                required: ["entities"]
+                required: ["entities", "inferred_links"]
               }
             }
           });
@@ -230,12 +243,14 @@ async function startServer() {
           
           if (!generated || !Array.isArray(generated.entities)) {
             if (Array.isArray(generated)) {
-              generated = { entities: generated };
+              generated = { entities: generated, inferred_links: [] };
             } else {
-              generated = { entities: [] };
+              generated = { entities: [], inferred_links: [] };
             }
           }
           
+          if (!generated.inferred_links) generated.inferred_links = [];
+
           if (generated.entities.length === 0) {
             throw new Error("No entities extracted.");
           }
@@ -246,15 +261,19 @@ async function startServer() {
             return res.status(401).json({ error: 'API key not valid. Please pass a valid API key in your Workspace settings.' });
           }
           // Fallback to basic extraction if Gemini fails
-          generated.entities = [
-            {
-              kind: "rpe",
-              name: `Substrate Rupture [Fallback]`,
-              core_fracture: "The API failed to parse profound implications; this is a generic extraction.",
-              operation: "insert",
-              confidence: 0.1
-            }
-          ] as any;
+          generated = {
+            entities: [
+              {
+                kind: "rpe",
+                name: `Substrate Rupture [Fallback]`,
+                core_fracture: "The API failed to parse profound implications; this is a generic extraction.",
+                operation: "insert",
+                confidence: 0.1,
+                isInferred: false
+              }
+            ],
+            inferred_links: []
+          };
         }
         
         const preview = {
@@ -316,28 +335,43 @@ async function startServer() {
         // Insert the extracted entities as nodes and link them to the file node!
         for (let i = 0; i < (preview.entities || []).length; i++) {
           const e = preview.entities[i];
-          const newId = `node_${Date.now()}_${Math.random().toString(36).substring(2,7)}`;
+          const newId = e.isInferred ? `inferred_${Date.now()}_${i}` : `node_${Date.now()}_${Math.random().toString(36).substring(2,7)}`;
           
           try {
             await nodesCollection.insertOne({
               id: newId,
               label: e.name || 'Unnamed Concept',
               type: e.kind === 'axiom' ? 'axiom' : 'concept',
-              status: 'RAW',
+              status: e.isInferred ? 'DRAFT' : 'RAW',
               summary: e.core_fracture || e.statement || '',
               blocks: [],
               socratic_questions: [],
-              metadata: { confidence: e.confidence, source_file: preview.file_name },
+              metadata: { 
+                confidence: e.confidence, 
+                source_file: preview.file_name, 
+                isInferred: e.isInferred 
+              },
               saturation_level: Math.floor((e.confidence || 0.5) * 100),
               revision_count: 0,
               last_audited_date: new Date().toISOString()
             });
 
-            // Create a link
+            // Create a link to the source file
             insertLink.run(newId, fileNodeId, 'EXTRACTED_FROM', 'documents');
             ingestedCount++;
           } catch(err) {
             console.error(`Failed to insert entity ${e.name}:`, err);
+          }
+        }
+
+        // Insert inferred links if present
+        if (preview.inferred_links) {
+          for (const link of preview.inferred_links) {
+            try {
+              insertLink.run(link.source, link.target, link.relation, link.isInferred ? 'inferred' : 'structural');
+            } catch (err) {
+               console.error(`Failed to insert link ${link.source} -> ${link.target}:`, err);
+            }
           }
         }
 

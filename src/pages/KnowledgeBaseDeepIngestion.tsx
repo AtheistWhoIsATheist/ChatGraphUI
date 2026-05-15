@@ -265,8 +265,13 @@ export default function KnowledgeBaseDeepIngestion() {
                     </div>
                     <div className="flex justify-between gap-4">
                       <div className="flex-1">
-                        <div className="font-mono text-xs text-zinc-200 bg-white/5 inline-block px-2 py-1 mb-3  tracking-widest">
-                          [{e.kind}] • OP:{e.operation} • TRUTH_LOCK:{String(!!(e as any).hard_truth)}
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="font-mono text-xs text-zinc-200 bg-white/5 inline-block px-2 py-1 tracking-widest">
+                            [{e.kind}] • OP:{e.operation} • TRUTH_LOCK:{String(!!(e as any).hard_truth)}
+                          </div>
+                          {(e as any).isInferred && (
+                            <span className="text-[9px] bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded border border-emerald-500/20 uppercase tracking-tighter">Inferred</span>
+                          )}
                         </div>
                         <div className="text-xl font-bold text-white tracking-tight leading-tight">{e.name}</div>
                       </div>
