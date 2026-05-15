@@ -30,16 +30,38 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
   const [hasIntegrated, setHasIntegrated] = useState(false);
   const [auditReport, setAuditReport] = useState<AuditReport | null>(null);
   const [resonanceData, setResonanceData] = useState<ResonanceResult | null>(null);
+  const [scrutinyLog, setScrutinyLog] = useState<string[]>([]);
+
+  const substrateSamples = [
+    "Void-Shift detected in Sector 314. Structural instability correlates with Axiom 04.",
+    "The collapse of recursive reification suggests a phenomenological rupture in the thinker's intent.",
+    "Apophatic discipline is failing; metaphysical smuggling detected in the substrate's core assertions.",
+    "The drift between nihilism and existence accelerates. Topology integration is 80% likely."
+  ];
 
   const handleExtractionAndSynthesis = async () => {
     if (!inputText.trim() || !ai) return;
     setIsProcessing(true);
+    setScrutinyLog(["Initializing Scrutiny Protocol...", "Accessing Neural Substrate...", "Calibrating Apophatic Filters..."]);
     setResult(null);
     setExtractedNodes([]);
     setExtractedLinks([]);
     setHasIntegrated(false);
     setAuditReport(null);
     setResonanceData(null);
+
+    // Simulated log drip for tactical feel
+    const logInterval = setInterval(() => {
+      const logs = [
+        "Scanning for Metaphysical Smuggling...",
+        "Identifying Epistemic Markers...",
+        "Calculating Groundlessness Index...",
+        "Mapping Structural Gaps...",
+        "Crystallizing Node Topology...",
+        "Auditing Semantic Integrity..."
+      ];
+      setScrutinyLog(prev => [...prev, logs[Math.floor(Math.random() * logs.length)]].slice(-6));
+    }, 1200);
 
     try {
       const contextSummary = existingNodes
@@ -127,6 +149,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
       console.error(error);
       setResult("Structural error in synthesis stream. Verify neural connection.");
     } finally {
+      clearInterval(logInterval);
       setIsProcessing(false);
     }
   };
@@ -218,7 +241,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
              </p>
           </div>
           
-           <div className="flex-1 relative group rounded-2xl overflow-hidden border border-white/5 focus-within:border-emerald-500/30 transition-all duration-500 bg-black/20 shadow-2xl">
+          <div className="flex-1 relative group rounded-2xl overflow-hidden border border-white/5 focus-within:border-emerald-500/30 transition-all duration-500 bg-black/20 shadow-2xl">
             <textarea 
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
@@ -228,6 +251,19 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
             {/* Visual scanline effect */}
             <div className="absolute inset-0 pointer-events-none z-20 bg-gradient-to-b from-transparent via-emerald-500/5 to-transparent h-[10%] w-full animate-[scan_8s_linear_infinite]" />
           </div>
+
+          <div className="grid grid-cols-2 gap-3 mb-2">
+            {substrateSamples.map((sample, idx) => (
+              <button
+                key={idx}
+                onClick={() => setInputText(sample)}
+                className="text-left p-3 text-[9px] text-zinc-500 hover:text-emerald-400 border border-white/5 hover:border-emerald-500/30 bg-white/5 hover:bg-emerald-500/5 transition-all rounded-lg font-mono uppercase tracking-tighter"
+              >
+                Scan Target: {sample.slice(0, 45)}...
+              </button>
+            ))}
+          </div>
+
           <button 
             onClick={handleExtractionAndSynthesis}
             disabled={isProcessing || !inputText.trim() || !ai}
@@ -260,14 +296,25 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
           )}
           
           {isProcessing && (
-             <div className="absolute inset-0 flex items-center justify-center flex-col gap-8">
+             <div className="absolute inset-0 flex items-center justify-center flex-col gap-10 bg-black/80 backdrop-blur-md z-50">
                 <div className="relative">
-                  <div className="w-20 h-20 border-2 border-emerald-500/10 rounded-full animate-ping" />
+                  <div className="w-24 h-24 border-2 border-emerald-500/10 rounded-full animate-ping" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <BrainCircuit className="w-8 h-8 text-emerald-400 animate-pulse" />
+                    <BrainCircuit className="w-10 h-10 text-emerald-400 animate-pulse" />
                   </div>
                 </div>
-                <p className="text-[10px] tracking-[0.3em] font-bold text-zinc-500 font-mono animate-pulse uppercase">Crystallizing semantic markers...</p>
+                
+                <div className="w-full max-w-sm flex flex-col gap-2">
+                  <div className="text-[10px] tracking-[0.3em] font-bold text-emerald-500/60 font-mono mb-2 uppercase text-center">Sub-Surface Scrutiny Active</div>
+                  <div className="bg-black/40 border border-white/5 p-4 rounded-xl flex flex-col gap-1 uppercase font-mono text-[8px] text-zinc-500">
+                    {scrutinyLog.map((log, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                         <span className="text-emerald-500/40">[{new Date().toLocaleTimeString()}]</span>
+                         <span className={i === scrutinyLog.length - 1 ? "text-emerald-400 animate-pulse" : ""}>{log}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
              </div>
           )}
  

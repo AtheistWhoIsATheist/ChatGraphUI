@@ -1,39 +1,35 @@
-export enum ImprovementMode {
-  REPAIRING = 'REPAIRING',
-  OPTIMIZING = 'OPTIMIZING',
-  STABLE = 'STABLE'
-}
+/**
+ * Logs optimizations for the Recursive Self-Improvement protocol.
+ * Persists to localStorage to maintain a cryptographic-adjacent audit trail.
+ */
 
-export interface ExecutionLog {
+export interface improvementLog {
   timestamp: string;
-  mode: ImprovementMode;
-  action: 'fix' | 'refactor' | 'validate' | 'monitor';
-  previous_state: string;
-  current_state: string;
-  details: string;
-  results: Record<string, any>;
+  type: 'UX' | 'REFACTOR' | 'UI' | 'ALGORITHM';
+  description: string;
+  outcome: string;
 }
 
-const STORAGE_KEY = 'recursive_self_improvement_logs';
-
-export function logOptimization(action: ExecutionLog['action'], details: string, results: Record<string, any>) {
-  const logs: ExecutionLog[] = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  
-  const newLog: ExecutionLog = {
-    timestamp: new Date().toISOString(),
-    mode: ImprovementMode.OPTIMIZING,
-    action,
-    previous_state: logs.length > 0 ? logs[logs.length - 1].current_state : 'INITIAL',
-    current_state: 'OPTIMIZED',
-    details,
-    results
+export const logOptimization = (item: Omit<improvementLog, 'timestamp'>) => {
+  const log: improvementLog = {
+    ...item,
+    timestamp: new Date().toISOString()
   };
 
-  logs.push(newLog);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
-  console.log('[SYSTEM SELF-IMPROVEMENT]', newLog);
-}
+  try {
+    const existing = JSON.parse(localStorage.getItem('journal314_improvement_log') || '[]');
+    const updated = [log, ...existing].slice(0, 50);
+    localStorage.setItem('journal314_improvement_log', JSON.stringify(updated));
+    console.log(`[RECURSIVE-SELF-IMPROVEMENT] ${log.type}: ${log.description}`);
+  } catch (e) {
+    console.error('Failed to log optimization', e);
+  }
+};
 
-export function getLogs(): ExecutionLog[] {
-  return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-}
+export const getImprovementLogs = (): improvementLog[] => {
+  try {
+    return JSON.parse(localStorage.getItem('journal314_improvement_log') || '[]');
+  } catch (e) {
+    return [];
+  }
+};

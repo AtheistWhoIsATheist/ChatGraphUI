@@ -29,15 +29,15 @@ const REIFICATION_PATTERNS = [
 ];
 
 const METAPHYSICAL_PATTERNS = [
-  { regex: /\b(is|exists|real|reality|truth|absolute|ultimate)\b(?! \s*(?:not|without|limit|aporetic|marker|operator))/i, message: "Potential hidden ontological commitment or reification of 'truth'/'absolute'." },
-  { regex: /\b(essence|substance|nature|identity)\b(?! \s*of|as|marker)/i, message: "Use of substance-language. Consider using 'structural recurrence' or 'phenomenological regularity'." }
+  { regex: /\b(is|exists|real|reality|truth|absolute|ultimate|being|existence|actual)\b(?! \s*(?:not|without|limit|aporetic|marker|operator|occurrence|probability))/i, message: "Potential hidden ontological commitment. Frame as 'phenomenological occurrence' or 'probabilistic node'." },
+  { regex: /\b(essence|substance|nature|identity|soul|spirit|core)\b(?! \s*of|as|marker|process)/i, message: "Use of substance-language detected. Consider using 'structural recurrence' or 'kinetic regularity'." }
 ];
 
 const GROUNDLESSNESS_PATTERNS = [
-  { regex: /\b(abyss|abyssal|bottomless|unfounded|ungrounded|baseless|rootless|groundless)\b/i, message: "Linguistic markers of ontic groundlessness detected." },
-  { regex: /\b(dissolving|vanishing|evanescent|fleeting|insubstantial|collapse|rupture|fracture)\b/i, message: "Patterns of substantial dissolution or structural rupture." },
-  { regex: /\b(void-contact|voidance|non-being|nihil|nothingness-marker)\b/i, message: "Direct reference to the architecture of the void." },
-  { regex: /\b(suspension|vertigo|dread|anxiety|angst)\b/i, message: "Affective correlates of groundlessness detected." }
+  { regex: /\b(abyss|abyssal|bottomless|unfounded|ungrounded|baseless|rootless|groundless|unanchored)\b/i, message: "Linguistic markers of ontic groundlessness detected." },
+  { regex: /\b(dissolving|vanishing|evanescent|fleeting|insubstantial|collapse|rupture|fracture|voiding)\b/i, message: "Patterns of substantial dissolution or structural rupture detected." },
+  { regex: /\b(void-contact|voidance|non-being|nihil|nothingness-marker|void-logic)\b/i, message: "Direct reference to the architecture of the void." },
+  { regex: /\b(suspension|vertigo|dread|anxiety|angst|drift|hollow)\b/i, message: "Affective correlates of groundlessness detected." }
 ];
 
 const EPISTEMIC_MARKERS = [
