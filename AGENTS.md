@@ -7,6 +7,8 @@ An advanced structural textual analysis platform for deconstructing philosophica
 - **High Intentionality**: All UI must be distinctive, avoiding generic patterns. Use the Antigravity Design system.
 - **Recursive Self-Improvement**: Log all optimizations in `/src/utils/selfImprovement.ts`.
 - **AxiomForge (Semantic Oracle)**: 100% robust extraction of nodes and links from raw text substrate.
+- **Source-Driven Development (SDD)**: Ground every implementation in official documentation. Treat documentation as the "Ground Truth" for technical substrate. Cite sources via code comments.
+- **Agnostic Topology**: Maintain strict agnosticism toward "Truth" in the ontology. Frame all nodes as "Phenomenological Occurrences" or "Possibilities".
 
 ## Tech Stack
 - Frontend: React 18 (Vite), TypeScript, Tailwind CSS 4, Motion (for animations).

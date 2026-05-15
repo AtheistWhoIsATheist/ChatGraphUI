@@ -1,16 +1,17 @@
 # GEMINI.md - AI Implementation Guardrails
 
 ## Model Selection Strategy
-- **Extraction & Synthesis**: Prefer `gemini-2.5-pro` for deep philosophical extraction in AxiomForge.
-- **Chat & Summarization**: Use `gemini-2.0-flash` for high-throughput interaction.
+- **Extraction & Synthesis**: Prefer `gemini-2.0-flash` for high-throughput scrutiny and initial extraction. Use `gemini-1.5-pro` for deep recursive densification.
+- **Generative Scrutiny**: Use `gemini-2.0-flash` for real-time inference of structural gaps in AxiomForge.
 
 ## Prompt Engineering Patterns
-Use the **"AxiomForge Substrate Extraction"** pattern:
+Use the **"AxiomForge Substrate Scrutiny"** pattern:
 ```markdown
-Analyze text for:
-1. Entities (void_concept, thinker, paradox, ren_stage, axiom, argument, synthesis)
-2. Links (contradicts, supports, derives_from, synthesizes, transcends, voids, iterates)
-3. Narrative Synthesis
+Analyze for:
+1. Entities (Extracted vs. Inferred)
+2. Links (Supports, Contradicts, Bridges)
+3. Narrative Synthesis (Generative Extrapolation)
+4. Agnostic Framing (Phenomenological Occurrences)
 ```
 
 ## Recursive Self-Improvement Protocol
