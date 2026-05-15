@@ -17,19 +17,27 @@ export interface AuditReport {
     apophaticDiscipline: AuditFinding[];
     antiReification: AuditFinding[];
     epistemicMarkers: AuditFinding[];
+    groundlessness: AuditFinding[];
   };
 }
 
 const REIFICATION_PATTERNS = [
-  { regex: /\bthe void\b(?! \s*(?:as|through|of|in\s+the\s+sense))/i, message: "Treating 'The Void' as an entity rather than an operator." },
-  { regex: /\bvoid\b\s+(?:is|contains|holds|exists|wants|acts)/i, message: "Attributing agency or existence to the Void." },
-  { regex: /\bnothingness\b\s+(?:is|exists|causes|wants|contains)/i, message: "Reifying Nothingness as a substance." },
-  { regex: /\bthe Transcendent\b\s+(?:is|acts|wants|reveals)/i, message: "Treating the Transcendent as an agent." }
+  { regex: /\bthe void\b(?! \s*(?:as|through|of|in\s+the\s+sense))/i, message: "Treating 'The Void' as an entity rather than an operator. Prefer 'void-contact' or 'voidance'." },
+  { regex: /\bvoid\b\s+(?:is|contains|holds|exists|wants|acts)/i, message: "Attributing agency or existence to the Void. The Void should be framed as a limit-operator." },
+  { regex: /\bnothingness\b\s+(?:is|exists|causes|wants|contains)/i, message: "Reifying Nothingness as a substance. Frame as 'nothingness-marker' or 'phenomenon-of-absence'." },
+  { regex: /\bthe Transcendent\b\s+(?:is|acts|wants|reveals)/i, message: "Treating the Transcendent as an agent. Use aporetic framing." }
 ];
 
 const METAPHYSICAL_PATTERNS = [
-  { regex: /\b(is|exists)\b(?! \s*(?:not|without|limit|aporetic))/i, message: "Potential hidden ontological commitment ('is'/'exists')." },
-  { regex: /\b(essence|substance)\b(?! \s*of|as)/i, message: "Use of substance-language." }
+  { regex: /\b(is|exists|real|reality|truth|absolute|ultimate)\b(?! \s*(?:not|without|limit|aporetic|marker|operator))/i, message: "Potential hidden ontological commitment or reification of 'truth'/'absolute'." },
+  { regex: /\b(essence|substance|nature|identity)\b(?! \s*of|as|marker)/i, message: "Use of substance-language. Consider using 'structural recurrence' or 'phenomenological regularity'." }
+];
+
+const GROUNDLESSNESS_PATTERNS = [
+  { regex: /\b(abyss|abyssal|bottomless|unfounded|ungrounded|baseless|rootless|groundless)\b/i, message: "Linguistic markers of ontic groundlessness detected." },
+  { regex: /\b(dissolving|vanishing|evanescent|fleeting|insubstantial|collapse|rupture|fracture)\b/i, message: "Patterns of substantial dissolution or structural rupture." },
+  { regex: /\b(void-contact|voidance|non-being|nihil|nothingness-marker)\b/i, message: "Direct reference to the architecture of the void." },
+  { regex: /\b(suspension|vertigo|dread|anxiety|angst)\b/i, message: "Affective correlates of groundlessness detected." }
 ];
 
 const EPISTEMIC_MARKERS = [
@@ -45,7 +53,8 @@ export function auditNihilContent(text: string, nodes: Partial<Node>[], links: a
       metaphysicalSmuggling: [],
       apophaticDiscipline: [],
       antiReification: [],
-      epistemicMarkers: []
+      epistemicMarkers: [],
+      groundlessness: []
     }
   };
 
@@ -71,13 +80,40 @@ export function auditNihilContent(text: string, nodes: Partial<Node>[], links: a
     });
   });
 
-  // 3. Epistemic Markers
-  const markerCount = EPISTEMIC_MARKERS.filter(m => text.includes(m)).length;
-  report.sections.epistemicMarkers.push({
-    check: "Marker Presence",
-    result: markerCount > 0 ? 'PASS' : 'FAIL',
-    recommendation: markerCount === 0 ? "Add [TEXTUAL], [PHENOMENOLOGICAL], etc. to orient claims." : undefined
+  // 3. Groundlessness Scrutiny
+  GROUNDLESSNESS_PATTERNS.forEach(p => {
+    const match = text.match(p.regex);
+    if (match) {
+      report.sections.groundlessness.push({
+        check: "Groundlessness Detection",
+        result: 'PASS', // Finding groundlessness is often a 'pass' in this specific nihiltheistic context, but we flag it as a finding.
+        evidence: match[0],
+        recommendation: p.message
+      });
+    }
   });
+
+  // 4. Epistemic Markers & Unlabeled Claims
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 10);
+  const unlabeledSentences = sentences.filter(s => !EPISTEMIC_MARKERS.some(m => s.includes(m)));
+
+  report.sections.epistemicMarkers.push({
+    check: "Marker Coverage",
+    result: unlabeledSentences.length === 0 ? 'PASS' : (unlabeledSentences.length > sentences.length / 2 ? 'FAIL' : 'WARNING'),
+    evidence: unlabeledSentences.length > 0 ? unlabeledSentences[0].trim() : undefined,
+    recommendation: unlabeledSentences.length > 0 
+      ? `Found ${unlabeledSentences.length} unlabeled claims. Consider tagging with [INTERPRETIVE] or [PHENOMENOLOGICAL].` 
+      : "Full epistemic coverage detected."
+  });
+
+  const markerCount = EPISTEMIC_MARKERS.filter(m => text.includes(m)).length;
+  if (markerCount === 0) {
+    report.sections.epistemicMarkers.push({
+      check: "Marker Presence",
+      result: 'FAIL',
+      recommendation: "Add [TEXTUAL], [PHENOMENOLOGICAL], etc. to orient claims."
+    });
+  }
 
   // Simple scoring
   const totalChecks = 
@@ -91,7 +127,7 @@ export function auditNihilContent(text: string, nodes: Partial<Node>[], links: a
     ...report.sections.epistemicMarkers
   ].filter(f => f.result === 'FAIL').length;
 
-  report.overallScore = Math.max(0, 100 - (failed * 20));
+  report.overallScore = Math.max(0, 100 - (failed * 15));
   report.status = failed > 0 ? 'FAIL' : (report.overallScore < 90 ? 'WARNING' : 'PASS');
 
   return report;

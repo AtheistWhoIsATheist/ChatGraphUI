@@ -95,3 +95,34 @@ You are the Nihiltheism Operations Engine. Your task is to extract fundamental p
 **SUBSTRATE (TEXT):**
 {text_to_analyze}
 `;
+
+export const resonanceAnalysisPrompt = `
+**THE RESONANCE CHAMBER: CROSS-TRADITION SCRUTINY**
+Analyze the resonance between the provided text and the identified traditions/thinkers from the Journal314 corpus.
+
+**TEXT:**
+{input_text}
+
+**RESONANT TARGETS:**
+{resonant_targets}
+
+**MANDATE:**
+1. **Structural Similarities:** Identify shared underlying architectures (e.g., both use negation as a productive force).
+2. **Non-Equivalence Remainders:** What makes this text distinctly unique? What exists in it that is NOT found in the comparative traditions?
+3. **Resonance Profile:** Summarize the intensity of connection to each tradition (0-100%).
+4. **Generative Bridges:** Propose 2-3 links to existing corpus nodes that aren't obvious.
+
+**OUTPUT FORMAT (JSON ONLY):**
+{
+  "similarities": [
+    { "tradition": "...", "similarity": "...", "intensity": 0.8 }
+  ],
+  "remainders": [
+    { "concept": "...", "difference": "..." }
+  ],
+  "generative_bridges": [
+    { "source": "input_concept", "target": "corpus_node_id", "logic": "..." }
+  ],
+  "summary": "Deep philosophical synthesis of the resonance."
+}
+`;
