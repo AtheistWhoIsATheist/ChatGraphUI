@@ -9,6 +9,7 @@ import { cn } from '../lib/utils';
 import Markdown from 'react-markdown';
 import { getGeminiClient } from '../lib/gemini';
 import { Node as GraphNode, Link as GraphLink } from '../data/corpus';
+import { auditNihilContent, AuditReport } from '../utils/auditEngine';
 
 const ai = getGeminiClient();
 
@@ -26,6 +27,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
   const [extractedNodes, setExtractedNodes] = useState<{id: string, label: string, type: string, confidence: number, isInferred?: boolean}[]>([]);
   const [extractedLinks, setExtractedLinks] = useState<{source: string, target: string, type: string, confidence: number, isInferred?: boolean}[]>([]);
   const [hasIntegrated, setHasIntegrated] = useState(false);
+  const [auditReport, setAuditReport] = useState<AuditReport | null>(null);
 
   const handleExtractionAndSynthesis = async () => {
     if (!inputText.trim() || !ai) return;
@@ -49,12 +51,18 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
         ${contextSummary}
 
         TASK:
-        1. Extract the key Entities PRESENT in the text. Map them to these types: 
+        1. Extract the key Entities PRESENT in the substrate. Map them to these types: 
            - 'void_concept', 'thinker', 'paradox', 'ren_stage', 'axiom', 'argument', 'synthesis'.
-        2. INFER STRUCTURAL GAPS: Propose nodes and links that are NOT in the text but should logically exist to support the argument or bridge it to the EXISTING TOPOLOGY.
-        3. Infer strong Links connecting these entities.
-        4. Synthesize a Narrative Synthesis that summarizes the text AND acts as a generative layer proposing new philosophical directions.
-        5. Determine Integration Level (Isolated, Pattern, Structural, Unified).
+        2. INFER STRUCTURAL GAPS: Propose nodes/links NOT in text but logically implied by REN to bridge to the EXISTING TOPOLOGY.
+        3. AGNOSTIC FRAMING: Tag every claim with an Epistemic Marker:
+           - [TEXTUAL]: Direct extraction.
+           - [PHENOMENOLOGICAL]: Experience report.
+           - [INTERPRETIVE]: Inferential reading.
+           - [ANALOGICAL]: Cross-domain comparison.
+           - [APHATIC]: Limit-of-language claims.
+        4. ANTI-REIFICATION: Do NOT treat 'Void' or 'Nothingness' as agents or substances. Use operator-language (e.g., 'void-contact', 'nothingness-marker').
+        5. Synthesize a Narrative Synthesis that summarizes the text AND acts as a generative layer proposing new philosophical directions.
+        6. Determine Integration Level (Isolated, Pattern, Structural, Unified).
 
         Format the output in Markdown. At the end, provide a JSON block enclosed in \`\`\`json containing nodes and links in this structure:
         {
@@ -86,6 +94,10 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
            if (parsed.nodes) setExtractedNodes(parsed.nodes);
            if (parsed.links) setExtractedLinks(parsed.links);
            markdownText = text.replace(jsonMatch[0], ''); 
+           
+           // Run Apophatic Audit
+           const report = auditNihilContent(markdownText, parsed.nodes, parsed.links);
+           setAuditReport(report);
          } catch (e) {
            console.error("Failed to parse extracted JSON", e);
          }
@@ -240,6 +252,56 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
                <div className="prose prose-invert prose-sm max-w-none font-mono">
                  <Markdown>{result}</Markdown>
                </div>
+
+               {auditReport && (
+                 <div className={cn(
+                   "p-6 border rounded-2xl bg-black/40 backdrop-blur-xl relative overflow-hidden",
+                   auditReport.status === 'PASS' ? "border-emerald-500/20" : 
+                   auditReport.status === 'FAIL' ? "border-red-500/20" : "border-yellow-500/20"
+                 )}>
+                   <div className="flex items-center justify-between mb-4">
+                     <h4 className="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-500 flex items-center gap-2">
+                       <Database className="w-3 h-3" /> Apophatic Discipline Audit
+                     </h4>
+                     <div className={cn(
+                       "px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-tighter",
+                       auditReport.status === 'PASS' ? "bg-emerald-500/10 text-emerald-500" : 
+                       auditReport.status === 'FAIL' ? "bg-red-500/10 text-red-500" : "bg-yellow-500/10 text-yellow-500"
+                     )}>
+                       {auditReport.status} • {auditReport.overallScore}%
+                     </div>
+                   </div>
+
+                   <div className="space-y-4">
+                      {[
+                        ...auditReport.sections.antiReification,
+                        ...auditReport.sections.metaphysicalSmuggling,
+                        ...auditReport.sections.epistemicMarkers
+                      ].filter(f => f.result !== 'PASS').map((finding, idx) => (
+                        <div key={idx} className="flex gap-3">
+                          <AlertTriangle className={cn(
+                            "w-4 h-4 flex-shrink-0 mt-0.5",
+                            finding.result === 'FAIL' ? "text-red-500/60" : "text-yellow-500/60"
+                          )} />
+                          <div>
+                            <div className="text-[10px] text-zinc-300 font-bold">{finding.check}</div>
+                            <div className="text-[9px] text-zinc-500 leading-relaxed mt-1">
+                              {finding.recommendation}
+                              {finding.evidence && (
+                                <span className="block mt-1 font-mono text-white/40 italic">"{finding.evidence}"</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {auditReport.status === 'PASS' && (
+                        <div className="text-[9px] text-emerald-500/60 flex items-center gap-2">
+                          <Sparkles className="w-3 h-3" /> All axioms maintain apophatic discipline.
+                        </div>
+                      )}
+                   </div>
+                 </div>
+               )}
                
                {extractedNodes.length > 0 && (
                  <div className="mt-8 pt-8 border-t border-white/5">
