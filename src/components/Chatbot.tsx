@@ -32,6 +32,7 @@ export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   const chatSessionRef = useRef<any>(null);
 
@@ -48,6 +49,9 @@ export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
 
     const userText = input.trim();
     setInput('');
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
     setMessages(prev => [...prev, { role: 'user', text: userText }]);
     setIsLoading(true);
     setError(null);
@@ -189,20 +193,32 @@ export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
               <span className="text-[10px]  tracking-widest text-zinc-300 font-bold">CONTEXT: REN ANALYSIS</span>
             </div>
           </div>
-          <div className="relative flex items-center">
-            <input
-              type="text"
+          <div className="relative flex items-start">
+            <textarea
+              ref={textareaRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              onChange={(e) => {
+                setInput(e.target.value);
+                if (textareaRef.current) {
+                  textareaRef.current.style.height = 'auto';
+                  textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`;
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
               placeholder="ENTER QUERY..."
-              className="w-full bg-zinc-900/40 border border-white/5 py-4 pl-6 pr-16 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-white/10 transition-colors font-mono font-bold tracking-widest "
+              className="w-full bg-zinc-900/40 border border-white/5 py-3 pl-6 pr-16 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-white/10 transition-colors font-mono font-bold tracking-widest resize-none min-h-[52px] max-h-[160px] custom-scrollbar"
               disabled={isLoading}
+              rows={1}
             />
             <button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              className="absolute right-2 w-12 h-12 bg-zinc-800 text-white border-transparent hover:bg-zinc-700 border border-[#000] flex items-center justify-center text-zinc-950 hover:bg-[#fff] disabled:opacity-50 disabled:bg-[#333] disabled:text-zinc-400 transition-colors cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center hover:bg-emerald-500/10 hover:border-emerald-500/30 disabled:opacity-30 disabled:bg-transparent disabled:text-zinc-700 disabled:border-transparent transition-all duration-300 cursor-pointer rounded-lg"
             >
               <Send className="w-5 h-5" strokeWidth={2} />
             </button>

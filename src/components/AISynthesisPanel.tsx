@@ -31,6 +31,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
   const [auditReport, setAuditReport] = useState<AuditReport | null>(null);
   const [resonanceData, setResonanceData] = useState<ResonanceResult | null>(null);
   const [scrutinyLog, setScrutinyLog] = useState<string[]>([]);
+  const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const substrateSamples = [
     "Void-Shift detected in Sector 314. Structural instability correlates with Axiom 04.",
@@ -50,8 +51,11 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
     setAuditReport(null);
     setResonanceData(null);
 
+    // Clear any existing interval just in case
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
     // Simulated log drip for tactical feel
-    const logInterval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       const logs = [
         "Scanning for Metaphysical Smuggling...",
         "Identifying Epistemic Markers...",
@@ -149,10 +153,16 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
       console.error(error);
       setResult("Structural error in synthesis stream. Verify neural connection.");
     } finally {
-      clearInterval(logInterval);
+      if (intervalRef.current) clearInterval(intervalRef.current);
       setIsProcessing(false);
     }
   };
+
+  React.useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
 
   const commitToGraph = () => {
     if (extractedNodes.length === 0) return;

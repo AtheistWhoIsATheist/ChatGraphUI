@@ -9,6 +9,7 @@ interface GraphLayoutOptions {
   height: number;
   clusterMode: boolean;
   gravity: number; // 0 to 100
+  nodeSpacing?: number; // 0 to 100
   activeFilters: {
     types: Set<string>;
     statuses: Set<string>;
@@ -28,7 +29,7 @@ const CLUSTER_CENTERS: Partial<Record<NodeType, { x: number; y: number }>> = {
   // Default center for others is (0,0)
 };
 
-export function useGraphLayout({ nodes, links, width, height, clusterMode, gravity, activeFilters }: GraphLayoutOptions) {
+export function useGraphLayout({ nodes, links, width, height, clusterMode, gravity, nodeSpacing = 70, activeFilters }: GraphLayoutOptions) {
   const [graphData, setGraphData] = useState<{ nodes: any[]; links: any[] }>({ nodes: [], links: [] });
   const simulationRef = useRef<d3.Simulation<d3.SimulationNodeDatum, undefined> | null>(null);
   const requestRef = useRef<number | null>(null);
@@ -90,6 +91,9 @@ export function useGraphLayout({ nodes, links, width, height, clusterMode, gravi
       nodeDegrees[tId] = (nodeDegrees[tId] || 0) + 1;
     });
 
+    // Node Spacing factor controls node-spacing & prevents overlap
+    const spacingFactor = 0.5 + (nodeSpacing / 100) * 1.5;
+
     const getRadius = (n: any) => {
       const degree = nodeDegrees[n.id] || 0;
       const saturation = n.metadata?.saturation_level || 50;
@@ -104,12 +108,13 @@ export function useGraphLayout({ nodes, links, width, height, clusterMode, gravi
       const saturationMultiplier = 0.8 + (saturation / 100) * 0.4;
       const finalRadius = (baseRadius + centralityBonus) * saturationMultiplier;
       const calculatedRadius = Math.max(6, Math.min(65, finalRadius));
-      return calculatedRadius + 30; // 30px extra padding for robust aura breathability
+      // Add compact base padding + let spacingFactor scale the collision radius
+      return (calculatedRadius + 10) * spacingFactor;
     };
 
     // Calculate forces based on gravity (0 to 100)
-    const chargeStrength = clusterMode ? -100 : -300 * (1 - (gravity - 50) / 100);
-    const linkDistance = clusterMode ? 50 : 100 * (1 - (gravity - 50) / 100);
+    const chargeStrength = clusterMode ? -100 : -350 * (1 - (gravity - 50) / 100);
+    const linkDistance = (clusterMode ? 50 : 120 * (1 - (gravity - 50) / 100)) * spacingFactor;
     const centerStrength = gravity / 100; // 0 to 1
 
     // Initialize simulation
@@ -119,7 +124,7 @@ export function useGraphLayout({ nodes, links, width, height, clusterMode, gravi
       .force('charge', d3.forceManyBody().strength(chargeStrength))
       .force('link', d3.forceLink(filteredLinks).id((d: any) => d.id).distance(linkDistance))
       .force('center', d3.forceCenter(width / 2, height / 2).strength(centerStrength))
-      .force('collide', d3.forceCollide().radius((d: any) => getRadius(d)).iterations(3));
+      .force('collide', d3.forceCollide().radius((d: any) => getRadius(d)).strength(1.0).iterations(5));
 
     // Apply clustering forces if enabled
     if (clusterMode) {
@@ -160,7 +165,7 @@ export function useGraphLayout({ nodes, links, width, height, clusterMode, gravi
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
       simulation.stop();
     };
-  }, [nodes, links, width, height, clusterMode, gravity, filterKey]); // Use filterKey instead of activeFilters
+  }, [nodes, links, width, height, clusterMode, gravity, nodeSpacing, filterKey]); // Use filterKey instead of activeFilters
 
   // Drag handlers
   const drag = (node: any) => {

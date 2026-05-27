@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, Database, Cpu, Box, Sparkles, Microscope, 
-  BarChart3, AlertTriangle, Network, HardDrive, Menu
+  BarChart3, AlertTriangle, Network, HardDrive, Menu, Compass
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAppStore } from '../store/appStore';
@@ -16,12 +16,14 @@ export type ViewMode =
   'oe_analytics' | 
   'theme_clusters' | 
   'ai_synthesis' | 
-  'deep_ingestion';
+  'deep_ingestion' |
+  'global_topology';
 
 export const NAV_ITEMS = [
   { id: 'deep_ingestion', icon: Database, title: "Journal314 Ingestion" },
   { id: 'engine', icon: Cpu, title: "Journal314 / REN Graph Engine" },
   { id: '3d_engine', icon: Box, title: "REN Topology (3D)" },
+  { id: 'global_topology', icon: Compass, title: "Global Topology" },
   { id: 'stream', icon: Sparkles, title: "Synthesis Stream" },
   { id: 'discriminator', icon: Microscope, title: "Occurrence-Elevation Discriminator" },
   { id: 'oe_analytics', icon: BarChart3, title: "Occurrence-Elevation Analytics" },

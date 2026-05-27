@@ -79,9 +79,35 @@ export function KnowledgeGraph({
   const [isAddingNode, setIsAddingNode] = useState(false);
   const [newNode, setNewNode] = useState({ label: '', type: 'concept' });
   
+  // Visual & Spacing styling
+  const [nodeStylePreset, setNodeStylePreset] = useState<'void-glow' | 'glass' | 'neon' | 'solid'>('void-glow');
+  const [nodeSpacing, setNodeSpacing] = useState(70);
+
   // Filters
   const [activeTypes, setActiveTypes] = useState<Set<string>>(new Set());
   const [activeStatuses, setActiveStatuses] = useState<Set<string>>(new Set());
+
+  // Dynamically compute existing types and statuses in graph nodes
+  const availableTypes = useMemo(() => {
+    const typesSet = new Set<string>();
+    nodes.forEach(n => {
+      if (n.type) typesSet.add(n.type);
+    });
+    // Ensure standard defaults exist if empty
+    const defaults = ['concept', 'thinker', 'treatise', 'question', 'axiom', 'praxis'];
+    defaults.forEach(t => typesSet.add(t));
+    return Array.from(typesSet).sort();
+  }, [nodes]);
+
+  const availableStatuses = useMemo(() => {
+    const statusesSet = new Set<string>();
+    nodes.forEach(n => {
+      if (n.status) statusesSet.add(n.status);
+    });
+    const defaults = ['VERIFIED', 'INFERENCE', 'HYPOTHESIS'];
+    defaults.forEach(s => statusesSet.add(s));
+    return Array.from(statusesSet).sort();
+  }, [nodes]);
 
   // Layout Hook
   const { nodes: layoutNodes, links } = useGraphLayout({
@@ -91,8 +117,81 @@ export function KnowledgeGraph({
     height: dimensions.height,
     clusterMode,
     gravity,
+    nodeSpacing,
     activeFilters: { types: activeTypes, statuses: activeStatuses }
   });
+
+  const getNodeStyles = (
+    node: Node, 
+    color: string, 
+    matchesSearch: boolean, 
+    isSelected: boolean, 
+    isHovered: boolean, 
+    isConnectedToFocus: boolean, 
+    scale: any
+  ) => {
+    // Determine dynamic shape borders or style tags by node type
+    let borderRadius = "9999px"; // Standard circle
+    let borderStyle = "solid";
+    
+    if (node.type === 'thinker') {
+      borderRadius = "35%"; // Soft rounded squircle
+    } else if (node.type === 'axiom' || node.type === 'axiom_type' || node.id.includes('axiom')) {
+      borderRadius = "8px"; // Compact soft box for axiomatic truths
+      borderStyle = "double";
+    } else if (node.type === 'question' || node.id.includes('question')) {
+      borderRadius = "50% 50% 50% 10%"; // Tear-drop inquiry geometry
+    } else if (node.type === 'paradox') {
+      borderRadius = "0px"; // Brutalist sharp square
+      borderStyle = "dashed";
+    }
+
+    let bgStyle = "";
+    let borderStyleValue = "";
+    let shadowStyle = "";
+
+    switch (nodeStylePreset) {
+      case 'solid':
+        bgStyle = isSelected ? '#fff' : color;
+        borderStyleValue = isSelected || matchesSearch ? '2.5px solid #fff' : `2.5px ${borderStyle} rgba(0,0,0,0.45)`;
+        shadowStyle = isSelected || isHovered ? `0 0 25px ${color}` : `0 4px 10px rgba(0,0,0,0.45)`;
+        break;
+      case 'neon':
+        bgStyle = isSelected ? `${color}40` : `${color}05`;
+        borderStyleValue = isSelected || matchesSearch ? `2.5px solid #fff` : `2.0px ${borderStyle} ${color}`;
+        shadowStyle = isSelected || isHovered 
+          ? `0 0 35px ${color}, inset 0 0 15px ${color}` 
+          : `0 0 12px ${color}45`;
+        break;
+      case 'glass':
+        bgStyle = isSelected ? `${color}35` : `rgba(12, 12, 12, 0.75)`;
+        borderStyleValue = isSelected || matchesSearch ? `2px solid #fff` : `1.2px ${borderStyle} ${color}cc`;
+        shadowStyle = isSelected || isHovered 
+          ? `0 0 30px ${color}80` 
+          : `0 4px 12px rgba(0,0,0,0.65)`;
+        break;
+      case 'void-glow':
+      default: // hologram / void-glow
+        bgStyle = isSelected ? `${color}` : `${color}15`;
+        borderStyleValue = isSelected || matchesSearch 
+          ? '2px solid #fff' 
+          : (isHovered || isConnectedToFocus ? `1.5px solid ${color}` : `1px ${borderStyle} ${color}80`);
+        shadowStyle = isSelected || isHovered 
+          ? `0 0 ${20 + scale.glowIntensity * 50}px ${color}` 
+          : `0 0 10px rgba(0,0,0,0.5)`;
+        break;
+    }
+
+    return {
+      borderRadius,
+      borderStyle,
+      backgroundColor: bgStyle,
+      border: borderStyleValue,
+      boxShadow: shadowStyle,
+      width: `${scale.radius * 2}px`,
+      height: `${scale.radius * 2}px`,
+    };
+  };
 
   // Resize Observer
   useEffect(() => {
@@ -549,6 +648,12 @@ export function KnowledgeGraph({
         gravity={gravity}
         setGravity={setGravity}
         onAddNode={() => setIsAddingNode(true)}
+        nodeStylePreset={nodeStylePreset}
+        setNodeStylePreset={setNodeStylePreset}
+        nodeSpacing={nodeSpacing}
+        setNodeSpacing={setNodeSpacing}
+        availableTypes={availableTypes}
+        availableStatuses={availableStatuses}
       />
 
       {/* --- INSIGHT GENERATOR (BOTTOM LEFT) --- */}
@@ -830,22 +935,19 @@ export function KnowledgeGraph({
                   {/* Node Shape */}
                   <div 
                     className={cn(
-                      "rounded-full shadow-2xl border transition-all duration-500",
-                      isSelected ? "animate-pulse" : "group-hover:scale-110",
+                      "shadow-2xl transition-all duration-500 relative flex items-center justify-center",
+                      isSelected ? "animate-pulse" : "group-hover:scale-105",
                       matchesSearch && "shadow-[0_0_40px_white] ring-4 ring-white/20"
                     )}
-                    style={{ 
-                      backgroundColor: isSelected ? `${color}` : `${color}15`, 
-                      borderColor: isSelected || matchesSearch ? '#fff' : (isHovered || isConnectedToFocus ? color : `${color}80`),
-                      boxShadow: (isSelected || isHovered) ? `0 0 ${20 + scale.glowIntensity * 50}px ${color}` : `0 0 10px rgba(0,0,0,0.5)`,
-                      width: `${scale.radius * 2}px`,
-                      height: `${scale.radius * 2}px`,
-                    }}
+                    style={getNodeStyles(node, color, matchesSearch, isSelected, isHovered, isConnectedToFocus, scale)}
                   >
                     {/* Inner Semantic Core */}
                     <div 
-                      className="absolute inset-2 rounded-full opacity-40"
-                      style={{ backgroundColor: color }}
+                      className="absolute inset-[20%] opacity-45"
+                      style={{ 
+                        backgroundColor: color,
+                        borderRadius: node.type === 'thinker' ? "35%" : (node.type === 'axiom' || node.type === 'axiom_type' || node.id.includes('axiom') ? "6px" : "9999px")
+                      }}
                     />
                   </div>
 

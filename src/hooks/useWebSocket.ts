@@ -6,6 +6,7 @@ export function useWebSocket() {
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const reconnectAttemptsRef = useRef(0);
+  const simIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const maxReconnectAttempts = 5;
   const baseBackoff = 1000; // 1s
 
@@ -109,6 +110,9 @@ export function useWebSocket() {
       if (wsRef.current) {
         wsRef.current.close();
       }
+      if (simIntervalRef.current) {
+        clearInterval(simIntervalRef.current);
+      }
     };
   }, []);
 
@@ -131,10 +135,14 @@ export function useWebSocket() {
     setStreaming(true);
     setSynthesis('');
     
+    if (simIntervalRef.current) {
+      clearInterval(simIntervalRef.current);
+    }
+
     const mockResponse = "The void is ⊗ being and non-being simultaneously. [INFERRED] from Nāgārjuna's analysis. ∅ concept exists in the apophatic tradition. ~Perhaps this is the core insight~ [SPECULATIVE]";
     let i = 0;
     
-    const interval = setInterval(() => {
+    simIntervalRef.current = setInterval(() => {
       if (i < mockResponse.length) {
         setSynthesis(useSynthesisStore.getState().synthesis + mockResponse[i]);
         if (i % 10 === 0) {
@@ -145,7 +153,10 @@ export function useWebSocket() {
         }
         i++;
       } else {
-        clearInterval(interval);
+        if (simIntervalRef.current) {
+          clearInterval(simIntervalRef.current);
+          simIntervalRef.current = null;
+        }
         setStreaming(false);
         addMessage({
           id: Date.now().toString(),

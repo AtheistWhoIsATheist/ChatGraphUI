@@ -14,6 +14,7 @@ import { OEDiscriminator } from './components/OEDiscriminator';
 import { OEDashboard } from './components/OEDiscriminatorDashboard';
 import { ThreeGraph } from './components/ThreeGraph';
 import { ThemeClusters } from './components/ThemeClusters';
+import { GlobalTopology } from './components/GlobalTopology';
 import { AISynthesisPanel } from './components/AISynthesisPanel';
 import { corpusNodes, corpusLinks, Node, Link } from './data/corpus';
 import { 
@@ -126,6 +127,8 @@ function App() {
         return <OEDashboard />;
       case 'theme_clusters':
         return <ThemeClusters />;
+      case 'global_topology':
+        return <GlobalTopology />;
       case 'ai_synthesis':
         return (
           <AISynthesisPanel 
