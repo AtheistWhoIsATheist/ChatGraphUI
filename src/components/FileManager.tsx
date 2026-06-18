@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { 
   FileText, Upload, Trash2, Search, Filter as FilterIcon, 
-  ChevronDown, Loader2, CheckCircle2, AlertCircle, HardDrive, X, Sparkles, Zap
+  ChevronDown, Loader2, CheckCircle2, AlertCircle, HardDrive, X, Sparkles, Zap, HardDriveDownload
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { IngestionFile } from '../utils/runIngestion';
+import { useAppStore } from '../store/appStore';
 
 interface FileManagerProps {
   onExtract: (file: IngestionFile) => void;
@@ -14,8 +15,36 @@ interface FileManagerProps {
 }
 
 export function FileManager({ onExtract, files, setFiles, onClose }: FileManagerProps) {
+  const { nodes, links } = useAppStore();
   const [sortBy, setSortBy] = useState<keyof IngestionFile>("uploadDate");
   const [filter, setFilter] = useState("");
+
+  const handleExportGraph = () => {
+    try {
+      const exportPayload = {
+        exportedAt: new Date().toISOString(),
+        version: "2.0.0",
+        graph: {
+          nodeCount: nodes.length,
+          linkCount: links.length,
+          nodes,
+          links
+        }
+      };
+      const dataStr = JSON.stringify(exportPayload, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `journal314_graph_export_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to export state domain:', error);
+    }
+  };
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -131,6 +160,16 @@ export function FileManager({ onExtract, files, setFiles, onClose }: FileManager
               className="px-6 py-3 bg-zinc-950 border border-white/5 text-[10px]  font-bold tracking-widest text-zinc-400 hover:text-zinc-950 hover:bg-zinc-200 text-black border-transparent hover:bg-zinc-300 hover:border-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-xl transition duration-300 backdrop-blur-md"
             >
               Clear
+            </button>
+          </div>
+
+          <div className="border-t border-white/5 pt-4">
+            <button 
+              onClick={handleExportGraph}
+              className="w-full flex items-center justify-center gap-3 py-3 bg-zinc-950 hover:bg-emerald-950/20 text-emerald-400 hover:text-emerald-300 border border-emerald-500/20 hover:border-emerald-500/50 text-[10px] font-bold tracking-widest transition-all rounded-xl duration-300 backdrop-blur-md shadow-[0_0_15px_rgba(16,185,129,0.05)] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+            >
+              <HardDriveDownload className="w-3.5 h-3.5" />
+              EXPORT GRAPH (JSON)
             </button>
           </div>
         </div>

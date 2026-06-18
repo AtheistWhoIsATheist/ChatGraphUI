@@ -869,14 +869,22 @@ export function KnowledgeGraph({
             return (
               <motion.div
                 key={`node-${node.id}`}
-                initial={{ scale: 0, opacity: 0 }}
+                initial={{ scale: 0.3, opacity: 0, filter: "blur(12px) brightness(0.3)", rotate: -12 }}
                 animate={{ 
-                  scale: matchesSearch ? 1.3 : (isSelected ? 1.15 : 1), 
-                  opacity: isDeeplyDimmed ? 0.05 : (isDimmed ? 0.2 : 1),
-                  filter: isDeeplyDimmed ? "blur(2px) grayscale(0.5)" : "blur(0px) grayscale(0)"
+                  scale: matchesSearch ? 1.35 : (isSelected ? 1.18 : (isHovered ? 1.08 : 1)), 
+                  opacity: isDeeplyDimmed ? 0.05 : (isDimmed ? 0.25 : 1),
+                  filter: isDeeplyDimmed 
+                    ? "blur(3.5px) grayscale(0.8) brightness(0.35)" 
+                    : (isHovered || isSelected ? "blur(0px) brightness(1.2)" : "blur(0px) brightness(1.0)"),
+                  rotate: isHovered ? [0, 2, -2, 0] : 0
                 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 400, damping: 35 }}
+                exit={{ scale: 0.2, opacity: 0, filter: "blur(8px)" }}
+                transition={{ 
+                  scale: { type: "spring", stiffness: 350, damping: 25 },
+                  opacity: { duration: 0.4 },
+                  filter: { duration: 0.3 },
+                  rotate: isHovered ? { duration: 4, repeat: Infinity, ease: "easeInOut" } : { duration: 0.5 }
+                }}
                 className="absolute"
                 style={{ 
                   left: isNaN(node.x) ? 0 : node.x, 

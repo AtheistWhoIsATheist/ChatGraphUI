@@ -27,8 +27,12 @@ import { NavigationSidebar, ViewMode } from './components/NavigationSidebar';
 import { logOptimization } from './utils/selfImprovement';
 import { TheoryOverlay } from './components/TheoryOverlay';
 import { useAppStore, SidebarMode } from './store/appStore';
+import { useGraphPersistence } from './hooks/useGraphPersistence';
 
 function App() {
+  // Synchronize graph state with localStorage automatically
+  useGraphPersistence();
+
   const { 
     nodes, links, viewMode, selectedNodeId, sidebarMode, 
     isLeftSidebarOpen, isRightSidebarOpen, isFileManagerOpen,
