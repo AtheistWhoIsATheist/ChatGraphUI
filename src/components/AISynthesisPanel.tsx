@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sparkles, AlertTriangle, Workflow, 
-  Database, BrainCircuit, Network, ArrowLeft, Zap
+  Database, BrainCircuit, Network, ArrowLeft, Zap, ShieldAlert, BookOpen, Terminal
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import Markdown from 'react-markdown';
@@ -11,6 +11,7 @@ import { Node as GraphNode, Link as GraphLink } from '../data/corpus';
 import { auditNihilContent, AuditReport } from '../utils/auditEngine';
 import { findResonantCandidates, ResonanceResult } from '../utils/resonanceEngine';
 import { resonanceAnalysisPrompt } from '../backend/ai-prompts';
+import { DIRECTIVES } from '../lib/library';
 
 const ai = getGeminiClient();
 
@@ -260,6 +261,40 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
             />
             {/* Visual scanline effect */}
             <div className="absolute inset-0 pointer-events-none z-20 bg-gradient-to-b from-transparent via-emerald-500/5 to-transparent h-[10%] w-full animate-[scan_8s_linear_infinite]" />
+          </div>
+
+          {/* PEC Ω System Directives Library */}
+          <div className="p-4 bg-zinc-950/40 border border-white/5 rounded-2xl flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-500/80 flex items-center gap-2">
+                <Terminal className="w-3.5 h-3.5 text-emerald-500" />
+                PEC Ω SYSTEM DIRECTIVES LIBRARY
+              </span>
+              <span className="text-[8px] font-mono text-zinc-500 tracking-[0.2em] uppercase">SEED SUBSTRATE AVAILABLE</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {DIRECTIVES.map((dir) => (
+                <button
+                  key={dir.id}
+                  onClick={() => setInputText(dir.body)}
+                  className="text-left p-3.5 bg-zinc-900/50 hover:bg-emerald-950/25 border border-white/5 hover:border-emerald-500/20 hover:scale-[1.01] transition-all rounded-xl duration-300 group flex flex-col gap-1.5"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-[11px] font-bold text-white group-hover:text-emerald-400 font-sans transition-colors">{dir.title}</span>
+                    <span className={cn(
+                      "text-[7px] uppercase font-bold px-1.5 py-0.5 rounded tracking-widest",
+                      dir.intensity === "maximal" ? "bg-red-500/10 text-red-400 border border-red-500/20" : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                    )}>
+                      {dir.intensity}
+                    </span>
+                  </div>
+                  <p className="text-[9px] text-zinc-400 leading-normal font-sans line-clamp-2">{dir.summary}</p>
+                  <div className="text-[7.5px] text-zinc-600 font-mono uppercase tracking-wider mt-1">
+                    Audience: {dir.audience}
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-2">
