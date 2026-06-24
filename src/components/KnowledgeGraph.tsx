@@ -16,29 +16,35 @@ import { logOptimization } from '../utils/selfImprovement';
 
 // --- TYPES & CONSTANTS ---
 
-const NODE_COLORS: Partial<Record<NodeType, string>> = {
-  treatise: '#a1a1aa', // zinc-400
-  journal: '#d4d4d8',  // zinc-300
-  thinker: '#e4e4e7',  // zinc-200
-  theme: '#52525b',    // zinc-600
-  concept: '#71717a',  // zinc-500
-  fragment: '#3f3f46', // zinc-700
-  methodology: '#a1a1aa', // zinc-400
-  claim: '#d4d4d8',    // zinc-300
-  experience: '#e4e4e7', // zinc-200
-  library_item: '#52525b', // zinc-600
-  summary: '#71717a',  // zinc-500
-  question: '#3f3f46', // zinc-700
-  praxis: '#a1a1aa',   // zinc-400
-  axiom: '#d4d4d8',    // zinc-300
-  ...NT_NODE_COLORS,
+const NODE_COLORS: Record<string, string> = {
+  treatise: '#0066ff',     // Cosmic Blue
+  journal: '#00e5ff',      // Electric Cyan
+  thinker: '#ffb703',      // Intense Amber Gold
+  theme: '#8a2be2',        // Royal Purple
+  concept: '#0066ff',      // Cosmic Blue
+  fragment: '#374151',     // Translucent Gunmetal Gray
+  methodology: '#00f5d4',   // Radioactive Emerald Green
+  claim: '#ff5500',        // HD Burnt Orange
+  experience: '#00f5d4',   // Radioactive Emerald Green
+  library_item: '#374151', // Translucent Gunmetal Gray
+  summary: '#ff5500',      // HD Burnt Orange
+  question: '#d946ef',     // Cosmic Fuchsia
+  praxis: '#00f5d4',       // Radioactive Emerald Green
+  axiom: '#ff5500',        // HD Burnt Orange
+  
+  // Nihiltheism Ontology specific overrides (ensuring absolute coherence)
+  void_concept: '#d946ef', // Cosmic Fuchsia
+  paradox: '#d946ef',      // Cosmic Fuchsia
+  ren_stage: '#ff5500',    // HD Burnt Orange
+  argument: '#0066ff',     // Cosmic Blue
+  synthesis: '#00f5d4',    // Radioactive Emerald Green
 };
 
 const getHierarchicalColor = (node: Node) => {
   if (node.id === 'void') return '#ffffff'; // The Singularity is pure light
-  if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) return '#e4e4e7'; // zinc-200
-  if (node.type === 'methodology' || node.id.includes('series') || node.id.includes('codex')) return '#a1a1aa'; // zinc-400
-  return NODE_COLORS[node.type] || '#71717a';
+  if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) return '#d946ef'; // Cosmic Fuchsia
+  if (node.id.includes('series') || node.id.includes('codex')) return '#00e5ff'; // Electric Cyan
+  return NODE_COLORS[node.type] || NODE_COLORS[node.type as string] || '#00f5d4';
 };
 
 // --- COMPONENT ---
@@ -383,7 +389,10 @@ export function KnowledgeGraph({
     // 2. Connection Hierarchy (Visual Style)
     let dashArray = "none";
     let isFlowing = false;
-    let color = isSelected || isHovered ? "#e4e4e7" : (isNeighbor ? "rgba(255,255,255,0.4)" : (isFoundational ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.05)"));
+    
+    // Resolve dynamic colors for the cluster links
+    const sourceColor = sourceNode ? getHierarchicalColor(sourceNode) : '#ffffff';
+    let color = sourceColor;
 
     if (link.type === 'explores') {
       dashArray = "4,4"; 
@@ -394,9 +403,33 @@ export function KnowledgeGraph({
       isFlowing = true;
     }
 
-    if (link.type === 'tension') {
-      color = isSelected || isHovered ? "#f87171" : "#7f1d1d"; // Reddish for tension
+    // Explicit colors based on relation types
+    if (link.type === 'tension' || link.type === 'contradicts') {
+      color = isSelected || isHovered ? "#f43f5e" : `${sourceColor}cc`; // Reddish tension or vivid color
       width = width * 1.5;
+    } else if (link.type === 'supports') {
+      color = isSelected || isHovered ? "#10b981" : `${sourceColor}cc`; // Emerald green support or vivid color
+    } else if (link.type === 'derives_from' || link.type === 'synthesizes') {
+      color = isSelected || isHovered ? "#06b6d4" : `${sourceColor}cc`; // Cyan derivation or vivid color
+    } else if (link.type === 'transcends') {
+      color = isSelected || isHovered ? "#a855f7" : `${sourceColor}cc`; // Purple transcendence or vivid color
+    }
+
+    // Adjust link opacity dynamically based on interaction states
+    if (isFocusMode) {
+      if (isSelected || isHovered) {
+        // Active links stay fully opaque
+      } else if (isNeighbor) {
+        color = `${color}66`; // 40% opacity for neighbors
+      } else {
+        color = `${color}03`; // 1.2% opacity for others in focus mode
+      }
+    } else {
+      if (isFoundational) {
+        color = `${color}55`; // 33% opacity for foundational
+      } else {
+        color = `${color}2a`; // 16% opacity for normal background links
+      }
     }
     
     return {
@@ -959,13 +992,22 @@ export function KnowledgeGraph({
                     />
                   </div>
 
-                  {/* Label (Dynamic Density) */}
-                  <div className={cn(
-                    "absolute top-full mt-3 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-xl border border-white/10 text-[10px]  font-bold tracking-widest transition-all duration-500 pointer-events-none",
-                    (isHovered || isSelected || matchesSearch || scale.radius > 30) 
-                      ? "opacity-100 translate-y-0 text-white border-orange-500 shadow-2xl bg-orange-950/20" 
-                      : (isDeeplyDimmed ? "opacity-0 -translate-y-2 scale-90" : "opacity-30 translate-y-0 text-zinc-400")
-                  )}>
+                  {/* Label (Floating & Colorful) */}
+                  <div 
+                    className={cn(
+                      "absolute top-full mt-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap px-1.5 py-0.5 text-center font-sans tracking-tight transition-all duration-300 pointer-events-none",
+                      (isHovered || isSelected || matchesSearch)
+                        ? "opacity-100 scale-110 font-bold z-50"
+                        : (isDeeplyDimmed ? "opacity-0 scale-75" : "opacity-85 font-medium")
+                    )}
+                    style={{
+                      color: isHovered || isSelected || matchesSearch ? '#ffffff' : color,
+                      fontSize: `${Math.max(10, Math.min(18, 9 + scale.radius * 0.15))}px`,
+                      textShadow: isHovered || isSelected || matchesSearch 
+                        ? `0 0 8px ${color}, 0 0 16px ${color}, 0 1px 3px rgba(0,0,0,0.95)`
+                        : `0 1px 2px rgba(0,0,0,0.9)`,
+                    }}
+                  >
                     {node.label}
                   </div>
                 </div>

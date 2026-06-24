@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import { 
   Network, Sparkles, Loader2, ZoomIn, ZoomOut, RotateCcw, 
-  Search, Filter, ShieldCheck, Cpu, ArrowRight, BookOpen, Layers, Info, GitCompare
+  Search, Filter, ShieldCheck, Cpu, ArrowRight, BookOpen, Layers, Info, GitCompare,
+  SlidersHorizontal, Compass, Eye, Flame
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore } from '../store/appStore';
@@ -15,18 +16,56 @@ import { logOptimization } from '../utils/selfImprovement';
 
 const ai = getGeminiClient();
 
-// High-contrast cyberpunk / Void-themed colors
+// High-contrast 8k Cosmic / Void-themed colors
 const CLUSTER_COLORS = [
-  '#10b981', // emerald
-  '#ec4899', // hot pink
-  '#3b82f6', // sapphire blue
-  '#8b5cf6', // royal violet
-  '#eab308', // amber gold
-  '#f97316', // neon orange
-  '#14b8a6', // teal
-  '#ef4444', // blood red
-  '#06b6d4', // cyan
-  '#a855f7', // amethyst
+  '#ff5500', // HD Burnt Orange
+  '#0066ff', // Cosmic Blue
+  '#00e5ff', // Electric Cyan
+  '#d946ef', // Cosmic Fuchsia
+  '#00f5d4', // Radioactive Emerald
+  '#8a2be2', // Royal Violet
+  '#ffb703', // Intense Amber Gold
+  '#374151', // Gunmetal Gray
+];
+
+// Core learning paths for guided topological journeys
+const LEARNING_PATHS = [
+  {
+    id: 'meaninglessness-to-transcendence',
+    title: 'Meaninglessness to Transcendence',
+    description: 'Track how meaning-collapse transitions into non-dogmatic apophatic illumination.',
+    nodes: ['THINKER_emile_cioran', 'THINKER_evelyn_underhill', 'THINKER_st_john_of_the_cross', 'void'],
+  },
+  {
+    id: 'despair-to-mystical-negation',
+    title: 'Despair to Mystical Negation',
+    description: 'Explore the transformational crucible of dread and ascetic renunciation.',
+    nodes: ['THINKER_ernest_becker', 'THINKER_kierkegaard', 'THINKER_thomas_kempis'],
+  },
+  {
+    id: 'journal314-witnesses',
+    title: 'Abyssal Witnesses',
+    description: 'Direct readings and extractions of ground-truth passages on the edge of the void.',
+    nodes: ['THINKER_emile_cioran', 'THINKER_ernest_becker', 'THINKER_kierkegaard'],
+  },
+  {
+    id: 'occurrence-vs-elevation',
+    title: 'Occurrence vs Elevation',
+    description: 'Analyze how local phenomenological occurrences get elevated into systemic theology.',
+    nodes: ['THINKER_emile_cioran', 'THINKER_evelyn_underhill'],
+  },
+  {
+    id: 'silence-of-god',
+    title: 'The Silence of God',
+    description: 'The Glacial blue pathway mapping divine hiddenness and infinite distance.',
+    nodes: ['THINKER_thomas_kempis', 'THINKER_st_john_of_the_cross'],
+  },
+  {
+    id: 'pnt-convergence',
+    title: 'PNT Vertex Convergence',
+    description: 'See the vertices M → E → L → D → N → Ø converge on the trans-conceptual recognize.',
+    nodes: ['THINKER_emile_cioran', 'THINKER_ernest_becker', 'THINKER_kierkegaard'],
+  }
 ];
 
 interface D3Node extends d3.SimulationNodeDatum {
@@ -36,12 +75,30 @@ interface D3Node extends d3.SimulationNodeDatum {
   status?: string;
   communityId: number;
   radius: number;
+  summary?: string;
+  properties?: {
+    dread?: number;
+    dread_saturation?: number;
+    void_quotient?: number;
+    void_contact_depth?: number;
+    elevation_level?: number;
+    why_elevation?: string;
+    [key: string]: any;
+  };
 }
 
 interface D3Link extends d3.SimulationLinkDatum<D3Node> {
   source: string | D3Node;
   target: string | D3Node;
   value?: number;
+  type?: string;
+  isInferred?: boolean;
+  properties?: {
+    score?: number;
+    confidence?: number;
+    isInferred?: boolean;
+    [key: string]: any;
+  };
 }
 
 export function GlobalTopology() {
@@ -61,6 +118,14 @@ export function GlobalTopology() {
 
   // Goal 5: Layout gravity switch state
   const [gravityFocused, setGravityFocused] = useState(false);
+
+  // Advanced semantic filters
+  const [filterEvidenceStatus, setFilterEvidenceStatus] = useState<string>('ALL'); // 'ALL', 'TEXTUAL', 'INFERRED'
+  const [filterOE, setFilterOE] = useState<string>('ALL'); // 'ALL', 'OCCURRENCE', 'ELEVATION'
+  const [filterMinElevation, setFilterMinElevation] = useState<number>(-1); // -1 (ALL), 0, 1, 2, 3, 4
+  const [filterHighDread, setFilterHighDread] = useState<boolean>(false);
+  const [filterHighVoid, setFilterHighVoid] = useState<boolean>(false);
+  const [selectedLearningPath, setSelectedLearningPath] = useState<string | null>(null);
 
   // Goal 3: Batch parsing states
   const [isBatchProcessing, setIsBatchProcessing] = useState(false);
@@ -137,6 +202,15 @@ export function GlobalTopology() {
     return CLUSTER_COLORS[communityId % CLUSTER_COLORS.length];
   };
 
+  // Helper to resolve semantic colors for node elements
+  const getSemanticColor = (d: D3Node) => {
+    if (d.id === 'void') return '#8b5cf6'; // Violet/Purple for Void abyss
+    if (d.type === 'thinker') return '#fbc531'; // Pale Gold for Thinker/Human Witness
+    if (d.type === 'passage' || d.type === 'library_item') return '#10b981'; // Emerald for Manuscript Shard
+    if (d.status === 'speculative' || d.type === 'speculative') return '#f59e0b'; // Speculative amber
+    return getClusterColor(d.communityId);
+  };
+
   // Process data for D3 force layout
   const filteredD3Data = useMemo(() => {
     // Filter nodes by search, type, and Louvain community visibility
@@ -144,13 +218,41 @@ export function GlobalTopology() {
       const commId = nodeCommunityMap.get(n.id) ?? 0;
       if (hiddenClusterIds.has(commId)) return false;
 
+      // Scented Search (matches label, summary, thinker voice profile, etc.)
+      const searchLower = searchQuery.toLowerCase();
       const matchesSearch = searchQuery === '' || 
-        n.label.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        n.id.toLowerCase().includes(searchQuery.toLowerCase());
+        n.label.toLowerCase().includes(searchLower) || 
+        n.id.toLowerCase().includes(searchLower) ||
+        (n.summary && n.summary.toLowerCase().includes(searchLower)) ||
+        (n.type && n.type.toLowerCase().includes(searchLower)) ||
+        (n.metadata?.philosophical_stance && n.metadata.philosophical_stance.toLowerCase().includes(searchLower));
       
       const matchesType = selectedNodeTypes.size === 0 || selectedNodeTypes.has(n.type);
-      
-      return matchesSearch && matchesType;
+
+      // Inferred vs Source-Backed (Evidence Status)
+      const isInferred = n.isInferred || n.type === 'inferred_bridge' || n.id.includes('inferred') || n.id.includes('latent');
+      const matchesEvidence = filterEvidenceStatus === 'ALL' || 
+        (filterEvidenceStatus === 'INFERRED' && isInferred) ||
+        (filterEvidenceStatus === 'TEXTUAL' && !isInferred);
+
+      // Occurrence vs Elevation
+      const elevLvl = n.properties?.elevation_level !== undefined ? n.properties.elevation_level : (n.type === 'system' ? 2 : 0);
+      const matchesOE = filterOE === 'ALL' ||
+        (filterOE === 'OCCURRENCE' && elevLvl === 0) ||
+        (filterOE === 'ELEVATION' && elevLvl > 0);
+
+      // Min Elevation Level (0 to 4)
+      const matchesMinElevation = filterMinElevation === -1 || elevLvl >= filterMinElevation;
+
+      // High Dread
+      const dreadVal = n.properties?.dread || n.properties?.dread_saturation || 0;
+      const matchesHighDread = !filterHighDread || dreadVal >= 0.5;
+
+      // High Void Contact
+      const voidVal = n.properties?.void_quotient || n.properties?.void_contact_depth || 0;
+      const matchesHighVoid = !filterHighVoid || voidVal >= 0.5;
+
+      return matchesSearch && matchesType && matchesEvidence && matchesOE && matchesMinElevation && matchesHighDread && matchesHighVoid;
     });
 
     const activeNodeIds = new Set(activeNodes.map(n => n.id));
@@ -163,6 +265,7 @@ export function GlobalTopology() {
       if (n.type === 'thinker') r = 18;
       if (n.type === 'tradition' || n.type === 'system') r = 16;
       if (n.type === 'claim') r = 10;
+      if (n.id === 'void') r = 24; // Abyssal singularity
       
       // Pull cached coordinates if they exist to animate transitions smoothly
       const prev = posRef.current.get(n.id);
@@ -176,27 +279,37 @@ export function GlobalTopology() {
         x: prev?.x,
         y: prev?.y,
         vx: prev?.vx,
-        vy: prev?.vy
-      };
+        vy: prev?.vy,
+        properties: n.properties,
+        metadata: n.metadata,
+        summary: n.summary
+      } as any;
     });
 
     // Create D3 Links that connect active nodes only
     const d3Links: D3Link[] = [];
     links.forEach(l => {
-      const sourceId = typeof l.source === 'string' ? l.source : l.source.id;
-      const targetId = typeof l.target === 'string' ? l.target : l.target.id;
+      const sourceId = typeof l.source === 'string' ? l.source : (l.source ? (l.source as any).id : '');
+      const targetId = typeof l.target === 'string' ? l.target : (l.target ? (l.target as any).id : '');
 
-      if (activeNodeIds.has(sourceId) && activeNodeIds.has(targetId)) {
+      if (sourceId && targetId && activeNodeIds.has(sourceId) && activeNodeIds.has(targetId)) {
+        const score = l.properties?.score !== undefined 
+          ? l.properties.score 
+          : (l.score !== undefined ? l.score : 0.5);
+
         d3Links.push({
           source: sourceId,
           target: targetId,
-          value: l.weight || 2
-        });
+          value: score,
+          type: l.type,
+          isInferred: l.isInferred || l.type === 'inferred' || l.properties?.isInferred,
+          properties: l.properties
+        } as any);
       }
     });
 
     return { d3Nodes, d3Links };
-  }, [nodes, links, nodeCommunityMap, searchQuery, selectedNodeTypes, hiddenClusterIds]);
+  }, [nodes, links, nodeCommunityMap, searchQuery, selectedNodeTypes, hiddenClusterIds, filterEvidenceStatus, filterOE, filterMinElevation, filterHighDread, filterHighVoid]);
 
   // 2. D3 Visualization Setup and Rendering
   useEffect(() => {
@@ -215,6 +328,76 @@ export function GlobalTopology() {
 
     // Define subtle defs for glow filters and patterns
     const defs = svg.append('defs');
+
+    // Keyframe pulsing styles for semantic halos
+    defs.append('style')
+      .text(`
+        @keyframes pulse-red {
+          0% { r: 14px; stroke-opacity: 0.6; }
+          50% { r: 24px; stroke-opacity: 0.2; }
+          100% { r: 14px; stroke-opacity: 0.6; }
+        }
+        @keyframes pulse-purple {
+          0% { r: 16px; stroke-opacity: 0.6; }
+          50% { r: 26px; stroke-opacity: 0.2; }
+          100% { r: 16px; stroke-opacity: 0.6; }
+        }
+        .pulse-glow {
+          transform-origin: center;
+        }
+      `);
+
+    // Standard arrow marker
+    defs.append('marker')
+      .attr('id', 'arrow-standard')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 22) // offset from node center so arrowhead touches boundary
+      .attr('refY', 0)
+      .attr('markerWidth', 5)
+      .attr('markerHeight', 5)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L10,0L0,4')
+      .attr('fill', '#4b5563');
+
+    // Crimson tension/contradiction marker
+    defs.append('marker')
+      .attr('id', 'arrow-tension')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 22)
+      .attr('refY', 0)
+      .attr('markerWidth', 5.5)
+      .attr('markerHeight', 5.5)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L10,0L0,4')
+      .attr('fill', '#ef4444');
+
+    // Electric violet resonance/deepens marker
+    defs.append('marker')
+      .attr('id', 'arrow-resonance')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 22)
+      .attr('refY', 0)
+      .attr('markerWidth', 5.5)
+      .attr('markerHeight', 5.5)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L10,0L0,4')
+      .attr('fill', '#a855f7');
+
+    // Pale gold transcendence marker
+    defs.append('marker')
+      .attr('id', 'arrow-gold')
+      .attr('viewBox', '0 -5 10 10')
+      .attr('refX', 22)
+      .attr('refY', 0)
+      .attr('markerWidth', 5.5)
+      .attr('markerHeight', 5.5)
+      .attr('orient', 'auto')
+      .append('path')
+      .attr('d', 'M0,-4L10,0L0,4')
+      .attr('fill', '#eab308');
     
     // Grid pattern
     const pattern = defs.append('pattern')
@@ -345,23 +528,45 @@ export function GlobalTopology() {
     });
 
     // Draw Links
+    // Draw Links with variable density/opacity and thickness based on connection strength (score)
     const link = linkGroup.selectAll('line')
       .data(d3Links)
       .join('line')
-      .attr('stroke', '#1e1e24')
-      .attr('stroke-opacity', 0.6)
-      .attr('stroke-width', d => Math.max(1, Math.min(6, (d.value || 1.5))));
+      .attr('stroke', d => {
+        if (d.properties?.collapse_violation) return '#ef4444'; // crimson warning
+        if (d.type === 'tension' || d.type === 'contradicts' || d.type === 'objection') return '#ef4444'; // crimson
+        if (d.type === 'RESONANCE' || d.type === 'resonance' || d.type === 'deepens') return '#a855f7'; // electric violet
+        if (d.type === 'transcends' || d.type === 'transcendent_echo') return '#eab308'; // pale gold
+        if (d.isInferred) return '#f59e0b'; // dim amber
+        return '#3f3f46'; // translucent gunmetal gray
+      })
+      .attr('stroke-opacity', d => {
+        const score = d.value !== undefined ? d.value : 0.5;
+        const baseOpacity = 0.15 + (score * 0.75); // Range: 0.15 to 0.90 based on score
+        return d.isInferred ? baseOpacity * 0.6 : baseOpacity;
+      })
+      .attr('stroke-width', d => {
+        const score = d.value !== undefined ? d.value : 0.5;
+        return 1.0 + (score * 4.5); // Range: 1.0px to 5.5px thickness based on score
+      })
+      .attr('stroke-dasharray', d => {
+        if (d.isInferred || d.type === 'explores') return '4, 4';
+        if (d.type === 'tension') return '2, 2';
+        return 'none';
+      })
+      .attr('marker-end', d => {
+        if (d.properties?.collapse_violation || d.type === 'tension') return 'url(#arrow-tension)';
+        if (d.type === 'RESONANCE' || d.type === 'resonance' || d.type === 'deepens') return 'url(#arrow-resonance)';
+        if (d.type === 'transcends' || d.type === 'transcendent_echo') return 'url(#arrow-gold)';
+        return 'url(#arrow-standard)';
+      });
 
-    // Draw Nodes
-    const node = nodeGroup.selectAll('circle')
-      .data(d3Nodes)
-      .join('circle')
-      .attr('r', d => d.radius)
-      .attr('fill', d => getClusterColor(d.communityId))
-      .attr('stroke', '#09090b')
-      .attr('stroke-width', 2)
+    // Draw Nodes as customized Groups
+    const node = nodeGroup.selectAll('g.node-group')
+      .data(d3Nodes, (d: any) => d.id)
+      .join('g')
+      .attr('class', d => `node-group node-glob-${d.id}`)
       .attr('cursor', 'pointer')
-      .attr('class', d => `node-glob-${d.id}`)
       .on('click', (event, d) => {
         if (comparisonMode) {
           event.stopPropagation();
@@ -382,13 +587,24 @@ export function GlobalTopology() {
         setSelectedNodeId(d.id);
         setSidebarMode('details');
         setRightSidebarOpen(true);
-        // Dim or focus state
-        node.style('opacity', n => n.communityId === d.communityId ? 1 : 0.2);
-        link.style('opacity', l => {
-          const sId = typeof l.source === 'string' ? l.source : (l.source as D3Node).id;
-          const tId = typeof l.target === 'string' ? l.target : (l.target as D3Node).id;
-          return sId === d.id || tId === d.id ? 1 : 0.05;
+        
+        // Dynamic neighborhood highlight
+        node.style('opacity', n => {
+          if (n.id === d.id) return 1;
+          const isConnected = d3Links.some(l => {
+            const sId = typeof l.source === 'string' ? l.source : (l.source as any).id;
+            const tId = typeof l.target === 'string' ? l.target : (l.target as any).id;
+            return (sId === d.id && tId === n.id) || (sId === n.id && tId === d.id);
+          });
+          return isConnected ? 1 : 0.12;
         });
+
+        link.style('opacity', l => {
+          const sId = typeof l.source === 'string' ? l.source : (l.source as any).id;
+          const tId = typeof l.target === 'string' ? l.target : (l.target as any).id;
+          return sId === d.id || tId === d.id ? 1 : 0.03;
+        });
+
         setSelectedClusterId(d.communityId);
         event.stopPropagation();
       })
@@ -417,25 +633,166 @@ export function GlobalTopology() {
       })
       .call(drag(simulation) as any);
 
+    // Build the visual elements inside each group
+    node.each(function(d: any) {
+      const g = d3.select(this);
+      g.selectAll('*').remove(); // clear existing content
+
+      const dread = d.properties?.dread || d.properties?.dread_saturation || 0;
+      const voidQ = d.properties?.void_quotient || d.properties?.void_contact_depth || 0;
+      const isVoid = d.id === 'void';
+      const color = getSemanticColor(d);
+
+      // 1. Add glowing aura rings for intense entities
+      if (dread > 0.5) {
+        g.append('circle')
+          .attr('r', d.radius + 10)
+          .attr('fill', 'none')
+          .attr('stroke', '#ef4444')
+          .attr('stroke-width', 2)
+          .attr('stroke-opacity', 0.4)
+          .attr('class', 'pulse-glow')
+          .style('animation', 'pulse-red 3s infinite ease-in-out');
+      } else if (voidQ > 0.5) {
+        g.append('circle')
+          .attr('r', d.radius + 10)
+          .attr('fill', 'none')
+          .attr('stroke', '#8b5cf6')
+          .attr('stroke-width', 2)
+          .attr('stroke-opacity', 0.4)
+          .attr('class', 'pulse-glow')
+          .style('animation', 'pulse-purple 3.5s infinite ease-in-out');
+      }
+
+      // 2. Draw core geometries
+      if (isVoid) {
+        // Singular black abyss void node
+        g.append('circle')
+          .attr('r', d.radius)
+          .attr('fill', '#000000')
+          .attr('stroke', '#ffffff')
+          .attr('stroke-width', 3)
+          .style('filter', 'url(#glow-global)');
+          
+        g.append('circle')
+          .attr('r', d.radius - 6)
+          .attr('fill', 'none')
+          .attr('stroke', '#8b5cf6')
+          .attr('stroke-width', 1.5)
+          .attr('stroke-dasharray', '3, 3');
+      } else if (d.type === 'thinker') {
+        // Human witness: gold hollow ring with small inner solid coordinate
+        g.append('circle')
+          .attr('r', d.radius)
+          .attr('fill', color)
+          .attr('fill-opacity', 0.12)
+          .attr('stroke', color)
+          .attr('stroke-width', 2.5);
+
+        g.append('circle')
+          .attr('r', d.radius - 7)
+          .attr('fill', color)
+          .attr('stroke', 'none');
+      } else if (d.type === 'passage' || d.type === 'library_item') {
+        // Shard rect: bone-white manuscript feel
+        const w = d.radius * 2;
+        const h = d.radius * 1.3;
+        g.append('rect')
+          .attr('x', -w / 2)
+          .attr('y', -h / 2)
+          .attr('width', w)
+          .attr('height', h)
+          .attr('rx', 3)
+          .attr('fill', '#09090b')
+          .attr('stroke', color)
+          .attr('stroke-width', 2)
+          .style('filter', 'url(#glow-global)');
+          
+        g.append('line')
+          .attr('x1', -w / 3)
+          .attr('y1', 0)
+          .attr('x2', w / 3)
+          .attr('y2', 0)
+          .attr('stroke', '#a1a1aa')
+          .attr('stroke-width', 1)
+          .attr('stroke-opacity', 0.6);
+      } else if (d.isInferred || d.type === 'inferred_bridge' || d.id.includes('inferred') || d.id.includes('latent')) {
+        // Speculative dashed circle representing latent nodes
+        g.append('circle')
+          .attr('r', d.radius)
+          .attr('fill', '#09090b')
+          .attr('stroke', color)
+          .attr('stroke-width', 1.5)
+          .attr('stroke-dasharray', '4, 3')
+          .style('filter', 'url(#glow-global)');
+      } else {
+        // Standard high contrast circular entity
+        g.append('circle')
+          .attr('r', d.radius)
+          .attr('fill', color)
+          .attr('stroke', '#020202')
+          .attr('stroke-width', 1.5)
+          .style('filter', 'url(#glow-global)');
+      }
+
+      // Add a small red/orange warning trigger if there is a collapse violation
+      if (d.properties?.collapse_violation) {
+        g.append('circle')
+          .attr('cx', d.radius - 3)
+          .attr('cy', -d.radius + 3)
+          .attr('r', 4.5)
+          .attr('fill', '#ef4444')
+          .attr('stroke', '#000000')
+          .attr('stroke-width', 1);
+      }
+    });
+
+    // Apply learning path or cluster-specific opacity styling
+    if (selectedLearningPath) {
+      const activePath = LEARNING_PATHS.find(p => p.id === selectedLearningPath);
+      if (activePath) {
+        node.style('opacity', n => activePath.nodes.includes(n.id) || n.id === 'void' ? 1 : 0.12);
+        link.style('opacity', l => {
+          const sId = typeof l.source === 'string' ? l.source : (l.source as any).id;
+          const tId = typeof l.target === 'string' ? l.target : (l.target as any).id;
+          const bothInPath = (activePath.nodes.includes(sId) || sId === 'void') && 
+                             (activePath.nodes.includes(tId) || tId === 'void');
+          return bothInPath ? 1 : 0.04;
+        });
+      }
+    } else if (selectedClusterId !== null) {
+      node.style('opacity', n => n.communityId === selectedClusterId ? 1 : 0.15);
+      link.style('opacity', l => {
+        const sId = typeof l.source === 'string' ? l.source : (l.source as any).id;
+        const tId = typeof l.target === 'string' ? l.target : (l.target as any).id;
+        const sNode = d3Nodes.find(n => n.id === sId);
+        const tNode = d3Nodes.find(n => n.id === tId);
+        return sNode?.communityId === selectedClusterId && tNode?.communityId === selectedClusterId ? 0.8 : 0.05;
+      });
+    }
+
     // Reset focused state when clicking empty area on canvas
     svg.on('click', () => {
       node.style('opacity', 1);
-      link.style('opacity', 0.6);
+      link.style('opacity', 0.65);
       setSelectedClusterId(null);
+      setSelectedLearningPath(null);
     });
 
-    // Draw Labels
+    // Draw Labels with bone-white color and text shadow
     const labels = labelGroup.selectAll('text')
       .data(d3Nodes)
       .join('text')
       .text(d => d.label)
-      .attr('font-size', '10px')
-      .attr('font-family', 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace')
-      .attr('fill', '#d4d4d8')
+      .attr('font-size', '9px')
+      .attr('font-weight', '500')
+      .attr('font-family', '"Inter", ui-sans-serif, system-ui, sans-serif')
+      .attr('fill', '#f5f5f7')
       .attr('text-anchor', 'middle')
       .attr('dy', '.35em')
       .style('pointer-events', 'none')
-      .style('text-shadow', '0 1px 4px rgba(0,0,0,0.9)');
+      .style('letter-spacing', '0.04em')
+      .style('text-shadow', '0 1px 3px rgba(0,0,0,0.95), 0 0 4px rgba(0,0,0,0.85)');
 
     // 3. Render Convex Hulls for visual cluster containment
     const hullLine = d3.line<[number, number]>().curve(d3.curveBasisClosed);
@@ -510,8 +867,7 @@ export function GlobalTopology() {
         .attr('y2', (d: any) => d.target.y);
 
       node
-        .attr('cx', (d: any) => d.x)
-        .attr('cy', (d: any) => d.y);
+        .attr('transform', (d: any) => `translate(${d.x}, ${d.y})`);
 
       labels
         .attr('x', (d: any) => d.x)
@@ -546,7 +902,7 @@ export function GlobalTopology() {
     return () => {
       simulation.stop();
     };
-  }, [filteredD3Data, linkDistance, chargeStrength, clusteringStrength, selectedClusterId, gravityFocused, comparisonMode, selectedCompareIds]);
+  }, [filteredD3Data, linkDistance, chargeStrength, clusteringStrength, selectedClusterId, gravityFocused, comparisonMode, selectedCompareIds, selectedLearningPath]);
 
   // Zoom manipulation actions
   const handleZoomIn = () => {
@@ -599,7 +955,7 @@ Perform a rigorous, Phase 2 Synthesis of this cluster.
 3. Do NOT include generic filler intro/outro. Provide deep, dense, academic philosophical synthesis in clean Markdown format.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-3.5-flash',
         contents: prompt
       });
 
@@ -651,7 +1007,7 @@ Perform a rigorous, Phase 2 Synthesis of this cluster.
 3. Do NOT include generic filler intro/outro. Provide deep, dense, academic philosophical synthesis in clean Markdown format.`;
 
         const response = await ai.models.generateContent({
-          model: 'gemini-2.0-flash',
+          model: 'gemini-3.5-flash',
           contents: prompt
         });
 
@@ -751,7 +1107,7 @@ Please perform deep recursive theme densification (using gemini-1.5-pro capabili
 Provide directly in dense, clean academic format formatted for easy reading.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-1.5-pro',
+        model: 'gemini-3.5-flash',
         contents: prompt
       });
 
@@ -961,16 +1317,183 @@ Provide directly in dense, clean academic format formatted for easy reading.`;
               </div>
             </div>
 
-            {/* Micro Legenda */}
-            <div className="bg-zinc-900/40 p-4 border border-white/5 rounded-xl backdrop-blur-md">
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-3">Clustering Legend</span>
-              <div className="grid grid-cols-2 gap-2 text-[9px] font-mono">
-                {communities.slice(0, 8).map(c => (
-                  <div key={c.id} className="flex items-center gap-2 truncate">
-                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: getClusterColor(c.id) }} />
-                    <span className="text-zinc-300 truncate">CLUSTER_{c.id}</span>
+            {/* Goal 1: Advanced Semantic Filters */}
+            <div className="bg-zinc-900/40 p-4 border border-white/5 rounded-xl backdrop-blur-md space-y-4">
+              <div className="flex items-center gap-2 border-b border-white/5 pb-2">
+                <SlidersHorizontal className="w-4 h-4 text-emerald-400" />
+                <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">Semantic Filters</span>
+              </div>
+
+              {/* Evidence Status */}
+              <div className="space-y-1.5">
+                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block">Evidence Basis</span>
+                <div className="grid grid-cols-3 gap-1 bg-black/40 p-1 rounded-lg border border-white/5">
+                  {(['ALL', 'TEXTUAL', 'INFERRED'] as const).map(status => (
+                    <button
+                      key={status}
+                      onClick={() => setFilterEvidenceStatus(status)}
+                      className={cn(
+                        "py-1 text-[8px] font-bold uppercase rounded transition-all font-mono cursor-pointer",
+                        filterEvidenceStatus === status
+                          ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
+                          : "text-zinc-500 hover:text-zinc-300"
+                      )}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Occurrence vs Elevation */}
+              <div className="space-y-1.5">
+                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest block">Taxonomy Focus</span>
+                <div className="grid grid-cols-3 gap-1 bg-black/40 p-1 rounded-lg border border-white/5">
+                  {(['ALL', 'OCCURRENCE', 'ELEVATION'] as const).map(focus => (
+                    <button
+                      key={focus}
+                      onClick={() => setFilterOE(focus)}
+                      className={cn(
+                        "py-1 text-[8px] font-bold uppercase rounded transition-all font-mono cursor-pointer",
+                        filterOE === focus
+                          ? "bg-purple-500/10 border border-purple-500/20 text-purple-400"
+                          : "text-zinc-500 hover:text-zinc-300"
+                      )}
+                    >
+                      {focus}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Minimum Elevation Slider */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[9px] font-mono font-bold text-zinc-500">
+                  <span>MIN ELEVATION LEVEL</span>
+                  <span className="text-zinc-300">{filterMinElevation === -1 ? 'ALL' : `Lvl ${filterMinElevation}`}</span>
+                </div>
+                <input
+                  type="range"
+                  min="-1"
+                  max="4"
+                  value={filterMinElevation}
+                  onChange={(e) => setFilterMinElevation(Number(e.target.value))}
+                  className="w-full accent-purple-500 bg-zinc-800 h-1 rounded cursor-pointer"
+                />
+              </div>
+
+              {/* Dread & Void Quotient Checkboxes */}
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <button
+                  onClick={() => setFilterHighDread(!filterHighDread)}
+                  className={cn(
+                    "flex items-center justify-center gap-1 py-1.5 border rounded-lg text-[8px] font-mono cursor-pointer transition-all",
+                    filterHighDread
+                      ? "bg-red-500/10 border-red-500/30 text-red-400 font-bold"
+                      : "bg-black/20 border-white/5 text-zinc-500 hover:border-white/10"
+                  )}
+                >
+                  <Flame className="w-3 h-3 shrink-0 text-red-500" />
+                  HIGH DREAD
+                </button>
+                <button
+                  onClick={() => setFilterHighVoid(!filterHighVoid)}
+                  className={cn(
+                    "flex items-center justify-center gap-1 py-1.5 border rounded-lg text-[8px] font-mono cursor-pointer transition-all",
+                    filterHighVoid
+                      ? "bg-purple-500/10 border-purple-500/30 text-purple-400 font-bold"
+                      : "bg-black/20 border-white/5 text-zinc-500 hover:border-white/10"
+                  )}
+                >
+                  <Eye className="w-3 h-3 shrink-0 text-purple-400" />
+                  DEEP VOID
+                </button>
+              </div>
+            </div>
+
+            {/* Goal 2: Guided Learning Paths */}
+            <div className="bg-zinc-900/40 p-4 border border-white/5 rounded-xl backdrop-blur-md space-y-3">
+              <div className="flex items-center gap-2 border-b border-white/5 pb-2">
+                <Compass className="w-4 h-4 text-amber-500" />
+                <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">Guided Paths</span>
+              </div>
+              <p className="text-[8px] text-zinc-500 font-sans leading-relaxed">
+                Select a conceptual journey to highlight its trajectory and suppress irrelevant background nodes.
+              </p>
+              <div className="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar pr-1">
+                {LEARNING_PATHS.map(path => {
+                  const isActive = selectedLearningPath === path.id;
+                  return (
+                    <button
+                      key={path.id}
+                      onClick={() => setSelectedLearningPath(isActive ? null : path.id)}
+                      className={cn(
+                        "w-full text-left p-2 border border-white/5 rounded-lg transition-all flex flex-col gap-0.5 cursor-pointer",
+                        isActive
+                          ? "bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-sm"
+                          : "bg-black/20 text-zinc-400 hover:border-white/10"
+                      )}
+                    >
+                      <span className="text-[9px] font-bold font-mono uppercase tracking-wider">{path.title}</span>
+                      <span className="text-[8px] text-zinc-500 font-sans leading-normal">{path.description}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Goal 3: Detailed Visual Legend */}
+            <div className="bg-zinc-900/40 p-4 border border-white/5 rounded-xl backdrop-blur-md space-y-4">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block border-b border-white/5 pb-2 mb-2">Detailed Visual Legend</span>
+              
+              {/* Geometries/Nodes */}
+              <div className="space-y-2">
+                <span className="text-[8px] font-mono font-bold text-zinc-500 uppercase tracking-wider block">Ontological Geometry</span>
+                <div className="grid grid-cols-1 gap-2 text-[9px] font-mono">
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 rounded-full border-2 border-white bg-black flex items-center justify-center shrink-0">
+                      <div className="w-1.5 h-1.5 bg-[#8b5cf6] rounded-full animate-ping" />
+                    </div>
+                    <span className="text-zinc-300">ABYSS SINGLE (Void Singularity)</span>
                   </div>
-                ))}
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 rounded-full border-2 border-[#fbc531] bg-black flex items-center justify-center shrink-0">
+                      <div className="w-1.5 h-1.5 bg-[#fbc531] rounded-full" />
+                    </div>
+                    <span className="text-zinc-300">HUMAN WITNESS (Thinker)</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-3 bg-black border border-emerald-400 rounded shrink-0" />
+                    <span className="text-zinc-300">MANUSCRIPT SHARD (Passage Rect)</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 rounded-full border border-dashed border-[#f59e0b] shrink-0" />
+                    <span className="text-zinc-300">SPECULATIVE NODE (Latent Bridging)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Edge/Links meanings */}
+              <div className="space-y-2 border-t border-white/5 pt-3">
+                <span className="text-[8px] font-mono font-bold text-zinc-500 uppercase tracking-wider block">Directional Relationships</span>
+                <div className="grid grid-cols-1 gap-1.5 text-[9px] font-mono">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-[2px] bg-[#ef4444] shrink-0 inline-block" />
+                    <span className="text-zinc-300">CRIMSON TENSION (Contradicts/Objections)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-[2px] bg-[#a855f7] shrink-0 inline-block" />
+                    <span className="text-zinc-300">VIOLET DEEPENS (Resonance)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-[2px] bg-[#eab308] shrink-0 inline-block" />
+                    <span className="text-zinc-300">PALE GOLD TRANSCENDS (Bridges)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-[1.5px] bg-[#f59e0b] border-t border-dashed shrink-0 inline-block" />
+                    <span className="text-zinc-300">AMBER SPECULATIVE (Inferred Gap)</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1048,7 +1571,7 @@ Provide directly in dense, clean academic format formatted for easy reading.`;
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.1 }}
                     style={{ left: tooltipPos.x, top: tooltipPos.y }}
-                    className="absolute z-50 p-4 bg-zinc-950/95 border-l-2 border-emerald-500 border border-white/10 rounded-xl backdrop-blur-md shadow-2xl font-mono text-xs w-72 pointer-events-none"
+                    className="absolute z-50 p-4 bg-zinc-950/95 border-l-2 border-emerald-500 border border-white/10 rounded-xl backdrop-blur-md shadow-2xl font-mono text-xs w-80 pointer-events-none"
                   >
                     <div className="flex items-center justify-between border-b border-white/5 pb-2 mb-2">
                       <span className="text-[10px] text-zinc-500 uppercase tracking-widest">{hoveredNode.type}</span>
@@ -1056,7 +1579,57 @@ Provide directly in dense, clean academic format formatted for easy reading.`;
                         CLUSTER_{hoveredNode.communityId}
                       </span>
                     </div>
-                    <h3 className="font-serif font-bold text-zinc-100 text-sm mb-1 leading-tight">{hoveredNode.label}</h3>
+                    
+                    <h3 className="font-serif font-bold text-zinc-100 text-sm mb-1.5 leading-tight">{hoveredNode.label}</h3>
+                    
+                    {hoveredNode.summary && (
+                      <p className="text-[10px] text-zinc-400 font-sans leading-relaxed line-clamp-3 mb-2 italic">
+                        "{hoveredNode.summary}"
+                      </p>
+                    )}
+
+                    {/* Occurrence / Elevation Level */}
+                    <div className="mt-2 py-1.5 px-2 bg-black/40 border border-white/5 rounded-lg text-[9px] space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">TAXONOMY:</span>
+                        <span className={cn(
+                          "font-bold",
+                          (hoveredNode.properties?.elevation_level || 0) > 0 ? "text-purple-400" : "text-emerald-400"
+                        )}>
+                          {(hoveredNode.properties?.elevation_level || 0) > 0 ? 'SYSTEMIC ELEVATION' : 'LOCAL OCCURRENCE'}
+                        </span>
+                      </div>
+                      
+                      {hoveredNode.properties?.elevation_level !== undefined && (
+                        <div className="flex justify-between">
+                          <span className="text-zinc-500">ELEVATION LEVEL:</span>
+                          <span className="text-zinc-300 font-bold">Lvl {hoveredNode.properties.elevation_level} / 4</span>
+                        </div>
+                      )}
+                      
+                      {hoveredNode.properties?.why_elevation && (
+                        <p className="text-[8px] text-zinc-500 font-sans italic mt-1 leading-normal border-t border-white/5 pt-1">
+                          Reason: {hoveredNode.properties.why_elevation}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Dread & Void Metrics */}
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <div className="p-1.5 bg-red-500/5 border border-red-500/10 rounded-lg text-center">
+                        <p className="text-[8px] text-zinc-500 font-bold">DREAD</p>
+                        <p className="text-[11px] font-bold text-red-400">
+                          {((hoveredNode.properties?.dread || hoveredNode.properties?.dread_saturation || 0) * 100).toFixed(0)}%
+                        </p>
+                      </div>
+                      <div className="p-1.5 bg-purple-500/5 border border-purple-500/10 rounded-lg text-center">
+                        <p className="text-[8px] text-zinc-500 font-bold">VOID DEPTH</p>
+                        <p className="text-[11px] font-bold text-purple-400">
+                          {((hoveredNode.properties?.void_quotient || hoveredNode.properties?.void_contact_depth || 0) * 100).toFixed(0)}%
+                        </p>
+                      </div>
+                    </div>
+
                     {hoveredNode.status && (
                       <p className="text-[9px] text-zinc-500 mt-2 font-bold uppercase tracking-wider">
                         STATUS: <span className="text-zinc-300">{hoveredNode.status}</span>

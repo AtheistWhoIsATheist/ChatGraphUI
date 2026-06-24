@@ -24,6 +24,7 @@ import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { runIngestion, IngestionFile } from './utils/runIngestion';
 import { NavigationSidebar, ViewMode } from './components/NavigationSidebar';
+import { ResearchWorkbench } from './components/ResearchWorkbench';
 import { logOptimization } from './utils/selfImprovement';
 import { TheoryOverlay } from './components/TheoryOverlay';
 import { useAppStore, SidebarMode } from './store/appStore';
@@ -35,9 +36,9 @@ function App() {
 
   const { 
     nodes, links, viewMode, selectedNodeId, sidebarMode, 
-    isLeftSidebarOpen, isRightSidebarOpen, isFileManagerOpen,
+    isRightSidebarOpen, isFileManagerOpen,
     setNodes, setLinks, setViewMode, setSelectedNodeId, setSidebarMode,
-    setLeftSidebarOpen, setRightSidebarOpen, setFileManagerOpen,
+    setRightSidebarOpen, setFileManagerOpen,
     addNode, addLink, integrateSyntheticData
   } = useAppStore();
 
@@ -90,6 +91,36 @@ function App() {
           setFiles(prev => prev.map(f => f.id === id ? { ...f, status } : f));
         }
       );
+
+      // Save new nodes to the backend SQLite database
+      if (result.delta?.newNodes && result.delta.newNodes.length > 0) {
+        for (const node of result.delta.newNodes) {
+          try {
+            await fetch('/api/nodes', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(node)
+            });
+          } catch (nodeErr) {
+            console.error('[Ingestion] Failed to save node to backend:', nodeErr);
+          }
+        }
+      }
+
+      // Save new links to the backend SQLite database
+      if (result.delta?.newLinks && result.delta.newLinks.length > 0) {
+        for (const link of result.delta.newLinks) {
+          try {
+            await fetch('/api/links', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(link)
+            });
+          } catch (linkErr) {
+            console.error('[Ingestion] Failed to save link to backend:', linkErr);
+          }
+        }
+      }
 
       setNodes(result.nodes);
       setLinks(result.links);
@@ -153,6 +184,8 @@ function App() {
             canUndo={synthesisHistory.length > 0}
           />
         );
+      case 'comparative_workbench':
+        return <ResearchWorkbench />;
       default:
         return null;
     }
@@ -190,21 +223,6 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* Toggle Left Sidebar Button (when closed) */}
-      <AnimatePresence>
-        {!isLeftSidebarOpen && (
-          <motion.button
-            initial={{ x: -50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -50, opacity: 0 }}
-            onClick={() => setLeftSidebarOpen(true)}
-            className="fixed left-0 top-1/2 -translate-y-1/2 z-30 w-10 h-20 bg-zinc-950 border-y-2 border-r-2 border-white/5 flex items-center justify-center text-zinc-400 hover:text-zinc-300 hover:border-white/10 transition-colors rounded-2xl transition shadow-xl group backdrop-blur-md"
-          >
-            <Menu className="w-6 h-6 group-hover:scale-110 transition-transform" />
-          </motion.button>
-        )}
-      </AnimatePresence>
-
       {/* Left Sidebar - Navigation & Tools */}
       <NavigationSidebar />
 
@@ -212,11 +230,12 @@ function App() {
       <AnimatePresence>
         {isFileManagerOpen && (
           <motion.div
+            key="file-manager-panel"
             initial={{ x: -400 }}
             animate={{ x: 0 }}
             exit={{ x: -400 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed left-20 top-0 bottom-0 w-80 z-10 shadow-2xl"
+            className="fixed left-20 top-0 bottom-0 w-80 z-40 shadow-2xl"
           >
             <FileManager 
               files={files}
@@ -237,11 +256,12 @@ function App() {
       <AnimatePresence>
         {!isRightSidebarOpen && (
           <motion.button
+            key="open-right-sidebar"
             initial={{ x: 50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 50, opacity: 0 }}
             onClick={() => setRightSidebarOpen(true)}
-            className="fixed right-0 top-1/2 -translate-y-1/2 z-30 w-10 h-20 bg-zinc-950 border-y-2 border-l-2 border-white/5 flex items-center justify-center text-zinc-400 hover:text-zinc-300 hover:border-white/10 transition-colors rounded-2xl transition shadow-xl group backdrop-blur-md"
+            className="fixed right-0 top-1/2 -translate-y-1/2 z-50 w-10 h-20 bg-zinc-950 border-y-2 border-l-2 border-white/5 flex items-center justify-center text-zinc-400 hover:text-zinc-300 hover:border-white/10 transition-colors rounded-2xl transition shadow-xl group backdrop-blur-md cursor-pointer"
           >
             <Menu className="w-6 h-6 group-hover:scale-110 transition-transform" />
           </motion.button>
@@ -252,15 +272,16 @@ function App() {
       <AnimatePresence>
         {isRightSidebarOpen && (
           <motion.div 
+            key="right-sidebar-panel"
             initial={{ x: 400 }}
             animate={{ x: 0 }}
             exit={{ x: 400 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="w-[400px] border-l-2 border-white/5 bg-zinc-900/50 flex flex-col z-20 shadow-2xl relative"
+            className="w-[400px] h-full shrink-0 border-l-2 border-white/5 bg-zinc-900/50 flex flex-col z-40 shadow-2xl relative"
           >
             <button 
               onClick={() => setRightSidebarOpen(false)}
-              className="absolute top-2 left-2 p-1 text-zinc-500 hover:text-zinc-200 transition-colors z-50"
+              className="absolute top-2 left-2 p-1 text-zinc-500 hover:text-zinc-200 transition-colors z-50 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>

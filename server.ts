@@ -171,7 +171,7 @@ async function startServer() {
         let generated = { entities: [], inferred_links: [] };
         try {
           const response = await ai.models.generateContent({
-            model: 'gemini-2.0-flash', // Flash is better for high-throughput scrutiny
+            model: 'gemini-3.5-flash', // Flash is better for high-throughput scrutiny
             contents: prompt,
             config: {
               responseMimeType: 'application/json',
@@ -504,10 +504,43 @@ async function startServer() {
       `;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.1-pro-preview',
+        model: 'gemini-3.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              nodes: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    id: { type: Type.STRING },
+                    label: { type: Type.STRING },
+                    type: { type: Type.STRING },
+                    definition: { type: Type.STRING },
+                    tradition: { type: Type.STRING }
+                  },
+                  required: ["id", "label", "type", "definition"]
+                }
+              },
+              edges: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    source: { type: Type.STRING },
+                    target: { type: Type.STRING },
+                    relation: { type: Type.STRING },
+                    confidence: { type: Type.NUMBER }
+                  },
+                  required: ["source", "target", "relation", "confidence"]
+                }
+              }
+            },
+            required: ["nodes", "edges"]
+          }
         }
       });
       
@@ -566,6 +599,22 @@ async function startServer() {
       res.json(rows);
     } catch (error: any) {
       console.error('[API] Error fetching links:', error);
+      res.status(500).json({ error: error.message || 'Internal server error' });
+    }
+  });
+
+  app.post('/api/links', async (req, res) => {
+    try {
+      const db = getDb();
+      if (!db) {
+        return res.status(500).json({ error: 'Database connection severed.' });
+      }
+      const { source, target, label, type } = req.body;
+      const insertLink = db.prepare('INSERT INTO links (source, target, label, type) VALUES (?, ?, ?, ?)');
+      insertLink.run(source, target, label || '', type || 'explores');
+      res.status(201).json({ message: 'Link created successfully' });
+    } catch (error: any) {
+      console.error('[API] Error saving link:', error);
       res.status(500).json({ error: error.message || 'Internal server error' });
     }
   });

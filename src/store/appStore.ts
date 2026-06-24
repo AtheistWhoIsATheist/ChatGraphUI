@@ -18,6 +18,11 @@ interface AppState {
   isLeftSidebarOpen: boolean;
   isRightSidebarOpen: boolean;
   isFileManagerOpen: boolean;
+
+  // Google Drive Connection & Sync
+  gdriveConnected: boolean;
+  gdriveSyncStatus: 'idle' | 'scanning' | 'importing' | 'exporting' | 'error' | 'success';
+  gdriveSyncMessage: string;
   
   // Methods
   setNodes: (nodes: Node[]) => void;
@@ -30,6 +35,9 @@ interface AppState {
   setLeftSidebarOpen: (open: boolean) => void;
   setRightSidebarOpen: (open: boolean) => void;
   setFileManagerOpen: (open: boolean) => void;
+  setGDriveConnected: (connected: boolean) => void;
+  setGDriveSyncStatus: (status: 'idle' | 'scanning' | 'importing' | 'exporting' | 'error' | 'success') => void;
+  setGDriveSyncMessage: (msg: string) => void;
   
   // Batch updates
   integrateSyntheticData: (newNodes: Node[], newLinks: Link[]) => void;
@@ -45,6 +53,11 @@ export const useAppStore = create<AppState>((set) => ({
   isRightSidebarOpen: true,
   isFileManagerOpen: false,
 
+  // Google Drive Initial values
+  gdriveConnected: !!localStorage.getItem('google_access_token'),
+  gdriveSyncStatus: 'idle',
+  gdriveSyncMessage: '',
+
   setNodes: (nodes) => set({ nodes }),
   setLinks: (links) => set({ links }),
   addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
@@ -55,6 +68,9 @@ export const useAppStore = create<AppState>((set) => ({
   setLeftSidebarOpen: (isLeftSidebarOpen) => set({ isLeftSidebarOpen }),
   setRightSidebarOpen: (isRightSidebarOpen) => set({ isRightSidebarOpen }),
   setFileManagerOpen: (isFileManagerOpen) => set({ isFileManagerOpen }),
+  setGDriveConnected: (gdriveConnected) => set({ gdriveConnected }),
+  setGDriveSyncStatus: (gdriveSyncStatus) => set({ gdriveSyncStatus }),
+  setGDriveSyncMessage: (gdriveSyncMessage) => set({ gdriveSyncMessage }),
   
   integrateSyntheticData: (newNodes, newLinks) => set((state) => ({
     nodes: [...state.nodes, ...newNodes],

@@ -322,6 +322,59 @@ export function NodeDetailsPanel({ node }: NodeDetailsPanelProps) {
                   </span>
                 ))}
               </div>
+
+              {/* Micro-Telemetry Card Grid */}
+              <div className="grid grid-cols-3 gap-2 mb-6 font-mono text-xs">
+                {/* Elevation Card */}
+                <div className="bg-zinc-950/60 p-3 border border-white/5 rounded-xl backdrop-blur-md flex flex-col justify-between">
+                  <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider">ELEVATION LEVEL</span>
+                  <div className="mt-2 flex items-baseline gap-1">
+                    <span className="text-sm font-bold text-purple-400">
+                      {node.properties?.elevation_level !== undefined ? `Lvl ${node.properties.elevation_level}` : (node.type === 'system' ? 'Lvl 2' : 'Lvl 0')}
+                    </span>
+                    <span className="text-[8px] text-zinc-600">/ 4</span>
+                  </div>
+                  <div className="w-full bg-zinc-900 h-1 rounded overflow-hidden mt-1.5">
+                    <div 
+                      className="bg-purple-500 h-full rounded transition-all duration-500" 
+                      style={{ width: `${((node.properties?.elevation_level !== undefined ? node.properties.elevation_level : (node.type === 'system' ? 2 : 0)) / 4) * 100}%` }} 
+                    />
+                  </div>
+                </div>
+
+                {/* Dread Card */}
+                <div className="bg-zinc-950/60 p-3 border border-white/5 rounded-xl backdrop-blur-md flex flex-col justify-between">
+                  <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider">DREAD RATIO</span>
+                  <div className="mt-2 flex items-baseline gap-1">
+                    <span className="text-sm font-bold text-red-400">
+                      {(((node.properties?.dread || node.properties?.dread_saturation || 0) * 100)).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-zinc-900 h-1 rounded overflow-hidden mt-1.5">
+                    <div 
+                      className="bg-red-500 h-full rounded transition-all duration-500" 
+                      style={{ width: `${(node.properties?.dread || node.properties?.dread_saturation || 0) * 100}%` }} 
+                    />
+                  </div>
+                </div>
+
+                {/* Void Card */}
+                <div className="bg-zinc-950/60 p-3 border border-white/5 rounded-xl backdrop-blur-md flex flex-col justify-between">
+                  <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-wider">VOID DEPTH</span>
+                  <div className="mt-2 flex items-baseline gap-1">
+                    <span className="text-sm font-bold text-violet-400">
+                      {(((node.properties?.void_quotient || node.properties?.void_contact_depth || 0) * 100)).toFixed(0)}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-zinc-900 h-1 rounded overflow-hidden mt-1.5">
+                    <div 
+                      className="bg-violet-500 h-full rounded transition-all duration-500" 
+                      style={{ width: `${(node.properties?.void_quotient || node.properties?.void_contact_depth || 0) * 100}%` }} 
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="text-sm font-mono text-zinc-300 leading-relaxed markdown-body">
                 <Markdown>{node.summary || blocksToString(node.blocks)}</Markdown>
               </div>

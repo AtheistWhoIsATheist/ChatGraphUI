@@ -10,11 +10,36 @@ function getVoidQuotient(node: Node) {
   return (chars % 100) / 100;
 }
 
-const voidColor = (vq: number): THREE.Color => {
-  if (vq >= 0.75) return new THREE.Color(0xe4e4e7); // zinc-200
-  if (vq >= 0.50) return new THREE.Color(0xa1a1aa); // zinc-400
-  if (vq >= 0.25) return new THREE.Color(0x71717a); // zinc-500
-  return new THREE.Color(0x52525b);                 // zinc-600
+const THREE_COLORS: Record<string, number> = {
+  treatise: 0x0066ff,     // Cosmic Blue
+  journal: 0x00e5ff,      // Electric Cyan
+  thinker: 0xffb703,      // Intense Amber Gold
+  theme: 0x8a2be2,        // Royal Purple
+  concept: 0x0066ff,      // Cosmic Blue
+  fragment: 0x374151,     // Translucent Gunmetal Gray
+  methodology: 0x00f5d4,   // Radioactive Emerald Green
+  claim: 0xff5500,        // HD Burnt Orange
+  experience: 0x00f5d4,   // Radioactive Emerald Green
+  library_item: 0x374151, // Translucent Gunmetal Gray
+  summary: 0xff5500,      // HD Burnt Orange
+  question: 0xd946ef,     // Cosmic Fuchsia
+  praxis: 0x00f5d4,       // Radioactive Emerald Green
+  axiom: 0xff5500,        // HD Burnt Orange
+  
+  // Nihiltheism specific
+  void_concept: 0xd946ef, // Cosmic Fuchsia
+  paradox: 0xd946ef,      // Cosmic Fuchsia
+  ren_stage: 0xff5500,    // HD Burnt Orange
+  argument: 0x0066ff,     // Cosmic Blue
+  synthesis: 0x00f5d4,    // Radioactive Emerald Green
+};
+
+const getNodeColor = (node: Node): THREE.Color => {
+  if (node.id === 'void') return new THREE.Color(0xffffff);
+  if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) return new THREE.Color(0xd946ef); // Cosmic Fuchsia
+  if (node.id.includes('series') || node.id.includes('codex')) return new THREE.Color(0x00e5ff); // Electric Cyan
+  const colorHex = THREE_COLORS[node.type] || THREE_COLORS[node.type as string] || 0x00f5d4;
+  return new THREE.Color(colorHex);
 };
 
 const baseScale = (nodeType: string, count: number, vq: number): number => {
@@ -96,7 +121,7 @@ export function ThreeGraph() {
        else if (upperType === 'CLAIM' || upperType === 'PRAXIS') geom = new THREE.TetrahedronGeometry(radius, 0);
        else geom = new THREE.DodecahedronGeometry(radius, 0);
 
-       const c = voidColor(vq);
+       const c = getNodeColor(n);
        
        // BUG-FIX: Clone colors explicitly for material emission
        const mat = new THREE.MeshStandardMaterial({
@@ -143,6 +168,8 @@ export function ThreeGraph() {
             const start = smesh.position.clone();
             const end = tmesh.position.clone();
             const score = (l as any).properties?.score ?? 0.5;
+            const snode = nodes.find(n => n.id === sid);
+            const sourceColor = snode ? getNodeColor(snode) : new THREE.Color(0x3b82f6);
 
             // BUG-FIX: Edge glow unique materials
             if (type === 'RESONANCE' || type === 'CULMINATES') {
@@ -154,7 +181,7 @@ export function ThreeGraph() {
                );
                const tubeGeo = new THREE.TubeGeometry(curve, 20, 0.01 + score * 0.015, 6, false);
                const tubeMat = new THREE.MeshBasicMaterial({
-                 color: 0x71717a,
+                 color: sourceColor,
                  transparent: true,
                  opacity: typeof score === 'number' && !isNaN(score) ? score * 0.4 : 0.2,
                  blending: THREE.AdditiveBlending,
@@ -167,7 +194,7 @@ export function ThreeGraph() {
             } else if (type === 'TENSION' || type === 'PARADOX' || type === 'OBJECTION') {
                const geo = new THREE.BufferGeometry().setFromPoints([start, end]);
                const mat = new THREE.LineDashedMaterial({
-                 color: 0x52525b,
+                 color: new THREE.Color(0xf43f5e),
                  transparent: true,
                  opacity: typeof score === 'number' && !isNaN(score) ? 0.2 + score * 0.15 : 0.3,
                  dashSize: 0.5,
@@ -181,7 +208,7 @@ export function ThreeGraph() {
             } else {
                const geo = new THREE.BufferGeometry().setFromPoints([start, end]);
                const mat = new THREE.LineBasicMaterial({
-                 color: 0x27272a,
+                 color: sourceColor.clone().multiplyScalar(0.7),
                  transparent: true,
                  opacity: 0.2,
                });
