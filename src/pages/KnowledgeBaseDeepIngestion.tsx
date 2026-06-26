@@ -13,7 +13,7 @@ type QueueStatus =
 
 type ProposedEntity =
   | {
-      kind: "rpe";
+      kind: "insight";
       entity_id?: string;
       name: string;
       core_fracture: string;

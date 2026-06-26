@@ -43,7 +43,7 @@ const NODE_COLORS: Record<string, string> = {
 const getHierarchicalColor = (node: Node) => {
   if (node.id === 'void') return '#ffffff'; // The Singularity is pure light
   if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) return '#d946ef'; // Cosmic Fuchsia
-  if (node.id.includes('series') || node.id.includes('codex')) return '#00e5ff'; // Electric Cyan
+  if (['anti_reification', 'kenotic_constraints', 'ontodicy_collapse', 'ren_phenomenology'].includes(node.id) || node.id.includes('codex')) return '#00e5ff'; // Electric Cyan
   return NODE_COLORS[node.type] || NODE_COLORS[node.type as string] || '#00f5d4';
 };
 
@@ -463,7 +463,7 @@ export function KnowledgeGraph({
     let baseRadius = 15;
     if (node.id === 'void') baseRadius = 45; // Level 1: Singularity
     else if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) baseRadius = 35; // Level 2: Foundations
-    else if (node.type === 'methodology' || node.id.includes('series') || node.id.includes('codex')) baseRadius = 25; // Level 3: Operations
+    else if (node.type === 'methodology' || ['anti_reification', 'kenotic_constraints', 'ontodicy_collapse', 'ren_phenomenology'].includes(node.id) || node.id.includes('codex')) baseRadius = 25; // Level 3: Operations
     else baseRadius = 12; // Level 4: Specifics
     
     // 2. Structural Weighting (Centrality)

@@ -72,7 +72,7 @@ export function InsightPrompts({
       `;
       
       const response = await ai.models.generateContent({
-        model: 'gemini-3.1-pro-preview',
+        model: 'gemini-pro-latest',
         contents: prompt,
       });
 

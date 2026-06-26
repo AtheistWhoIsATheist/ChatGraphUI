@@ -25,7 +25,7 @@ export function startCronJobs() {
         const prompt = densificationPrompt.replace('{node_data}', JSON.stringify(node));
         
         const response = await getAi().models.generateContent({
-          model: 'gemini-3.1-pro-preview',
+          model: 'gemini-pro-latest',
           contents: prompt,
           config: {
             responseMimeType: 'application/json',
@@ -113,7 +113,7 @@ export function startCronJobs() {
       const prompt = revelationDigestPrompt.replace('{weekly_data}', JSON.stringify(weeklyData));
       
       const response = await getAi().models.generateContent({
-        model: 'gemini-3.1-pro-preview',
+        model: 'gemini-pro-latest',
         contents: prompt
       });
 

@@ -37,7 +37,7 @@ const THREE_COLORS: Record<string, number> = {
 const getNodeColor = (node: Node): THREE.Color => {
   if (node.id === 'void') return new THREE.Color(0xffffff);
   if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) return new THREE.Color(0xd946ef); // Cosmic Fuchsia
-  if (node.id.includes('series') || node.id.includes('codex')) return new THREE.Color(0x00e5ff); // Electric Cyan
+  if (['anti_reification', 'kenotic_constraints', 'ontodicy_collapse', 'ren_phenomenology'].includes(node.id) || node.id.includes('codex')) return new THREE.Color(0x00e5ff); // Electric Cyan
   const colorHex = THREE_COLORS[node.type] || THREE_COLORS[node.type as string] || 0x00f5d4;
   return new THREE.Color(colorHex);
 };

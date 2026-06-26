@@ -171,7 +171,7 @@ export function ThemeClusters() {
 Identify the high-level insight connecting these concepts. Treat this as a Phase 3 Synthesis & Genealogy task. Output a highly dense, academic synthesis in Markdown.`;
       
       const response = await ai.models.generateContent({
-          model: 'gemini-3.1-pro-preview',
+          model: 'gemini-pro-latest',
           contents: prompt,
       });
 

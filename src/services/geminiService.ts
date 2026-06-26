@@ -6,8 +6,8 @@ import { getGeminiClient } from "../lib/gemini";
 const ai = getGeminiClient();
 
 // Transmuted to the latest, most capable models per the Immutable Laws
-const CHAT_MODEL = 'gemini-3.1-pro-preview';
-const FAST_MODEL = 'gemini-3-flash-preview';
+const CHAT_MODEL = 'gemini-pro-latest';
+const FAST_MODEL = 'gemini-flash-latest';
 
 const EMBEDDING_MODEL = 'gemini-embedding-2-preview';
 

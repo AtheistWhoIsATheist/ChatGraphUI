@@ -19,6 +19,38 @@ export function getAi() {
   return aiInstance;
 }
 
+export async function generateWithFallback(ai: any, options: { model: string, contents: any, config?: any }, retries = 3) {
+  try {
+    return await ai.models.generateContent(options);
+  } catch (error: any) {
+    if (error.message?.includes('503') || error.message?.includes('429')) {
+      if (retries > 0) {
+        console.warn(`[GEMINI] Model ${options.model} returned 503/429. Retrying in 5 seconds... (${retries} left)`);
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        return await generateWithFallback(ai, options, retries - 1);
+      }
+    }
+    
+    console.warn(`[GEMINI] Model ${options.model} failed. Attempting fallback to gemini-flash-latest...`, error.message);
+    if (options.model !== 'gemini-flash-latest') {
+      try {
+        return await ai.models.generateContent({
+          ...options,
+          model: 'gemini-flash-latest'
+        });
+      } catch (fallbackError: any) {
+        if ((fallbackError.message?.includes('503') || fallbackError.message?.includes('429')) && retries > 0) {
+           console.warn(`[GEMINI] Fallback Model returned 503/429. Retrying in 5 seconds... (${retries} left)`);
+           await new Promise(resolve => setTimeout(resolve, 5000));
+           return await generateWithFallback(ai, { ...options, model: 'gemini-flash-latest' }, retries - 1);
+        }
+        throw fallbackError;
+      }
+    }
+    throw error;
+  }
+}
+
 // Helper to robustly JSON parse LLM responses
 function parseAiJson(text: string) {
   try { return JSON.parse(text); } catch (e) {
@@ -83,8 +115,8 @@ ${content}
         }
       `;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.1-pro-preview',
+      const response = await generateWithFallback(ai, {
+        model: 'gemini-pro-latest',
         contents: prompt,
         config: { responseMimeType: 'application/json' }
       });
@@ -232,8 +264,8 @@ nes2Router.post('/curator', async (req, res) => {
       User Query: ${query}
     `;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.1-pro-preview',
+    const response = await generateWithFallback(ai, {
+      model: 'gemini-pro-latest',
       contents: prompt,
     });
 

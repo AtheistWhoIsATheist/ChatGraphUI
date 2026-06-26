@@ -10,6 +10,38 @@ dotenv.config();
 
 import { nes2Router, getAi } from './src/backend/nes2-router.ts';
 
+async function generateWithFallback(ai: any, options: { model: string, contents: any, config?: any }, retries = 3) {
+  try {
+    return await ai.models.generateContent(options);
+  } catch (error: any) {
+    if (error.message?.includes('503') || error.message?.includes('429')) {
+      if (retries > 0) {
+        console.warn(`[GEMINI] Model ${options.model} returned 503/429. Retrying in 5 seconds... (${retries} left)`);
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        return await generateWithFallback(ai, options, retries - 1);
+      }
+    }
+    
+    console.warn(`[GEMINI] Model ${options.model} failed. Attempting fallback to gemini-flash-latest...`, error.message);
+    if (options.model !== 'gemini-flash-latest') {
+      try {
+        return await ai.models.generateContent({
+          ...options,
+          model: 'gemini-flash-latest'
+        });
+      } catch (fallbackError: any) {
+        if ((fallbackError.message?.includes('503') || fallbackError.message?.includes('429')) && retries > 0) {
+           console.warn(`[GEMINI] Fallback Model returned 503/429. Retrying in 5 seconds... (${retries} left)`);
+           await new Promise(resolve => setTimeout(resolve, 5000));
+           return await generateWithFallback(ai, { ...options, model: 'gemini-flash-latest' }, retries - 1);
+        }
+        throw fallbackError;
+      }
+    }
+    throw error;
+  }
+}
+
 async function startServer() {
   const app = express();
   const PORT = 3000;
@@ -49,8 +81,8 @@ async function startServer() {
         const prompt = densificationPrompt.replace('{node_data}', JSON.stringify(node));
         
         try {
-          const response = await ai.models.generateContent({
-            model: 'gemini-3.1-pro-preview',
+          const response = await generateWithFallback(ai, {
+            model: 'gemini-pro-latest',
             contents: prompt,
             config: {
               responseMimeType: 'application/json',
@@ -171,7 +203,7 @@ async function startServer() {
         let generated = { entities: [], inferred_links: [] };
         try {
           const response = await ai.models.generateContent({
-            model: 'gemini-3.5-flash', // Flash is better for high-throughput scrutiny
+            model: 'gemini-flash-latest', // Flash is better for high-throughput scrutiny
             contents: prompt,
             config: {
               responseMimeType: 'application/json',
@@ -264,7 +296,7 @@ async function startServer() {
           generated = {
             entities: [
               {
-                kind: "rpe",
+                kind: "insight",
                 name: `Substrate Rupture [Fallback]`,
                 core_fracture: "The API failed to parse profound implications; this is a generic extraction.",
                 operation: "insert",
@@ -283,7 +315,7 @@ async function startServer() {
           entities: generated.entities.map((e: any) => ({
             ...e,
             source_file: payload.file_name,
-            kind: e.kind === 'axiom' ? 'axiom' : 'rpe',
+            kind: e.kind === 'axiom' ? 'axiom' : 'insight',
             operation: 'insert',
             core_fracture: e.core_fracture || e.statement || 'Unknown structure.'
           })),
@@ -435,8 +467,8 @@ async function startServer() {
         RETURN STRICT JSON MATCHING THIS SCHEMA.
       `;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.1-pro-preview',
+      const response = await generateWithFallback(ai, {
+        model: 'gemini-pro-latest',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -504,7 +536,7 @@ async function startServer() {
       `;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-flash-latest',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -700,8 +732,8 @@ async function startServer() {
         Raw Drop: "${rawDrop}"
       `;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.1-pro-preview',
+      const response = await generateWithFallback(ai, {
+        model: 'gemini-pro-latest',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -807,8 +839,8 @@ async function startServer() {
         2. "summary": A dense, 2-3 sentence philosophical synthesis of how these concepts interrelate, focusing on tension, void, and presence.
       `;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.1-pro-preview',
+      const response = await generateWithFallback(ai, {
+        model: 'gemini-pro-latest',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',

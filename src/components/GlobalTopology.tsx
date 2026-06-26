@@ -944,18 +944,18 @@ export function GlobalTopology() {
     const labelsText = community.nodes.map(n => `ID: ${n.id} (Label: "${n.label}", Type: ${n.type})`).join(',\n');
 
     try {
-      const prompt = `You are the AutoNarrative Semantic Oracle, analyzing the dynamic topological cluster ID "${commId}" of the Journal314 REN philosophy network.
+      const prompt = `You are the Semantic Synthesis Engine, analyzing the dynamic topological cluster ID "${commId}" of the philosophical network.
       
 Here is the raw data substrate of nodes belonging to this cluster:
 ${labelsText}
 
-Perform a rigorous, Phase 2 Synthesis of this cluster. 
+Perform a rigorous synthesis of this cluster. 
 1. Assign a highly conceptual, dense title representing the core philosophical topic mapping these nodes together.
-2. Outline the underlying conceptual resonance, explaining how these ideas form a cohesive structural worldview. Use the vocabulary of Nihiltheistic topology (groundlessness, apophasis, A-Series).
+2. Outline the underlying conceptual resonance, explaining how these ideas form a cohesive structural worldview. Use the vocabulary of Nihiltheism (groundlessness, apophasis, kenosis).
 3. Do NOT include generic filler intro/outro. Provide deep, dense, academic philosophical synthesis in clean Markdown format.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-flash-latest',
         contents: prompt
       });
 
@@ -996,18 +996,18 @@ Perform a rigorous, Phase 2 Synthesis of this cluster.
       const labelsText = comm.nodes.map(n => `ID: ${n.id} (Label: "${n.label}", Type: ${n.type})`).join(',\n');
 
       try {
-        const prompt = `You are the AutoNarrative Semantic Oracle, analyzing the dynamic topological cluster ID "${commId}" of the Journal314 REN philosophy network.
+        const prompt = `You are the Semantic Synthesis Engine, analyzing the dynamic topological cluster ID "${commId}" of the philosophical network.
         
 Here is the raw data substrate of nodes belonging to this cluster:
 ${labelsText}
 
-Perform a rigorous, Phase 2 Synthesis of this cluster. 
+Perform a rigorous synthesis of this cluster. 
 1. Assign a highly conceptual, dense title representing the core philosophical topic mapping these nodes together.
-2. Outline the underlying conceptual resonance, explaining how these ideas form a cohesive structural worldview. Use the vocabulary of Nihiltheistic topology (groundlessness, apophasis, A-Series).
+2. Outline the underlying conceptual resonance, explaining how these ideas form a cohesive structural worldview. Use the vocabulary of Nihiltheism (groundlessness, apophasis, kenosis).
 3. Do NOT include generic filler intro/outro. Provide deep, dense, academic philosophical synthesis in clean Markdown format.`;
 
         const response = await ai.models.generateContent({
-          model: 'gemini-3.5-flash',
+          model: 'gemini-flash-latest',
           contents: prompt
         });
 
@@ -1101,13 +1101,13 @@ Logical Venn elements discovered:
 - Unique Cluster ${compData.idA} Tags: ${compData.uniqueTagsA.join(', ')}
 - Unique Cluster ${compData.idB} Tags: ${compData.uniqueTagsB.join(', ')}
 
-Please perform deep recursive theme densification (using gemini-1.5-pro capabilities):
+Please perform deep recursive theme densification (using gemini-pro-latest capabilities):
 1. Substrate Contrast analysis. Write on what distinguishes their philosophical structures.
 2. Bridge Thesis: Outline shared ground and concepts that connect these apparent opposites.
 Provide directly in dense, clean academic format formatted for easy reading.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-flash-latest',
         contents: prompt
       });
 

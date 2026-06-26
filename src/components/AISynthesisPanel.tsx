@@ -109,7 +109,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
       `;
 
       const response = await ai.models.generateContent({
-          model: 'gemini-3.5-flash',
+          model: 'gemini-flash-latest',
           contents: [{ role: 'user', parts: [{ text: prompt }] }]
       });
       
@@ -136,7 +136,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
              .replace('{resonant_targets}', resonanceTargets);
 
            const resResult = await ai.models.generateContent({
-             model: 'gemini-3.5-flash',
+             model: 'gemini-flash-latest',
              contents: [{ role: 'user', parts: [{ text: resPrompt }] }],
              config: { responseMimeType: 'application/json' }
            });
@@ -152,7 +152,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
       setResult(markdownText);
     } catch (error) {
       console.error(error);
-      setResult("Structural error in synthesis stream. Verify neural connection.");
+      setResult("Structural error in synthesis stream. Verify API connection.");
     } finally {
       if (intervalRef.current) clearInterval(intervalRef.current);
       setIsProcessing(false);
@@ -185,7 +185,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
       type: n.type,
       status: n.isInferred ? 'DRAFT' : 'ACTIVE',
       metadata: { 
-        source: 'AxiomForge Synthesis', 
+        source: 'Analysis Engine Synthesis', 
         confidence: n.confidence,
         isInferred: n.isInferred,
         timestamp: new Date().toISOString() 
@@ -248,7 +248,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
           <div className="p-5 bg-white/5 border border-white/5 rounded-2xl">
              <p className="text-[11px] text-zinc-400 leading-relaxed tracking-wider flex items-center gap-3">
                <Workflow className="w-4 h-4 text-emerald-500" /> 
-               Input phenomenological substrate. AxiomForge will calculate integration resonance and structural nodes.
+               Input phenomenological substrate. The Analysis Engine will calculate integration resonance and structural nodes.
              </p>
           </div>
           

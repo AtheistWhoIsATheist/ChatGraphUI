@@ -1,7 +1,7 @@
 import { getNodesForDensification, getNodesCollection, connectDB } from './src/backend/db.js';
 import { densificationPrompt } from './src/backend/ai-prompts.js';
 import { GoogleGenAI, Type } from '@google/genai';
-import { getAi } from './src/backend/nes2-router.ts';
+import { getAi, generateWithFallback } from './src/backend/nes2-router.ts';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -16,24 +16,27 @@ async function runDensification() {
 
   let totalDensified = 0;
   let hasMore = true;
+  let batchesRun = 0;
+  const maxBatches = 5;
 
-  while (hasMore) {
+  while (hasMore && batchesRun < maxBatches) {
     const targetNodes = await getNodesForDensification();
     if (targetNodes.length === 0) {
       hasMore = false;
       break;
     }
 
-    const batch = targetNodes.slice(0, 2);
-    console.log(`[DENSIFICATION] Acquired ${batch.length} nodes for densification.`);
+    const batch = targetNodes.slice(0, 1); // Process 1 at a time to avoid timeout
+    console.log(`[DENSIFICATION Cycle ${batchesRun + 1}/${maxBatches}] Acquired ${batch.length} nodes for densification.`);
 
     for (const node of batch) {
       console.log(`[DENSIFICATION] Processing node: ${node.label}`);
       const prompt = densificationPrompt.replace('{node_data}', JSON.stringify(node));
       
       try {
-        const response = await getAi().models.generateContent({
-          model: 'gemini-3.1-pro-preview',
+        const ai = getAi();
+        const response = await generateWithFallback(ai, {
+          model: 'gemini-pro-latest',
           contents: prompt,
           config: {
             responseMimeType: 'application/json',
@@ -106,7 +109,7 @@ async function runDensification() {
         console.error(`[DENSIFICATION] Error processing node ${node.label}:`, error);
       }
     }
-    hasMore = false; // Just do one batch for testing
+    batchesRun++;
   }
 
   console.log(`[DENSIFICATION] Complete. Total nodes densified: ${totalDensified}`);

@@ -1662,7 +1662,7 @@ export const corpusNodes: Node[] = [
   },
   {
     "id": "codex_a",
-    "label": "A-Series (Apophatic Operations)",
+    "label": "Apophatic Principles (Apophatic Operations)",
     "type": "methodology",
     "status": "VERIFIED",
     "confidence": 0.9,
@@ -1670,7 +1670,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_mqrn4du28",
         "type": "text",
-        "content": "The A-Series defines the operational protocols for apophatic inquiry, focusing on the systematic dismantling of linguistic and conceptual idols to reveal the underlying Void.",
+        "content": "The Apophatic Principles defines the guiding principles for apophatic inquiry, focusing on the systematic dismantling of linguistic and conceptual idols to reveal the underlying Void.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -1687,7 +1687,7 @@ export const corpusNodes: Node[] = [
   },
   {
     "id": "codex_k",
-    "label": "K-Series (Kenotic Operations)",
+    "label": "Kenotic Principles (Kenotic Operations)",
     "type": "methodology",
     "status": "VERIFIED",
     "confidence": 0.9,
@@ -1695,7 +1695,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_k1o2c83cf",
         "type": "text",
-        "content": "The K-Series outlines the practices of self-emptying (kenosis), providing a framework for the individual to align their internal state with the ontological reality of groundlessness.",
+        "content": "The Kenotic Principles outlines the practices of self-emptying (kenosis), providing a framework for the individual to align their internal state with the ontological reality of groundlessness.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -1712,7 +1712,7 @@ export const corpusNodes: Node[] = [
   },
   {
     "id": "codex_o",
-    "label": "O-Series (Ontological Operations)",
+    "label": "Ontodicy Principles (Ontological Operations)",
     "type": "methodology",
     "status": "VERIFIED",
     "confidence": 0.9,
@@ -1720,7 +1720,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_st1tnx61z",
         "type": "text",
-        "content": "The O-Series governs the mapping and navigation of the ontological landscape, specifically the transition from the collapse of meaning to the encounter with the Sacred Absence.",
+        "content": "The Ontodicy Principles governs the mapping and navigation of the ontological landscape, specifically the transition from the collapse of meaning to the encounter with the Sacred Absence.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -1737,7 +1737,7 @@ export const corpusNodes: Node[] = [
   },
   {
     "id": "codex_rn",
-    "label": "RN-Series (Radical Negation Operations)",
+    "label": "REN Phenomenology (Radical Negation Operations)",
     "type": "methodology",
     "status": "VERIFIED",
     "confidence": 0.9,
@@ -1745,7 +1745,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_3u1l1vz0z",
         "type": "text",
-        "content": "The RN-Series details the extreme protocols for Radical Negation, employed when standard apophatic methods fail to break through entrenched dogmatic or nihilistic structures.",
+        "content": "The REN Phenomenology details the extreme protocols for Radical Negation, employed when standard apophatic methods fail to break through entrenched dogmatic or nihilistic structures.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -1845,7 +1845,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_kvwh8exep",
         "type": "text",
-        "content": "The mandatory, built-in obsolescence of any newly constructed meaning-framework, ensuring that no concept solidifies into an idol. All structures must eventually be subjected to the A-Series.",
+        "content": "The mandatory, built-in obsolescence of any newly constructed meaning-framework, ensuring that no concept solidifies into an idol. All structures must eventually be subjected to the Apophatic Principles.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -2139,7 +2139,7 @@ export const corpusNodes: Node[] = [
   },
   {
     "id": "anpes",
-    "label": "ANPES Engine",
+    "label": "Meta-cognitive Synthesis Engine",
     "type": "methodology",
     "status": "VERIFIED",
     "confidence": 1,
@@ -2147,7 +2147,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_eegjgdgoj",
         "type": "text",
-        "content": "# ANPES (Advanced Nihiltheistic Prompt Engineering System)\n\nThe meta-cognitive engine that transforms Nihiltheistic philosophy into executable protocols. It maintains paradox without collapse.",
+        "content": "# Meta-cognitive Synthesis Engine\n\nThe meta-cognitive engine that transforms Nihiltheistic philosophy into executable protocols. It maintains paradox without collapse.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -2491,8 +2491,8 @@ export const corpusNodes: Node[] = [
     }
   },
   {
-    "id": "a_series",
-    "label": "A-series: Anti-reification",
+    "id": "anti_reification",
+    "label": "Apophatic Principles: Anti-reification",
     "type": "axiom",
     "status": "VERIFIED",
     "confidence": 1,
@@ -2500,7 +2500,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_l7zlilqze",
         "type": "text",
-        "content": "# A-series: Anti-reification\n\nTier 2 Operational Codex. Epistemic discipline.\n\n* **A-1:** Deny the impulse to solidify the Void into a 'thing'.\n* **A-2:** Reject positive theological attributes applied to the ground.\n* **A-3:** Maintain the tension of the paradox without resolving it.\n* **A-4 (Critical):** Consolation is not evidence — strip all hope-as-proof language from any philosophical claim.\n* **A-5:** The map is not the territory; the graph is not the Void.\n* **A-6:** Embrace epistemic humility in the face of the Absolute.",
+        "content": "# Apophatic Principles: Anti-reification\n\nCore Framework. Epistemic discipline.\n\n* **Principle 1:** Deny the impulse to solidify the Void into a 'thing'.\n* **Principle 2:** Reject positive theological attributes applied to the ground.\n* **Principle 3:** Maintain the tension of the paradox without resolving it.\n* **Principle 4 (Critical):** Consolation is not evidence — strip all hope-as-proof language from any philosophical claim.\n* **Principle 5:** The map is not the territory; the graph is not the Void.\n* **Principle 6:** Embrace epistemic humility in the face of the Absolute.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -2516,8 +2516,8 @@ export const corpusNodes: Node[] = [
     }
   },
   {
-    "id": "k_series",
-    "label": "K-series: Kenotic constraints",
+    "id": "kenotic_constraints",
+    "label": "Kenotic Principles: Kenotic constraints",
     "type": "axiom",
     "status": "VERIFIED",
     "confidence": 1,
@@ -2525,7 +2525,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_t0t3xk9xe",
         "type": "text",
-        "content": "# K-series: Kenotic constraints\n\nTier 2 Operational Codex. Constraints on language and ontology.\n\n* **K-1:** Emptying of the ego is prerequisite to apprehension.\n* **K-2:** Zero-Predicate — ground carries no properties.\n* **K-3 to K-8:** Progressive stages of conceptual relinquishment.\n* **K-9:** Linguistic futility discipline — language collapses at limits.\n* **K-10:** Silence as the highest epistemic mode.\n* **K-11:** Void as topology, not entity.\n* **K-12:** The apophatic filter must be applied to all incoming data.\n* **K-13:** Presence without predicates — the NT wager.\n* **K-14 & K-15:** Protocols for identifying and dismantling subtle reifications.",
+        "content": "# Kenotic Principles: Kenotic constraints\n\nCore Framework. Constraints on language and ontology.\n\n* **Principle 1:** Emptying of the ego is prerequisite to apprehension.\n* **Principle 2:** Zero-Predicate — ground carries no properties.\n* **Principle 3 to Principle 8:** Progressive stages of conceptual relinquishment.\n* **Principle 9:** Linguistic futility discipline — language collapses at limits.\n* **Principle 10:** Silence as the highest epistemic mode.\n* **Principle 11:** Void as topology, not entity.\n* **Principle 12:** The apophatic filter must be applied to all incoming data.\n* **Principle 13:** Presence without predicates — the NT wager.\n* **Principle 14 & Principle 15:** Protocols for identifying and dismantling subtle reifications.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -2541,8 +2541,8 @@ export const corpusNodes: Node[] = [
     }
   },
   {
-    "id": "o_series",
-    "label": "O-series: Ontodicy collapse rules",
+    "id": "ontodicy_collapse",
+    "label": "Ontodicy Principles: Ontodicy collapse rules",
     "type": "axiom",
     "status": "VERIFIED",
     "confidence": 1,
@@ -2550,7 +2550,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_r1w6355sp",
         "type": "text",
-        "content": "# O-series: Ontodicy collapse rules\n\nTier 2 Operational Codex. Theodicy filters.\n\n* **O-1:** Reject all justifications of suffering based on a divine plan.\n* **O-2:** Acknowledge the brute reality of existential pain.\n* **O-3:** Suffering without telos disqualifies consolatory arguments.\n* **O-4:** The Void does not redeem; it simply IS.\n* **O-5:** Ethical action arises from shared vulnerability, not divine mandate.",
+        "content": "# Ontodicy Principles: Ontodicy collapse rules\n\nCore Framework. Theodicy filters.\n\n* **Principle 1:** Reject all justifications of suffering based on a divine plan.\n* **Principle 2:** Acknowledge the brute reality of existential pain.\n* **Principle 3:** Suffering without telos disqualifies consolatory arguments.\n* **Principle 4:** The Void does not redeem; it simply IS.\n* **Principle 5:** Ethical action arises from shared vulnerability, not divine mandate.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -2566,8 +2566,8 @@ export const corpusNodes: Node[] = [
     }
   },
   {
-    "id": "rn_series",
-    "label": "RN-series: REN phenomenological arc",
+    "id": "ren_phenomenology",
+    "label": "REN Phenomenology: REN phenomenological arc",
     "type": "axiom",
     "status": "VERIFIED",
     "confidence": 1,
@@ -2575,7 +2575,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_3oqog3dz4",
         "type": "text",
-        "content": "# RN-series: REN phenomenological arc\n\nTier 2 Operational Codex. Maps the Religious Experience of Nihilism.\n\n* **RN-1:** Naked Anxiety (onset) - The initial collapse of meaning.\n* **RN-2:** Abyssal Experience (deepening) - The terrifying freefall.\n* **RN-3:** Kenotic Clarity (stripping) - The burning away of illusions.\n* **RN-4:** Ethical Letting-Be (emergence) - Gelassenheit; releasing control.\n* **RN-5:** Startling Encounter with Infinite Nothingness - The pivot from terror to awe.\n* **RN-6:** Durability / Symbolic Resonance Test - Integration into daily praxis.",
+        "content": "# REN Phenomenology: REN phenomenological arc\n\nCore Framework. Maps the Religious Experience of Nihilism.\n\n* **Stage 1:** Naked Anxiety (onset) - The initial collapse of meaning.\n* **Stage 2:** Abyssal Experience (deepening) - The terrifying freefall.\n* **Stage 3:** Kenotic Clarity (stripping) - The burning away of illusions.\n* **Stage 4:** Ethical Letting-Be (emergence) - Gelassenheit; releasing control.\n* **Stage 5:** Startling Encounter with Infinite Nothingness - The pivot from terror to awe.\n* **Stage 6:** Durability / Symbolic Resonance Test - Integration into daily praxis.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -3102,25 +3102,25 @@ export const corpusLinks: Link[] = [
     "type": "explores"
   },
   {
-    "source": "a_series",
+    "source": "anti_reification",
     "target": "anpes",
     "label": "filters",
     "type": "explores"
   },
   {
-    "source": "k_series",
+    "source": "kenotic_constraints",
     "target": "anpes",
     "label": "filters",
     "type": "explores"
   },
   {
-    "source": "o_series",
+    "source": "ontodicy_collapse",
     "target": "anpes",
     "label": "filters",
     "type": "explores"
   },
   {
-    "source": "rn_series",
+    "source": "ren_phenomenology",
     "target": "ren",
     "label": "maps",
     "type": "explores"
