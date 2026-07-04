@@ -2,10 +2,10 @@
 
 ## Model Selection Strategy
 - **Extraction & Synthesis**: Prefer `gemini-2.0-flash` for high-throughput scrutiny and initial extraction. Use `gemini-1.5-pro` for deep recursive densification.
-- **Generative Scrutiny**: Use `gemini-2.0-flash` for real-time inference of structural gaps in AxiomForge.
+- **Generative Scrutiny**: Use `gemini-2.0-flash` for real-time inference of structural gaps in The Synthesis Engine.
 
 ## Prompt Engineering Patterns
-Use the **"AxiomForge Substrate Scrutiny"** pattern:
+Use the **"The Synthesis Engine Substrate Scrutiny"** pattern:
 ```markdown
 Analyze for:
 1. Entities (Extracted vs. Inferred)

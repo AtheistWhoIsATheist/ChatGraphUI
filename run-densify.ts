@@ -7,7 +7,7 @@ async function runDensificationCycles(cycles: number) {
       const response = await fetch('http://localhost:3000/api/densify', {
         method: 'POST',
       });
-      const data = await response.json();
+      const data = await response.json() as any;
       console.log(`[Cycle ${i}/${cycles}] Result:`, data);
       
       // Stop early if no more nodes require densification

@@ -97,7 +97,7 @@ export function NodeDetailsPanel({ node }: NodeDetailsPanelProps) {
       doc.setFont('courier', 'bold');
       doc.setFontSize(15);
       doc.setTextColor(255, 255, 255);
-      doc.text('REN CRYPTOGRAPHIC PROVENANCE REPORT', 15, 20);
+      doc.text('NIHILTHEISM PROVENANCE REPORT', 15, 20);
 
       doc.setFont('courier', 'normal');
       doc.setFontSize(8);

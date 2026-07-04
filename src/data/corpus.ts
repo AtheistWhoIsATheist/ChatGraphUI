@@ -1611,8 +1611,8 @@ export const corpusNodes: Node[] = [
     }
   },
   {
-    "id": "aif",
-    "label": "AIF (Abyssal Integration Factor)",
+    "id": "abyssal_integration_factor",
+    "label": "Abyssal Integration Factor",
     "type": "axiom",
     "status": "VERIFIED",
     "confidence": 1,
@@ -1620,7 +1620,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_98a7dcf9l",
         "type": "text",
-        "content": "The Abyssal Integration Factor (AIF) measures the degree to which an individual or system has integrated the reality of groundlessness into their operational framework without collapsing into passive nihilism.",
+        "content": "The Abyssal Integration Factor (Abyssal Integration Factor) measures the degree to which an individual or system has integrated the reality of groundlessness into their operational framework without collapsing into passive nihilism.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -1661,7 +1661,7 @@ export const corpusNodes: Node[] = [
     }
   },
   {
-    "id": "codex_a",
+    "id": "framework_apophatic",
     "label": "Apophatic Principles (Apophatic Operations)",
     "type": "methodology",
     "status": "VERIFIED",
@@ -1679,14 +1679,14 @@ export const corpusNodes: Node[] = [
     ],
     "metadata": {
       "tags": [
-        "codex",
+        "framework",
         "apophasis",
         "operations"
       ]
     }
   },
   {
-    "id": "codex_k",
+    "id": "framework_kenotic",
     "label": "Kenotic Principles (Kenotic Operations)",
     "type": "methodology",
     "status": "VERIFIED",
@@ -1704,14 +1704,14 @@ export const corpusNodes: Node[] = [
     ],
     "metadata": {
       "tags": [
-        "codex",
+        "framework",
         "kenosis",
         "operations"
       ]
     }
   },
   {
-    "id": "codex_o",
+    "id": "framework_ontodicy",
     "label": "Ontodicy Principles (Ontological Operations)",
     "type": "methodology",
     "status": "VERIFIED",
@@ -1729,15 +1729,15 @@ export const corpusNodes: Node[] = [
     ],
     "metadata": {
       "tags": [
-        "codex",
+        "framework",
         "ontology",
         "operations"
       ]
     }
   },
   {
-    "id": "codex_rn",
-    "label": "REN Phenomenology (Radical Negation Operations)",
+    "id": "framework_phenomenology",
+    "label": "The Religious Experience of Nihilism Phenomenology (Radical Negation Operations)",
     "type": "methodology",
     "status": "VERIFIED",
     "confidence": 0.9,
@@ -1745,7 +1745,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_3u1l1vz0z",
         "type": "text",
-        "content": "The REN Phenomenology details the extreme protocols for Radical Negation, employed when standard apophatic methods fail to break through entrenched dogmatic or nihilistic structures.",
+        "content": "The The Religious Experience of Nihilism Phenomenology details the extreme protocols for Radical Negation, employed when standard apophatic methods fail to break through entrenched dogmatic or nihilistic structures.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -1754,7 +1754,7 @@ export const corpusNodes: Node[] = [
     ],
     "metadata": {
       "tags": [
-        "codex",
+        "framework",
         "negation",
         "operations"
       ]
@@ -1762,7 +1762,7 @@ export const corpusNodes: Node[] = [
   },
   {
     "id": "praxis_ckip",
-    "label": "CKIP (Continuous Kenotic Integration Protocol)",
+    "label": "Continuous Kenotic Integration",
     "type": "praxis",
     "status": "VERIFIED",
     "confidence": 0.95,
@@ -1770,7 +1770,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_6zwx0dey3",
         "type": "text",
-        "content": "CKIP is the daily practice of identifying and releasing attachments to meaning-structures, ensuring a continuous state of kenotic openness to the Void.",
+        "content": "Continuous Kenotic Integration is the daily practice of identifying and releasing attachments to meaning-structures, ensuring a continuous state of kenotic openness to the Void.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -1820,7 +1820,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_xd3byfzwv",
         "type": "text",
-        "content": "A strategic, temporary disengagement from all social, linguistic, and conceptual networks to experience the unmediated weight of the Void, resetting the AIF.",
+        "content": "A strategic, temporary disengagement from all social, linguistic, and conceptual networks to experience the unmediated weight of the Void, resetting the Abyssal Integration Factor.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -1886,8 +1886,8 @@ export const corpusNodes: Node[] = [
     }
   },
   {
-    "id": "ren",
-    "label": "REN (The Religious Experience of Nihilism)",
+    "id": "the_religious_experience_of_nihilism",
+    "label": "The Religious Experience of Nihilism (The Religious Experience of Nihilism)",
     "type": "treatise",
     "status": "VERIFIED",
     "confidence": 1,
@@ -2138,7 +2138,7 @@ export const corpusNodes: Node[] = [
     }
   },
   {
-    "id": "anpes",
+    "id": "synthesis_engine",
     "label": "Meta-cognitive Synthesis Engine",
     "type": "methodology",
     "status": "VERIFIED",
@@ -2341,8 +2341,8 @@ export const corpusNodes: Node[] = [
     }
   },
   {
-    "id": "omega_audit_zenith",
-    "label": "OMEGA-AUDIT-ZENITH",
+    "id": "zenith_audit",
+    "label": "Zenith Audit",
     "type": "methodology",
     "status": "VERIFIED",
     "confidence": 1,
@@ -2350,7 +2350,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_l32h6soil",
         "type": "text",
-        "content": "# OMEGA-AUDIT-ZENITH Protocol\n\nThe governing protocol for the Knowledge Curator Agent, dictating the execution of the Intensive Iterative Densification Protocol.",
+        "content": "# Zenith Audit Protocol\n\nThe governing protocol for the Knowledge Curator Agent, dictating the execution of the Intensive Iterative Densification Protocol.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -2442,7 +2442,7 @@ export const corpusNodes: Node[] = [
   },
   {
     "id": "aif_2",
-    "label": "AIF: Apophatic Inscription Failure",
+    "label": "Apophatic Inscription Failure",
     "type": "axiom",
     "status": "VERIFIED",
     "confidence": 1,
@@ -2450,7 +2450,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_kycsmvwsj",
         "type": "text",
-        "content": "# AIF: Apophatic Inscription Failure\n\nTier 1 Meta-Axiom. The void cannot be fully captured; every output must acknowledge what it fails to say.",
+        "content": "# Apophatic Inscription Failure\n\nTier 1 Meta-Axiom. The void cannot be fully captured; every output must acknowledge what it fails to say.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -2510,7 +2510,7 @@ export const corpusNodes: Node[] = [
     "metadata": {
       "geometry": "square",
       "tags": [
-        "codex",
+        "framework",
         "anti-reification"
       ]
     }
@@ -2525,7 +2525,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_t0t3xk9xe",
         "type": "text",
-        "content": "# Kenotic Principles: Kenotic constraints\n\nCore Framework. Constraints on language and ontology.\n\n* **Principle 1:** Emptying of the ego is prerequisite to apprehension.\n* **Principle 2:** Zero-Predicate — ground carries no properties.\n* **Principle 3 to Principle 8:** Progressive stages of conceptual relinquishment.\n* **Principle 9:** Linguistic futility discipline — language collapses at limits.\n* **Principle 10:** Silence as the highest epistemic mode.\n* **Principle 11:** Void as topology, not entity.\n* **Principle 12:** The apophatic filter must be applied to all incoming data.\n* **Principle 13:** Presence without predicates — the NT wager.\n* **Principle 14 & Principle 15:** Protocols for identifying and dismantling subtle reifications.",
+        "content": "# Kenotic Principles: Kenotic constraints\n\nCore Framework. Constraints on language and ontology.\n\n* **Principle 1:** Emptying of the ego is prerequisite to apprehension.\n* **Principle 2:** Zero-Predicate — ground carries no properties.\n* **Principle 3 to Principle 8:** Progressive stages of conceptual relinquishment.\n* **Principle 9:** Linguistic futility discipline — language collapses at limits.\n* **Principle 10:** Silence as the highest epistemic mode.\n* **Principle 11:** Void as topology, not entity.\n* **Principle 12:** The apophatic filter must be applied to all incoming data.\n* **Principle 13:** Presence without predicates — the Nihiltheism wager.\n* **Principle 14 & Principle 15:** Protocols for identifying and dismantling subtle reifications.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -2535,7 +2535,7 @@ export const corpusNodes: Node[] = [
     "metadata": {
       "geometry": "square",
       "tags": [
-        "codex",
+        "framework",
         "kenosis"
       ]
     }
@@ -2560,14 +2560,14 @@ export const corpusNodes: Node[] = [
     "metadata": {
       "geometry": "square",
       "tags": [
-        "codex",
+        "framework",
         "ontodicy"
       ]
     }
   },
   {
     "id": "ren_phenomenology",
-    "label": "REN Phenomenology: REN phenomenological arc",
+    "label": "The Religious Experience of Nihilism Phenomenology: The Religious Experience of Nihilism phenomenological arc",
     "type": "axiom",
     "status": "VERIFIED",
     "confidence": 1,
@@ -2575,7 +2575,7 @@ export const corpusNodes: Node[] = [
       {
         "id": "blk_3oqog3dz4",
         "type": "text",
-        "content": "# REN Phenomenology: REN phenomenological arc\n\nCore Framework. Maps the Religious Experience of Nihilism.\n\n* **Stage 1:** Naked Anxiety (onset) - The initial collapse of meaning.\n* **Stage 2:** Abyssal Experience (deepening) - The terrifying freefall.\n* **Stage 3:** Kenotic Clarity (stripping) - The burning away of illusions.\n* **Stage 4:** Ethical Letting-Be (emergence) - Gelassenheit; releasing control.\n* **Stage 5:** Startling Encounter with Infinite Nothingness - The pivot from terror to awe.\n* **Stage 6:** Durability / Symbolic Resonance Test - Integration into daily praxis.",
+        "content": "# The Religious Experience of Nihilism Phenomenology: The Religious Experience of Nihilism phenomenological arc\n\nCore Framework. Maps the Religious Experience of Nihilism.\n\n* **Stage 1:** Naked Anxiety (onset) - The initial collapse of meaning.\n* **Stage 2:** Abyssal Experience (deepening) - The terrifying freefall.\n* **Stage 3:** Kenotic Clarity (stripping) - The burning away of illusions.\n* **Stage 4:** Ethical Letting-Be (emergence) - Gelassenheit; releasing control.\n* **Stage 5:** Startling Encounter with Infinite Nothingness - The pivot from terror to awe.\n* **Stage 6:** Durability / Symbolic Resonance Test - Integration into daily praxis.",
         "metadata": {
           "lastEdited": 1778377158612,
           "sentiment": "neutral"
@@ -2585,14 +2585,14 @@ export const corpusNodes: Node[] = [
     "metadata": {
       "geometry": "square",
       "tags": [
-        "codex",
+        "framework",
         "phenomenology"
       ]
     }
   },
   {
-    "id": "ckip",
-    "label": "CKIP",
+    "id": "continuous_kenotic_integration",
+    "label": "Continuous Kenotic Integration",
     "type": "praxis",
     "status": "VERIFIED",
     "confidence": 1,
@@ -2889,62 +2889,62 @@ export const corpusLinks: Link[] = [
     "type": "explores"
   },
   {
-    "source": "aif",
+    "source": "abyssal_integration_factor",
     "target": "void",
     "label": "measures",
     "type": "explores"
   },
   {
     "source": "s_100",
-    "target": "ren",
+    "target": "the_religious_experience_of_nihilism",
     "label": "targets",
     "type": "explores"
   },
   {
-    "source": "codex_a",
+    "source": "framework_apophatic",
     "target": "void",
     "label": "reveals",
     "type": "explores"
   },
   {
-    "source": "codex_k",
+    "source": "framework_kenotic",
     "target": "void",
     "label": "aligns with",
     "type": "explores"
   },
   {
-    "source": "codex_o",
+    "source": "framework_ontodicy",
     "target": "presence",
     "label": "maps",
     "type": "explores"
   },
   {
-    "source": "codex_rn",
+    "source": "framework_phenomenology",
     "target": "collapse",
     "label": "induces",
     "type": "triggers"
   },
   {
     "source": "praxis_ckip",
-    "target": "codex_k",
+    "target": "framework_kenotic",
     "label": "implements",
     "type": "documents"
   },
   {
     "source": "praxis_postural_negation",
-    "target": "codex_a",
+    "target": "framework_apophatic",
     "label": "embodies",
     "type": "documents"
   },
   {
     "source": "praxis_radical_withdrawal",
-    "target": "aif",
+    "target": "abyssal_integration_factor",
     "label": "resets",
     "type": "triggers"
   },
   {
     "source": "praxis_sunset_clause",
-    "target": "codex_a",
+    "target": "framework_apophatic",
     "label": "enforces",
     "type": "documents"
   },
@@ -2955,13 +2955,13 @@ export const corpusLinks: Link[] = [
     "type": "explores"
   },
   {
-    "source": "ren",
+    "source": "the_religious_experience_of_nihilism",
     "target": "void",
     "label": "explores",
     "type": "explores"
   },
   {
-    "source": "ren",
+    "source": "the_religious_experience_of_nihilism",
     "target": "presence",
     "label": "culminates in",
     "type": "culminates"
@@ -2974,7 +2974,7 @@ export const corpusLinks: Link[] = [
   },
   {
     "source": "journal314",
-    "target": "ren",
+    "target": "the_religious_experience_of_nihilism",
     "label": "drafts",
     "type": "documents"
   },
@@ -3021,8 +3021,8 @@ export const corpusLinks: Link[] = [
     "type": "confronts"
   },
   {
-    "source": "anpes",
-    "target": "ren",
+    "source": "synthesis_engine",
+    "target": "the_religious_experience_of_nihilism",
     "label": "operationalizes",
     "type": "explores"
   },
@@ -3054,7 +3054,7 @@ export const corpusLinks: Link[] = [
     "label": "interrogates"
   },
   {
-    "source": "omega_audit_zenith",
+    "source": "zenith_audit",
     "target": "densification_protocol",
     "label": "governs",
     "type": "explores"
@@ -3079,19 +3079,19 @@ export const corpusLinks: Link[] = [
   },
   {
     "source": "mac_alpha",
-    "target": "anpes",
+    "target": "synthesis_engine",
     "label": "constrains",
     "type": "explores"
   },
   {
-    "source": "aif",
-    "target": "anpes",
+    "source": "abyssal_integration_factor",
+    "target": "synthesis_engine",
     "label": "constrains",
     "type": "explores"
   },
   {
     "source": "s_100",
-    "target": "anpes",
+    "target": "synthesis_engine",
     "label": "constrains",
     "type": "explores"
   },
@@ -3103,30 +3103,30 @@ export const corpusLinks: Link[] = [
   },
   {
     "source": "anti_reification",
-    "target": "anpes",
+    "target": "synthesis_engine",
     "label": "filters",
     "type": "explores"
   },
   {
     "source": "kenotic_constraints",
-    "target": "anpes",
+    "target": "synthesis_engine",
     "label": "filters",
     "type": "explores"
   },
   {
     "source": "ontodicy_collapse",
-    "target": "anpes",
+    "target": "synthesis_engine",
     "label": "filters",
     "type": "explores"
   },
   {
     "source": "ren_phenomenology",
-    "target": "ren",
+    "target": "the_religious_experience_of_nihilism",
     "label": "maps",
     "type": "explores"
   },
   {
-    "source": "ckip",
+    "source": "continuous_kenotic_integration",
     "target": "void",
     "label": "integrates",
     "type": "explores"
@@ -3157,25 +3157,25 @@ export const corpusLinks: Link[] = [
   },
   {
     "source": "m1_datahub",
-    "target": "anpes",
+    "target": "synthesis_engine",
     "label": "supports",
     "type": "explores"
   },
   {
     "source": "m2_focusmatrix",
-    "target": "anpes",
+    "target": "synthesis_engine",
     "label": "visualizes",
     "type": "explores"
   },
   {
     "source": "m3_gapsynth",
-    "target": "anpes",
+    "target": "synthesis_engine",
     "label": "analyzes",
     "type": "explores"
   },
   {
     "source": "m4_autonarrative",
-    "target": "anpes",
+    "target": "synthesis_engine",
     "label": "narrates",
     "type": "explores"
   }

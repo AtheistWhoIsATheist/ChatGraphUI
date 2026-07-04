@@ -1,9 +1,9 @@
 export interface OntologicalNode {
   id: string;
   label: string;
-  node_class: 'Figure' | 'Tradition' | 'Text' | 'Concept' | 'Phenomenological Structure' | 'REN Stage' | 'Quote Artifact' | 'Source' | 'Objection' | 'Edge Claim';
+  node_class: 'Figure' | 'Tradition' | 'Text' | 'Concept' | 'Phenomenological Structure' | 'Stage' | 'Quote Artifact' | 'Source' | 'Objection' | 'Edge Claim';
   tradition: string;
-  phenomenological_extraction: string;
+  core_insight: string;
   primary_collapse_type: string;
   edges: Array<{ target: string; type: string; description: string }>;
   ux_treatment: string;
@@ -51,7 +51,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Nihilism",
     node_class: "Concept",
     tradition: "Modern Philosophy",
-    phenomenological_extraction: "Baselessness of value, meaning, knowledge, or communicability",
+    core_insight: "Baselessness of value, meaning, knowledge, or communicability",
     primary_collapse_type: "Objective meaning / value collapse",
     edges: [
       { target: "doctrinal_nihilism", type: "defines", description: "Defines the intellectual stance of conceptual meaninglessness" },
@@ -68,7 +68,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Phenomenological Nihilism",
     node_class: "Concept",
     tradition: "Phenomenology",
-    phenomenological_extraction: "Lived pre-reflective withdrawal of meaning and world structure before doctrinal formulation",
+    core_insight: "Lived pre-reflective withdrawal of meaning and world structure before doctrinal formulation",
     primary_collapse_type: "Meaning-world collapse",
     edges: [
       { target: "nihilism", type: "CONTRASTS_WITH", description: "Differs from structured doctrinal nihilism" }
@@ -84,7 +84,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Ecclesiastes",
     node_class: "Text",
     tradition: "Hebrew Wisdom Literature",
-    phenomenological_extraction: "Vanity (hebel), vapor, absolute futility of worldly labor, cyclical repetition, mortality, the uncontainable wind",
+    core_insight: "Vanity (hebel), vapor, absolute futility of worldly labor, cyclical repetition, mortality, the uncontainable wind",
     primary_collapse_type: "Worldly striving collapse",
     edges: [
       { target: "vanity", type: "WITNESSES", description: "Witnesses the futility of human effort under the sun" },
@@ -102,7 +102,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Job",
     node_class: "Text",
     tradition: "Hebrew Wisdom Literature",
-    phenomenological_extraction: "Suffering and devastation without transparent moral or rational justification",
+    core_insight: "Suffering and devastation without transparent moral or rational justification",
     primary_collapse_type: "Theodicy / moral intelligibility collapse",
     edges: [
       { target: "suffering_without_justification", type: "WITNESSES", description: "Exhibits pure suffering outside rational theodicy" },
@@ -119,7 +119,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Greek Tragedy",
     node_class: "Tradition",
     tradition: "Greek Antiquity",
-    phenomenological_extraction: "Pity, terror, unmovable fate, fragile agency, inevitable failure of rational heroism",
+    core_insight: "Pity, terror, unmovable fate, fragile agency, inevitable failure of rational heroism",
     primary_collapse_type: "Agency / fate collapse",
     edges: [
       { target: "tragic_exposure", type: "WITNESSES", description: "Dramatizes human vulnerability before blind fate" },
@@ -137,7 +137,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Heraclitus",
     node_class: "Figure",
     tradition: "Pre-Socratic Philosophy",
-    phenomenological_extraction: "Absolute flux, instability, change, and conflict as the fundamental law of the cosmos",
+    core_insight: "Absolute flux, instability, change, and conflict as the fundamental law of the cosmos",
     primary_collapse_type: "Permanence collapse",
     edges: [
       { target: "impermanence", type: "ANTICIPATES", description: "Prefigures radical change" },
@@ -154,7 +154,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Stoicism",
     node_class: "Tradition",
     tradition: "Hellenistic Philosophy",
-    phenomenological_extraction: "Finitude training, death discipline, radical cognitive control over emotional distress",
+    core_insight: "Finitude training, death discipline, radical cognitive control over emotional distress",
     primary_collapse_type: "Death-anxiety regulation",
     edges: [
       { target: "mortality", type: "ANTICIPATES", description: "Disciplines the self to meet mortality calmly" },
@@ -171,7 +171,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Seneca",
     node_class: "Figure",
     tradition: "Stoicism",
-    phenomenological_extraction: "Daily rehearsal of death (meletē thanatou), coping with exile and biological decay",
+    core_insight: "Daily rehearsal of death (meletē thanatou), coping with exile and biological decay",
     primary_collapse_type: "Mortality / adversity collapse",
     edges: [
       { target: "stoicism", type: "DEVELOPS", description: "Major roman figure representing Stoicism" },
@@ -188,7 +188,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Epictetus",
     node_class: "Figure",
     tradition: "Stoicism",
-    phenomenological_extraction: "Demarcation of control (prohairesis); the self as a free pocket of assent within an unyielding universe",
+    core_insight: "Demarcation of control (prohairesis); the self as a free pocket of assent within an unyielding universe",
     primary_collapse_type: "Agency collapse disciplined by assent",
     edges: [
       { target: "stoicism", type: "DEVELOPS", description: "Grounds stoic ethics in the distinction of what is and is not up to us" }
@@ -204,7 +204,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Marcus Aurelius",
     node_class: "Figure",
     tradition: "Stoicism",
-    phenomenological_extraction: "Radical temporal transience; human history as empty noise, the cosmic view dissolving personal pride",
+    core_insight: "Radical temporal transience; human history as empty noise, the cosmic view dissolving personal pride",
     primary_collapse_type: "Mortality / cosmic insignificance",
     edges: [
       { target: "death_reflection", type: "WITNESSES", description: "Strips human fame of historical importance" },
@@ -221,7 +221,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Epicurus",
     node_class: "Figure",
     tradition: "Epicureanism",
-    phenomenological_extraction: "Therapeutic materialist dissolution of post-mortem fear; death as state of non-existence",
+    core_insight: "Therapeutic materialist dissolution of post-mortem fear; death as state of non-existence",
     primary_collapse_type: "Death-anxiety",
     edges: [
       { target: "fear_of_death", type: "WITNESSES", description: "Displaces death anxiety using atomistic physics" },
@@ -238,7 +238,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Lucretius",
     node_class: "Figure",
     tradition: "Epicureanism",
-    phenomenological_extraction: "Symmetry argument between pre-natal and post-mortem infinite voids",
+    core_insight: "Symmetry argument between pre-natal and post-mortem infinite voids",
     primary_collapse_type: "Death-anxiety",
     edges: [
       { target: "epicurus", type: "DEVELOPS", description: "Elaborates Epicurean physics in De Rerum Natura" },
@@ -255,7 +255,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Buddhism",
     node_class: "Tradition",
     tradition: "Eastern Philosophy",
-    phenomenological_extraction: "Dukkha (unsatisfactoriness), Anicca (impermanence), and Anattā (non-self) leading to release from reified identity",
+    core_insight: "Dukkha (unsatisfactoriness), Anicca (impermanence), and Anattā (non-self) leading to release from reified identity",
     primary_collapse_type: "Self / permanence collapse",
     edges: [
       { target: "non_self", type: "WITNESSES", description: "Establishes lack of permanent egoic center" },
@@ -273,7 +273,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Anattā / Non-Self",
     node_class: "Concept",
     tradition: "Buddhism",
-    phenomenological_extraction: "The total absence of any permanent, unchanging soul, essence, or egoic center within physical or mental processes",
+    core_insight: "The total absence of any permanent, unchanging soul, essence, or egoic center within physical or mental processes",
     primary_collapse_type: "Selfhood collapse",
     edges: [
       { target: "buddhism", type: "DEVELOPS", description: "Core concept of early and Mahāyāna Buddhism" },
@@ -291,7 +291,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Nāgārjuna",
     node_class: "Figure",
     tradition: "Madhyamaka Buddhism",
-    phenomenological_extraction: "Emptiness (śūnyatā) of all intrinsic nature; all concepts are dependently arisen and lack independent reality",
+    core_insight: "Emptiness (śūnyatā) of all intrinsic nature; all concepts are dependently arisen and lack independent reality",
     primary_collapse_type: "Ontological substantiality collapse",
     edges: [
       { target: "emptiness", type: "DEVELOPS", description: "Systematizes Mahāyāna emptiness as Middle Way" },
@@ -308,7 +308,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Madhyamaka",
     node_class: "Tradition",
     tradition: "Mahāyāna Buddhism",
-    phenomenological_extraction: "The 'Middle Way' between eternalism (existence of essence) and annihilationism (sheer non-existence / standard nihilism)",
+    core_insight: "The 'Middle Way' between eternalism (existence of essence) and annihilationism (sheer non-existence / standard nihilism)",
     primary_collapse_type: "Essence collapse",
     edges: [
       { target: "nagarjuna", type: "DEVELOPS", description: "The central school founded on Nāgārjuna's treatises" },
@@ -325,7 +325,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Huayan Buddhism",
     node_class: "Tradition",
     tradition: "Chinese Buddhism",
-    phenomenological_extraction: "Emptiness translated into absolute mutual interpenetration of all phenomena; Indra's Net where every node reflects all others",
+    core_insight: "Emptiness translated into absolute mutual interpenetration of all phenomena; Indra's Net where every node reflects all others",
     primary_collapse_type: "Separate-being collapse",
     edges: [
       { target: "interdependence", type: "DEVELOPS", description: "Interprets emptiness as affirmative absolute interdependence" },
@@ -342,7 +342,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Dōgen",
     node_class: "Figure",
     tradition: "Zen Buddhism",
-    phenomenological_extraction: "Being-time (Uji); impermanence as ultimate reality; raw practice as enlightenment, not a means to a separate end",
+    core_insight: "Being-time (Uji); impermanence as ultimate reality; raw practice as enlightenment, not a means to a separate end",
     primary_collapse_type: "Fixed self/time collapse",
     edges: [
       { target: "buddhism", type: "DEVELOPS", description: "Brings Zen/Soto school structure to impermanence" },
@@ -359,7 +359,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Daoism / Taoism",
     node_class: "Tradition",
     tradition: "Chinese Philosophy",
-    phenomenological_extraction: "Wandering, anti-authoritarian play, critique of artificial language and social norms; alignment with the nameless Dao",
+    core_insight: "Wandering, anti-authoritarian play, critique of artificial language and social norms; alignment with the nameless Dao",
     primary_collapse_type: "Conceptual mastery collapse",
     edges: [
       { target: "ineffability", type: "WITNESSES", description: "Emphasizes the nameless pre-linguistic reality" },
@@ -376,7 +376,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Laozi",
     node_class: "Figure",
     tradition: "Daoism",
-    phenomenological_extraction: "The Dao that can be named is not the eternal Dao; naming collapse is the entrance to mystery",
+    core_insight: "The Dao that can be named is not the eternal Dao; naming collapse is the entrance to mystery",
     primary_collapse_type: "Naming collapse",
     edges: [
       { target: "ineffability", type: "WITNESSES", description: "Dao as a forced label for ungraspable ultimate presence/absence" },
@@ -393,7 +393,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Zhuangzi",
     node_class: "Figure",
     tradition: "Daoism",
-    phenomenological_extraction: "Perspectival play, celebration of uselessness, laughter at death, mock logic dissolving formal categories",
+    core_insight: "Perspectival play, celebration of uselessness, laughter at death, mock logic dissolving formal categories",
     primary_collapse_type: "Normativity / perspective collapse",
     edges: [
       { target: "daoism", type: "DEVELOPS", description: "Classical Zhuangzi text on selfhood deconstruction" },
@@ -410,7 +410,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Advaita Vedānta",
     node_class: "Tradition",
     tradition: "Hindu Philosophy",
-    phenomenological_extraction: "Maya (cosmic illusion) masking the ultimate nondual identity of Atman (the self) and Brahman (universal ultimate reality)",
+    core_insight: "Maya (cosmic illusion) masking the ultimate nondual identity of Atman (the self) and Brahman (universal ultimate reality)",
     primary_collapse_type: "Empirical individuality collapse",
     edges: [
       { target: "maya", type: "WITNESSES", description: "Identifies empirical plurality as cognitive projection" },
@@ -427,7 +427,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Śaṅkara",
     node_class: "Figure",
     tradition: "Advaita Vedānta",
-    phenomenological_extraction: "Deconstruction of the egoic subject to reveal the pure witnessing consciousness (saksin) which is Brahman",
+    core_insight: "Deconstruction of the egoic subject to reveal the pure witnessing consciousness (saksin) which is Brahman",
     primary_collapse_type: "Empirical self collapse",
     edges: [
       { target: "advaita_vedanta", type: "DEVELOPS", description: "The premier philosopher and systematizer of classical Advaita" },
@@ -444,7 +444,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Māyā / Avidyā",
     node_class: "Concept",
     tradition: "Advaita Vedānta",
-    phenomenological_extraction: "Ignorance or metaphysical illusion that projects an empirical world of multiplicity and suffering",
+    core_insight: "Ignorance or metaphysical illusion that projects an empirical world of multiplicity and suffering",
     primary_collapse_type: "World/self appearance collapse",
     edges: [
       { target: "advaita_vedanta", type: "DEVELOPS", description: "Primary mechanics of world-projection" },
@@ -461,7 +461,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Vivekananda",
     node_class: "Figure",
     tradition: "Modern Vedānta",
-    phenomenological_extraction: "Dissatisfaction and cosmic homesickness under the sway of maya; modernization of renunciation",
+    core_insight: "Dissatisfaction and cosmic homesickness under the sway of maya; modernization of renunciation",
     primary_collapse_type: "Finite identity collapse",
     edges: [
       { target: "advaita_vedanta", type: "DEVELOPS", description: "Brings Advaitic ontology to modern global audiences" },
@@ -478,7 +478,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Hinduism",
     node_class: "Tradition",
     tradition: "Eastern Philosophy",
-    phenomenological_extraction: "Infinite religious-philosophical container for nondual, devotional, and ascetic structures of liberation",
+    core_insight: "Infinite religious-philosophical container for nondual, devotional, and ascetic structures of liberation",
     primary_collapse_type: "Finite-world non-ultimacy",
     edges: [
       { target: "advaita_vedanta", type: "DEVELOPS", description: "Encompasses Advaita as its most influential school" },
@@ -495,7 +495,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Vedānta",
     node_class: "Tradition",
     tradition: "Hindu Philosophy",
-    phenomenological_extraction: "Upaniṣadic inquiry into ultimate reality, consciousness, and escape from transmigratory cycles",
+    core_insight: "Upaniṣadic inquiry into ultimate reality, consciousness, and escape from transmigratory cycles",
     primary_collapse_type: "Empirical ultimate collapse",
     edges: [
       { target: "advaita_vedanta", type: "DEVELOPS", description: "Radically nondual school of Vedanta" },
@@ -512,7 +512,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Upaniṣads",
     node_class: "Text",
     tradition: "Sanskrit Scriptures",
-    phenomenological_extraction: "The inner dialogic journey into the mystery of the self; stripping names and forms (nama-rupa)",
+    core_insight: "The inner dialogic journey into the mystery of the self; stripping names and forms (nama-rupa)",
     primary_collapse_type: "Empirical identity collapse",
     edges: [
       { target: "advaita_vedanta", type: "DEVELOPS", description: "Primary philosophical source for Nondual Vedanta" },
@@ -529,7 +529,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Pseudo-Dionysius",
     node_class: "Figure",
     tradition: "Christian Neoplatonism",
-    phenomenological_extraction: "Radical negative theology; divine excess blinding human language, necessitating apophatic stripping of all concepts",
+    core_insight: "Radical negative theology; divine excess blinding human language, necessitating apophatic stripping of all concepts",
     primary_collapse_type: "Language / God-concept collapse",
     edges: [
       { target: "apophatic_theology", type: "DEVELOPS", description: "Establishes apophatic movement in Christian writing" },
@@ -546,7 +546,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Apophatic Theology",
     node_class: "Tradition",
     tradition: "Christian / Comparative Mysticism",
-    phenomenological_extraction: "Negation as the only accurate register of ultimate reality; God is not, God is beyond being",
+    core_insight: "Negation as the only accurate register of ultimate reality; God is not, God is beyond being",
     primary_collapse_type: "Language collapse",
     edges: [
       { target: "pseudo_dionysius", type: "DEVELOPS", description: "Systematized in the late fifth century" },
@@ -563,7 +563,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Meister Eckhart",
     node_class: "Figure",
     tradition: "Rhineland Mysticism",
-    phenomenological_extraction: "Breakthrough (Durchbruch) to the Godhead beyond God; total detachment (Abgescheidenheit) and poverty of spirit",
+    core_insight: "Breakthrough (Durchbruch) to the Godhead beyond God; total detachment (Abgescheidenheit) and poverty of spirit",
     primary_collapse_type: "Possessive self / God-image collapse",
     edges: [
       { target: "detachment", type: "WITNESSES", description: "Advocates stripping the self of private desires, including the desire for God" },
@@ -581,7 +581,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Gregory of Nyssa",
     node_class: "Figure",
     tradition: "Patristic Theology",
-    phenomenological_extraction: "Infinite spiritual progression (epektasis) into lightless darkness; God as structurally incomprehensible",
+    core_insight: "Infinite spiritual progression (epektasis) into lightless darkness; God as structurally incomprehensible",
     primary_collapse_type: "Conceptual finality collapse",
     edges: [
       { target: "apophatic_theology", type: "DEVELOPS", description: "Precursor patristic witness to apophatic darkness" }
@@ -597,7 +597,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "The Cloud of Unknowing",
     node_class: "Text",
     tradition: "Fourteenth-Century English Mysticism",
-    phenomenological_extraction: "A dark cloud of forgetting beneath, and a cloud of unknowing above; intentional blindness to details to rest in naked love",
+    core_insight: "A dark cloud of forgetting beneath, and a cloud of unknowing above; intentional blindness to details to rest in naked love",
     primary_collapse_type: "Knowledge / language collapse",
     edges: [
       { target: "apophatic_theology", type: "DEVELOPS", description: "Classic text manual of Christian contemplative prayer" }
@@ -613,14 +613,14 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "St. John of the Cross",
     node_class: "Figure",
     tradition: "Spanish Mysticism",
-    phenomenological_extraction: "The Dark Night of the soul; passive purification of senses and spirit through severe spiritual desolation and felt abandonment",
+    core_insight: "The Dark Night of the soul; passive purification of senses and spirit through severe spiritual desolation and felt abandonment",
     primary_collapse_type: "Spiritual consolation collapse",
     edges: [
       { target: "dark_night", type: "WITNESSES", description: "Maps the journey through absolute desolation" },
       { target: "heidegger", type: "ANTICIPATES", description: "Prefigures existential anxiety stripping worldly security" },
       { target: "cioran", type: "ANTICIPATES", description: "Read deeply by Cioran as master of internal void" }
     ],
-    ux_treatment: "Core REN witness. Extremely detailed data panel with quote registry. Dark velvet visual styling.",
+    ux_treatment: "Core The Religious Experience of Nihilism witness. Extremely detailed data panel with quote registry. Dark velvet visual styling.",
     scholarly_anchor: "The Dark Night and Ascent of Mount Carmel; details passive trials where God withdraws all spiritual comfort.",
     ren_stage: 4,
     source_status: "Verified",
@@ -631,13 +631,13 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Dark Night",
     node_class: "Concept",
     tradition: "Spanish Mysticism",
-    phenomenological_extraction: "Absolute spiritual deprivation, grief, felt absence of God, and dissolution of religious pride; experienced as passive purgation",
+    core_insight: "Absolute spiritual deprivation, grief, felt absence of God, and dissolution of religious pride; experienced as passive purgation",
     primary_collapse_type: "Divine-presence collapse",
     edges: [
       { target: "john_of_the_cross", type: "DEVELOPS", description: "Operationalized category of Spanish Carmelite reform" },
-      { target: "abyssal_affect", type: "MAPS_TO_REN_STAGE", description: "Serves as the supreme historical witness for REN Stage 4" }
+      { target: "abyssal_affect", type: "MAPS_TO_REN_STAGE", description: "Serves as the supreme historical witness for Stage 4" }
     ],
-    ux_treatment: "REN Stage 4 exemplar card. Charcoal-black canvas with white text.",
+    ux_treatment: "Stage 4 exemplar card. Charcoal-black canvas with white text.",
     scholarly_anchor: "Carmelite theology and Evelyn Underhill's Mysticism; treats dark night as natural psychological transition to union.",
     ren_stage: 4,
     source_status: "Verified",
@@ -648,7 +648,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Miguel de Molinos",
     node_class: "Figure",
     tradition: "Quietism",
-    phenomenological_extraction: "The 'internal way' of total passive self-annihilation; silencing thoughts, actions, and will to allow God alone to act",
+    core_insight: "The 'internal way' of total passive self-annihilation; silencing thoughts, actions, and will to allow God alone to act",
     primary_collapse_type: "Self-will collapse",
     edges: [
       { target: "quietism", type: "DEVELOPS", description: "Author of The Spiritual Guide, trigger for the Quietist crisis" }
@@ -664,7 +664,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Quietism",
     node_class: "Tradition",
     tradition: "Modern Roman Catholic Controversy",
-    phenomenological_extraction: "Severe interior passivity; theological claim that the soul must be empty of active deeds, prayers, or care for its own salvation",
+    core_insight: "Severe interior passivity; theological claim that the soul must be empty of active deeds, prayers, or care for its own salvation",
     primary_collapse_type: "Active piety collapse",
     edges: [
       { target: "miguel_molinos", type: "DEVELOPS", description: "Centered historically on Molinos' trial" },
@@ -681,7 +681,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Thomas à Kempis",
     node_class: "Figure",
     tradition: "Devotio Moderna",
-    phenomenological_extraction: "Absolute contempt of the world (contemptus mundi); vanity of temporal honor, earthly knowledge, and social status",
+    core_insight: "Absolute contempt of the world (contemptus mundi); vanity of temporal honor, earthly knowledge, and social status",
     primary_collapse_type: "Worldly honor collapse",
     edges: [
       { target: "vanity", type: "WITNESSES", description: "Echoes Ecclesiastes vanity claims" },
@@ -698,7 +698,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Teresa of Ávila",
     node_class: "Figure",
     tradition: "Spanish Mysticism",
-    phenomenological_extraction: "Interior prayer trials, severe physical pain and spiritual dry spells as preparation for mystical betrothal",
+    core_insight: "Interior prayer trials, severe physical pain and spiritual dry spells as preparation for mystical betrothal",
     primary_collapse_type: "Superficial self / prayer collapse",
     edges: [
       { target: "john_of_the_cross", type: "DEVELOPS", description: "Collaborated with John in Discalced Carmelite reform" }
@@ -714,7 +714,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Thérèse of Lisieux",
     node_class: "Figure",
     tradition: "French Devotional Carmel",
-    phenomenological_extraction: "Intense dry trials, the 'tunnel' of absolute darkness where heaven and immortality seem like a cruel joke to reason",
+    core_insight: "Intense dry trials, the 'tunnel' of absolute darkness where heaven and immortality seem like a cruel joke to reason",
     primary_collapse_type: "Religious certainty / consolation collapse",
     edges: [
       { target: "dark_night", type: "DEVELOPS", description: "Brings Carmelite passive purification to modern ordinary settings" }
@@ -730,7 +730,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Thomas Merton",
     node_class: "Figure",
     tradition: "Modern Monasticism",
-    phenomenological_extraction: "Silence and active resistance to modern technological noise; finding the true, empty self hidden in God",
+    core_insight: "Silence and active resistance to modern technological noise; finding the true, empty self hidden in God",
     primary_collapse_type: "Modern distraction collapse",
     edges: [
       { target: "contemplation", type: "WITNESSES", description: "Frames modern spiritual sanity through apophatic solitude" },
@@ -747,7 +747,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Simone Weil",
     node_class: "Figure",
     tradition: "Modern Mysticism / Political Philosophy",
-    phenomenological_extraction: "Decreation (décréation); affliction (malheur) that destroys the social self; attention as pure unselfish wait for absent God",
+    core_insight: "Decreation (décréation); affliction (malheur) that destroys the social self; attention as pure unselfish wait for absent God",
     primary_collapse_type: "Self / affliction / God-presence collapse",
     edges: [
       { target: "affliction", type: "WITNESSES", description: "Lived physical and mental starvation as alignment with Christ's cross" },
@@ -765,7 +765,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Augustine",
     node_class: "Figure",
     tradition: "Early Christian Philosophy",
-    phenomenological_extraction: "The restless heart (inquietum cor); core insufficiency of all finite things when mistaken for ultimate rest",
+    core_insight: "The restless heart (inquietum cor); core insufficiency of all finite things when mistaken for ultimate rest",
     primary_collapse_type: "Finite love collapse",
     edges: [
       { target: "restlessness", type: "WITNESSES", description: "Documents internal divided desire" },
@@ -783,7 +783,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Pascal",
     node_class: "Figure",
     tradition: "French Existential Precursor",
-    phenomenological_extraction: "Diversion (divertissement); human terror of silent rooms, death, and spatial/cosmic insignificance, masked by constant tracking of toys",
+    core_insight: "Diversion (divertissement); human terror of silent rooms, death, and spatial/cosmic insignificance, masked by constant tracking of toys",
     primary_collapse_type: "Distraction / mortality collapse",
     edges: [
       { target: "diversion", type: "WITNESSES", description: "Frames human activity as desperate flight from the void" },
@@ -800,7 +800,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Kierkegaard",
     node_class: "Figure",
     tradition: "Existentialism",
-    phenomenological_extraction: "Anxiety (Angest) as the dizziness of freedom; Despair (Sygdommen til Døden) as failure to relate the finite and infinite self under God",
+    core_insight: "Anxiety (Angest) as the dizziness of freedom; Despair (Sygdommen til Døden) as failure to relate the finite and infinite self under God",
     primary_collapse_type: "Self-relation collapse",
     edges: [
       { target: "despair", type: "WITNESSES", description: "Outlines multi-layered psychology of despair" },
@@ -817,7 +817,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Luther",
     node_class: "Figure",
     tradition: "Reformation Theology",
-    phenomenological_extraction: "Anfechtung; severe existential trial, crushing terror before the Law, and felt abandonment by God",
+    core_insight: "Anfechtung; severe existential trial, crushing terror before the Law, and felt abandonment by God",
     primary_collapse_type: "Moral self-sufficiency collapse",
     edges: [
       { target: "augustine", type: "DEVELOPS", description: "Deeply influenced by Augustinian theology of fallen will" },
@@ -834,7 +834,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Bunyan",
     node_class: "Figure",
     tradition: "Puritanism",
-    phenomenological_extraction: "Agonizing internal guilt, conviction of sin, obsessive thoughts, and fear of spiritual loss during long years of isolation",
+    core_insight: "Agonizing internal guilt, conviction of sin, obsessive thoughts, and fear of spiritual loss during long years of isolation",
     primary_collapse_type: "Assurance collapse",
     edges: [
       { target: "sick_soul", type: "WITNESSES", description: "Classic historical case of twice-born psychological distress" }
@@ -850,7 +850,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Seraphim Rose",
     node_class: "Figure",
     tradition: "Eastern Orthodox Apologetics",
-    phenomenological_extraction: "Modern Western secular culture as a total logic of nihilism; stages from liberalism and realism to vitalism and pure destruction",
+    core_insight: "Modern Western secular culture as a total logic of nihilism; stages from liberalism and realism to vitalism and pure destruction",
     primary_collapse_type: "Modern secular meaning collapse",
     edges: [
       { target: "nietzsche", type: "PRESSURE_TESTS", description: "Examines Nietzsche's prediction of nihilism from strict traditionalist angle" }
@@ -866,7 +866,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "C.S. Lewis",
     node_class: "Figure",
     tradition: "Christian Apologetics",
-    phenomenological_extraction: "Desire/Longing (Sehnsucht) as evidence of transcendent homeland; grief as raw, mechanical physical sensation of absence",
+    core_insight: "Desire/Longing (Sehnsucht) as evidence of transcendent homeland; grief as raw, mechanical physical sensation of absence",
     primary_collapse_type: "Secular reduction collapse",
     edges: [
       { target: "nihilism", type: "PRESSURE_TESTS", description: "Challenges mechanical materialism as self-defeating" }
@@ -882,7 +882,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Chesterton",
     node_class: "Figure",
     tradition: "Christian Orthodoxy",
-    phenomenological_extraction: "Philosophical wonder; default shock that things exist at all, responding to modern gray-pessimism by celebrating primary limits",
+    core_insight: "Philosophical wonder; default shock that things exist at all, responding to modern gray-pessimism by celebrating primary limits",
     primary_collapse_type: "Modern rationalist flatness collapse",
     edges: [
       { target: "despair", type: "PRESSURE_TESTS", description: "Launches dynamic defense of life's magic" }
@@ -898,7 +898,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Aquinas",
     node_class: "Figure",
     tradition: "Scholasticism",
-    phenomenological_extraction: "Metaphysical structure of being (esse); God as the absolute act of being (actus purus) preventing ultimate void",
+    core_insight: "Metaphysical structure of being (esse); God as the absolute act of being (actus purus) preventing ultimate void",
     primary_collapse_type: "Groundlessness counterstructure",
     edges: [
       { target: "nihilism", type: "PRESSURE_TESTS", description: "Provides intellectual base resisting physical groundlessness" }
@@ -914,7 +914,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Nietzsche",
     node_class: "Figure",
     tradition: "Modern Philosophy",
-    phenomenological_extraction: "The 'death of God' and consequent devaluation of all supreme values; active vs. passive responses to the void",
+    core_insight: "The 'death of God' and consequent devaluation of all supreme values; active vs. passive responses to the void",
     primary_collapse_type: "Value / God-ground collapse",
     edges: [
       { target: "axiological_nihilism", type: "WITNESSES", description: "Maps the collapse of Christian-moral teleology" },
@@ -931,7 +931,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Dostoevsky",
     node_class: "Figure",
     tradition: "Siberian Existential Literature",
-    phenomenological_extraction: "The clinical psychology of free rebellion; if there is no God, everything is permissible; the underworld self",
+    core_insight: "The clinical psychology of free rebellion; if there is no God, everything is permissible; the underworld self",
     primary_collapse_type: "Moral order collapse",
     edges: [
       { target: "nihilism", type: "WITNESSES", description: "Dramatizes Russian political and spiritual nihilists" },
@@ -948,7 +948,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Russian Nihilism",
     node_class: "Tradition",
     tradition: "Nineteenth-Century Political Radicalism",
-    phenomenological_extraction: "Political, moral, and historical negation; rejection of church, state, family, and aesthetics in favor of raw scientific utility",
+    core_insight: "Political, moral, and historical negation; rejection of church, state, family, and aesthetics in favor of raw scientific utility",
     primary_collapse_type: "Authority collapse",
     edges: [
       { target: "nietzsche", type: "ANTICIPATES", description: "Analyzed by Nietzsche as an early, incomplete vital stage of nihilism" }
@@ -964,7 +964,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Schopenhauer",
     node_class: "Figure",
     tradition: "German Pessimism",
-    phenomenological_extraction: "The blind, striving, insatiable cosmic Will; perpetual oscillation between painful desire and stagnant boredom",
+    core_insight: "The blind, striving, insatiable cosmic Will; perpetual oscillation between painful desire and stagnant boredom",
     primary_collapse_type: "Desire / optimism collapse",
     edges: [
       { target: "suffering", type: "WITNESSES", description: "Posits physical pain and psychological tragedy as natural norm" },
@@ -982,7 +982,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Tolstoy",
     node_class: "Figure",
     tradition: "Existential Literature / Contemplative Crisis",
-    phenomenological_extraction: "Sudden, paralyzing arrest of life; the visual encounter with the 'eastern dragon' in the well while clinging to small drops of honey (fame/literary success)",
+    core_insight: "Sudden, paralyzing arrest of life; the visual encounter with the 'eastern dragon' in the well while clinging to small drops of honey (fame/literary success)",
     primary_collapse_type: "Achievement / reason collapse",
     edges: [
       { target: "sick_soul", type: "WITNESSES", description: "Experiential report of crisis in high success" },
@@ -999,7 +999,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "William James",
     node_class: "Figure",
     tradition: "Pragmatism / Psychology",
-    phenomenological_extraction: "Empirical cataloging of conversion, divided selves, and sick souls; personal struggle with suicidal melancholia",
+    core_insight: "Empirical cataloging of conversion, divided selves, and sick souls; personal struggle with suicidal melancholia",
     primary_collapse_type: "Healthy-mindedness collapse",
     edges: [
       { target: "religious_experience", type: "DEVELOPS", description: "Laid foundation for modern empirical study of mysticism" },
@@ -1016,13 +1016,13 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Sick Soul",
     node_class: "Concept",
     tradition: "William James Psychology",
-    phenomenological_extraction: "The state of consciousness that is absolutely unable to inhabit naive optimism or healthy-minded cheer; must be twice-born",
+    core_insight: "The state of consciousness that is absolutely unable to inhabit naive optimism or healthy-minded cheer; must be twice-born",
     primary_collapse_type: "Healthy-minded world collapse",
     edges: [
       { target: "william_james", type: "DEVELOPS", description: "Fundamental category of religious psychology" },
       { target: "cioran", type: "WITNESSES", description: "Extends sick-soul state to permanent intellectual disposition" }
     ],
-    ux_treatment: "REN Stage 2/4 transition bridge node. Faint hospital green outline.",
+    ux_treatment: "Stage 2/4 transition bridge node. Faint hospital green outline.",
     scholarly_anchor: "Varieties of Religious Experience; analyzed alongside conversion narratives.",
     ren_stage: 2,
     source_status: "Verified",
@@ -1033,7 +1033,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Divided Self",
     node_class: "Concept",
     tradition: "William James Psychology",
-    phenomenological_extraction: "The painful experience of internal division/bifurcation, where the soul feels split between two competing wills or paths",
+    core_insight: "The painful experience of internal division/bifurcation, where the soul feels split between two competing wills or paths",
     primary_collapse_type: "Self-coherence collapse",
     edges: [
       { target: "william_james", type: "DEVELOPS", description: "Category detailing internal conversion forces" },
@@ -1050,7 +1050,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Heidegger",
     node_class: "Figure",
     tradition: "Phenomenology",
-    phenomenological_extraction: "Anxiety (Angst) revealing the Nothing (das Nichts); being-toward-death (Sein-zum-Tode); the uncanny slipping away of everyday significance",
+    core_insight: "Anxiety (Angst) revealing the Nothing (das Nichts); being-toward-death (Sein-zum-Tode); the uncanny slipping away of everyday significance",
     primary_collapse_type: "Everyday significance collapse",
     edges: [
       { target: "nothingness", type: "WITNESSES", description: "Ontological anxiety discloses the nothingness behind ordinary objects" },
@@ -1068,7 +1068,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Dasein",
     node_class: "Concept",
     tradition: "Phenomenology",
-    phenomenological_extraction: "Being-in-the-world for whom its own being is an issue; existence structured around possibilities rather than fixed properties",
+    core_insight: "Being-in-the-world for whom its own being is an issue; existence structured around possibilities rather than fixed properties",
     primary_collapse_type: "Fixed-substance self collapse",
     edges: [
       { target: "heidegger", type: "DEVELOPS", description: "The central investigative focus of early Heideggerian ontology" }
@@ -1084,7 +1084,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Anxiety",
     node_class: "Concept",
     tradition: "Phenomenology / Existentialism",
-    phenomenological_extraction: "Pre-reflective, non-objectual dread where all specific physical objects slip away, leaving Dasein facing its own bare facticity and freedom",
+    core_insight: "Pre-reflective, non-objectual dread where all specific physical objects slip away, leaving Dasein facing its own bare facticity and freedom",
     primary_collapse_type: "Affective abyss",
     edges: [
       { target: "kierkegaard", type: "DEVELOPS", description: "Developed across religious and psychological scales" },
@@ -1101,7 +1101,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Nothingness",
     node_class: "Concept",
     tradition: "Comparative Philosophy",
-    phenomenological_extraction: "The absolute background of possibility, revealed when active significance or substantial beings withdraw",
+    core_insight: "The absolute background of possibility, revealed when active significance or substantial beings withdraw",
     primary_collapse_type: "Ontological collapse",
     edges: [
       { target: "heidegger", type: "DEVELOPS", description: "Investigated as background of being" },
@@ -1118,7 +1118,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Tillich",
     node_class: "Figure",
     tradition: "Existential Theology",
-    phenomenological_extraction: "Anxiety of nonbeing across three fields: death/finitude, guilt/condemnation, and emptiness/meaninglessness; courage to accept acceptance",
+    core_insight: "Anxiety of nonbeing across three fields: death/finitude, guilt/condemnation, and emptiness/meaninglessness; courage to accept acceptance",
     primary_collapse_type: "Ultimate concern collapse",
     edges: [
       { target: "meaninglessness", type: "WITNESSES", description: "Identifies modern mid-century despair as meaninglessness" },
@@ -1136,7 +1136,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Nonbeing",
     node_class: "Concept",
     tradition: "Existential Theology",
-    phenomenological_extraction: "The infinite threat to ontic, spiritual, and moral self-affirmation, framing death and meaninglessness",
+    core_insight: "The infinite threat to ontic, spiritual, and moral self-affirmation, framing death and meaninglessness",
     primary_collapse_type: "Being-security collapse",
     edges: [
       { target: "tillich", type: "DEVELOPS", description: "Dynamic ontological counterpart to being in Tillich's systematic framework" }
@@ -1152,7 +1152,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Ernest Becker",
     node_class: "Figure",
     tradition: "Synthesized Psychological Anthropology",
-    phenomenological_extraction: "Terror of death as the central driving force of human history; culture as a magnificent, shared 'hero-system' or defense illusion",
+    core_insight: "Terror of death as the central driving force of human history; culture as a magnificent, shared 'hero-system' or defense illusion",
     primary_collapse_type: "Culture-as-defense collapse",
     edges: [
       { target: "pascal", type: "DEVELOPS", description: "Upgrades Pascalian diversion theory into complete clinical psychology" },
@@ -1169,7 +1169,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Rudolf Otto",
     node_class: "Figure",
     tradition: "Philosophy of Religion",
-    phenomenological_extraction: "The numinous experience: mysterium tremendum et fascinans; the crushing majesty and wild attraction of the absolute other",
+    core_insight: "The numinous experience: mysterium tremendum et fascinans; the crushing majesty and wild attraction of the absolute other",
     primary_collapse_type: "Sacred comfort collapse",
     edges: [
       { target: "underhill", type: "ANTICIPATES", description: "Provides categories of mystical terror/beauty" }
@@ -1185,7 +1185,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Evelyn Underhill",
     node_class: "Figure",
     tradition: "Mysticism / Academic Scrutiny",
-    phenomenological_extraction: "Systematization of mystical development into five core stages: awakening, purgation, illumination, dark night, divine union",
+    core_insight: "Systematization of mystical development into five core stages: awakening, purgation, illumination, dark night, divine union",
     primary_collapse_type: "Ordinary consciousness collapse",
     edges: [
       { target: "john_of_the_cross", type: "DEVELOPS", description: "Normalizes Spanish Carmelite dark night studies for modern psychology" }
@@ -1201,7 +1201,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Aldous Huxley",
     node_class: "Figure",
     tradition: "Perennial Philosophy",
-    phenomenological_extraction: "Universalist spiritual core; chemical and mystical experiences as doors of perception bypassing normal protective brain filters",
+    core_insight: "Universalist spiritual core; chemical and mystical experiences as doors of perception bypassing normal protective brain filters",
     primary_collapse_type: "Ordinary perception collapse",
     edges: [
       { target: "vivekananda", type: "DEVELOPS", description: "Extends modern Hindu universalism to contemporary western drug research" },
@@ -1218,7 +1218,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Walter Stace",
     node_class: "Figure",
     tradition: "Academic Philosophy of Mysticism",
-    phenomenological_extraction: "Phenomenological division of mysticism into 'extrovertive' (physical unity) and 'introvertive' (pure spatial and identity vacuum)",
+    core_insight: "Phenomenological division of mysticism into 'extrovertive' (physical unity) and 'introvertive' (pure spatial and identity vacuum)",
     primary_collapse_type: "Self-world boundary collapse",
     edges: [
       { target: "hood_scale", type: "ANTICIPATES", description: "Categories used directly to construct the Hood Mysticism Scale" }
@@ -1234,7 +1234,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Ralph Hood",
     node_class: "Figure",
     tradition: "Psychometrics / Psychology",
-    phenomenological_extraction: "Scientific measurement of mystical reports; validating dimensions of ego loss, unity, positive affect, and ineffability",
+    core_insight: "Scientific measurement of mystical reports; validating dimensions of ego loss, unity, positive affect, and ineffability",
     primary_collapse_type: "Scientific assessment of collapse reports",
     edges: [
       { target: "stace_walter", type: "DEVELOPS", description: "Operationalized Stace's categories into modern Hood M-Scale" }
@@ -1250,7 +1250,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Walter Pahnke",
     node_class: "Figure",
     tradition: "Clinical Psychedelics Research",
-    phenomenological_extraction: "Experimental elicitation of complete mystical experiences in seminary students using psilocybin",
+    core_insight: "Experimental elicitation of complete mystical experiences in seminary students using psilocybin",
     primary_collapse_type: "Ordinary consciousness collapse",
     edges: [
       { target: "griffiths", type: "ANTICIPATES", description: "Prefigures Griffiths' clinical updates forty years later" },
@@ -1267,7 +1267,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Timothy Leary",
     node_class: "Figure",
     tradition: "Harvard Psilocybin Project",
-    phenomenological_extraction: "Consciousness alteration; the complete breaking of ordinary linguistic game coordinates to touch raw reality",
+    core_insight: "Consciousness alteration; the complete breaking of ordinary linguistic game coordinates to touch raw reality",
     primary_collapse_type: "Linguistic game collapse",
     edges: [
       { target: "pahnke", type: "DEVELOPS", description: "Academic supervisor supporting Pahnke's chapel trials" }
@@ -1283,7 +1283,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Roland Griffiths",
     node_class: "Figure",
     tradition: "Modern Clinical Psychedelics Research",
-    phenomenological_extraction: "Rigorous scientific validation that psilocybin can occasion authentic mystical-type experiences of enduring value",
+    core_insight: "Rigorous scientific validation that psilocybin can occasion authentic mystical-type experiences of enduring value",
     primary_collapse_type: "Ego/world ordinary-state collapse",
     edges: [
       { target: "pahnke", type: "DEVELOPS", description: "Replicates and hardens the safety and metrics of early psychiatric efforts" }
@@ -1299,7 +1299,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Robert Forman",
     node_class: "Figure",
     tradition: "Philosophy of Mysticism",
-    phenomenological_extraction: "Pure Consciousness Events (PCEs); mystical states empty of all specific objects, thoughts, and concepts, challenging constructivist models",
+    core_insight: "Pure Consciousness Events (PCEs); mystical states empty of all specific objects, thoughts, and concepts, challenging constructivist models",
     primary_collapse_type: "Content/subject-object collapse",
     edges: [
       { target: "constructivism", type: "PRESSURE_TESTS", description: "Argues PCEs exhibit lack of cultural/doctrinal content, exposing pre-linguistic core" }
@@ -1315,7 +1315,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Constructivism",
     node_class: "Objection",
     tradition: "Academic Philosophy of Religion",
-    phenomenological_extraction: "There is no unmediated mystical state; all human experience is radically constructed and shaped by prior language, dogmatics, and culture",
+    core_insight: "There is no unmediated mystical state; all human experience is radically constructed and shaped by prior language, dogmatics, and culture",
     primary_collapse_type: "Naïve perennialism collapse",
     edges: [
       { target: "huxley", type: "PRESSURE_TESTS", description: "Rejects Huxley's perennial common core as poor scholarship" },
@@ -1332,7 +1332,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Mysticism",
     node_class: "Tradition",
     tradition: "Academic Comparative Religion",
-    phenomenological_extraction: "Diverse reports of oneness, ineffability, ultimate truth, and modified boundaries of time and the self",
+    core_insight: "Diverse reports of oneness, ineffability, ultimate truth, and modified boundaries of time and the self",
     primary_collapse_type: "Ordinary experience collapse",
     edges: [
       { target: "underhill", type: "DEVELOPS", description: "Subject of Underhill's developmental cataloging" },
@@ -1349,7 +1349,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Psychedelic Experience",
     node_class: "Tradition",
     tradition: "Clinical Psychiatry / Comparative Studies",
-    phenomenological_extraction: "Ego-dissolution, spatial-temporal distortion, profound visual beauty, and dread; closely mimicking natural mystical report",
+    core_insight: "Ego-dissolution, spatial-temporal distortion, profound visual beauty, and dread; closely mimicking natural mystical report",
     primary_collapse_type: "Self-world collapse",
     edges: [
       { target: "mysticism_field", type: "WITNESSES", description: "Parallels natural mystical reports under controlled settings" }
@@ -1365,7 +1365,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Emile Cioran",
     node_class: "Figure",
     tradition: "French Pessimism / Literature of Despair",
-    phenomenological_extraction: "Aphoristic despair, lucid insomnia, radical refusal of system-building, finding a strange sanctuary in absolute decay",
+    core_insight: "Aphoristic despair, lucid insomnia, radical refusal of system-building, finding a strange sanctuary in absolute decay",
     primary_collapse_type: "System / consolation collapse",
     edges: [
       { target: "ecclesiastes", type: "DEVELOPS", description: "Brings biblical vanity to ultimate modern literary fatigue" },
@@ -1383,7 +1383,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Peter Wessel Zapffe",
     node_class: "Figure",
     tradition: "Schopenhauerian Existential Pessimism",
-    phenomenological_extraction: "The tragic mistake of human consciousness over-developing; four mechanisms of defense: isolation, anchoring, distraction, sublimating",
+    core_insight: "The tragic mistake of human consciousness over-developing; four mechanisms of defense: isolation, anchoring, distraction, sublimating",
     primary_collapse_type: "Consciousness-as-burden collapse",
     edges: [
       { target: "becker", type: "ANTICIPATES", description: "Directly prefigures Becker's hero systems with his 'anchoring' and 'distraction' mechanisms" },
@@ -1400,7 +1400,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Thomas Ligotti",
     node_class: "Figure",
     tradition: "Contemporary Horror Philosophy",
-    phenomenological_extraction: "The puppet-self; human consciousness as a malignant, useless mutation; the universe as a terrifying, empty machinery of horror",
+    core_insight: "The puppet-self; human consciousness as a malignant, useless mutation; the universe as a terrifying, empty machinery of horror",
     primary_collapse_type: "Normality / selfhood collapse",
     edges: [
       { target: "zapffe", type: "DEVELOPS", description: "Brings Zapffe's evolutionary tragic view into clinical horror" }
@@ -1416,7 +1416,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Philipp Mainländer",
     node_class: "Figure",
     tradition: "German Pessimism",
-    phenomenological_extraction: "The death of God as actual historic event; the universe as the decaying corpse of a God who willed non-existence, driving to suicide",
+    core_insight: "The death of God as actual historic event; the universe as the decaying corpse of a God who willed non-existence, driving to suicide",
     primary_collapse_type: "Being / value collapse",
     edges: [
       { target: "schopenhauer", type: "DEVELOPS", description: "Translates Schopenhauer's metaphysical Will into a physical will to die" }
@@ -1432,7 +1432,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Giacomo Leopardi",
     node_class: "Figure",
     tradition: "Italian Literary Pessimism",
-    phenomenological_extraction: "Cosmic indifference; nature as a cold stepmother actively destroying her children; human pleasure as mere temporary lack of pain",
+    core_insight: "Cosmic indifference; nature as a cold stepmother actively destroying her children; human pleasure as mere temporary lack of pain",
     primary_collapse_type: "Nature-as-good collapse",
     edges: [
       { target: "schopenhauer", type: "ANTICIPATES", description: "Prefigures Schopenhauer's philosophical despair within poetry and essays" }
@@ -1448,7 +1448,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Eduard von Hartmann",
     node_class: "Figure",
     tradition: "German Pessimism",
-    phenomenological_extraction: "The unconscious will; the cosmic development as progress toward universal conscious self-destruction",
+    core_insight: "The unconscious will; the cosmic development as progress toward universal conscious self-destruction",
     primary_collapse_type: "Optimism collapse",
     edges: [
       { target: "schopenhauer", type: "DEVELOPS", description: "Synthesized Hegelian dialectic and Schopenhauerian pessimist will" }
@@ -1464,7 +1464,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Sigmund Freud",
     node_class: "Figure",
     tradition: "Psychoanalysis",
-    phenomenological_extraction: "The death drive (Todestrieb); civilization built on the structural repression of biological drives, doomed to permanent discontent",
+    core_insight: "The death drive (Todestrieb); civilization built on the structural repression of biological drives, doomed to permanent discontent",
     primary_collapse_type: "Rational self-mastery collapse",
     edges: [
       { target: "becker", type: "ANTICIPATES", description: "Pioneered clinical depth psychology which Becker reformulates" }
@@ -1480,7 +1480,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Otto Rank",
     node_class: "Figure",
     tradition: "Psychoanalysis",
-    phenomenological_extraction: "Birth trauma; human creativity and heroization as direct, desperate response to primal terror of separation and death",
+    core_insight: "Birth trauma; human creativity and heroization as direct, desperate response to primal terror of separation and death",
     primary_collapse_type: "Self-security collapse",
     edges: [
       { target: "becker", type: "DEVELOPS", description: "Deeply reformulates Rankian theories of creative heroization as primary drive" }
@@ -1496,7 +1496,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Carl Jung",
     node_class: "Figure",
     tradition: "Analytical Psychology",
-    phenomenological_extraction: "The shadow and archetype deconstruction; egoic sovereignty collapse as necessary step toward individuation",
+    core_insight: "The shadow and archetype deconstruction; egoic sovereignty collapse as necessary step toward individuation",
     primary_collapse_type: "Ego sovereignty collapse",
     edges: [
       { target: "mysticism_field", type: "DEVELOPS", description: "Maps mystical reports into archetypal symbols of the deep collective mind" }
@@ -1512,7 +1512,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Franz Kafka",
     node_class: "Figure",
     tradition: "Absurdist Existential Literature",
-    phenomenological_extraction: "The impenetrable, hostile bureaucracy; human action trapped in arbitrary, infinite corridors under invisible judgment",
+    core_insight: "The impenetrable, hostile bureaucracy; human action trapped in arbitrary, infinite corridors under invisible judgment",
     primary_collapse_type: "Social/world intelligibility collapse",
     edges: [
       { target: "alienation_concept", type: "WITNESSES", description: "Supreme dramaturgical witness to estrangement" }
@@ -1528,7 +1528,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Samuel Beckett",
     node_class: "Figure",
     tradition: "Theatre of the Absurd",
-    phenomenological_extraction: "Absolute exhaustion of language and action; figures waiting forever for something that never arrives, conversing in empty gaps",
+    core_insight: "Absolute exhaustion of language and action; figures waiting forever for something that never arrives, conversing in empty gaps",
     primary_collapse_type: "Narrative/action collapse",
     edges: [
       { target: "absurd_concept", type: "WITNESSES", description: "Stripped existentialism of heroic activism (Camus) in favor of naked passive waiting" }
@@ -1544,7 +1544,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Mitchell Heisman",
     node_class: "Figure",
     tradition: "Limit-Situation Text",
-    phenomenological_extraction: "The claim that rational suicide represents the highest achievement of objective reason, completely breaking biological bias",
+    core_insight: "The claim that rational suicide represents the highest achievement of objective reason, completely breaking biological bias",
     primary_collapse_type: "Reason-as-life-support collapse",
     edges: [
       { target: "rational_suicide", type: "WITNESSES", description: "Extreme intellectual experiment using code-level negation" }
@@ -1560,7 +1560,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Jorge Luis Borges",
     node_class: "Figure",
     tradition: "Argentine Philosophical Literature",
-    phenomenological_extraction: "The library of Babel; infinity as a terrifying prison; the instability of memory and ego identity",
+    core_insight: "The library of Babel; infinity as a terrifying prison; the instability of memory and ego identity",
     primary_collapse_type: "Knowledge/order collapse",
     edges: [
       { target: "epistemic_abyss", type: "WITNESSES", description: "Labyrinthine deconstruction of complete archives" }
@@ -1576,7 +1576,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Edgar Allan Poe",
     node_class: "Figure",
     tradition: "Gothic Romanticism",
-    phenomenological_extraction: "Obsessive descent into madness, decay, and premature burial; terror of the physical dissolution of boundaries",
+    core_insight: "Obsessive descent into madness, decay, and premature burial; terror of the physical dissolution of boundaries",
     primary_collapse_type: "Psychological stability collapse",
     edges: [
       { target: "horror_concept", type: "WITNESSES", description: "Delineates internal collapse of rationality before morbid obsessions" }
@@ -1592,7 +1592,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Montaigne",
     node_class: "Figure",
     tradition: "Skepticism",
-    phenomenological_extraction: "What do I know? (Que sçay-je?); the complete instability of human opinion, memory, and physical stability",
+    core_insight: "What do I know? (Que sçay-je?); the complete instability of human opinion, memory, and physical stability",
     primary_collapse_type: "Rational certainty collapse",
     edges: [
       { target: "skepticism", type: "WITNESSES", description: "Pioneered modern self-reflexive doubt" }
@@ -1608,7 +1608,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "David Hume",
     node_class: "Figure",
     tradition: "Empiricism / Skepticism",
-    phenomenological_extraction: "Deconstruction of causation and the unified self; physical world as mere habit of association",
+    core_insight: "Deconstruction of causation and the unified self; physical world as mere habit of association",
     primary_collapse_type: "Epistemic necessity collapse",
     edges: [
       { target: "skepticism", type: "WITNESSES", description: "Radically limited human claims on objective cause" }
@@ -1624,7 +1624,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "W.K. Clifford",
     node_class: "Figure",
     tradition: "Evidentialism",
-    phenomenological_extraction: "The claim that believing on insufficient evidence is a severe moral failure, not a benign subjective choice",
+    core_insight: "The claim that believing on insufficient evidence is a severe moral failure, not a benign subjective choice",
     primary_collapse_type: "Unjustified belief collapse",
     edges: [
       { target: "faith_claims", type: "PRESSURE_TESTS", description: "Launches severe moral indictment against optimistic religious leaps" }
@@ -1640,7 +1640,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Bertrand Russell",
     node_class: "Figure",
     tradition: "Analytic Philosophy",
-    phenomenological_extraction: "A free man's worship; constructing courage and dignity on the firm foundation of unyielding despair before a cold mechanical cosmos",
+    core_insight: "A free man's worship; constructing courage and dignity on the firm foundation of unyielding despair before a cold mechanical cosmos",
     primary_collapse_type: "Metaphysical consolation collapse",
     edges: [
       { target: "secular_skepticism", type: "WITNESSES", description: "Maintains ethical dignity while rejecting cosmic purpose" }
@@ -1656,7 +1656,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Wittgenstein",
     node_class: "Figure",
     tradition: "Analytic Philosophy / Language-Limit",
-    phenomenological_extraction: "The limits of my language mean the limits of my world; what we cannot speak of we must pass over in silence",
+    core_insight: "The limits of my language mean the limits of my world; what we cannot speak of we must pass over in silence",
     primary_collapse_type: "Language collapse",
     edges: [
       { target: "pseudo_dionysius", type: "ANTICIPATES", description: "Modern secular analogue to apophatic theological silence" }
@@ -1672,7 +1672,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Jean-Paul Sartre",
     node_class: "Figure",
     tradition: "Existentialism",
-    phenomenological_extraction: "Existence precedes essence; nausea at raw brute physical contingency; mankind is condemned to be free",
+    core_insight: "Existence precedes essence; nausea at raw brute physical contingency; mankind is condemned to be free",
     primary_collapse_type: "Essence / given meaning collapse",
     edges: [
       { target: "nihiltheism", type: "CONTRASTS_WITH", description: "Our platform rejects Sartre's humanist self-making as soft comfort" }
@@ -1688,7 +1688,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Albert Camus",
     node_class: "Figure",
     tradition: "Absurdism",
-    phenomenological_extraction: "The absurd: mismatch between human demand for explanation and cold silence of the universe; Sisyphus' heroic rebellion",
+    core_insight: "The absurd: mismatch between human demand for explanation and cold silence of the universe; Sisyphus' heroic rebellion",
     primary_collapse_type: "Demand-for-meaning/world-silence collapse",
     edges: [
       { target: "nihiltheism", type: "CONTRASTS_WITH", description: "Camus' heroic rebellion is treated as active refusal of deep abyssal collapse" }
@@ -1704,7 +1704,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Karl Jaspers",
     node_class: "Figure",
     tradition: "Existential Philosophy",
-    phenomenological_extraction: "Limit-situations (Grenzsituationen) like death, suffering, guilt, and struggle that shatter everyday security, pointing to transcendence",
+    core_insight: "Limit-situations (Grenzsituationen) like death, suffering, guilt, and struggle that shatter everyday security, pointing to transcendence",
     primary_collapse_type: "Boundary-situation collapse",
     edges: [
       { target: "heidegger", type: "DEVELOPS", description: "Parallels Being and Time's attunements" },
@@ -1721,7 +1721,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Emmanuel Levinas",
     node_class: "Figure",
     tradition: "French Phenomenology / Ethics",
-    phenomenological_extraction: "The ethical face-to-face; egoic self-sovereignty shattered and held hostage by the infinite shock of the concrete other",
+    core_insight: "The ethical face-to-face; egoic self-sovereignty shattered and held hostage by the infinite shock of the concrete other",
     primary_collapse_type: "Self-sovereignty collapse",
     edges: [
       { target: "simone_weil", type: "DEVELOPS", description: "Bridges Weil's unselfish attention into complete ethical ontology" }
@@ -1737,7 +1737,7 @@ export const ontologyNodes: OntologicalNode[] = [
     label: "Simone de Beauvoir",
     node_class: "Figure",
     tradition: "Existentialism / Ethics",
-    phenomenological_extraction: "The ethics of ambiguity; human freedom can only be actualized by actively willing the freedom of others",
+    core_insight: "The ethics of ambiguity; human freedom can only be actualized by actively willing the freedom of others",
     primary_collapse_type: "Fixed meaning collapse",
     edges: [
       { target: "sartre", type: "DEVELOPS", description: "Coordinates Sartre's radical freedom into concrete social and gendered realities" },

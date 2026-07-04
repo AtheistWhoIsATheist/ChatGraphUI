@@ -425,7 +425,7 @@ async function startServer() {
 
       let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
       const prompt = `
-        You are the Journal314 Occurrence-Elevation Discriminator.
+        You are the Journal314 Insight Analyzer.
         Analyze the following text by ${thinker || 'Unknown'} from "${source_file || 'Unknown'}".
         
         Detect and map where philosophical language shifts from descriptive occurrence into structural elevation.

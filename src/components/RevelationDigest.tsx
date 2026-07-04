@@ -29,19 +29,19 @@ export function RevelationDigest() {
 *Date: ${new Date().toLocaleDateString()}*
 
 ## Structural Shift
-Over the past 7 days, the Journal314 and REN entries have demonstrated significant cross-alignment. The boundaries between disparate transcriptions have blurred, revealing a shared structural grammar.
+Over the past 7 days, the Journal314 and The Religious Experience of Nihilism entries have demonstrated significant cross-alignment. The boundaries between disparate transcriptions have blurred, revealing a shared structural grammar.
 
 ## Consolidated Entries
-- **Node: "Entry 45"** - *Pruned*. This node was identified as redundant, failing to capture the structural weight of the event. It has been merged into **"REN Encounter 2"** and **"Structural Rupture"**.
+- **Node: "Entry 45"** - *Pruned*. This node was identified as redundant, failing to capture the structural weight of the event. It has been merged into **"Encounter 2"** and **"Structural Rupture"**.
 - **Node: "The Event"** - *Densified*. The concept has been split into "Passive Observation" and "Active Reconstruction," providing a more rigorous framework for analysis.
 
 ## Transcendent Links Discovered
-- A new edge has been forged between Journal314 and REN logs, indicating temporal overlap.
+- A new edge has been forged between Journal314 and The Religious Experience of Nihilism logs, indicating temporal overlap.
 - The tension between independent observational accounts has been synthesized under a unified framework.
 
 ## Active Aporias
 1. If the events overlap structurally, what are the discrepancies in the timeline?
-2. How do subjective REN logs differ from Journal314 empirical accounts?
+2. How do subjective The Religious Experience of Nihilism logs differ from Journal314 empirical accounts?
             `
           }
         ];
@@ -70,12 +70,12 @@ Over the past 7 days, the Journal314 and REN entries have demonstrated significa
               <Eye className="w-8 h-8 text-zinc-300 animate-pulse-slow" />
             </div>
             <div>
-              <h1 className="text-4xl font-semibold tracking-widest text-white ">REN Synthesis Digest</h1>
+              <h1 className="text-4xl font-semibold tracking-widest text-white ">The Religious Experience of Nihilism Synthesis Digest</h1>
               <p className="text-zinc-300 font-bold text-xs tracking-widest  mt-2">Automated Report</p>
             </div>
           </div>
           <p className="text-zinc-400 max-w-2xl leading-relaxed text-sm font-bold indent-8 border-l-2 border-white/10 pl-4 bg-white/5 p-4 text-justify rounded-xl transition duration-300 backdrop-blur-md">
-            An autonomous synthesis of the Knowledgebase's evolution. This digest narrativizes the structural relationships between Journal314 entries and REN transcripts.
+            An autonomous synthesis of the Knowledgebase's evolution. This digest narrativizes the structural relationships between Journal314 entries and The Religious Experience of Nihilism transcripts.
           </p>
         </header>
 

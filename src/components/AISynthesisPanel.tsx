@@ -75,7 +75,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
         .join('\n');
 
       const prompt = `
-        Analyze the following phenomenological report or philosophical text in the context of Journal314 and Recursive Existential Nihilism (REN).
+        Analyze the following phenomenological report or philosophical text in the context of Journal314 and The Religious Experience of Nihilism.
         
         CONTEXT (EXISTING TOPOLOGY):
         ${contextSummary}
@@ -83,7 +83,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
         TASK:
         1. Extract the key Entities PRESENT in the substrate. Map them to these types: 
            - 'void_concept', 'thinker', 'paradox', 'ren_stage', 'axiom', 'argument', 'synthesis'.
-        2. INFER STRUCTURAL GAPS: Propose nodes/links NOT in text but logically implied by REN to bridge to the EXISTING TOPOLOGY.
+        2. INFER STRUCTURAL GAPS: Propose nodes/links NOT in text but logically implied by The Religious Experience of Nihilism to bridge to the EXISTING TOPOLOGY.
         3. AGNOSTIC FRAMING: Tag every claim with an Epistemic Marker:
            - [TEXTUAL]: Direct extraction.
            - [PHENOMENOLOGICAL]: Experience report.
@@ -221,7 +221,7 @@ export function AISynthesisPanel({ nodes: existingNodes, onIntegrate, onUndo, ca
             <BrainCircuit className="w-8 h-8 text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-serif font-light tracking-[0.2em] text-white">AXIOMFORGE</h1>
+            <h1 className="text-3xl font-serif font-light tracking-[0.2em] text-white">SYNTHESIS ENGINE</h1>
             <div className="text-[9px] font-bold tracking-[0.3em] text-emerald-500/60 mt-1 uppercase">Semantic Ingestion & Synthesis Protocol</div>
           </div>
         </div>

@@ -109,6 +109,17 @@ export function getNodesCollection() {
   if (!db) return null;
   
   return {
+    findOne: async (filter: any) => {
+      if (filter.id) {
+        const row = db.prepare('SELECT * FROM nodes WHERE id = ?').get(filter.id);
+        return row;
+      }
+      if (filter.label) {
+        const row = db.prepare('SELECT * FROM nodes WHERE label = ?').get(filter.label);
+        return row;
+      }
+      return null;
+    },
     insertOne: async (node: any) => {
       const stmt = db.prepare(`
         INSERT INTO nodes (

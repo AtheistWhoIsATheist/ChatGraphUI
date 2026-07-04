@@ -16,6 +16,7 @@ import { ThreeGraph } from './components/ThreeGraph';
 import { ThemeClusters } from './components/ThemeClusters';
 import { GlobalTopology } from './components/GlobalTopology';
 import { AISynthesisPanel } from './components/AISynthesisPanel';
+import { InfranodusEngine } from './components/InfranodusEngine';
 import { corpusNodes, corpusLinks, Node, Link } from './data/corpus';
 import { 
   Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles, ShieldCheck, HardDriveDownload, Info, HardDrive, Microscope, Box, BarChart3, Group, Network
@@ -186,6 +187,8 @@ function App() {
         );
       case 'comparative_workbench':
         return <ResearchWorkbench />;
+      case 'infranodus':
+        return <InfranodusEngine />;
       default:
         return null;
     }
@@ -208,7 +211,7 @@ function App() {
               className="text-center space-y-6"
             >
               <h1 className="text-4xl md:text-6xl font-serif tracking-widest text-zinc-200 animate-glitch">
-                Journal314 & REN Analysis Engine
+                Journal314 & Nihiltheism Analysis Engine
               </h1>
               <p className="text-zinc-500 font-mono tracking-widest text-sm">
                 Structural Textual Analysis

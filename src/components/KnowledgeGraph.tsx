@@ -1,6 +1,7 @@
-import { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import * as d3 from 'd3';
+import jLouvain from 'jlouvain';
 import { Node, NodeType } from '../data/corpus';
 import { NT_NODE_COLORS } from '../data/nt_schema';
 import { cn } from '../lib/utils';
@@ -42,8 +43,8 @@ const NODE_COLORS: Record<string, string> = {
 
 const getHierarchicalColor = (node: Node) => {
   if (node.id === 'void') return '#ffffff'; // The Singularity is pure light
-  if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) return '#d946ef'; // Cosmic Fuchsia
-  if (['anti_reification', 'kenotic_constraints', 'ontodicy_collapse', 'ren_phenomenology'].includes(node.id) || node.id.includes('codex')) return '#00e5ff'; // Electric Cyan
+  if (['presence', 'collapse', 'spiritual_emergency', 'the_religious_experience_of_nihilism'].includes(node.id)) return '#d946ef'; // Cosmic Fuchsia
+  if (['anti_reification', 'kenotic_constraints', 'ontodicy_collapse', 'ren_phenomenology'].includes(node.id) || node.id.includes('framework')) return '#00e5ff'; // Electric Cyan
   return NODE_COLORS[node.type] || NODE_COLORS[node.type as string] || '#00f5d4';
 };
 
@@ -51,7 +52,7 @@ const getHierarchicalColor = (node: Node) => {
 
 import { useAppStore } from '../store/appStore';
 
-export function KnowledgeGraph({ 
+export const KnowledgeGraph = React.memo(function KnowledgeGraph({ 
   onNodeSelect: externalOnNodeSelect, 
 }: { 
   onNodeSelect?: (node: Node) => void; 
@@ -306,15 +307,76 @@ export function KnowledgeGraph({
     return lLinks;
   }, [nodes, initialLinks]);
 
-  const activeLatentLinks = useMemo(() => {
-    if (!showLatent) return [];
-    return latentLinksBase.map(ll => {
-      const source = layoutNodes.find(n => n.id === ll.sourceId);
-      const target = layoutNodes.find(n => n.id === ll.targetId);
+  // --- PERMANENT GLOBAL SCALING LOGIC ---
+  const nodeDegrees = useMemo(() => {
+    const degrees: Record<string, number> = {};
+    initialLinks.forEach(link => {
+      const sourceId = typeof link.source === 'string' ? link.source : (link.source as any).id;
+      const targetId = typeof link.target === 'string' ? link.target : (link.target as any).id;
+      degrees[sourceId] = (degrees[sourceId] || 0) + 1;
+      degrees[targetId] = (degrees[targetId] || 0) + 1;
+    });
+    return degrees;
+  }, [initialLinks]);
+
+  const centralityScale = useMemo(() => {
+    const degrees = Object.values(nodeDegrees);
+    const minDegree = degrees.length ? Math.min(...degrees) : 0;
+    const maxDegree = degrees.length ? Math.max(...degrees) : 1;
+    return d3.scaleLinear()
+      .domain([minDegree, maxDegree || 1])
+      .range([12, 65]);
+  }, [nodeDegrees]);
+
+  const calculateNodeScale = (node: Node) => {
+    const degree = nodeDegrees[node.id] || 0;
+    const radius = centralityScale(degree);
+    const saturation = node.metadata?.saturation_level || 50;
+    const aif = (Math.min(degree, 10) / 10) * 0.4 + (saturation / 100) * 0.6;
+    
+    return {
+      radius,
+      aif,
+      glowIntensity: aif * 0.6,
+      auraSize: aif * 25
+    };
+  };
+
+  
+  const { visibleNodes, visibleLinks, activeLatentLinks } = useMemo(() => {
+    if (layoutNodes.length <= 1000) {
+      return { 
+        visibleNodes: layoutNodes, 
+        visibleLinks: links,
+        activeLatentLinks: showLatent ? latentLinksBase.map(ll => {
+          const source = layoutNodes.find(n => n.id === ll.sourceId);
+          const target = layoutNodes.find(n => n.id === ll.targetId);
+          if (source && target) return { source, target, reason: ll.reason };
+          return null;
+        }).filter(Boolean) as { source: any; target: any; reason: string }[] : []
+      };
+    }
+    
+    const sortedNodes = [...layoutNodes].sort((a, b) => (nodeDegrees[b.id] || 0) - (nodeDegrees[a.id] || 0));
+    const throttledNodes = sortedNodes.slice(0, 1000);
+    const throttledNodeIds = new Set(throttledNodes.map(n => n.id));
+    
+    const throttledLinks = links.filter(link => {
+      const sourceId = typeof link.source === 'string' ? link.source : (link.source as any).id;
+      const targetId = typeof link.target === 'string' ? link.target : (link.target as any).id;
+      return throttledNodeIds.has(sourceId) && throttledNodeIds.has(targetId);
+    });
+
+    const throttledLatentLinks = showLatent ? latentLinksBase.filter(ll => throttledNodeIds.has(ll.sourceId) && throttledNodeIds.has(ll.targetId)).map(ll => {
+      const source = throttledNodes.find(n => n.id === ll.sourceId);
+      const target = throttledNodes.find(n => n.id === ll.targetId);
       if (source && target) return { source, target, reason: ll.reason };
       return null;
-    }).filter(Boolean) as { source: any; target: any; reason: string }[];
-  }, [showLatent, latentLinksBase, layoutNodes]);
+    }).filter(Boolean) as { source: any; target: any; reason: string }[] : [];
+    
+    return { visibleNodes: throttledNodes, visibleLinks: throttledLinks, activeLatentLinks: throttledLatentLinks };
+  }, [layoutNodes, links, nodeDegrees, latentLinksBase, showLatent]);
+
 
   // --- INSIGHT GENERATOR LOGIC ---
   const getInsights = (nodeId: string) => {
@@ -342,7 +404,62 @@ export function KnowledgeGraph({
 
   const selectedInsights = selectedNodeId ? getInsights(selectedNodeId) : null;
 
+  
+  // --- COMMUNITY DETECTION ---
+  const communities = useMemo(() => {
+    if (nodes.length === 0) return {};
+    
+    const edgeData = initialLinks.map(link => {
+      const sourceId = typeof link.source === 'string' ? link.source : (link.source as any).id;
+      const targetId = typeof link.target === 'string' ? link.target : (link.target as any).id;
+      return { source: sourceId, target: targetId, weight: 1.0 };
+    });
+    
+    const nodeIds = nodes.map(n => n.id);
+    
+    try {
+      const jL = jLouvain().nodes(nodeIds).edges(edgeData);
+      return jL();
+    } catch (e) {
+      console.warn("Louvain clustering failed:", e);
+      return {};
+    }
+  }, [nodes, initialLinks]);
+
+  const clusterColorScale = useMemo(() => {
+    return d3.scaleOrdinal(d3.schemeCategory10);
+  }, []);
+
+  const getClusterColor = (node: Node) => {
+    const clusterId = communities[node.id];
+    if (clusterId !== undefined) {
+      return clusterColorScale(clusterId.toString());
+    }
+    return getHierarchicalColor(node);
+  };
+
   // --- PERSISTENT RELATIONAL WEB LOGIC ---
+  
+  const linkWeights = useMemo(() => {
+    const weights: Record<string, number> = {};
+    initialLinks.forEach(link => {
+      const sourceId = typeof link.source === 'string' ? link.source : (link.source as any).id;
+      const targetId = typeof link.target === 'string' ? link.target : (link.target as any).id;
+      const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
+      weights[key] = (weights[key] || 0) + 1;
+    });
+    return weights;
+  }, [initialLinks]);
+
+  const linkWeightScale = useMemo(() => {
+    const weights = Object.values(linkWeights);
+    const minWeight = weights.length ? Math.min(...weights) : 1;
+    const maxWeight = weights.length ? Math.max(...weights) : 1;
+    return d3.scaleLinear()
+      .domain([minWeight, maxWeight || 1])
+      .range([1.2, 6.0]);
+  }, [linkWeights]);
+
   const calculateLinkStyle = (link: any) => {
     const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
     const targetId = typeof link.target === 'string' ? link.target : link.target.id;
@@ -367,7 +484,8 @@ export function KnowledgeGraph({
     
     // 1. Dynamic Weight & Opacity
     let opacity = structuralIntegrity ? 0.25 : 0.1;
-    let width = 1.2;
+    const linkKey = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
+    let width = linkWeightScale(linkWeights[linkKey] || 1);
     
     if (isFoundational) {
       opacity = structuralIntegrity ? 0.5 : 0.2;
@@ -391,7 +509,7 @@ export function KnowledgeGraph({
     let isFlowing = false;
     
     // Resolve dynamic colors for the cluster links
-    const sourceColor = sourceNode ? getHierarchicalColor(sourceNode) : '#ffffff';
+    const sourceColor = sourceNode ? getClusterColor(sourceNode) : '#ffffff';
     let color = sourceColor;
 
     if (link.type === 'explores') {
@@ -442,60 +560,14 @@ export function KnowledgeGraph({
     };
   };
 
-  // --- PERMANENT GLOBAL SCALING LOGIC ---
-  const nodeDegrees = useMemo(() => {
-    const degrees: Record<string, number> = {};
-    initialLinks.forEach(link => {
-      const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
-      const targetId = typeof link.target === 'string' ? link.target : link.target.id;
-      degrees[sourceId] = (degrees[sourceId] || 0) + 1;
-      degrees[targetId] = (degrees[targetId] || 0) + 1;
-    });
-    return degrees;
-  }, [initialLinks]);
-
-  const calculateNodeScale = (node: Node) => {
-    const degree = nodeDegrees[node.id] || 0;
-    const saturation = node.metadata?.saturation_level || 50;
-    const voidQuotient = node.metadata?.void_quotient || 0;
-    
-    // 1. Base Scale by Type/ID (Hierarchical)
-    let baseRadius = 15;
-    if (node.id === 'void') baseRadius = 45; // Level 1: Singularity
-    else if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(node.id)) baseRadius = 35; // Level 2: Foundations
-    else if (node.type === 'methodology' || ['anti_reification', 'kenotic_constraints', 'ontodicy_collapse', 'ren_phenomenology'].includes(node.id) || node.id.includes('codex')) baseRadius = 25; // Level 3: Operations
-    else baseRadius = 12; // Level 4: Specifics
-    
-    // 2. Structural Weighting (Centrality)
-    const centralityBonus = Math.min(degree * 2.5, 25);
-    
-    // 3. Semantic Saturation
-    const saturationMultiplier = 0.8 + (saturation / 100) * 0.4;
-    
-    // 4. Void Quotient Impact
-    const voidMultiplier = 1.0 + (voidQuotient * 0.4);
-    
-    const finalRadius = (baseRadius + centralityBonus) * saturationMultiplier * voidMultiplier;
-    
-    // 4. Abyssal Integration Factor (AIF)
-    const aif = (Math.min(degree, 10) / 10) * 0.4 + (saturation / 100) * 0.6;
-    
-    return {
-      radius: Math.max(6, Math.min(65, finalRadius)),
-      aif,
-      glowIntensity: aif * 0.6,
-      auraSize: aif * 25
-    };
-  };
-
   // --- BUOY-HOVER ANIMATION ENGINE ---
   const layoutNodesRef = useRef(layoutNodes);
   const linksRef = useRef(links);
   const activeLatentLinksRef = useRef(activeLatentLinks);
 
   useEffect(() => {
-    layoutNodesRef.current = layoutNodes;
-    linksRef.current = links;
+    layoutNodesRef.current = visibleNodes;
+    linksRef.current = visibleLinks;
     activeLatentLinksRef.current = activeLatentLinks;
   }, [layoutNodes, links, activeLatentLinks]);
 
@@ -787,7 +859,7 @@ export function KnowledgeGraph({
 
         {/* Links */}
         <AnimatePresence>
-          {links.map((link, i) => {
+          {visibleLinks.map((link, i) => {
             if (!link.source || !link.target || typeof link.source === 'string' || typeof link.target === 'string' || isNaN(link.source.x) || isNaN(link.target.x)) return null;
 
             const sourceId = link.source.id;
@@ -874,7 +946,7 @@ export function KnowledgeGraph({
       {/* Nodes */}
       <div className="absolute inset-0 pointer-events-none">
         <AnimatePresence>
-          {layoutNodes.map((node) => {
+          {visibleNodes.map((node) => {
             const hasSearchQuery = searchQuery && searchQuery.trim().length > 0;
             const matchesSearch = hasSearchQuery && node.label.toLowerCase().includes(searchQuery.toLowerCase());
             const isSelected = selectedNodeId === node.id;
@@ -886,7 +958,7 @@ export function KnowledgeGraph({
             );
             
             const isFocusMode = !!selectedNodeId || !!hoveredNodeId || !!hoveredLink;
-            const isConnectedToFocus = links.some(l => 
+            const isConnectedToFocus = visibleLinks.some(l => 
               (l.source?.id === node.id && (l.target?.id === selectedNodeId || l.target?.id === hoveredNodeId)) || 
               (l.target?.id === node.id && (l.source?.id === selectedNodeId || l.source?.id === hoveredNodeId))
             );
@@ -896,7 +968,7 @@ export function KnowledgeGraph({
             // Even darker if not matching focus
             const isDeeplyDimmed = isDimmed && ((isFocusMode && !isConnectedToFocus) || (hasSearchQuery && !matchesSearch));
 
-            const color = getHierarchicalColor(node);
+            const color = getClusterColor(node);
             const scale = calculateNodeScale(node);
 
             return (
@@ -1086,5 +1158,5 @@ export function KnowledgeGraph({
       </AnimatePresence>
     </div>
   );
-}
+});
 

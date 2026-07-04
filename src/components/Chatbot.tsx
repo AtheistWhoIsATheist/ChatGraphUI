@@ -26,7 +26,7 @@ interface ChatbotProps {
 
 export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', text: 'I am the Synthesis Engine for Journal314 and REN analysis. I am now ready to process specific files or prompts under this architecture. Enter your query.' }
+    { role: 'model', text: 'I am the Synthesis Engine for Journal314 and The Religious Experience of Nihilism analysis. I am now ready to process specific files or prompts under this architecture. Enter your query.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -118,7 +118,7 @@ export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
         <div className="flex items-center gap-3">
           <ChevronRight className="w-6 h-6 text-zinc-300" strokeWidth={4} />
           <div>
-            <h2 className="text-sm font-semibold text-zinc-100 tracking-widest ">REN Synthesis Engine</h2>
+            <h2 className="text-sm font-semibold text-zinc-100 tracking-widest ">Synthesis Engine</h2>
             <p className="text-[10px] text-zinc-300  tracking-widest mt-0.5">Synthesis Engine</p>
           </div>
         </div>
@@ -190,7 +190,7 @@ export function Chatbot({ nodes, onCollapse }: ChatbotProps) {
             <span className="text-[10px]  tracking-widest text-zinc-400 font-bold">ENTER TO SEND • SHIFT+ENTER FOR NEWLINE</span>
             <div className="flex items-center gap-2 bg-white/5 border border-white/5 px-3 py-1">
               <div className="w-2 h-2 bg-[#00FF66] shadow-xl"></div>
-              <span className="text-[10px]  tracking-widest text-zinc-300 font-bold">CONTEXT: REN ANALYSIS</span>
+              <span className="text-[10px]  tracking-widest text-zinc-300 font-bold">CONTEXT: The Religious Experience of Nihilism ANALYSIS</span>
             </div>
           </div>
           <div className="relative flex items-start">

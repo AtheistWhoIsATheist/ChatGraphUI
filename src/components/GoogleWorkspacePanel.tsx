@@ -264,9 +264,9 @@ export const GoogleWorkspacePanel: React.FC<GoogleWorkspacePanelProps> = ({
       let finalFolderId = folderId;
       
       // If exporting to a specific auto-created folder at the root
-      if (targetFolderName === 'REN-Analysis-Exports') {
-        setGDriveSyncMessage('Searching for "REN-Analysis-Exports" folder...');
-        const searchUrl = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent("name = 'REN-Analysis-Exports' and mimeType = 'application/vnd.google-apps.folder' and trashed = false")}`;
+      if (targetFolderName === 'Nihiltheism-Analysis-Exports') {
+        setGDriveSyncMessage('Searching for "Nihiltheism-Analysis-Exports" folder...');
+        const searchUrl = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent("name = 'Nihiltheism-Analysis-Exports' and mimeType = 'application/vnd.google-apps.folder' and trashed = false")}`;
         const searchRes = await fetch(searchUrl, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
@@ -280,7 +280,7 @@ export const GoogleWorkspacePanel: React.FC<GoogleWorkspacePanelProps> = ({
           finalFolderId = searchData.files[0].id;
           setGDriveSyncMessage('Existing directory located.');
         } else {
-          setGDriveSyncMessage('Creating "REN-Analysis-Exports" directory...');
+          setGDriveSyncMessage('Creating "Nihiltheism-Analysis-Exports" directory...');
           const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
             method: 'POST',
             headers: {
@@ -288,7 +288,7 @@ export const GoogleWorkspacePanel: React.FC<GoogleWorkspacePanelProps> = ({
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              name: "REN-Analysis-Exports",
+              name: "Nihiltheism-Analysis-Exports",
               mimeType: "application/vnd.google-apps.folder",
               parents: ["root"]
             })
@@ -300,7 +300,7 @@ export const GoogleWorkspacePanel: React.FC<GoogleWorkspacePanelProps> = ({
           
           const createData = await createRes.json();
           finalFolderId = createData.id;
-          setGDriveSyncMessage('Created "REN-Analysis-Exports" directory.');
+          setGDriveSyncMessage('Created "Nihiltheism-Analysis-Exports" directory.');
         }
       }
 
@@ -823,17 +823,17 @@ export const GoogleWorkspacePanel: React.FC<GoogleWorkspacePanelProps> = ({
               </button>
 
               <button
-                onClick={() => handleExportToGDrive('root', 'REN-Analysis-Exports')}
+                onClick={() => handleExportToGDrive('root', 'Nihiltheism-Analysis-Exports')}
                 disabled={gdriveSyncStatus === 'exporting'}
                 className="py-2.5 bg-zinc-900 hover:bg-emerald-950/15 text-emerald-400 hover:text-emerald-300 border border-emerald-500/20 hover:border-emerald-500/40 rounded-xl text-[9px] font-bold tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-1.5"
-                title="Create and export directly into standard 'REN-Analysis-Exports' root directory"
+                title="Create and export directly into standard 'Nihiltheism-Analysis-Exports' root directory"
               >
                 {gdriveSyncStatus === 'exporting' ? (
                   <Loader2 className="w-3 h-3 animate-spin" />
                 ) : (
                   <FolderOpen className="w-3 h-3 text-emerald-500" />
                 )}
-                EXPORT TO "REN-EXPORTS"
+                EXPORT TO "NIHILTHEISM-EXPORTS"
               </button>
             </div>
           </div>

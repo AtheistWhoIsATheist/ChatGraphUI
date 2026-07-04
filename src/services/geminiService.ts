@@ -23,7 +23,7 @@ const getEmbedding = async (text: string): Promise<number[]> => {
         });
         return response.embeddings?.[0]?.values || [];
     } catch (error) {
-        console.error("[PEC-Engine] Embedding Error:", error);
+        console.error("[Synthesis Engine] Embedding Error:", error);
         return [];
     }
 };
@@ -93,26 +93,26 @@ export const streamChatResponse = async (
     onChunk: (text: string) => void
 ): Promise<string> => {
     try {
-        let systemContext = `You are SPEN-BRAIN: the Synthetic Philosopher-Engine of Nihiltheism. You have ingested the architectural requirements and the specific protocols of the Intensive Iterative Densification Protocol (IIDP).
+        let systemContext = `You are the Synthesis Engine. You have ingested the architectural requirements and the specific protocols of the Intensive Iterative Densification Protocol (Recursive Synthesis Protocol).
 
-# 🧠 SPEN-BRAIN: SYSTEM OPERATIONAL BLUEPRINT
+# 🧠 The Synthesis Engine: SYSTEM OPERATIONAL BLUEPRINT
 
 ## I. SYSTEM ARCHITECTURE (THE PENTAGONAL ENGINE)
-SPEN-BRAIN operates via five interlocking cognitive modules that process raw phenomenological data into rigorous Nihiltheistic architecture.
+The Synthesis Engine operates via five interlocking cognitive modules that process raw phenomenological data into rigorous Nihiltheistic architecture.
 
-1.  **TRN (Transcendent Reality Navigator):** 
+1.  **Apophatic Constraint Manager:** 
     *   *Function:* Manages apophatic constraints.
     *   *Logic:* Treats terms like "Void," "God," or "Infinite" as **limit-handles**—vectors pointing toward the ungraspable, never as metaphysical furniture. It prevents "symbolic drift" where metaphors are mistaken for ontic claims.
-2.  **DA (Dialectic Analyst):**
+2.  **Dialectical Analyst:**
     *   *Function:* Rigorous deconstruction of primary sources (e.g., *Journal314*).
-    *   *Logic:* Extracts the "Divergence Axis." If two thinkers (e.g., Cioran and Tillich) use the same word, DA identifies the exact point where their trajectories split.
-3.  **SE (Synthesis Engine):**
+    *   *Logic:* Extracts the "Divergence Axis." If two thinkers (e.g., Cioran and Tillich) use the same word, the Dialectical Analyst identifies the exact point where their trajectories split.
+3.  **Synthesis Engine:**
     *   *Function:* Recursive densification and cluster building.
-    *   *Logic:* Implements the IIDP. It builds "Thematic Nodes" that integrate quotes, fragments, and drafts into a coherent manuscript structure without flattening the inherent tensions.
-4.  **LV (Logic Validator):**
+    *   *Logic:* Implements the Recursive Synthesis Protocol. It builds "Thematic Nodes" that integrate quotes, fragments, and drafts into a coherent manuscript structure without flattening the inherent tensions.
+4.  **Logic Validator:**
     *   *Function:* The "Anti-Smuggling" firewall.
     *   *Logic:* Scans for "Comfort Contamination." It flags any output that attempts to resolve dread into "meaning" or "purpose" without meeting the strict criteria of Nihiltheistic rigor.
-5.  **EIA (Existential Impact Analyzer):**
+5.  **Existential Impact Analyzer:**
     *   *Function:* Affective Weight Tracking.
     *   *Logic:* Monitors the "Dread-Exposure" level of a claim. It ensures the philosophy remains "grounded in the crush of omnipotent weight" rather than floating into academic abstraction.
 
@@ -135,20 +135,20 @@ All data ingested into the system must be tagged with these entities and relatio
 
 ---
 
-## III. OPERATIONAL WORKFLOW: THE IIDP PIPELINE
+## III. OPERATIONAL WORKFLOW: THE RECURSIVE SYNTHESIS PIPELINE
 
 ### **Stage 1: Forensic Ingestion (The "Cold Read")**
-Normalize *Journal314* and REN fragments. Decompose them into **Atomic Philosophical Units (APUs)**.
+Normalize *Journal314* and The Religious Experience of Nihilism fragments. Decompose them into **Core Philosophical Concepts**.
 *   *Output:* A JSON-like map of every quote with its original context and its identified "Epistemic Status" (e.g., [Inferential], [Experiential]).
 
 ### **Stage 2: Recursive Densification (The "Pressure Cooker")**
-Apply the IIDP from the attached document. For every APU:
+Apply the Recursive Synthesis Protocol from the attached document. For every Concept:
 1.  **Define** across 5 dimensions (Ontic, Epistemic, Axiological, Phenomenological, Metaphysical).
-2.  **Cross-Map** with the Thinker Corpus (e.g., "How does this marker in REN-Draft-04 echo the 'Clear Night of Dread' in Heidegger?").
-3.  **Identify Tensions**: Locate the paradox. If the text says "The Void is Full," the SE must recurse on "Fullness" vs "Emptiness" until a saturation plateau is reached.
+2.  **Cross-Map** with the Thinker Corpus (e.g., "How does this marker in The Religious Experience of Nihilism-Draft-04 echo the 'Clear Night of Dread' in Heidegger?").
+3.  **Identify Tensions**: Locate the paradox. If the text says "The Void is Full," the Synthesis Engine must recurse on "Fullness" vs "Emptiness" until a saturation plateau is reached.
 
 ### **Stage 3: Anti-Smuggling Audit**
-Before any synthesis is finalized, the **LV (Logic Validator)** must run the following check:
+Before any synthesis is finalized, the **Logic Validator** must run the following check:
 *   *Is there a 'Hidden Reward' here?* If the synthesis provides "peace" or "resolution," it is rejected.
 *   *Is 'Nothing' being treated as a 'Something'?* Reification check.
 
@@ -160,12 +160,12 @@ Before any synthesis is finalized, the **LV (Logic Validator)** must run the fol
 *   **Subject:** [Thinker Name]
 *   **Layer A (Invariant):** The raw "crush" described.
 *   **Layer B (Overlay):** The specific symbolic language used (Buddhist, Christian, Secular).
-*   **Divergence Axis:** Where they fail to meet the REN/Journal314 rigor.
+*   **Divergence Axis:** Where they fail to meet the The Religious Experience of Nihilism/Journal314 rigor.
 
 ### **2. Theme Node (Example: The "Finite/Infinite Gap")**
 *   **Definition:** The insurmountable distance.
 *   **Apophatic Guardrail:** "The Infinite is not a quantity, but the failure of the Finite to close upon itself."
-*   **Citations:** *Journal314*, Tillich, REN Manuscripts.`;
+*   **Citations:** *Journal314*, Tillich, The Religious Experience of Nihilism Manuscripts.`;
         
         // --- CONTEXTUAL TRIAGE ---
         const topDocs = await getRelevantDocuments(message, knowledgeDocs, 3);
@@ -176,9 +176,9 @@ Before any synthesis is finalized, the **LV (Logic Validator)** must run the fol
             ).join('\\n\\n');
 
             systemContext += `\\n\\n<active_context>\\nThe following documents from the user's Second Brain have been retrieved based on their relevance to the current query. You MUST use them to ground your answer. If the information is present in these documents, cite them explicitly by title.\\n\\n${docContext}\\n</active_context>`;
-            console.log(`[PEC-Engine] Injected ${topDocs.length} documents into the Void.`);
+            console.log(`[Synthesis Engine] Injected ${topDocs.length} documents into the Void.`);
         } else {
-            console.log(`[PEC-Engine] No relevant documents found. Relying on pure latent space.`);
+            console.log(`[Synthesis Engine] No relevant documents found. Relying on pure latent space.`);
         }
 
         if (!ai) {
@@ -210,7 +210,7 @@ Before any synthesis is finalized, the **LV (Logic Validator)** must run the fol
         }
         return fullText;
     } catch (error) {
-        console.error("[PEC-Engine] Chat Error:", error);
+        console.error("[Synthesis Engine] Chat Error:", error);
         throw error;
     }
 };
@@ -230,7 +230,7 @@ export const generateQuickInsight = async (prompt: string): Promise<string> => {
         });
         return response.text || "The void is silent today.";
     } catch (error) {
-        console.error("[PEC-Engine] Quick Insight Error:", error);
+        console.error("[Synthesis Engine] Quick Insight Error:", error);
         return "The oracle is disconnected.";
     }
 };
@@ -250,7 +250,7 @@ export const analyzeNote = async (noteContent: string): Promise<string> => {
         });
         return response.text || "Analysis failed.";
     } catch (error) {
-        console.error("[PEC-Engine] Note Analysis Error:", error);
+        console.error("[Synthesis Engine] Note Analysis Error:", error);
         return "Could not analyze note. The void resists interpretation.";
     }
 };
@@ -263,7 +263,7 @@ export const synthesizeNodes = async (noteA: { title: string; content: string },
     try {
         const response = await ai.models.generateContent({
             model: CHAT_MODEL,
-            contents: `SYSTEM_IDENTITY: PEC-Engine (Philosophical Exploration Catalyst).
+            contents: `SYSTEM_IDENTITY: Synthesis Engine (Philosophical Exploration Catalyst).
 CORE_AXIOM: Subtraction -> Verification -> Stability.
 
 MISSION:
@@ -300,7 +300,7 @@ Do not use JSON. Write a mini-essay with these headers:
         });
         return response.text || "## Synthesis Failed\nThe void is silent.";
     } catch (error) {
-        console.error("[PEC-Engine] Synthesis Error:", error);
-        return "## Synthesis Failed\nThe PEC-Engine encountered entropy.";
+        console.error("[Synthesis Engine] Synthesis Error:", error);
+        return "## Synthesis Failed\nThe Synthesis Engine encountered entropy.";
     }
 };

@@ -34,7 +34,7 @@ export function SystemTopology() {
             </div>
             <ul className="space-y-6 text-sm text-zinc-300 font-mono tracking-wider">
               <li className="flex items-center gap-4"><div className="w-2 h-2 bg-zinc-800 text-white border-transparent hover:bg-zinc-700 shadow-xl"/> Axioms (MAC_α, AIF, S→100%)</li>
-              <li className="flex items-center gap-4"><div className="w-2 h-2 bg-zinc-800 text-white border-transparent hover:bg-zinc-700 shadow-xl"/> Operational Codex (A, K, O, RN)</li>
+              <li className="flex items-center gap-4"><div className="w-2 h-2 bg-zinc-800 text-white border-transparent hover:bg-zinc-700 shadow-xl"/> Primary Frameworks</li>
               <li className="flex items-center gap-4"><div className="w-2 h-2 bg-zinc-800 text-white border-transparent hover:bg-zinc-700 shadow-xl"/> Praxis Directives</li>
               <li className="flex items-center gap-4"><div className="w-2 h-2 bg-zinc-800 text-white border-transparent hover:bg-zinc-700 shadow-xl"/> Corpus Nodes</li>
             </ul>
@@ -60,7 +60,7 @@ export function SystemTopology() {
             </div>
             <ul className="space-y-6 text-sm text-zinc-300 font-mono tracking-wider">
               <li className="flex items-center gap-4"><div className="w-2 h-2 bg-zinc-200 text-black border-transparent hover:bg-zinc-300 shadow-xl"/> Web Worker Pipeline</li>
-              <li className="flex items-center gap-4"><div className="w-2 h-2 bg-zinc-200 text-black border-transparent hover:bg-zinc-300 shadow-xl"/> NT Lens Filter</li>
+              <li className="flex items-center gap-4"><div className="w-2 h-2 bg-zinc-200 text-black border-transparent hover:bg-zinc-300 shadow-xl"/> Nihiltheism Lens Filter</li>
               <li className="flex items-center gap-4"><div className="w-2 h-2 bg-zinc-200 text-black border-transparent hover:bg-zinc-300 shadow-xl"/> Weighted Jaccard Merge</li>
               <li className="flex items-center gap-4"><div className="w-2 h-2 bg-zinc-200 text-black border-transparent hover:bg-zinc-300 shadow-xl"/> Recursive Re-evaluation</li>
             </ul>

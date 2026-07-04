@@ -1,5 +1,5 @@
 /**
- * Nihiltheism (NT) Ontology & Configuration Layer
+ * Nihiltheism (Nihiltheism) Ontology & Configuration Layer
  * 
  * This schema defines the structural vocabulary for ChatGraphUI to interface 
  * with the Python Adversarial Engine. It provides the exact node types, edge types, 
@@ -11,7 +11,7 @@ export type NTNodeType =
   | 'void_concept'    // Core concepts related to nothingness/the void
   | 'thinker'         // Philosophers, authors, or AI agents
   | 'paradox'         // Unresolvable contradictions in the graph
-  | 'ren_stage'       // Stages of Recursive Existential Nihilism
+  | 'ren_stage'       // Stages of The Religious Experience of Nihilism
   | 'axiom'           // Foundational truths of the system
   | 'argument'        // Logical steps in the adversarial loop
   | 'synthesis';      // Merged concepts after the densification process
@@ -22,7 +22,7 @@ export type NTEdgeType =
   | 'supports'        // Reinforcing relationship
   | 'derives_from'    // Lineage/Audit trail relationship
   | 'synthesizes'     // Points from raw arguments to a Synthesis node
-  | 'transcends'      // Moving from one REN-Stage to the next
+  | 'transcends'      // Moving from one Stage to the next
   | 'voids'           // When a concept completely nullifies another
   | 'iterates';       // Multi-turn reasoning loops
 
@@ -55,7 +55,7 @@ export const NT_AXIOMS: NTAxiom[] = [
   },
   {
     id: 'ax_04_ren_progression',
-    statement: 'Consciousness progresses through stages of Recursive Existential Nihilism (REN).',
+    statement: 'Consciousness progresses through stages of The Religious Experience of Nihilism.',
     description: 'Awareness of the Void leads to despair, which leads to recursive abstraction, allowing for synthetic meaning generation.',
     weight: 0.85
   }

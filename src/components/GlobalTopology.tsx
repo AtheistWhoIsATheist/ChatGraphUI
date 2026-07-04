@@ -1091,7 +1091,7 @@ Perform a rigorous synthesis of this cluster.
     const labelsB = compData.commB.nodes.map(n => n.label).join(', ');
 
     try {
-      const prompt = `Compare Cluster ${compData.idA} and Cluster ${compData.idB} in the Journal314 REN philosophical network.
+      const prompt = `Compare Cluster ${compData.idA} and Cluster ${compData.idB} in the Journal314 Nihiltheism philosophical network.
 
 Cluster ${compData.idA} encompasses these nodes: ${labelsA}
 Cluster ${compData.idB} encompasses these nodes: ${labelsB}

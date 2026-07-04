@@ -100,8 +100,8 @@ export function useGraphLayout({ nodes, links, width, height, clusterMode, gravi
       
       let baseRadius = 15;
       if (n.id === 'void') baseRadius = 45;
-      else if (['presence', 'collapse', 'spiritual_emergency', 'ren'].includes(n.id)) baseRadius = 35;
-      else if (n.type === 'methodology' || ['anti_reification', 'kenotic_constraints', 'ontodicy_collapse', 'ren_phenomenology'].includes(n.id) || n.id.includes('codex')) baseRadius = 25;
+      else if (['presence', 'collapse', 'spiritual_emergency', 'the_religious_experience_of_nihilism'].includes(n.id)) baseRadius = 35;
+      else if (n.type === 'methodology' || ['anti_reification', 'kenotic_constraints', 'ontodicy_collapse', 'ren_phenomenology'].includes(n.id) || n.id.includes('framework')) baseRadius = 25;
       else baseRadius = 12;
       
       const centralityBonus = Math.min(degree * 2.5, 25);

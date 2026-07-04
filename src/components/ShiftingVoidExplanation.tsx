@@ -18,7 +18,7 @@ export function ShiftingVoidExplanation() {
               Theoretical Framework
             </h1>
             <p className="text-xl text-zinc-300 font-semibold  tracking-widest">
-              Journal314 & REN Analysis
+              Journal314 & The Religious Experience of Nihilism Analysis
             </p>
           </header>
 
@@ -30,10 +30,10 @@ export function ShiftingVoidExplanation() {
             </h2>
             <div className="prose prose-invert max-w-none text-zinc-400 leading-relaxed space-y-4 font-mono font-bold tracking-widest ">
               <p>
-                The <strong>Analysis Engine</strong> is not merely a static repository of information, but a dynamic, self-organizing knowledge base designed to map the contours of <em>Journal314</em> and the <em>REN transcriptions</em>. It is an analytical engine that actively seeks out contradictions, structural gaps, and latent connections within the corpus.
+                The <strong>Analysis Engine</strong> is not merely a static repository of information, but a dynamic, self-organizing knowledge base designed to map the contours of <em>Journal314</em> and the <em>The Religious Experience of Nihilism transcriptions</em>. It is an analytical engine that actively seeks out contradictions, structural gaps, and latent connections within the corpus.
               </p>
               <p>
-                Traditional knowledge bases attempt to build a simple keyword logic. This engine maps the structural gaps and topologies of thought. It tracks the tension between Journal and REN events seamlessly across dimensions.
+                Traditional knowledge bases attempt to build a simple keyword logic. This engine maps the structural gaps and topologies of thought. It tracks the tension between Journal and The Religious Experience of Nihilism events seamlessly across dimensions.
               </p>
             </div>
           </section>

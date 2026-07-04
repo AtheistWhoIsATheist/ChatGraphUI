@@ -90,7 +90,7 @@ export function ResearchWorkbench() {
   const filteredNodes = useMemo(() => {
     return ontologyNodes.filter(node => {
       const matchesSearch = node.label.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            node.phenomenological_extraction.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            node.core_insight.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             node.scholarly_anchor.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesClass = selectedClass === 'All' || node.node_class === selectedClass;
       const matchesTradition = selectedTradition === 'All' || node.tradition === selectedTradition;
@@ -107,7 +107,7 @@ export function ResearchWorkbench() {
 
   // Handle export systems
   const handleCSVExport = () => {
-    const headers = ['ID', 'Label', 'Class', 'Tradition', 'REN Stage', 'Collapse Type', 'Scholarly Anchor'];
+    const headers = ['ID', 'Label', 'Class', 'Tradition', 'Stage', 'Collapse Type', 'Scholarly Anchor'];
     const rows = filteredNodes.map(n => [
       n.id, n.label, n.node_class, n.tradition, n.ren_stage, n.primary_collapse_type, n.scholarly_anchor
     ]);
@@ -142,8 +142,8 @@ export function ResearchWorkbench() {
       md += `### ${n.label} (${n.node_class})\n`;
       md += `- **Tradition**: ${n.tradition}\n`;
       md += `- **Primary Collapse**: ${n.primary_collapse_type}\n`;
-      md += `- **REN Stage**: Stage ${n.ren_stage}\n`;
-      md += `- **Lived Extraction**: ${n.phenomenological_extraction}\n`;
+      md += `- **Stage**: Stage ${n.ren_stage}\n`;
+      md += `- **Lived Extraction**: ${n.core_insight}\n`;
       md += `- **Scholarly Anchor Citation**: ${n.scholarly_anchor}\n`;
       md += `- **Trust Profile**: Confidence ${n.confidence} | Status: ${n.source_status}\n\n`;
     });
@@ -186,7 +186,7 @@ export function ResearchWorkbench() {
               nodeA: a,
               nodeB: b,
               disparityScore,
-              sharedStructure: shareCollapse ? a.primary_collapse_type : `Shared REN Stage ${a.ren_stage}`,
+              sharedStructure: shareCollapse ? a.primary_collapse_type : `Shared Stage ${a.ren_stage}`,
               mechanicOverlap: "Negation serves a productive/revaluing role inside the core collapse events."
             });
           }
@@ -231,7 +231,7 @@ export function ResearchWorkbench() {
         {[
           { id: 'catalog', label: "Node Substrates", icon: BookOpen },
           { id: 'comparison', label: "Figure Matrix", icon: GitCompare },
-          { id: 'ren_mapper', label: "REN Stages", icon: Layers },
+          { id: 'ren_mapper', label: "Stages", icon: Layers },
           { id: 'disparity', label: "Max Disparity", icon: Scale },
           { id: 'objections', label: "Objection Map", icon: AlertTriangle },
           { id: 'oracle', label: "AI Oracle Queue", icon: Sparkles },
@@ -311,7 +311,7 @@ export function ResearchWorkbench() {
                     onChange={e => setSelectedStage(e.target.value === 'All' ? 'All' : Number(e.target.value))}
                     className="bg-zinc-950 border border-white/5 p-1.5 rounded-lg text-xs outline-none"
                   >
-                    <option value="All">REN Stage: All</option>
+                    <option value="All">Stage: All</option>
                     {[1,2,3,4,5,6].map(stg => <option key={stg} value={stg}>Stage {stg}</option>)}
                   </select>
                 </div>
@@ -339,7 +339,7 @@ export function ResearchWorkbench() {
                             <span className="text-[9px] bg-white/5 border border-white/5 px-1.5 py-0.5 font-bold tracking-widest rounded text-zinc-400">Stage {node.ren_stage}</span>
                           </div>
                           <h3 className="text-sm font-serif font-semibold text-zinc-200 group-hover:text-emerald-400 transition-colors mb-2">{node.label}</h3>
-                          <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed font-sans">{node.phenomenological_extraction}</p>
+                          <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed font-sans">{node.core_insight}</p>
                         </div>
 
                         <div className="flex justify-between items-center mt-3 border-t border-white/5 pt-2">
@@ -380,7 +380,7 @@ export function ResearchWorkbench() {
 
                   <div>
                     <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-mono">Lived Phenomenological Extraction</span>
-                    <p className="text-zinc-300 leading-relaxed bg-zinc-950 p-2.5 border border-white/5 rounded-lg italic">"{selectedNode.phenomenological_extraction}"</p>
+                    <p className="text-zinc-300 leading-relaxed bg-zinc-950 p-2.5 border border-white/5 rounded-lg italic">"{selectedNode.core_insight}"</p>
                   </div>
 
                   <div>
@@ -401,7 +401,7 @@ export function ResearchWorkbench() {
                         <span className="text-zinc-200 font-bold">{(selectedNode.confidence * 100).toFixed(0)}%</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-zinc-500 block">REN STAGE</span>
+                        <span className="text-zinc-500 block">The Religious Experience of Nihilism STAGE</span>
                         <span className="text-emerald-400 font-bold">Stage {selectedNode.ren_stage}</span>
                       </div>
                     </div>
@@ -489,11 +489,11 @@ export function ResearchWorkbench() {
                         <td className="p-4 font-mono text-[10px] font-bold text-zinc-500 border-r border-white/5 bg-zinc-950/20 uppercase tracking-wider">Lived Phenomenon</td>
                         {selectedFigures.map(figId => {
                           const fig = ontologyNodes.find(n => n.id === figId)!;
-                          return <td key={figId} className="p-4 text-zinc-300 leading-relaxed border-r border-white/5 italic">"{fig.phenomenological_extraction}"</td>;
+                          return <td key={figId} className="p-4 text-zinc-300 leading-relaxed border-r border-white/5 italic">"{fig.core_insight}"</td>;
                         })}
                       </tr>
                       <tr className="hover:bg-white/5 transition-colors">
-                        <td className="p-4 font-mono text-[10px] font-bold text-zinc-500 border-r border-white/5 bg-zinc-950/20 uppercase tracking-wider">REN Stage Allocation</td>
+                        <td className="p-4 font-mono text-[10px] font-bold text-zinc-500 border-r border-white/5 bg-zinc-950/20 uppercase tracking-wider">Stage Allocation</td>
                         {selectedFigures.map(figId => {
                           const fig = ontologyNodes.find(n => n.id === figId)!;
                           const stageDef = NIHILTHEISM_STEPS.find(s => s.stage === fig.ren_stage)!;
@@ -519,7 +519,7 @@ export function ResearchWorkbench() {
             </motion.div>
           )}
 
-          {/* Tab 3: REN-Stage Mapper */}
+          {/* Tab 3: Stage Mapper */}
           {activeTab === 'ren_mapper' && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -577,7 +577,7 @@ export function ResearchWorkbench() {
                                 </span>
                               </div>
                               <h4 className="text-xs font-serif font-bold text-zinc-200">{fig.label}</h4>
-                              <p className="text-[10px] text-zinc-400 line-clamp-2 mt-1 leading-relaxed font-sans">{fig.phenomenological_extraction}</p>
+                              <p className="text-[10px] text-zinc-400 line-clamp-2 mt-1 leading-relaxed font-sans">{fig.core_insight}</p>
                             </div>
                             <div className="border-t border-white/5 pt-1.5 mt-2 flex justify-between items-center text-[8px] text-zinc-500">
                               <span className="truncate max-w-[100px]">{fig.tradition}</span>
@@ -630,7 +630,7 @@ export function ResearchWorkbench() {
                         <h4 className="text-sm font-serif font-bold text-zinc-200">{pair.nodeA.label}</h4>
                         <span className="text-[9px] font-mono font-bold tracking-widest text-zinc-500 bg-white/5 border border-white/5 px-2 py-0.5 rounded">{pair.nodeA.tradition}</span>
                       </div>
-                      <p className="text-xs text-zinc-300 italic mb-1 leading-relaxed">"{pair.nodeA.phenomenological_extraction}"</p>
+                      <p className="text-xs text-zinc-300 italic mb-1 leading-relaxed">"{pair.nodeA.core_insight}"</p>
                       <span className="text-[10px] font-mono text-rose-400 block font-bold">COLLAPSE: {pair.nodeA.primary_collapse_type}</span>
                     </div>
 
@@ -645,7 +645,7 @@ export function ResearchWorkbench() {
                         <h4 className="text-sm font-serif font-bold text-zinc-200">{pair.nodeB.label}</h4>
                         <span className="text-[9px] font-mono font-bold tracking-widest text-zinc-500 bg-white/5 border border-white/5 px-2 py-0.5 rounded">{pair.nodeB.tradition}</span>
                       </div>
-                      <p className="text-xs text-zinc-300 italic mb-1 leading-relaxed">"{pair.nodeB.phenomenological_extraction}"</p>
+                      <p className="text-xs text-zinc-300 italic mb-1 leading-relaxed">"{pair.nodeB.core_insight}"</p>
                       <span className="text-[10px] font-mono text-rose-400 block font-bold">COLLAPSE: {pair.nodeB.primary_collapse_type}</span>
                     </div>
 
