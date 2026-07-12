@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, X, Filter, Atom, Sparkles, Network, SlidersHorizontal, Plus } from 'lucide-react';
+import { Search, X, Filter, Atom, Sparkles, Network, SlidersHorizontal, Plus, Layers } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface GraphToolbarProps {
@@ -29,6 +29,10 @@ interface GraphToolbarProps {
   setNodeSpacing: (spacing: number) => void;
   availableTypes: string[];
   availableStatuses: string[];
+
+  // Multi-select integration
+  multiSelectMode: boolean;
+  setMultiSelectMode: (mode: boolean) => void;
 }
 
 export function GraphToolbar({
@@ -55,7 +59,10 @@ export function GraphToolbar({
   nodeSpacing,
   setNodeSpacing,
   availableTypes,
-  availableStatuses
+  availableStatuses,
+
+  multiSelectMode,
+  setMultiSelectMode
 }: GraphToolbarProps) {
   const toggleSetItem = (set: Set<string>, item: string) => {
     const next = new Set(set);
@@ -94,7 +101,7 @@ export function GraphToolbar({
           >
             {/* Scented Search */}
             <div className="pointer-events-auto bg-zinc-950 border border-white/5 hover:border-white/10 transition-colors p-3 w-64 flex items-center gap-3 rounded-2xl backdrop-blur-md">
-              <Search className="w-5 h-5 text-zinc-305" />
+              <Search className="w-5 h-5 text-zinc-300" />
               <input
                 type="text"
                 placeholder="Scented Search..."
@@ -110,7 +117,7 @@ export function GraphToolbar({
             </div>
 
             {/* Filter Group */}
-            <div className="pointer-events-auto bg-zinc-950 border border-white/5 p-4 w-62 rounded-2xl backdrop-blur-md flex flex-col gap-2.5">
+            <div className="pointer-events-auto bg-zinc-950 border border-white/5 p-4 w-64 rounded-2xl backdrop-blur-md flex flex-col gap-2.5">
               <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-200 tracking-widest uppercase">
                 <Filter className="w-3.5 h-3.5" /> Filter Substrates
               </div>
@@ -225,6 +232,19 @@ export function GraphToolbar({
                 <span className="text-xs tracking-widest uppercase">Structural Integrity</span>
               </button>
 
+              <button
+                onClick={() => setMultiSelectMode(!multiSelectMode)}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-2.5 border transition-all duration-300 font-bold rounded-2xl cursor-pointer",
+                  multiSelectMode
+                    ? "bg-amber-500/20 text-amber-200 border-amber-500/40 shadow-2xl scale-102"
+                    : "bg-zinc-900/50 border-white/5 text-zinc-400 hover:border-white/10 hover:text-white"
+                )}
+              >
+                <Layers className={cn("w-4.5 h-4.5", multiSelectMode && "animate-pulse text-amber-400")} />
+                <span className="text-xs tracking-widest uppercase">Multi-Select</span>
+              </button>
+
               {/* Node Visual Presets */}
               <div className="bg-zinc-900/50 border border-white/5 p-3.5 flex flex-col gap-2 font-mono font-bold tracking-widest rounded-2xl backdrop-blur-md">
                 <div className="flex items-center gap-2 text-[9px] text-zinc-300 uppercase mb-0.5">
@@ -256,7 +276,7 @@ export function GraphToolbar({
               {/* Gravity Slider */}
               <div className="bg-zinc-900/50 border border-white/5 p-3.5 flex flex-col gap-2 font-mono font-bold tracking-widest rounded-2xl backdrop-blur-md">
                 <div className="flex items-center justify-between text-[9px] text-zinc-300 uppercase">
-                  <div className="flex items-center gap-1.55">
+                  <div className="flex items-center gap-1.5">
                     <SlidersHorizontal className="w-3 h-3" />
                     <span>Gravity</span>
                   </div>
@@ -275,7 +295,7 @@ export function GraphToolbar({
               {/* Spacing Slider */}
               <div className="bg-zinc-900/50 border border-white/5 p-3.5 flex flex-col gap-2 font-mono font-bold tracking-widest rounded-2xl backdrop-blur-md">
                 <div className="flex items-center justify-between text-[9px] text-zinc-300 uppercase">
-                  <div className="flex items-center gap-1.55">
+                  <div className="flex items-center gap-1.5">
                     <SlidersHorizontal className="w-3 h-3" />
                     <span>Node Spacing</span>
                   </div>

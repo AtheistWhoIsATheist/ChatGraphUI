@@ -7,97 +7,153 @@ dotenv.config();
 let db: any;
 
 export async function connectDB() {
-  try {
-    db = new Database('voidgraph.db');
-    
-    // Initialize tables
-    db.exec(`
-      CREATE TABLE IF NOT EXISTS nodes (
-        id TEXT PRIMARY KEY,
-        label TEXT,
-        type TEXT,
-        status TEXT,
-        summary TEXT,
-        blocks TEXT,
-        socratic_questions TEXT,
-        metadata TEXT,
-        saturation_level INTEGER,
-        revision_count INTEGER,
-        last_audited_date TEXT,
-        audit_logs TEXT
-      );
+  const dbPath = 'voidgraph.db';
+  let attempts = 0;
+  
+  while (attempts < 2) {
+    try {
+      db = new Database(dbPath);
       
-      CREATE TABLE IF NOT EXISTS links (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        source TEXT,
-        target TEXT,
-        label TEXT,
-        type TEXT
-      );
+      // Set write-ahead logging (WAL) mode for better concurrency and stability
+      try {
+        db.pragma('journal_mode = WAL');
+      } catch (pragmaError) {
+        console.warn('[DB] Failed to set WAL mode:', pragmaError);
+      }
       
-      CREATE TABLE IF NOT EXISTS digests (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT,
-        content TEXT,
-        type TEXT
-      );
-    `);
-    
-    // Seed data if empty
-    const count = db.prepare('SELECT COUNT(*) as count FROM nodes').get().count;
-    if (count === 0) {
-      console.log('[DB] Seeding initial corpus nodes and links...');
-      const insertNode = db.prepare(`
-        INSERT OR IGNORE INTO nodes (
-          id, label, type, status, summary, blocks, socratic_questions,
-          metadata, saturation_level, revision_count, last_audited_date, audit_logs
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      // Initialize tables
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS nodes (
+          id TEXT PRIMARY KEY,
+          label TEXT,
+          type TEXT,
+          status TEXT,
+          summary TEXT,
+          blocks TEXT,
+          socratic_questions TEXT,
+          metadata TEXT,
+          saturation_level INTEGER,
+          revision_count INTEGER,
+          last_audited_date TEXT,
+          audit_logs TEXT
+        );
+        
+        CREATE TABLE IF NOT EXISTS links (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          source TEXT,
+          target TEXT,
+          label TEXT,
+          type TEXT
+        );
+        
+        CREATE TABLE IF NOT EXISTS digests (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          date TEXT,
+          content TEXT,
+          type TEXT
+        );
       `);
       
-      const insertManyNodes = db.transaction((nodes: any[]) => {
-        for (const node of nodes) {
-          insertNode.run(
-            node.id,
-            node.label,
-            node.type,
-            node.status || 'UNKNOWN',
-            node.summary || '',
-            JSON.stringify(node.blocks || []),
-            JSON.stringify(node.socratic_questions || []),
-            JSON.stringify(node.metadata || {}),
-            node.saturation_level || 0,
-            node.revision_count || 0,
-            node.last_audited_date ? new Date(node.last_audited_date).toISOString() : new Date().toISOString(),
-            JSON.stringify(node.audit_logs || [])
-          );
-        }
-      });
+      // Verify integrity by running a query
+      const count = db.prepare('SELECT COUNT(*) as count FROM nodes').get().count;
       
-      insertManyNodes(corpusNodes);
+      // Seed data if empty
+      if (count === 0) {
+        console.log('[DB] Seeding initial corpus nodes and links...');
+        const insertNode = db.prepare(`
+          INSERT OR IGNORE INTO nodes (
+            id, label, type, status, summary, blocks, socratic_questions,
+            metadata, saturation_level, revision_count, last_audited_date, audit_logs
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+        
+        const insertManyNodes = db.transaction((nodes: any[]) => {
+          for (const node of nodes) {
+            insertNode.run(
+              node.id,
+              node.label,
+              node.type,
+              node.status || 'UNKNOWN',
+              node.summary || '',
+              JSON.stringify(node.blocks || []),
+              JSON.stringify(node.socratic_questions || []),
+              JSON.stringify(node.metadata || {}),
+              node.saturation_level || 0,
+              node.revision_count || 0,
+              node.last_audited_date ? new Date(node.last_audited_date).toISOString() : new Date().toISOString(),
+              JSON.stringify(node.audit_logs || [])
+            );
+          }
+        });
+        
+        insertManyNodes(corpusNodes);
 
-      const insertLink = db.prepare(`
-        INSERT INTO links (source, target, label, type) VALUES (?, ?, ?, ?)
-      `);
+        const insertLink = db.prepare(`
+          INSERT INTO links (source, target, label, type) VALUES (?, ?, ?, ?)
+        `);
 
-      const insertManyLinks = db.transaction((links: any[]) => {
-        for (const link of links) {
-          insertLink.run(
-            typeof link.source === 'string' ? link.source : (link.source as any).id,
-            typeof link.target === 'string' ? link.target : (link.target as any).id,
-            link.label || '',
-            link.type || ''
-          );
+        const insertManyLinks = db.transaction((links: any[]) => {
+          for (const link of links) {
+            insertLink.run(
+              typeof link.source === 'string' ? link.source : (link.source as any).id,
+              typeof link.target === 'string' ? link.target : (link.target as any).id,
+              link.label || '',
+              link.type || ''
+            );
+          }
+        });
+
+        insertManyLinks(corpusLinks);
+
+        console.log('[DB] Seeding complete.');
+      }
+      
+      console.log('[DB] Connected to SQLite - The Abyssal Archive is online.');
+      break; // Successful connection and validation, exit loop
+      
+    } catch (error: any) {
+      console.error(`[DB] Database connection/integrity failure (attempt ${attempts + 1}/2):`, error);
+      attempts++;
+      
+      if (attempts >= 2) {
+        console.error('[DB] Catastrophic database error. Unable to repair or rebuild SQLite database.');
+        throw error;
+      }
+      
+      const errorStr = String(error).toLowerCase();
+      if (errorStr.includes('malformed') || errorStr.includes('corrupt') || errorStr.includes('disk image')) {
+        console.warn('[DB] SQLite database is malformed or corrupted! Triggering automated recovery protocol...');
+        
+        try {
+          if (db) {
+            try { db.close(); } catch (_) {}
+            db = null;
+          }
+          
+          const fs = await import('fs');
+          if (fs.existsSync(dbPath)) {
+            const corruptedBackupPath = `${dbPath}.corrupted.${Date.now()}`;
+            fs.renameSync(dbPath, corruptedBackupPath);
+            console.warn(`[DB] Renamed malformed database to ${corruptedBackupPath} for diagnostics.`);
+          }
+          
+          // Remove WAL / shared memory sidecar files to prevent locks
+          if (fs.existsSync(`${dbPath}-shm`)) {
+            try { fs.unlinkSync(`${dbPath}-shm`); } catch (_) {}
+          }
+          if (fs.existsSync(`${dbPath}-wal`)) {
+            try { fs.unlinkSync(`${dbPath}-wal`); } catch (_) {}
+          }
+          
+          console.log('[DB] Fresh environment cleared. Commencing rebuild on retry attempt...');
+        } catch (recoveryErr) {
+          console.error('[DB] Recovery file operations encountered an error:', recoveryErr);
         }
-      });
-
-      insertManyLinks(corpusLinks);
-
-      console.log('[DB] Seeding complete.');
+      } else {
+        // Not a corruption error (e.g. schema/syntax error during dev), bubble up immediately
+        throw error;
+      }
     }
-    
-    console.log('[DB] Connected to SQLite - The Abyssal Archive is online.');
-  } catch (error) {
-    console.error('[DB] Failed to connect to SQLite:', error);
   }
 }
 

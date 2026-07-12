@@ -2,11 +2,11 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import * as d3 from 'd3';
 import jLouvain from 'jlouvain';
-import { Node, NodeType } from '../data/corpus';
+import { Node, NodeType, Link } from '../data/corpus';
 import { NT_NODE_COLORS } from '../data/nt_schema';
 import { cn } from '../lib/utils';
 import { 
-  X, Zap, Link2Off
+  X, Zap, Link2Off, Layers, Eye, EyeOff, Trash2, Check, FolderPlus, Plus, SlidersHorizontal, ArrowUpRight, HelpCircle
 } from 'lucide-react';
 import { useGraphLayout } from '../hooks/useGraphLayout';
 import { GraphToolbar } from './GraphToolbar';
@@ -14,8 +14,16 @@ import { InsightOverlay } from './InsightOverlay';
 import { ExpansionPanel } from './ExpansionPanel';
 import { AddNodeModal } from './AddNodeModal';
 import { logOptimization } from '../utils/selfImprovement';
+import { useAppStore } from '../store/appStore';
 
 // --- TYPES & CONSTANTS ---
+
+interface Collection {
+  id: string;
+  label: string;
+  nodeIds: string[]; // member node IDs
+  isCollapsed: boolean;
+}
 
 const NODE_COLORS: Record<string, string> = {
   treatise: '#0066ff',     // Cosmic Blue
@@ -32,6 +40,7 @@ const NODE_COLORS: Record<string, string> = {
   question: '#d946ef',     // Cosmic Fuchsia
   praxis: '#00f5d4',       // Radioactive Emerald Green
   axiom: '#ff5500',        // HD Burnt Orange
+  collection: '#f59e0b',   // Packed Amber for collection nodes
   
   // Nihiltheism Ontology specific overrides (ensuring absolute coherence)
   void_concept: '#d946ef', // Cosmic Fuchsia
@@ -45,12 +54,11 @@ const getHierarchicalColor = (node: Node) => {
   if (node.id === 'void') return '#ffffff'; // The Singularity is pure light
   if (['presence', 'collapse', 'spiritual_emergency', 'the_religious_experience_of_nihilism'].includes(node.id)) return '#d946ef'; // Cosmic Fuchsia
   if (['anti_reification', 'kenotic_constraints', 'ontodicy_collapse', 'ren_phenomenology'].includes(node.id) || node.id.includes('framework')) return '#00e5ff'; // Electric Cyan
+  if (node.type === 'collection') {
+    return node.metadata?.isCollapsed ? '#f59e0b' : '#10b981'; // Amber if collapsed, Emerald if expanded
+  }
   return NODE_COLORS[node.type] || NODE_COLORS[node.type as string] || '#00f5d4';
 };
-
-// --- COMPONENT ---
-
-import { useAppStore } from '../store/appStore';
 
 export const KnowledgeGraph = React.memo(function KnowledgeGraph({ 
   onNodeSelect: externalOnNodeSelect, 
@@ -82,6 +90,27 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
   const [isToolbarOpen, setIsToolbarOpen] = useState(true);
   const [structuralIntegrity, setStructuralIntegrity] = useState(true);
   
+  // Collections & Multi-Select States
+  const [collections, setCollections] = useState<Collection[]>(() => {
+    try {
+      const saved = localStorage.getItem('knowledge_graph_collections');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('knowledge_graph_collections', JSON.stringify(collections));
+  }, [collections]);
+
+  const [selectedNodeIds, setSelectedNodeIds] = useState<Set<string>>(new Set());
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
+  const [newCollectionName, setNewCollectionName] = useState('');
+  const [hoveredCollectionId, setHoveredCollectionId] = useState<string | null>(null);
+  const [isCollectionsHubExpanded, setIsCollectionsHubExpanded] = useState(false);
+  const [showLinkStrengthLegend, setShowLinkStrengthLegend] = useState(true);
+
   // Manual Node Add State
   const [isAddingNode, setIsAddingNode] = useState(false);
   const [newNode, setNewNode] = useState({ label: '', type: 'concept' });
@@ -94,13 +123,189 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
   const [activeTypes, setActiveTypes] = useState<Set<string>>(new Set());
   const [activeStatuses, setActiveStatuses] = useState<Set<string>>(new Set());
 
+  // Track latest layout coordinates to place collection nodes at centroid
+  const latestCoordsRef = useRef<Map<string, { x: number; y: number }>>(new Map());
+
+  // Collection Handlers
+  const handleCreateCollection = () => {
+    if (selectedNodeIds.size < 2) return;
+    
+    // Auto-create a cool descriptive default name based on first selected nodes
+    const selectedLabels = Array.from(selectedNodeIds)
+      .map(id => nodes.find(n => n.id === id)?.label || '')
+      .filter(Boolean);
+    
+    let defaultLabel = `Collection of ${selectedNodeIds.size} nodes`;
+    if (selectedLabels.length >= 2) {
+      defaultLabel = `Cluster: ${selectedLabels[0]} & ${selectedLabels[1]}`;
+      if (selectedLabels.length > 2) {
+        defaultLabel += ` (+${selectedLabels.length - 2})`;
+      }
+    }
+
+    const label = newCollectionName.trim() || defaultLabel;
+    const newCol: Collection = {
+      id: `collection-${Date.now()}`,
+      label,
+      nodeIds: Array.from(selectedNodeIds),
+      isCollapsed: true // default to collapsed to manage complexity!
+    };
+    
+    setCollections(prev => [...prev, newCol]);
+    setSelectedNodeIds(new Set());
+    setNewCollectionName('');
+    setMultiSelectMode(false);
+    
+    logOptimization('refactor', 'Grouped multiple nodes into a visual collection', { 
+      collectionId: newCol.id, 
+      label, 
+      nodesCount: newCol.nodeIds.length 
+    });
+  };
+
+  const handleToggleCollectionCollapse = (id: string) => {
+    setCollections(prev => prev.map(c => c.id === id ? { ...c, isCollapsed: !c.isCollapsed } : c));
+  };
+
+  const handleDissolveCollection = (id: string) => {
+    setCollections(prev => prev.filter(c => c.id !== id));
+    logOptimization('refactor', 'Dissolved node collection back to normal graph coordinates', { collectionId: id });
+  };
+
+  // Preprocess nodes and links to inject collections
+  const { processedNodes, processedLinks } = useMemo(() => {
+    const collapsedMembers = new Set<string>();
+    const expandedMembers = new Set<string>();
+    
+    collections.forEach(c => {
+      if (c.isCollapsed) {
+        c.nodeIds.forEach(id => collapsedMembers.add(id));
+      } else {
+        c.nodeIds.forEach(id => expandedMembers.add(id));
+      }
+    });
+
+    // 1. Build list of visible nodes
+    const finalNodes: Node[] = [];
+    
+    // Add original nodes that are not collapsed collection members
+    nodes.forEach(n => {
+      if (!collapsedMembers.has(n.id)) {
+        finalNodes.push(n);
+      }
+    });
+
+    // Add active collection nodes
+    collections.forEach(c => {
+      // Find average position of member nodes if they exist
+      let sumX = 0;
+      let sumY = 0;
+      let count = 0;
+      c.nodeIds.forEach(id => {
+        const coord = latestCoordsRef.current.get(id);
+        if (coord) {
+          sumX += coord.x;
+          sumY += coord.y;
+          count++;
+        }
+      });
+
+      const colNode: Node = {
+        id: c.id,
+        label: c.label,
+        type: 'collection',
+        status: 'VERIFIED',
+        summary: `Group collection of ${c.nodeIds.length} nodes: ${c.nodeIds.map(id => nodes.find(n => n.id === id)?.label || id).join(', ')}`,
+        blocks: [
+          {
+            id: `blk-${c.id}`,
+            type: 'text',
+            content: `This is an aggregated visual group collection containing ${c.nodeIds.length} nodes:\n\n${c.nodeIds.map(id => `• **${nodes.find(n => n.id === id)?.label || id}** (${nodes.find(n => n.id === id)?.type || 'direct'})`).join('\n')}`,
+            metadata: {
+              lastEdited: Date.now(),
+              sentiment: 'neutral'
+            }
+          }
+        ],
+        metadata: {
+          isCollection: true,
+          isCollapsed: c.isCollapsed,
+          nodeIds: c.nodeIds,
+          tags: ['collection', 'hierarchy-group'],
+          philosophical_stance: 'Topological Aggregation & Complexity Management',
+          relation_to_void: 'Folds complex regional topologies into cohesive visual singularities.',
+          source_references: ['Dynamic Ontodicy Topography Layer 3']
+        }
+      };
+
+      // Set initial positions based on centroid of member nodes to prevent erratic jumps
+      if (count > 0) {
+        (colNode as any).x = sumX / count;
+        (colNode as any).y = sumY / count;
+      }
+
+      finalNodes.push(colNode);
+    });
+
+    // 2. Build list of visible links
+    const finalLinks: Link[] = [];
+
+    // Map any node ID to its collapsed collection node ID if applicable
+    const getTargetNodeId = (nodeId: string): string => {
+      const col = collections.find(c => c.nodeIds.includes(nodeId));
+      if (col && col.isCollapsed) {
+        return col.id;
+      }
+      return nodeId;
+    };
+
+    initialLinks.forEach(link => {
+      const sId = typeof link.source === 'string' ? link.source : (link.source as any).id;
+      const tId = typeof link.target === 'string' ? link.target : (link.target as any).id;
+
+      const sourceMapped = getTargetNodeId(sId);
+      const targetMapped = getTargetNodeId(tId);
+
+      // Skip internal links (links where both source and target are collapsed in the same collection)
+      if (sourceMapped === targetMapped) {
+        return;
+      }
+
+      finalLinks.push({
+        ...link,
+        source: sourceMapped,
+        target: targetMapped
+      });
+    });
+
+    // Add physical guide links between expanded collection nodes and members to bind them closely in the physics simulation
+    collections.forEach(c => {
+      if (!c.isCollapsed) {
+        c.nodeIds.forEach(memberId => {
+          if (finalNodes.some(n => n.id === memberId)) {
+            finalLinks.push({
+              source: c.id,
+              target: memberId,
+              type: 'collection_member',
+              weight: 5.0, // Strong gravity pull to group members around collection hub
+              properties: {
+                score: 1.0
+              }
+            });
+          }
+        });
+      }
+    });
+
+    return { processedNodes: finalNodes, processedLinks: finalLinks };
+  }, [nodes, initialLinks, collections]);
+
   // Dynamically compute existing types and statuses in graph nodes
   const availableTypes = useMemo(() => {
     const typesSet = new Set<string>();
     nodes.forEach(n => {
       if (n.type) typesSet.add(n.type);
     });
-    // Ensure standard defaults exist if empty
     const defaults = ['concept', 'thinker', 'treatise', 'question', 'axiom', 'praxis'];
     defaults.forEach(t => typesSet.add(t));
     return Array.from(typesSet).sort();
@@ -118,8 +323,8 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
 
   // Layout Hook
   const { nodes: layoutNodes, links } = useGraphLayout({
-    nodes: nodes,
-    links: initialLinks,
+    nodes: processedNodes,
+    links: processedLinks,
     width: dimensions.width,
     height: dimensions.height,
     clusterMode,
@@ -128,6 +333,15 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     activeFilters: { types: activeTypes, statuses: activeStatuses }
   });
 
+  // Track coordinates changes
+  useEffect(() => {
+    layoutNodes.forEach(n => {
+      if (!isNaN(n.x) && !isNaN(n.y)) {
+        latestCoordsRef.current.set(n.id, { x: n.x, y: n.y });
+      }
+    });
+  }, [layoutNodes]);
+
   const getNodeStyles = (
     node: Node, 
     color: string, 
@@ -135,9 +349,9 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     isSelected: boolean, 
     isHovered: boolean, 
     isConnectedToFocus: boolean, 
-    scale: any
+    scale: any,
+    isMultiSelected: boolean = false
   ) => {
-    // Determine dynamic shape borders or style tags by node type
     let borderRadius = "9999px"; // Standard circle
     let borderStyle = "solid";
     
@@ -151,6 +365,9 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     } else if (node.type === 'paradox') {
       borderRadius = "0px"; // Brutalist sharp square
       borderStyle = "dashed";
+    } else if (node.type === 'collection') {
+      borderRadius = "40%"; // Octagon / squarish collection container
+      borderStyle = node.metadata?.isCollapsed ? "dashed" : "double";
     }
 
     let bgStyle = "";
@@ -160,32 +377,48 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     switch (nodeStylePreset) {
       case 'solid':
         bgStyle = isSelected ? '#fff' : color;
-        borderStyleValue = isSelected || matchesSearch ? '2.5px solid #fff' : `2.5px ${borderStyle} rgba(0,0,0,0.45)`;
-        shadowStyle = isSelected || isHovered ? `0 0 25px ${color}` : `0 4px 10px rgba(0,0,0,0.45)`;
+        borderStyleValue = isMultiSelected 
+          ? '3px dashed #f59e0b'
+          : (isSelected || matchesSearch ? '2.5px solid #fff' : `2.5px ${borderStyle} rgba(0,0,0,0.45)`);
+        shadowStyle = isMultiSelected
+          ? '0 0 30px #f59e0b'
+          : (isSelected || isHovered ? `0 0 25px ${color}` : `0 4px 10px rgba(0,0,0,0.45)`);
         break;
       case 'neon':
         bgStyle = isSelected ? `${color}40` : `${color}05`;
-        borderStyleValue = isSelected || matchesSearch ? `2.5px solid #fff` : `2.0px ${borderStyle} ${color}`;
-        shadowStyle = isSelected || isHovered 
-          ? `0 0 35px ${color}, inset 0 0 15px ${color}` 
-          : `0 0 12px ${color}45`;
+        borderStyleValue = isMultiSelected
+          ? '2.5px dashed #f59e0b'
+          : (isSelected || matchesSearch ? `2.5px solid #fff` : `2.0px ${borderStyle} ${color}`);
+        shadowStyle = isMultiSelected
+          ? '0 0 35px #f59e0b, inset 0 0 15px #f59e0b'
+          : (isSelected || isHovered 
+              ? `0 0 35px ${color}, inset 0 0 15px ${color}` 
+              : `0 0 12px ${color}45`);
         break;
       case 'glass':
         bgStyle = isSelected ? `${color}35` : `rgba(12, 12, 12, 0.75)`;
-        borderStyleValue = isSelected || matchesSearch ? `2px solid #fff` : `1.2px ${borderStyle} ${color}cc`;
-        shadowStyle = isSelected || isHovered 
-          ? `0 0 30px ${color}80` 
-          : `0 4px 12px rgba(0,0,0,0.65)`;
+        borderStyleValue = isMultiSelected
+          ? '2px dashed #f59e0b'
+          : (isSelected || matchesSearch ? `2px solid #fff` : `1.2px ${borderStyle} ${color}cc`);
+        shadowStyle = isMultiSelected
+          ? '0 0 30px #f59e0b'
+          : (isSelected || isHovered 
+              ? `0 0 30px ${color}80` 
+              : `0 4px 12px rgba(0,0,0,0.65)`);
         break;
       case 'void-glow':
       default: // hologram / void-glow
         bgStyle = isSelected ? `${color}` : `${color}15`;
-        borderStyleValue = isSelected || matchesSearch 
-          ? '2px solid #fff' 
-          : (isHovered || isConnectedToFocus ? `1.5px solid ${color}` : `1px ${borderStyle} ${color}80`);
-        shadowStyle = isSelected || isHovered 
-          ? `0 0 ${20 + scale.glowIntensity * 50}px ${color}` 
-          : `0 0 10px rgba(0,0,0,0.5)`;
+        borderStyleValue = isMultiSelected
+          ? '2px dashed #f59e0b'
+          : (isSelected || matchesSearch 
+              ? '2px solid #fff' 
+              : (isHovered || isConnectedToFocus ? `1.5px solid ${color}` : `1px ${borderStyle} ${color}80`));
+        shadowStyle = isMultiSelected
+          ? '0 0 30px #f59e0b'
+          : (isSelected || isHovered 
+              ? `0 0 ${20 + scale.glowIntensity * 50}px ${color}` 
+              : `0 0 10px rgba(0,0,0,0.5)`);
         break;
     }
 
@@ -224,11 +457,9 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
         return -event.deltaY * (event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.002) * damping;
       })
       .filter((event) => {
-        // Only allow zoom on wheel if ctrlKey is pressed
         if (event.type === 'wheel') {
           return event.ctrlKey;
         }
-        // Allow drag (mousedown) without ctrlKey
         return event.button === 0 || event.type === 'touchstart';
       })
       .on('zoom', (event) => {
@@ -242,7 +473,6 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     const selection = d3.select(container);
     selection.call(zoom);
     
-    // Prevent default wheel behavior when zooming to avoid page scroll
     const handleWheel = (e: WheelEvent) => {
       if (e.ctrlKey) {
         e.preventDefault();
@@ -261,7 +491,6 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     if (searchQuery.trim().length > 2) {
       const firstMatch = layoutNodes.find(n => n.label.toLowerCase().includes(searchQuery.toLowerCase()));
       if (firstMatch && !isNaN(firstMatch.x) && !isNaN(firstMatch.y)) {
-        // Transition to center the first match
         const k = Math.max(1.2, transform.k);
         setTransform({
           x: dimensions.width / 2 - firstMatch.x * k,
@@ -310,14 +539,14 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
   // --- PERMANENT GLOBAL SCALING LOGIC ---
   const nodeDegrees = useMemo(() => {
     const degrees: Record<string, number> = {};
-    initialLinks.forEach(link => {
+    processedLinks.forEach(link => {
       const sourceId = typeof link.source === 'string' ? link.source : (link.source as any).id;
       const targetId = typeof link.target === 'string' ? link.target : (link.target as any).id;
       degrees[sourceId] = (degrees[sourceId] || 0) + 1;
       degrees[targetId] = (degrees[targetId] || 0) + 1;
     });
     return degrees;
-  }, [initialLinks]);
+  }, [processedLinks]);
 
   const centralityScale = useMemo(() => {
     const degrees = Object.values(nodeDegrees);
@@ -335,14 +564,13 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     const aif = (Math.min(degree, 10) / 10) * 0.4 + (saturation / 100) * 0.6;
     
     return {
-      radius,
+      radius: node.type === 'collection' ? Math.max(radius * 1.25, 26) : radius, // Make collection hubs bigger
       aif,
       glowIntensity: aif * 0.6,
       auraSize: aif * 25
     };
   };
 
-  
   const { visibleNodes, visibleLinks, activeLatentLinks } = useMemo(() => {
     if (layoutNodes.length <= 1000) {
       return { 
@@ -377,13 +605,12 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     return { visibleNodes: throttledNodes, visibleLinks: throttledLinks, activeLatentLinks: throttledLatentLinks };
   }, [layoutNodes, links, nodeDegrees, latentLinksBase, showLatent]);
 
-
   // --- INSIGHT GENERATOR LOGIC ---
   const getInsights = (nodeId: string) => {
-    const node = nodes.find(n => n.id === nodeId);
+    const node = processedNodes.find(n => n.id === nodeId);
     if (!node) return null;
     
-    const connectedLinks = initialLinks.filter(l => 
+    const connectedLinks = processedLinks.filter(l => 
       (typeof l.source === 'string' ? l.source === nodeId : (l.source as any).id === nodeId) || 
       (typeof l.target === 'string' ? l.target === nodeId : (l.target as any).id === nodeId)
     );
@@ -391,8 +618,7 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     
     let suggestion = null;
     if (degree < 2) {
-      // Find a related node by tag overlap
-      const related = nodes.find(n => 
+      const related = processedNodes.find(n => 
         n.id !== nodeId && 
         n.metadata?.tags?.some(t => node.metadata?.tags?.includes(t))
       );
@@ -404,18 +630,17 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
 
   const selectedInsights = selectedNodeId ? getInsights(selectedNodeId) : null;
 
-  
   // --- COMMUNITY DETECTION ---
   const communities = useMemo(() => {
-    if (nodes.length === 0) return {};
+    if (processedNodes.length === 0) return {};
     
-    const edgeData = initialLinks.map(link => {
+    const edgeData = processedLinks.map(link => {
       const sourceId = typeof link.source === 'string' ? link.source : (link.source as any).id;
       const targetId = typeof link.target === 'string' ? link.target : (link.target as any).id;
       return { source: sourceId, target: targetId, weight: 1.0 };
     });
     
-    const nodeIds = nodes.map(n => n.id);
+    const nodeIds = processedNodes.map(n => n.id);
     
     try {
       const jL = jLouvain().nodes(nodeIds).edges(edgeData);
@@ -424,7 +649,7 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
       console.warn("Louvain clustering failed:", e);
       return {};
     }
-  }, [nodes, initialLinks]);
+  }, [processedNodes, processedLinks]);
 
   const clusterColorScale = useMemo(() => {
     return d3.scaleOrdinal(d3.schemeCategory10);
@@ -439,17 +664,16 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
   };
 
   // --- PERSISTENT RELATIONAL WEB LOGIC ---
-  
   const linkWeights = useMemo(() => {
     const weights: Record<string, number> = {};
-    initialLinks.forEach(link => {
+    processedLinks.forEach(link => {
       const sourceId = typeof link.source === 'string' ? link.source : (link.source as any).id;
       const targetId = typeof link.target === 'string' ? link.target : (link.target as any).id;
       const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
       weights[key] = (weights[key] || 0) + 1;
     });
     return weights;
-  }, [initialLinks]);
+  }, [processedLinks]);
 
   const linkWeightScale = useMemo(() => {
     const weights = Object.values(linkWeights);
@@ -464,8 +688,8 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
     const targetId = typeof link.target === 'string' ? link.target : link.target.id;
     
-    const sourceNode = nodes.find(n => n.id === sourceId);
-    const targetNode = nodes.find(n => n.id === targetId);
+    const sourceNode = processedNodes.find(n => n.id === sourceId);
+    const targetNode = processedNodes.find(n => n.id === targetId);
     
     const isFoundational = sourceId === 'void' || targetId === 'void' || 
                           (sourceNode?.type === 'concept' && targetNode?.type === 'concept');
@@ -478,10 +702,30 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     );
     
     const isHovered = hoveredNodeId === sourceId || hoveredNodeId === targetId || isLinkHovered;
-    const isFocusMode = !!selectedNodeId || !!hoveredNodeId || !!hoveredLink;
+    const isFocusMode = !!selectedNodeId || !!hoveredNodeId || !!hoveredLink || !!hoveredCollectionId;
     const isNeighbor = (sourceId === selectedNodeId || targetId === selectedNodeId) || 
                        (sourceId === hoveredNodeId || targetId === hoveredNodeId) || isLinkHovered;
     
+    // Compute connection strength (0.0 to 1.0)
+    let strength = 0.5;
+    if (link.properties?.score !== undefined) {
+      strength = Math.min(1.0, Number(link.properties.score));
+    } else if (link.weight !== undefined) {
+      strength = Math.min(1.0, Number(link.weight) / 5.0);
+    } else if (link.score !== undefined) {
+      strength = Math.min(1.0, Number(link.score));
+    } else {
+      if (['tension', 'contradicts', 'supports', 'transcends', 'synthesis'].includes(link.type)) {
+        strength = 0.8;
+      } else if (link.type === 'collection_member') {
+        strength = 1.0;
+      } else {
+        strength = 0.4;
+      }
+    }
+    const isStrong = strength >= 0.75;
+    const isWeak = strength < 0.4;
+
     // 1. Dynamic Weight & Opacity
     let opacity = structuralIntegrity ? 0.25 : 0.1;
     const linkKey = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
@@ -491,14 +735,22 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
       opacity = structuralIntegrity ? 0.5 : 0.2;
       width = 2.2;
     }
+
+    if (isStrong) {
+      width = width * 1.4;
+      opacity = opacity * 1.5;
+    } else if (isWeak) {
+      width = 1.0;
+      opacity = opacity * 0.6;
+    }
     
     if (isFocusMode) {
       if (isSelected || isHovered) {
         opacity = 1.0;
-        width = 3.2;
+        width = isStrong ? 4.5 : 3.2;
       } else if (isNeighbor) {
         opacity = 0.4;
-        width = 1.8;
+        width = isStrong ? 2.3 : 1.8;
       } else {
         opacity = 0.01; // Deep Focus: Almost vanish unrelated
       }
@@ -508,29 +760,33 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     let dashArray = "none";
     let isFlowing = false;
     
+    if (isWeak) {
+      dashArray = "3,4"; // Weak connections are finely dashed
+    } else if (link.type === 'explores') {
+      dashArray = "4,4"; 
+      isFlowing = true;
+      width = width * 1.1;
+    } else if (link.type === 'documents') {
+      dashArray = "10,6";
+      isFlowing = true;
+    } else if (link.type === 'collection_member') {
+      dashArray = "2,3"; // Expanded collection binding is a tight dashed guide line
+    }
+
     // Resolve dynamic colors for the cluster links
     const sourceColor = sourceNode ? getClusterColor(sourceNode) : '#ffffff';
     let color = sourceColor;
 
-    if (link.type === 'explores') {
-      dashArray = "4,4"; 
-      isFlowing = true;
-      width = width * 2; // Thicker for explores
-    } else if (link.type === 'documents') {
-      dashArray = "10,6";
-      isFlowing = true;
-    }
-
-    // Explicit colors based on relation types
-    if (link.type === 'tension' || link.type === 'contradicts') {
-      color = isSelected || isHovered ? "#f43f5e" : `${sourceColor}cc`; // Reddish tension or vivid color
-      width = width * 1.5;
+    if (link.type === 'collection_member') {
+      color = "#10b981"; // Emerald green for parent-child bindings
+    } else if (link.type === 'tension' || link.type === 'contradicts') {
+      color = isSelected || isHovered ? "#f43f5e" : `${sourceColor}cc`;
     } else if (link.type === 'supports') {
-      color = isSelected || isHovered ? "#10b981" : `${sourceColor}cc`; // Emerald green support or vivid color
+      color = isSelected || isHovered ? "#10b981" : `${sourceColor}cc`;
     } else if (link.type === 'derives_from' || link.type === 'synthesizes') {
-      color = isSelected || isHovered ? "#06b6d4" : `${sourceColor}cc`; // Cyan derivation or vivid color
+      color = isSelected || isHovered ? "#06b6d4" : `${sourceColor}cc`;
     } else if (link.type === 'transcends') {
-      color = isSelected || isHovered ? "#a855f7" : `${sourceColor}cc`; // Purple transcendence or vivid color
+      color = isSelected || isHovered ? "#a855f7" : `${sourceColor}cc`;
     }
 
     // Adjust link opacity dynamically based on interaction states
@@ -556,7 +812,10 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
       dashArray,
       isFlowing,
       color,
-      isActive: isSelected || isHovered
+      isActive: isSelected || isHovered,
+      isStrong,
+      isWeak,
+      strength
     };
   };
 
@@ -611,8 +870,6 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
       
       currentNodes.forEach(node => {
         const p = getParams(node.id);
-        
-        // Harmonic overtone: 30% of main amplitude, 2x frequency
         const harmonicX = Math.sin(t * (p.freqX * 2) + p.phaseX) * (p.ampX * 0.3);
         const harmonicY = Math.sin(t * (p.freqY * 2) + p.phaseY) * (p.ampY * 0.3);
         
@@ -627,7 +884,7 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
         }
       });
       
-      currentLinks.forEach(link => {
+      currentLinks.forEach((link, idx) => {
         const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
         const targetId = typeof link.target === 'string' ? link.target : link.target.id;
         
@@ -652,11 +909,15 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
         const cx = mx - (dy / dist) * (dist * curvature);
         const cy = my + (dx / dist) * (dist * curvature);
         
-        const linkId = `link-${sourceId}-${targetId}`;
-        const el = linkRefs.current.get(linkId);
-        if (el) {
-          el.setAttribute('d', `M ${sx} ${sy} Q ${cx} ${cy} ${tx} ${ty}`);
-        }
+        const baseLinkId = `link-${sourceId}-${targetId}-${idx}`;
+        const glowEl = linkRefs.current.get(`${baseLinkId}-glow`);
+        const mainEl = linkRefs.current.get(`${baseLinkId}-main`);
+        const coreEl = linkRefs.current.get(`${baseLinkId}-core`);
+        
+        const pathData = `M ${sx} ${sy} Q ${cx} ${cy} ${tx} ${ty}`;
+        if (glowEl) glowEl.setAttribute('d', pathData);
+        if (mainEl) mainEl.setAttribute('d', pathData);
+        if (coreEl) coreEl.setAttribute('d', pathData);
       });
 
       currentLatentLinks.forEach(link => {
@@ -699,8 +960,6 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
-  // --- RENDER HELPERS ---
-
   return (
     <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-[#0a0a0a] text-zinc-100 font-sans selection:bg-orange-500/30">
       
@@ -715,11 +974,11 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
           >
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-zinc-200 animate-pulse" />
-              <span className="text-[10px]  font-semibold tracking-widest text-orange-100">Sovereign Inquiry Active</span>
+              <span className="text-[10px] font-semibold tracking-widest text-orange-100">Sovereign Inquiry Active</span>
             </div>
             <div className="w-px h-4 bg-white/10" />
-            <div className="text-[10px]  font-bold tracking-widest text-zinc-400">
-              {nodes.find(n => n.id === selectedNodeId)?.label}
+            <div className="text-[10px] font-bold tracking-widest text-zinc-400">
+              {processedNodes.find(n => n.id === selectedNodeId)?.label || nodes.find(n => n.id === selectedNodeId)?.label}
             </div>
             <button 
               onClick={(e) => { 
@@ -759,6 +1018,8 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
         setNodeSpacing={setNodeSpacing}
         availableTypes={availableTypes}
         availableStatuses={availableStatuses}
+        multiSelectMode={multiSelectMode}
+        setMultiSelectMode={setMultiSelectMode}
       />
 
       {/* --- INSIGHT GENERATOR (BOTTOM LEFT) --- */}
@@ -782,6 +1043,155 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 contrast-150 brightness-50 mix-blend-overlay" />
         </motion.div>
       </div>
+
+      {/* --- FLOATING COLLECTIONS HUB (TOP RIGHT) --- */}
+      <div className="absolute top-6 right-6 z-40 flex flex-col items-end gap-3 pointer-events-none max-h-[85vh] overflow-y-auto no-scrollbar">
+        <button
+          onClick={() => setIsCollectionsHubExpanded(!isCollectionsHubExpanded)}
+          className="pointer-events-auto flex items-center gap-2.5 px-4 py-2 bg-black/40 backdrop-blur-md border border-white/10 hover:border-white/20 rounded-xl shadow-xl text-zinc-400 hover:text-zinc-200 transition-all cursor-pointer font-mono text-[10px] font-bold tracking-widest uppercase"
+        >
+          <Layers className="w-4 h-4 text-amber-500 animate-pulse" />
+          <span>Collections ({collections.length})</span>
+        </button>
+
+        <AnimatePresence>
+          {isCollectionsHubExpanded && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+              className="pointer-events-auto w-72 p-4 bg-zinc-950/95 border border-white/5 rounded-2xl shadow-2xl backdrop-blur-md flex flex-col gap-3.5"
+            >
+              <div className="flex items-center justify-between pb-2 border-b border-white/5">
+                <span className="text-[10px] font-bold tracking-widest uppercase text-zinc-200 flex items-center gap-2">
+                  <Layers className="w-3.5 h-3.5 text-amber-500" />
+                  Collections Substrate
+                </span>
+                <button
+                  onClick={() => setIsCollectionsHubExpanded(false)}
+                  className="p-1 hover:bg-white/5 rounded-md text-zinc-500 hover:text-zinc-300 cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Collections list */}
+              <div className="flex flex-col gap-2 max-h-[250px] overflow-y-auto pr-1 no-scrollbar">
+                {collections.length === 0 ? (
+                  <div className="text-center py-6 border border-dashed border-white/5 rounded-xl bg-black/20">
+                    <Layers className="w-7 h-7 text-zinc-700 mx-auto mb-2" />
+                    <p className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest leading-relaxed">
+                      No collections defined.<br />Select multiple nodes using <span className="text-amber-500">Shift+Click</span> or toggle Multi-Select mode.
+                    </p>
+                  </div>
+                ) : (
+                  collections.map(col => {
+                    const isColHovered = hoveredCollectionId === col.id;
+                    return (
+                      <div
+                        key={col.id}
+                        onMouseEnter={() => setHoveredCollectionId(col.id)}
+                        onMouseLeave={() => setHoveredCollectionId(null)}
+                        className={cn(
+                          "p-2.5 bg-zinc-900/30 border border-white/5 hover:border-white/10 rounded-xl flex flex-col gap-2 transition-all duration-300",
+                          isColHovered && "bg-amber-500/[0.02] border-amber-500/20"
+                        )}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex flex-col gap-0.5 max-w-[70%]">
+                            <span className="text-[11px] font-bold text-zinc-200 truncate leading-tight">
+                              {col.label}
+                            </span>
+                            <span className="text-[8px] font-mono text-zinc-500 leading-none">
+                              {col.nodeIds.length} members
+                            </span>
+                          </div>
+                          
+                          {/* Collapse Indicator badge */}
+                          <span 
+                            className={cn(
+                              "text-[8px] font-bold font-mono uppercase px-1.5 py-0.5 rounded border leading-none shrink-0",
+                              col.isCollapsed 
+                                ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                                : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                            )}
+                          >
+                            {col.isCollapsed ? 'Packed' : 'Open'}
+                          </span>
+                        </div>
+
+                        {/* Control actions */}
+                        <div className="flex items-center gap-1 border-t border-white/5 pt-2">
+                          <button
+                            onClick={() => handleToggleCollectionCollapse(col.id)}
+                            className="flex-1 flex items-center justify-center gap-1 px-2 py-1 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-zinc-200 text-[9px] font-mono uppercase tracking-wider rounded-lg transition-colors cursor-pointer"
+                          >
+                            {col.isCollapsed ? (
+                              <>
+                                <Eye className="w-3 h-3 text-emerald-400" />
+                                <span>Expand</span>
+                              </>
+                            ) : (
+                              <>
+                                <EyeOff className="w-3 h-3 text-amber-400" />
+                                <span>Collapse</span>
+                              </>
+                            )}
+                          </button>
+
+                          <button
+                            onClick={() => handleDissolveCollection(col.id)}
+                            className="p-1 hover:bg-red-500/20 text-zinc-500 hover:text-red-400 rounded-lg transition-colors cursor-pointer"
+                            title="Dissolve Collection (releases members)"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* --- LINK STRENGTH LEGEND (BOTTOM RIGHT) --- */}
+      {showLinkStrengthLegend && (
+        <div className="absolute bottom-6 right-6 z-40 p-4 bg-zinc-950/80 border border-white/5 rounded-2xl backdrop-blur-md flex flex-col gap-2.5 max-w-[200px] pointer-events-auto">
+          <div className="flex items-center justify-between pb-1.5 border-b border-white/5">
+            <span className="text-[9px] font-bold tracking-widest uppercase text-zinc-200 flex items-center gap-1.5">
+              <HelpCircle className="w-3.5 h-3.5 text-cyan-400" />
+              Line Intensity
+            </span>
+            <button
+              onClick={() => setShowLinkStrengthLegend(false)}
+              className="text-zinc-500 hover:text-zinc-300"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+          <div className="flex flex-col gap-1.5 font-mono text-[8px] text-zinc-400 uppercase">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-1.5 bg-gradient-to-r from-white/20 via-white/80 to-white/20 rounded shadow-[0_0_10px_white]" />
+              <span>Strong (Active)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-1 bg-white/40 rounded" />
+              <span>Medium</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-px border-t border-dashed border-white/20" />
+              <span>Weak (Latent)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-0.5 bg-emerald-500/80 rounded" />
+              <span>Collection</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* --- GRAPH CANVAS --- */}
       <div 
@@ -859,12 +1269,12 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
 
         {/* Links */}
         <AnimatePresence>
-          {visibleLinks.map((link, i) => {
+          {visibleLinks.map((link, idx) => {
             if (!link.source || !link.target || typeof link.source === 'string' || typeof link.target === 'string' || isNaN(link.source.x) || isNaN(link.target.x)) return null;
 
             const sourceId = link.source.id;
             const targetId = link.target.id;
-            const linkId = `link-${sourceId}-${targetId}-${i}`;
+            const baseLinkId = `link-${sourceId}-${targetId}-${idx}`;
             const style = calculateLinkStyle(link);
 
             // Calculate Quadratic Bezier Control Point
@@ -872,7 +1282,6 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
             const dy = link.target.y - link.source.y;
             const dist = Math.sqrt(dx * dx + dy * dy) || 1;
             
-            // Curvature based on index to separate overlapping links
             const curvature = 0.2;
             const mx = (link.source.x + link.target.x) / 2;
             const my = (link.source.y + link.target.y) / 2;
@@ -880,7 +1289,7 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
             const cy = my + (dx / dist) * (dist * curvature);
 
             return (
-              <g key={linkId}
+              <g key={baseLinkId}
                  className="cursor-pointer pointer-events-auto"
                  onMouseEnter={(e) => {
                    setHoveredLink(link);
@@ -899,8 +1308,23 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
                   strokeWidth={20}
                 />
                 
+                {/* 1. Underlying wide glowing path for strong links (Neon Tube Core Glow) */}
+                {style.isStrong && (
+                  <path
+                    ref={(el) => { if (el) linkRefs.current.set(`${baseLinkId}-glow`, el as any); else linkRefs.current.delete(`${baseLinkId}-glow`); }}
+                    d={`M ${link.source.x} ${link.source.y} Q ${cx} ${cy} ${link.target.x} ${link.target.y}`}
+                    fill="none"
+                    stroke={style.color}
+                    strokeWidth={style.width + 6}
+                    opacity={style.opacity * 0.25}
+                    strokeDasharray={style.dashArray}
+                    style={{ filter: "url(#void-bloom)" }}
+                  />
+                )}
+
+                {/* 2. Standard main path */}
                 <motion.path
-                  ref={(el) => { if (el) linkRefs.current.set(linkId, el as any); else linkRefs.current.delete(linkId); }}
+                  ref={(el) => { if (el) linkRefs.current.set(`${baseLinkId}-main`, el as any); else linkRefs.current.delete(`${baseLinkId}-main`); }}
                   initial={{ pathLength: 0, opacity: 0 }}
                   animate={{ 
                     pathLength: 1, 
@@ -912,26 +1336,47 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
                   fill="none"
                   strokeDasharray={style.dashArray}
                 />
+
+                {/* 3. Overlapping bright inner core for strong links (Neon Pipe Fiber Core) */}
+                {style.isStrong && (
+                  <motion.path
+                    ref={(el) => { if (el) linkRefs.current.set(`${baseLinkId}-core`, el as any); else linkRefs.current.delete(`${baseLinkId}-core`); }}
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ 
+                      pathLength: 1, 
+                      opacity: style.opacity * 0.9
+                    }}
+                    exit={{ opacity: 0 }}
+                    stroke="#ffffff"
+                    strokeWidth={1.5}
+                    fill="none"
+                    strokeDasharray={style.dashArray}
+                  />
+                )}
                 
-                {/* Animated Data Packets (Logic Flow) */}
-                {style.isActive && (
+                {/* Animated Data Packets (Logic Flow Animation) */}
+                {(style.isActive || style.isStrong) && !style.isWeak && (
                   <g className="pointer-events-none">
-                    {[0, 1, 2].map((i) => (
+                    {[0, 1, 2].map((packetIndex) => (
                       <motion.circle
-                        key={`${linkId}-packet-${i}`}
-                        r={1.2 + i * 0.3}
-                        fill={style.color}
+                        key={`${baseLinkId}-packet-${packetIndex}`}
+                        r={style.isStrong ? 2.2 + packetIndex * 0.4 : 1.2 + packetIndex * 0.3}
+                        fill={style.isStrong ? "#ffffff" : style.color}
                         initial={{ offsetDistance: "0%" }}
                         animate={{ offsetDistance: "100%" }}
                         transition={{ 
-                          duration: 1.5 + Math.random() * 0.5, 
+                          duration: style.isStrong 
+                            ? (1.0 + Math.random() * 0.3) // Strong links flow FASTER
+                            : (1.5 + Math.random() * 0.5), 
                           repeat: Infinity, 
-                          delay: i * 0.6,
+                          delay: packetIndex * 0.5,
                           ease: "linear" 
                         }}
                         style={{
                           offsetPath: `path('M ${link.source.x} ${link.source.y} Q ${cx} ${cy} ${link.target.x} ${link.target.y}')`,
-                          filter: `blur(${0.5}px) drop-shadow(0 0 5px ${style.color})`,
+                          filter: style.isStrong 
+                            ? `blur(${0.3}px) drop-shadow(0 0 8px #ffffff)` 
+                            : `blur(${0.4}px) drop-shadow(0 0 6px ${style.color})`,
                         }}
                       />
                     ))}
@@ -950,23 +1395,30 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
             const hasSearchQuery = searchQuery && searchQuery.trim().length > 0;
             const matchesSearch = hasSearchQuery && node.label.toLowerCase().includes(searchQuery.toLowerCase());
             const isSelected = selectedNodeId === node.id;
-            const isHovered = hoveredNodeId === node.id || (
+            
+            // Check collection context hover highlights
+            const colHovered = hoveredCollectionId ? collections.find(c => c.id === hoveredCollectionId) : null;
+            const isMemberOfHoveredCol = colHovered ? colHovered.nodeIds.includes(node.id) : false;
+            const isHoveredColNode = node.id === hoveredCollectionId;
+
+            const isHovered = hoveredNodeId === node.id || isHoveredColNode || isMemberOfHoveredCol || (
               hoveredLink && (
                 (typeof hoveredLink.source === 'string' ? hoveredLink.source : hoveredLink.source.id) === node.id || 
                 (typeof hoveredLink.target === 'string' ? hoveredLink.target : hoveredLink.target.id) === node.id
               )
             );
             
-            const isFocusMode = !!selectedNodeId || !!hoveredNodeId || !!hoveredLink;
+            const isFocusMode = !!selectedNodeId || !!hoveredNodeId || !!hoveredLink || !!hoveredCollectionId;
             const isConnectedToFocus = visibleLinks.some(l => 
-              (l.source?.id === node.id && (l.target?.id === selectedNodeId || l.target?.id === hoveredNodeId)) || 
-              (l.target?.id === node.id && (l.source?.id === selectedNodeId || l.source?.id === hoveredNodeId))
+              (l.source?.id === node.id && (l.target?.id === selectedNodeId || l.target?.id === hoveredNodeId || (colHovered && colHovered.nodeIds.includes(l.target?.id)))) || 
+              (l.target?.id === node.id && (l.source?.id === selectedNodeId || l.source?.id === hoveredNodeId || (colHovered && colHovered.nodeIds.includes(l.source?.id))))
             );
 
             // True if faded out by focus isolation OR search isolation
             const isDimmed = (isFocusMode && !isSelected && !isHovered && !isConnectedToFocus) || (hasSearchQuery && !matchesSearch);
-            // Even darker if not matching focus
             const isDeeplyDimmed = isDimmed && ((isFocusMode && !isConnectedToFocus) || (hasSearchQuery && !matchesSearch));
+
+            const isMultiSelected = selectedNodeIds.has(node.id);
 
             const color = getClusterColor(node);
             const scale = calculateNodeScale(node);
@@ -1004,11 +1456,23 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
                   )}
                   onMouseEnter={() => setHoveredNodeId(node.id)}
                   onMouseLeave={() => setHoveredNodeId(null)}
-                  onClick={() => {
-                    setSelectedNodeId(node.id);
-                    setSidebarMode('details');
-                    setRightSidebarOpen(true);
-                    externalOnNodeSelect?.(node);
+                  onClick={(e) => {
+                    if (multiSelectMode || e.shiftKey) {
+                      e.stopPropagation();
+                      const next = new Set(selectedNodeIds);
+                      if (next.has(node.id)) {
+                        next.delete(node.id);
+                      } else {
+                        next.add(node.id);
+                      }
+                      setSelectedNodeIds(next);
+                      setSelectedNodeId(undefined); // Clear single selected node
+                    } else {
+                      setSelectedNodeId(node.id);
+                      setSidebarMode('details');
+                      setRightSidebarOpen(true);
+                      externalOnNodeSelect?.(node);
+                    }
                   }}
                   onDoubleClick={() => setExpandedNodeId(node.id)}
                 >
@@ -1052,7 +1516,7 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
                       isSelected ? "animate-pulse" : "group-hover:scale-105",
                       matchesSearch && "shadow-[0_0_40px_white] ring-4 ring-white/20"
                     )}
-                    style={getNodeStyles(node, color, matchesSearch, isSelected, isHovered, isConnectedToFocus, scale)}
+                    style={getNodeStyles(node, color, matchesSearch, isSelected, isHovered, isConnectedToFocus, scale, isMultiSelected)}
                   >
                     {/* Inner Semantic Core */}
                     <div 
@@ -1062,6 +1526,13 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
                         borderRadius: node.type === 'thinker' ? "35%" : (node.type === 'axiom' || node.type === 'axiom_type' || node.id.includes('axiom') ? "6px" : "9999px")
                       }}
                     />
+
+                    {/* Collection Pack Indicator Count */}
+                    {node.type === 'collection' && (
+                      <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white font-mono select-none">
+                        {node.metadata?.isCollapsed ? `+${node.metadata?.nodeIds?.length}` : '•'}
+                      </div>
+                    )}
                   </div>
 
                   {/* Label (Floating & Colorful) */}
@@ -1089,6 +1560,57 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
         </AnimatePresence>
       </div>
       </div>
+
+      {/* --- FLOATING BOTTOM ACTION BAR FOR MULTI-SELECT GROUPING --- */}
+      <AnimatePresence>
+        {selectedNodeIds.size > 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: 50, x: "-50%" }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col md:flex-row items-center gap-4 p-4 bg-zinc-950/95 border border-amber-500/30 rounded-2xl shadow-2xl backdrop-blur-2xl pointer-events-auto"
+          >
+            <div className="flex items-center gap-3 pr-2 border-r border-white/10 shrink-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+              <span className="text-[10px] font-bold tracking-widest text-zinc-100 uppercase font-mono">
+                Multi-Select: {selectedNodeIds.size} nodes
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Name cluster..."
+                value={newCollectionName}
+                onChange={(e) => setNewCollectionName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleCreateCollection();
+                  }
+                }}
+                className="bg-zinc-900 border border-white/10 hover:border-white/20 transition-colors px-3 py-1.5 rounded-xl text-xs font-mono text-zinc-200 outline-none placeholder:text-zinc-600 focus:border-amber-500/50 w-44"
+              />
+
+              <button
+                onClick={handleCreateCollection}
+                className="px-4 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-black text-[10px] font-extrabold tracking-widest uppercase transition-all rounded-xl cursor-pointer shadow-lg shadow-emerald-500/10 flex items-center gap-1.5 font-mono"
+              >
+                <FolderPlus className="w-3.5 h-3.5" /> Group
+              </button>
+
+              <button
+                onClick={() => {
+                  setSelectedNodeIds(new Set());
+                  setNewCollectionName('');
+                }}
+                className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-zinc-200 text-[10px] font-mono font-bold tracking-widest uppercase transition-all rounded-xl cursor-pointer"
+              >
+                Clear
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* --- SEMANTIC EXPANSION ENGINE (ANALYSIS-REVEAL) --- */}
       <ExpansionPanel 
@@ -1159,4 +1681,3 @@ export const KnowledgeGraph = React.memo(function KnowledgeGraph({
     </div>
   );
 });
-
