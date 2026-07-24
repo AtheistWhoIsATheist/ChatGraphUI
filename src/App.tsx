@@ -1,355 +1,417 @@
-import React, { useState, useEffect } from 'react';
-import { KnowledgeGraph } from './components/KnowledgeGraph';
-import { Chatbot } from './components/Chatbot';
-import { IntelligenceCards } from './components/IntelligenceCards';
-import { InsightPrompts } from './components/InsightPrompts';
-import { StreamFeed } from './components/StreamFeed';
-import { StructuralGaps } from './components/StructuralGaps';
-import { ShiftingVoidExplanation } from './components/ShiftingVoidExplanation';
-import { AuditTrailPanel } from './components/AuditTrailPanel';
-import { NodeDetailsPanel } from './components/NodeDetailsPanel';
-import { FileManager } from './components/FileManager';
-import KnowledgeBaseDeepIngestion from './pages/KnowledgeBaseDeepIngestion';
-import { OEDiscriminator } from './components/OEDiscriminator';
-import { OEDashboard } from './components/OEDiscriminatorDashboard';
-import { ThreeGraph } from './components/ThreeGraph';
-import { ThemeClusters } from './components/ThemeClusters';
-import { GlobalTopology } from './components/GlobalTopology';
-import { AISynthesisPanel } from './components/AISynthesisPanel';
-import { InfranodusEngine } from './components/InfranodusEngine';
-import { corpusNodes, corpusLinks, Node, Link } from './data/corpus';
-import { 
-  Menu, X, Database, AlertTriangle, Cpu, MessageSquare, Layers, Zap, BookOpen, Sparkles, ShieldCheck, HardDriveDownload, Info, HardDrive, Microscope, Box, BarChart3, Group, Network
-} from 'lucide-react';
-import { cn } from './lib/utils';
+import { useState, useEffect, useCallback } from 'react';
+import { initialNodes, initialLinks, corpusTexts } from './data/ontology';
+import { JournalEntry, Marginalia, ParadoxSynthesis, CorpusIngestionBatch } from './types';
+import { InteractiveGraph } from './components/InteractiveGraph';
+import { NodeDetailPanel } from './components/NodeDetailPanel';
+import { ReflectionChamber } from './components/ReflectionChamber';
+import { CorpusBrowser } from './components/CorpusBrowser';
+import { ParadoxSynthesizer } from './components/ParadoxSynthesizer';
+import { CorpusIntakeTool } from './components/CorpusIntakeTool';
+import { DataManagementModal } from './components/DataManagementModal';
+import { Network, PenTool, BookOpen, Activity, Clock, Info, Database, Brain } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { runIngestion, IngestionFile } from './utils/runIngestion';
-import { NavigationSidebar, ViewMode } from './components/NavigationSidebar';
-import { ResearchWorkbench } from './components/ResearchWorkbench';
-import { logOptimization } from './utils/selfImprovement';
-import { TheoryOverlay } from './components/TheoryOverlay';
-import { useAppStore, SidebarMode } from './store/appStore';
-import { useGraphPersistence } from './hooks/useGraphPersistence';
 
-function App() {
-  // Synchronize graph state with localStorage automatically
-  useGraphPersistence();
+export default function App() {
+  // Navigation tabs: 'graph' | 'journal' | 'corpus' | 'paradox' | 'intake'
+  const [activeTab, setActiveTab] = useState<'graph' | 'journal' | 'corpus' | 'paradox' | 'intake'>('intake');
 
-  const { 
-    nodes, links, viewMode, selectedNodeId, sidebarMode, 
-    isRightSidebarOpen, isFileManagerOpen,
-    setNodes, setLinks, setViewMode, setSelectedNodeId, setSidebarMode,
-    setRightSidebarOpen, setFileManagerOpen,
-    addNode, addLink, integrateSyntheticData
-  } = useAppStore();
+  // Core application states
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+  const [selectedQuestion, setSelectedQuestion] = useState<string | null>(null);
+  const [isDataModalOpen, setIsDataModalOpen] = useState(false);
 
-  const [showRupture, setShowRupture] = useState(true);
-  const [files, setFiles] = useState<IngestionFile[]>([]);
-  const [synthesisHistory, setSynthesisHistory] = useState<{nodes: Node[], links: Link[]}[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [nodesRes, linksRes] = await Promise.all([
-          fetch('/api/nodes'),
-          fetch('/api/links')
-        ]);
-        
-        if (nodesRes.ok) {
-          const data = await nodesRes.json();
-          setNodes(data);
-        }
-
-        if (linksRes.ok) {
-          const data = await linksRes.json();
-          setLinks(data);
-        }
-      } catch (error) {
-        console.error('Error fetching data, using corpus defaults:', error);
-      }
-    };
-    fetchData();
-  }, [setNodes, setLinks]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowRupture(false), 4000);
-    return () => clearTimeout(timer);
+  // Stable callbacks to maintain reference integrity
+  const handleSelectNode = useCallback((nodeId: string | null) => {
+    setSelectedNodeId(nodeId);
   }, []);
 
-  const handleNodeSelect = (node: Node) => {
-    setSelectedNodeId(node.id);
-    setSidebarMode('details');
-    setRightSidebarOpen(true);
-  };
+  const handleHoverNode = useCallback((nodeId: string | null) => {
+    setHoveredNodeId(nodeId);
+  }, []);
 
-  const handleFileExtract = async (file: IngestionFile) => {
+  // Persistence States (Local Storage)
+  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
+  const [marginalia, setMarginalia] = useState<Marginalia[]>([]);
+  const [synthesisHistory, setSynthesisHistory] = useState<ParadoxSynthesis[]>([]);
+  const [ingestionBatches, setIngestionBatches] = useState<CorpusIngestionBatch[]>([]);
+
+  // Time clock display (strictly literal and compliant)
+  const [currentTime, setCurrentTime] = useState('');
+
+  // 1. Initialize persistent data from localStorage
+  useEffect(() => {
     try {
-      const result = await runIngestion(
-        file, 
-        nodes, 
-        links, 
-        (id, status) => {
-          setFiles(prev => prev.map(f => f.id === id ? { ...f, status } : f));
-        }
-      );
+      const savedJournal = localStorage.getItem('nes2_journal_entries');
+      if (savedJournal) setJournalEntries(JSON.parse(savedJournal));
 
-      // Save new nodes to the backend SQLite database
-      if (result.delta?.newNodes && result.delta.newNodes.length > 0) {
-        for (const node of result.delta.newNodes) {
-          try {
-            await fetch('/api/nodes', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(node)
-            });
-          } catch (nodeErr) {
-            console.error('[Ingestion] Failed to save node to backend:', nodeErr);
-          }
-        }
+      const savedMarginalia = localStorage.getItem('nes2_marginalia');
+      if (savedMarginalia) setMarginalia(JSON.parse(savedMarginalia));
+
+      const savedSynthesis = localStorage.getItem('nes2_synthesis_history');
+      if (savedSynthesis) setSynthesisHistory(JSON.parse(savedSynthesis));
+
+      const savedBatches = localStorage.getItem('nes2_ingestion_batches');
+      if (savedBatches) setIngestionBatches(JSON.parse(savedBatches));
+    } catch (e) {
+      console.error('Failed to load archives from persistent local storage:', e);
+    }
+  }, []);
+
+  // 2. Real-time Clock loop (clean and stabilized)
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setCurrentTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Helper to update and persist ingested batches
+  const handleSaveBatch = (newBatch: CorpusIngestionBatch) => {
+    const updated = [newBatch, ...ingestionBatches.filter(b => b.batchId !== newBatch.batchId)];
+    setIngestionBatches(updated);
+    localStorage.setItem('nes2_ingestion_batches', JSON.stringify(updated));
+  };
+
+  const handleDeleteBatch = (batchId: string) => {
+    const updated = ingestionBatches.filter(b => b.batchId !== batchId);
+    setIngestionBatches(updated);
+    localStorage.setItem('nes2_ingestion_batches', JSON.stringify(updated));
+  };
+
+  const handleClearAllBatches = () => {
+    setIngestionBatches([]);
+    localStorage.removeItem('nes2_ingestion_batches');
+  };
+
+  // 3. Helper to update and persist journal entries
+  const handleSaveJournalEntry = (newEntry: JournalEntry) => {
+    const updated = [newEntry, ...journalEntries];
+    setJournalEntries(updated);
+    localStorage.setItem('nes2_journal_entries', JSON.stringify(updated));
+  };
+
+  const handleDeleteJournalEntry = (id: string) => {
+    const updated = journalEntries.filter(entry => entry.id !== id);
+    setJournalEntries(updated);
+    localStorage.setItem('nes2_journal_entries', JSON.stringify(updated));
+  };
+
+  // 4. Helper to update and persist marginalia
+  const handleSaveMarginalia = (corpusId: string, noteText: string) => {
+    let updated: Marginalia[] = [];
+    if (noteText.trim() === '') {
+      updated = marginalia.filter(m => m.corpusId !== corpusId);
+    } else {
+      const existingIdx = marginalia.findIndex(m => m.corpusId === corpusId);
+      if (existingIdx > -1) {
+        updated = [...marginalia];
+        updated[existingIdx] = { corpusId, noteText, timestamp: new Date().toISOString() };
+      } else {
+        updated = [...marginalia, { corpusId, noteText, timestamp: new Date().toISOString() }];
       }
+    }
+    setMarginalia(updated);
+    localStorage.setItem('nes2_marginalia', JSON.stringify(updated));
+  };
 
-      // Save new links to the backend SQLite database
-      if (result.delta?.newLinks && result.delta.newLinks.length > 0) {
-        for (const link of result.delta.newLinks) {
-          try {
-            await fetch('/api/links', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(link)
-            });
-          } catch (linkErr) {
-            console.error('[Ingestion] Failed to save link to backend:', linkErr);
-          }
-        }
-      }
+  const handleDeleteMarginalia = (corpusId: string) => {
+    const updated = marginalia.filter(m => m.corpusId !== corpusId);
+    setMarginalia(updated);
+    localStorage.setItem('nes2_marginalia', JSON.stringify(updated));
+  };
 
-      setNodes(result.nodes);
-      setLinks(result.links);
-    } catch (error) {
-      console.error('Extraction failed:', error);
+  // 5. Helper to update and persist paradox synthesis
+  const handleSaveSynthesis = (newSynthesis: ParadoxSynthesis) => {
+    const updated = [newSynthesis, ...synthesisHistory];
+    setSynthesisHistory(updated);
+    localStorage.setItem('nes2_synthesis_history', JSON.stringify(updated));
+  };
+
+  const handleClearSynthesisHistory = () => {
+    setSynthesisHistory([]);
+    localStorage.removeItem('nes2_synthesis_history');
+  };
+
+  // Import external archive data (merge or restore)
+  const handleImportData = (imported: {
+    journalEntries?: JournalEntry[];
+    marginalia?: Marginalia[];
+    synthesisHistory?: ParadoxSynthesis[];
+  }) => {
+    if (imported.journalEntries) {
+      setJournalEntries(imported.journalEntries);
+      localStorage.setItem('nes2_journal_entries', JSON.stringify(imported.journalEntries));
+    }
+    if (imported.marginalia) {
+      setMarginalia(imported.marginalia);
+      localStorage.setItem('nes2_marginalia', JSON.stringify(imported.marginalia));
+    }
+    if (imported.synthesisHistory) {
+      setSynthesisHistory(imported.synthesisHistory);
+      localStorage.setItem('nes2_synthesis_history', JSON.stringify(imported.synthesisHistory));
     }
   };
 
-  // Content Renderer
-  const renderMainContent = () => {
-    switch (viewMode) {
-      case 'deep_ingestion':
-        return (
-          <div className="w-full h-full overflow-y-auto custom-scrollbar">
-            <KnowledgeBaseDeepIngestion />
-          </div>
-        );
-      case 'engine':
-        return (
-          <div className="relative w-full h-full">
-            <KnowledgeGraph />
-            <TheoryOverlay />
-          </div>
-        );
-      case '3d_engine':
-        return (
-          <div className="relative w-full h-full">
-            <ThreeGraph />
-            <TheoryOverlay />
-          </div>
-        );
-      case 'stream':
-        return <StreamFeed nodes={nodes} onNodeSelect={handleNodeSelect} selectedNodeId={selectedNodeId} />;
-      case 'gaps':
-        return <StructuralGaps nodes={nodes} onNodeSelect={handleNodeSelect} />;
-      case 'discriminator':
-        return <OEDiscriminator />;
-      case 'oe_analytics':
-        return <OEDashboard />;
-      case 'theme_clusters':
-        return <ThemeClusters />;
-      case 'global_topology':
-        return <GlobalTopology />;
-      case 'ai_synthesis':
-        return (
-          <AISynthesisPanel 
-            nodes={nodes}
-            onIntegrate={(newNodes, newLinks) => {
-              setSynthesisHistory(prev => [...prev, { nodes: [...nodes], links: [...links] }]);
-              integrateSyntheticData(newNodes, newLinks);
-              logOptimization('refactor', 'Merged synthetic bridge into main corpus', { nodeCount: newNodes.length });
-            }}
-            onUndo={() => {
-              if (synthesisHistory.length > 0) {
-                const last = synthesisHistory[synthesisHistory.length - 1];
-                setNodes(last.nodes);
-                setLinks(last.links);
-                setSynthesisHistory(prev => prev.slice(0, -1));
-              }
-            }}
-            canUndo={synthesisHistory.length > 0}
-          />
-        );
-      case 'comparative_workbench':
-        return <ResearchWorkbench />;
-      case 'infranodus':
-        return <InfranodusEngine />;
-      default:
-        return null;
-    }
+  // Clear all local storage state
+  const handleClearAllData = () => {
+    setJournalEntries([]);
+    setMarginalia([]);
+    setSynthesisHistory([]);
+    localStorage.removeItem('nes2_journal_entries');
+    localStorage.removeItem('nes2_marginalia');
+    localStorage.removeItem('nes2_synthesis_history');
+  };
+
+  // Safe node selector
+  const activeNode = selectedNodeId ? initialNodes.find(n => n.id === selectedNodeId) : null;
+
+  // Jump to reflection chamber with selected question
+  const handleSelectQuestion = (question: string) => {
+    setSelectedQuestion(question);
+    setActiveTab('journal');
   };
 
   return (
-    <div className="flex h-screen w-full bg-zinc-950 text-zinc-100 overflow-hidden font-sans selection:bg-zinc-100/50 relative">
-      {/* Rupture Sequence */}
-      <AnimatePresence>
-        {showRupture && (
-          <motion.div 
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 1.5, ease: "easeInOut" } }}
-            className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
+    <div id="application-root" className="h-full flex flex-col bg-neutral-950 text-neutral-100 font-sans antialiased overflow-hidden">
+      
+      {/* 1. Header Layout */}
+      <header className="border-b border-neutral-900 bg-neutral-950/80 backdrop-blur-md px-6 py-4 flex flex-shrink-0 justify-between items-center z-20">
+        <div className="flex flex-col">
+          <div className="flex items-center gap-2">
+            <h1 className="font-display text-base font-bold uppercase tracking-widest text-white">
+              Nihilismi Experientia Sacra II
+            </h1>
+            <span className="text-[10px] font-mono text-neutral-600 bg-neutral-900 px-2 py-0.5 rounded border border-neutral-850">
+              v2.0.1
+            </span>
+          </div>
+          <p className="text-[11px] text-neutral-500 tracking-wide font-sans mt-0.5">
+            Interactive Digital Companion & Apophatic Knowledge Architecture
+          </p>
+        </div>
+
+        {/* Toolbar & lit clock display */}
+        <div className="flex items-center gap-4 text-xs text-neutral-500 font-mono">
+          <button
+            onClick={() => setIsDataModalOpen(true)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-lg text-neutral-300 hover:text-white transition-all text-xs font-mono cursor-pointer"
+            title="Export or Import reflections, notes, and paradox syntheses"
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, filter: "blur(10px)" }}
-              animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
-              transition={{ duration: 2, ease: "easeOut" }}
-              className="text-center space-y-6"
-            >
-              <h1 className="text-4xl md:text-6xl font-serif tracking-widest text-zinc-200 animate-glitch">
-                Journal314 & Nihiltheism Analysis Engine
-              </h1>
-              <p className="text-zinc-500 font-mono tracking-widest text-sm">
-                Structural Textual Analysis
-              </p>
-              <motion.div 
-                animate={{ scaleX: [0, 1] }} 
-                transition={{ duration: 1.5, delay: 1, ease: "circOut" }}
-                className="h-[2px] w-full bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent"
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <Database className="w-3.5 h-3.5 text-amber-400" />
+            <span>Data Backup & Export</span>
+          </button>
 
-      {/* Left Sidebar - Navigation & Tools */}
-      <NavigationSidebar />
+          <div className="hidden sm:flex items-center gap-1.5 border-l border-neutral-850 pl-4">
+            <Clock className="w-3.5 h-3.5 text-neutral-600" />
+            <span>Time:</span>
+            <span className="text-neutral-300 font-medium">{currentTime || '--:--:--'}</span>
+          </div>
+        </div>
+      </header>
 
-      {/* File Manager Panel */}
-      <AnimatePresence>
-        {isFileManagerOpen && (
-          <motion.div
-            key="file-manager-panel"
-            initial={{ x: -400 }}
-            animate={{ x: 0 }}
-            exit={{ x: -400 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed left-20 top-0 bottom-0 w-80 z-40 shadow-2xl"
-          >
-            <FileManager 
-              files={files}
-              setFiles={setFiles}
-              onExtract={handleFileExtract}
-              onClose={() => setFileManagerOpen(false)}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Data Management Export / Import Modal */}
+      <DataManagementModal
+        isOpen={isDataModalOpen}
+        onClose={() => setIsDataModalOpen(false)}
+        journalEntries={journalEntries}
+        marginalia={marginalia}
+        synthesisHistory={synthesisHistory}
+        onImportData={handleImportData}
+        onClearAllData={handleClearAllData}
+      />
 
-      {/* Main Content Area */}
-      <main className="flex-1 relative overflow-hidden">
-        {renderMainContent()}
-      </main>
-
-      {/* Toggle Right Sidebar Button (when closed) */}
-      <AnimatePresence>
-        {!isRightSidebarOpen && (
-          <motion.button
-            key="open-right-sidebar"
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 50, opacity: 0 }}
-            onClick={() => setRightSidebarOpen(true)}
-            className="fixed right-0 top-1/2 -translate-y-1/2 z-50 w-10 h-20 bg-zinc-950 border-y-2 border-l-2 border-white/5 flex items-center justify-center text-zinc-400 hover:text-zinc-300 hover:border-white/10 transition-colors rounded-2xl transition shadow-xl group backdrop-blur-md cursor-pointer"
-          >
-            <Menu className="w-6 h-6 group-hover:scale-110 transition-transform" />
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* Right Sidebar - Synthesis Engine & Intelligence Cards */}
-      <AnimatePresence>
-        {isRightSidebarOpen && (
-          <motion.div 
-            key="right-sidebar-panel"
-            initial={{ x: 400 }}
-            animate={{ x: 0 }}
-            exit={{ x: 400 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="w-[400px] h-full shrink-0 border-l-2 border-white/5 bg-zinc-900/50 flex flex-col z-40 shadow-2xl relative"
-          >
-            <button 
-              onClick={() => setRightSidebarOpen(false)}
-              className="absolute top-2 left-2 p-1 text-zinc-500 hover:text-zinc-200 transition-colors z-50 cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
+      {/* 2. Main content container */}
+      <main className="flex-1 flex flex-col md:flex-row min-h-0 z-10 overflow-hidden">
+        
+        {/* Navigation Rail / Sidebar */}
+        <nav className="w-full md:w-64 border-b md:border-b-0 md:border-r border-neutral-900 bg-neutral-950/50 flex-shrink-0 flex flex-row md:flex-col justify-between p-3 md:p-4 gap-2">
+          <div className="flex flex-row md:flex-col gap-1.5 flex-1 md:flex-none">
             
-            {/* Sidebar Mode Toggle */}
-            <div className="absolute -left-[3.5rem] top-24 flex flex-col gap-4 z-50">
-              {[
-                { id: 'chat', icon: MessageSquare, color: 'text-zinc-200', activeBorder: 'border-white/10' },
-                { id: 'intelligence', icon: Layers, color: 'text-zinc-300', activeBorder: 'border-emerald-500' },
-                { id: 'insights', icon: Zap, color: 'text-zinc-300', activeBorder: 'border-[#00FF66]' },
-                { id: 'details', icon: Info, color: 'text-zinc-300', activeBorder: 'border-white/10' },
-                { id: 'audit', icon: ShieldCheck, color: 'text-[#ff00ff]', activeBorder: 'border-[#ff00ff]' }
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setSidebarMode(item.id as SidebarMode)}
-                  className={cn(
-                    "w-14 h-14 flex items-center justify-center transition-all border-y-2 border-l-2 border-r-0 relative rounded-2xl transition hover:bg-white/5 backdrop-blur-md",
-                    sidebarMode === item.id 
-                      ? `bg-zinc-900/50 ${item.activeBorder} ${item.color} -ml-2 w-16 z-20` 
-                      : "bg-white/5 border-white/5 text-zinc-500 hover:text-white hover:border-white/20 hover:bg-white/10"
-                  )}
-                  title={item.id}
-                >
-                  <item.icon className="w-6 h-6" strokeWidth={sidebarMode === item.id ? 3 : 2} />
-                  {sidebarMode === item.id && (
-                    <div className={cn("absolute right-[-4px] top-0 bottom-0 w-2 bg-zinc-900/50 z-30", item.activeBorder.replace('border-', 'bg-'))} />
-                  )}
-                </button>
-              ))}
+            {/* Tab: Ontology Map */}
+            <button
+              onClick={() => setActiveTab('graph')}
+              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
+                activeTab === 'graph'
+                  ? 'bg-white text-black font-semibold'
+                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
+              }`}
+            >
+              <Network className="w-4 h-4 flex-shrink-0" />
+              <span>Ontology Map</span>
+            </button>
+
+            {/* Tab: Reflection Chamber */}
+            <button
+              onClick={() => setActiveTab('journal')}
+              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
+                activeTab === 'journal'
+                  ? 'bg-white text-black font-semibold'
+                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
+              }`}
+            >
+              <PenTool className="w-4 h-4 flex-shrink-0" />
+              <span>Void Journal</span>
+            </button>
+
+            {/* Tab: Scholarly Archive */}
+            <button
+              onClick={() => setActiveTab('corpus')}
+              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
+                activeTab === 'corpus'
+                  ? 'bg-white text-black font-semibold'
+                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
+              }`}
+            >
+              <BookOpen className="w-4 h-4 flex-shrink-0" />
+              <span>Scholarly Archive</span>
+            </button>
+
+            {/* Tab: Paradox Synthesizer */}
+            <button
+              onClick={() => setActiveTab('paradox')}
+              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
+                activeTab === 'paradox'
+                  ? 'bg-white text-black font-semibold'
+                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
+              }`}
+            >
+              <Activity className="w-4 h-4 flex-shrink-0" />
+              <span>Paradox Synthesizer</span>
+            </button>
+
+            {/* Tab: Corpus Intake & Second Brain AI */}
+            <button
+              onClick={() => setActiveTab('intake')}
+              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
+                activeTab === 'intake'
+                  ? 'bg-gradient-to-r from-amber-500 to-purple-600 text-white font-semibold shadow-lg shadow-purple-950/50'
+                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
+              }`}
+            >
+              <Brain className="w-4 h-4 flex-shrink-0 text-amber-400" />
+              <span>Corpus Intake & AI</span>
+            </button>
+          </div>
+
+          {/* Socratic Motto / Info card at bottom of navigation (desktop only) */}
+          <div className="hidden md:flex flex-col gap-2 p-3 bg-neutral-900/20 border border-neutral-900/60 rounded-xl text-[10px] font-mono text-neutral-500 leading-normal select-none">
+            <div className="flex items-center gap-1 text-neutral-400">
+              <Info className="w-3.5 h-3.5 text-neutral-500 flex-shrink-0" />
+              <span>Apophatic Method</span>
             </div>
+            <p>Define absolute truth strictly by stating what it is not. Expose certainty to aporia, and settle in silent awareness.</p>
+          </div>
+        </nav>
 
-            {sidebarMode === 'chat' ? (
-              <Chatbot 
-                nodes={nodes}
-                onCollapse={() => {}}
-              />
-            ) : sidebarMode === 'intelligence' ? (
-              <IntelligenceCards 
-                nodes={nodes}
-                links={links}
-                onNodeSelect={handleNodeSelect}
-              />
-            ) : sidebarMode === 'insights' ? (
-              <InsightPrompts 
-                nodes={nodes}
-                links={links}
-                onNodeSelect={handleNodeSelect}
-              />
-            ) : sidebarMode === 'details' ? (
-              <NodeDetailsPanel 
-                node={nodes.find(n => n.id === selectedNodeId)}
-              />
-            ) : (
-              <AuditTrailPanel 
-                node={nodes.find(n => n.id === selectedNodeId)}
-              />
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+        {/* 3. Main Workspace Container */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-black">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25 }}
+              className="h-full"
+            >
+              
+              {/* Tab Content: Graph / Map View */}
+              {activeTab === 'graph' && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full items-start">
+                  {/* Left SVG Graph panel (7 cols) */}
+                  <div className="lg:col-span-7 h-full flex flex-col gap-4">
+                    <InteractiveGraph
+                      nodes={initialNodes}
+                      links={initialLinks}
+                      selectedNodeId={selectedNodeId}
+                      hoveredNodeId={hoveredNodeId}
+                      onSelectNode={handleSelectNode}
+                      onHoverNode={handleHoverNode}
+                    />
+                  </div>
 
+                  {/* Right Node details panel (5 cols) */}
+                  <div className="lg:col-span-5 h-full">
+                    {activeNode ? (
+                      <NodeDetailPanel
+                        node={activeNode}
+                        corpusTexts={corpusTexts}
+                        onSelectQuestion={handleSelectQuestion}
+                        onNavigateToTab={setActiveTab}
+                      />
+                    ) : (
+                      <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-4 h-full min-h-[300px] abyssal-glow justify-between py-16">
+                        <div className="flex flex-col items-center gap-3">
+                          <Network className="w-10 h-10 text-neutral-800 animate-pulse" />
+                          <h3 className="font-display text-sm tracking-widest text-neutral-400 uppercase font-medium">No Parameter Selected</h3>
+                          <p className="text-xs text-neutral-500 leading-relaxed max-w-xs font-sans">
+                            Select any concept node in the active network projection grid to examine its ontological parameters, connected texts, and reflective pathways.
+                          </p>
+                        </div>
+                        <div className="bg-neutral-900/30 border border-neutral-900 p-3.5 rounded-xl text-[10px] font-mono text-neutral-500 leading-normal max-w-sm mt-4 text-left select-none">
+                          <span className="text-neutral-400 font-semibold block mb-1">Recommended Starting Gateways:</span>
+                          • The Absolute Void (Ontological Core)<br />
+                          • Socratic Epoché (Epistemological Suspension)<br />
+                          • Śūnyatā (Radical Emptiness Insight)
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Tab Content: Void Journal / Reflection */}
+              {activeTab === 'journal' && (
+                <ReflectionChamber
+                  nodes={initialNodes}
+                  selectedNodeId={selectedNodeId}
+                  selectedQuestion={selectedQuestion}
+                  onSelectNode={setSelectedNodeId}
+                  onSelectQuestion={setSelectedQuestion}
+                  journalEntries={journalEntries}
+                  onSaveEntry={handleSaveJournalEntry}
+                  onDeleteEntry={handleDeleteJournalEntry}
+                />
+              )}
+
+              {/* Tab Content: Scholarly Archive */}
+              {activeTab === 'corpus' && (
+                <CorpusBrowser
+                  corpusTexts={corpusTexts}
+                  marginalia={marginalia}
+                  onSaveMarginalia={handleSaveMarginalia}
+                  onDeleteMarginalia={handleDeleteMarginalia}
+                />
+              )}
+
+              {/* Tab Content: Paradox Synthesizer */}
+              {activeTab === 'paradox' && (
+                <ParadoxSynthesizer
+                  nodes={initialNodes}
+                  synthesisHistory={synthesisHistory}
+                  onSaveSynthesis={handleSaveSynthesis}
+                  onClearHistory={handleClearSynthesisHistory}
+                />
+              )}
+
+              {/* Tab Content: Corpus Intake & Second Brain AI */}
+              {activeTab === 'intake' && (
+                <CorpusIntakeTool
+                  ingestionBatches={ingestionBatches}
+                  onSaveBatch={handleSaveBatch}
+                  onDeleteBatch={handleDeleteBatch}
+                  onClearAllBatches={handleClearAllBatches}
+                />
+              )}
+
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </main>
     </div>
   );
 }
-
-
-export default App;

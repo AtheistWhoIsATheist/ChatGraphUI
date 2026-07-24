@@ -1,6 +1,6 @@
 {
-  "name": "J314 Occurrence-Elevation Discriminator",
-  "description": "Analyzes philosophical texts for Occurrence vs Elevation claims and synthesizes knowledge graphs.",
+  "name": "Nihilismi Experientia Sacra 2",
+  "description": "An interactive digital companion and knowledge architecture for researching Nihiltheism, existential voids, and apophatic ontology.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

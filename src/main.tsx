@@ -1,25 +1,10 @@
-import {StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
-import App from './App.tsx';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
 import './index.css';
 
-// Suppress Vite HMR WebSocket connection errors in the AI Studio environment
-window.addEventListener('unhandledrejection', (event) => {
-  if (event.reason && event.reason.message && event.reason.message.includes('WebSocket closed without opened')) {
-    event.preventDefault();
-  }
-});
-
-const originalConsoleError = console.error;
-console.error = (...args) => {
-  if (typeof args[0] === 'string' && args[0].includes('[vite] failed to connect to websocket')) {
-    return;
-  }
-  originalConsoleError(...args);
-};
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
     <App />
-  </StrictMode>,
+  </React.StrictMode>
 );

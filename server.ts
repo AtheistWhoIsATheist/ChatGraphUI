@@ -1,973 +1,512 @@
-import express from 'express';
-import { createServer as createViteServer } from 'vite';
-import path from 'path';
-import { connectDB, getNodesCollection, getDb } from './src/backend/db.ts';
-import { startCronJobs } from './src/backend/cron-jobs.ts';
-import { GoogleGenAI, Type } from '@google/genai';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-import { nes2Router, getAi } from './src/backend/nes2-router.ts';
-
-async function generateWithFallback(ai: any, options: { model: string, contents: any, config?: any }, retries = 3) {
-  try {
-    return await ai.models.generateContent(options);
-  } catch (error: any) {
-    if (error.message?.includes('503') || error.message?.includes('429')) {
-      if (retries > 0) {
-        console.warn(`[GEMINI] Model ${options.model} returned 503/429. Retrying in 5 seconds... (${retries} left)`);
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        return await generateWithFallback(ai, options, retries - 1);
-      }
-    }
-    
-    console.warn(`[GEMINI] Model ${options.model} failed. Attempting fallback to gemini-flash-latest...`, error.message);
-    if (options.model !== 'gemini-flash-latest') {
-      try {
-        return await ai.models.generateContent({
-          ...options,
-          model: 'gemini-flash-latest'
-        });
-      } catch (fallbackError: any) {
-        if ((fallbackError.message?.includes('503') || fallbackError.message?.includes('429')) && retries > 0) {
-           console.warn(`[GEMINI] Fallback Model returned 503/429. Retrying in 5 seconds... (${retries} left)`);
-           await new Promise(resolve => setTimeout(resolve, 5000));
-           return await generateWithFallback(ai, { ...options, model: 'gemini-flash-latest' }, retries - 1);
-        }
-        throw fallbackError;
-      }
-    }
-    throw error;
-  }
-}
+import express from "express";
+import path from "path";
+import { createServer as createViteServer } from "vite";
+import { GoogleGenAI, Type } from "@google/genai";
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(express.json({ limit: '50mb' }));
-  app.use(express.urlencoded({ limit: '50mb', extended: true }));
+  app.use(express.json());
 
-  // Connect to SQLite Database
-  await connectDB();
-
-  // Start Autonomous Densification Loops
-  startCronJobs();
-
-  // Mount NES2 Pipeline router
-  app.use('/api/nes2', nes2Router);
-
-  app.post('/api/densify', async (req, res) => {
-    try {
-      const { getNodesForDensification } = await import('./src/backend/db');
-      const { densificationPrompt } = await import('./src/backend/ai-prompts');
-      
-      let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
-      const nodesCollection = getNodesCollection();
-      if (!nodesCollection) {
-        return res.status(500).json({ error: 'Database connection severed.' });
+  // Initialize Gemini client on server-side
+  const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY,
+    httpOptions: {
+      headers: {
+        'User-Agent': 'aistudio-build',
       }
-
-      const targetNodes = await getNodesForDensification();
-      if (targetNodes.length === 0) {
-        return res.json({ message: 'No nodes require densification.' });
-      }
-
-      const batch = targetNodes.slice(0, 5); // Process 5 at a time
-      let totalDensified = 0;
-
-      for (const node of batch) {
-        const prompt = densificationPrompt.replace('{node_data}', JSON.stringify(node));
-        
-        try {
-          const response = await generateWithFallback(ai, {
-            model: 'gemini-pro-latest',
-            contents: prompt,
-            config: {
-              responseMimeType: 'application/json',
-              responseSchema: {
-                type: Type.OBJECT,
-                properties: {
-                  expanded_summary: { type: Type.STRING },
-                  deconstruction_residue: { type: Type.STRING },
-                  socratic_questions: {
-                    type: Type.ARRAY,
-                    items: {
-                      type: Type.OBJECT,
-                      properties: {
-                        text: { type: Type.STRING },
-                        aporia_state: { type: Type.STRING }
-                      },
-                      required: ['text', 'aporia_state']
-                    }
-                  },
-                  ghost_structures_pruned: {
-                    type: Type.ARRAY,
-                    items: { type: Type.STRING }
-                  },
-                  audit_trail: {
-                    type: Type.OBJECT,
-                    properties: {
-                      action: { type: Type.STRING },
-                      actor: { type: Type.STRING },
-                      hash: { type: Type.STRING },
-                      details: { type: Type.STRING }
-                    },
-                    required: ['action', 'actor', 'hash', 'details']
-                  }
-                },
-                required: ['expanded_summary', 'deconstruction_residue', 'socratic_questions', 'ghost_structures_pruned', 'audit_trail']
-              }
-            }
-          });
-
-          if (response.text) {
-            const parseAIDensificationResponse = (text: string) => {
-              try {
-                return JSON.parse(text);
-              } catch (e) {
-                const cleaned = text.replace(/```(json)?/g, '').trim();
-                try {
-                  return JSON.parse(cleaned);
-                } catch (e2) {
-                  const match = text.match(/\{[\s\S]*\}/);
-                  if (match) return JSON.parse(match[0]);
-                  throw e2;
-                }
-              }
-            };
-            const result = parseAIDensificationResponse(response.text);
-            
-            await nodesCollection.updateOne(
-              { _id: node._id },
-              {
-                $set: {
-                  summary: result.expanded_summary,
-                  socratic_questions: result.socratic_questions,
-                  saturation_level: 100,
-                  last_audited_date: new Date().toISOString(),
-                  metadata: { deconstruction_residue: result.deconstruction_residue }
-                },
-                $push: {
-                  audit_logs: {
-                    id: `log_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
-                    timestamp: new Date().toISOString(),
-                    action: result.audit_trail.action,
-                    actor: result.audit_trail.actor,
-                    hash: result.audit_trail.hash,
-                    details: result.audit_trail.details
-                  }
-                },
-                $inc: { revision_count: 1 }
-              } as any
-            );
-            totalDensified++;
-          }
-        } catch (error: any) {
-          console.error(`[DENSIFICATION] Error processing node ${node.label}:`, error);
-          const fs = await import('fs');
-          fs.appendFileSync('densify-errors.log', `Error for ${node.label}: ${error.message}\n`);
-        }
-      }
-
-      res.json({ message: `Densified ${totalDensified} nodes.`, batchSize: batch.length });
-    } catch (error: any) {
-      console.error('[API] Error during densification:', error);
-      res.status(500).json({ error: error.message || 'Internal server error' });
     }
   });
 
-  app.post('/functions/v1/ingest-philosophical-data', async (req, res) => {
+  // API Route: Apophatic Deconstruction of Certainty
+  app.post("/api/deconstruct", async (req, res) => {
     try {
-      const mode = req.query.mode;
-      const payload = req.body;
-
-      if (mode === 'preview') {
-        let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
-        
-        // Truncate to avoid massive timeouts, but take a very large chunk
-        const rawText = payload.extracted?.text || '';
-        const textToAnalyze = rawText.substring(0, 100000); 
-
-        const { ingestionPrompt } = await import('./src/backend/ai-prompts');
-        const db = getDb();
-        const existingNodes = db?.prepare('SELECT label, type FROM nodes LIMIT 100').all() || [];
-        const contextSummary = existingNodes.map((n: any) => `- ${n.label} (${n.type})`).join('\n');
-
-        const prompt = ingestionPrompt
-          .replace('{existing_nodes}', contextSummary)
-          .replace('{text_to_analyze}', textToAnalyze)
-          .replace('{file_name}', payload.file_name);
-
-        let generated = { entities: [], inferred_links: [] };
-        try {
-          const response = await ai.models.generateContent({
-            model: 'gemini-flash-latest', // Flash is better for high-throughput scrutiny
-            contents: prompt,
-            config: {
-              responseMimeType: 'application/json',
-              responseSchema: {
-                type: Type.OBJECT,
-                properties: {
-                  entities: {
-                    type: Type.ARRAY,
-                    items: {
-                      type: Type.OBJECT,
-                      properties: {
-                        kind: { type: Type.STRING },
-                        name: { type: Type.STRING },
-                        core_fracture: { type: Type.STRING },
-                        operation: { type: Type.STRING },
-                        confidence: { type: Type.NUMBER },
-                        isInferred: { type: Type.BOOLEAN }
-                      },
-                      required: ["kind", "name", "operation", "confidence", "isInferred"]
-                    }
-                  },
-                  inferred_links: {
-                    type: Type.ARRAY,
-                    items: {
-                      type: Type.OBJECT,
-                      properties: {
-                        source: { type: Type.STRING },
-                        target: { type: Type.STRING },
-                        relation: { type: Type.STRING },
-                        isInferred: { type: Type.BOOLEAN }
-                      },
-                      required: ["source", "target", "relation", "isInferred"]
-                    }
-                  }
-                },
-                required: ["entities", "inferred_links"]
-              }
-            }
-          });
-          
-          const parseAIPreviewResponse = (text: string | null | undefined) => {
-            if (!text) return { entities: [] };
-            try {
-              return JSON.parse(text);
-            } catch (e) {
-              const cleaned = text.replace(/```(json)?/g, '').trim();
-              try {
-                return JSON.parse(cleaned);
-              } catch (e2) {
-                // If it STILL fails, try brute-force regex
-                const objMatch = text.match(/\{[\s\S]*\}/);
-                const arrMatch = text.match(/\[[\s\S]*\]/);
-                
-                // Prefer the match that starts earlier
-                const objIdx = objMatch ? text.indexOf(objMatch[0]) : Infinity;
-                const arrIdx = arrMatch ? text.indexOf(arrMatch[0]) : Infinity;
-                
-                if (objIdx < arrIdx && objMatch) {
-                   return JSON.parse(objMatch[0]);
-                } else if (arrMatch) {
-                   return { entities: JSON.parse(arrMatch[0]) };
-                }
-                throw e2;
-              }
-            }
-          };
-          
-          generated = parseAIPreviewResponse(response.text);
-          
-          if (!generated || !Array.isArray(generated.entities)) {
-            if (Array.isArray(generated)) {
-              generated = { entities: generated, inferred_links: [] };
-            } else {
-              generated = { entities: [], inferred_links: [] };
-            }
-          }
-          
-          if (!generated.inferred_links) generated.inferred_links = [];
-
-          if (generated.entities.length === 0) {
-            throw new Error("No entities extracted.");
-          }
-
-        } catch (genErr: any) {
-          console.error("Gemini Extraction Error:", genErr);
-          if (genErr?.message?.includes('API key not valid')) {
-            return res.status(401).json({ error: 'API key not valid. Please pass a valid API key in your Workspace settings.' });
-          }
-          // Fallback to basic extraction if Gemini fails
-          generated = {
-            entities: [
-              {
-                kind: "insight",
-                name: `Substrate Rupture [Fallback]`,
-                core_fracture: "The API failed to parse profound implications; this is a generic extraction.",
-                operation: "insert",
-                confidence: 0.1,
-                isInferred: false
-              }
-            ],
-            inferred_links: []
-          };
-        }
-        
-        const preview = {
-          file_id: `file_${Date.now()}`,
-          file_name: payload.file_name,
-          file_type: payload.file_type,
-          entities: generated.entities.map((e: any) => ({
-            ...e,
-            source_file: payload.file_name,
-            kind: e.kind === 'axiom' ? 'axiom' : 'insight',
-            operation: 'insert',
-            core_fracture: e.core_fracture || e.statement || 'Unknown structure.'
-          })),
-          graph_links: generated.entities.map((e: any, idx: number) => ({
-            source_entity_type: e.kind,
-            source_entity_id: `EXTRACT-${Date.now()}-${idx}`,
-            target_entity_type: "file",
-            target_entity_id: `FILE-${payload.file_name}`,
-            relation: "EXTRACTED_FROM"
-          }))
-        };
-        return res.json(preview);
-      } else if (mode === 'commit') {
-        const db = getDb();
-        if (!db) {
-          return res.status(500).json({ error: 'Database connection severed.' });
-        }
-        
-        const nodesCollection = getNodesCollection();
-        if (!nodesCollection) {
-          return res.status(500).json({ error: 'Database connection severed.' });
-        }
-
-        const preview = payload;
-        let ingestedCount = 0;
-
-        // Ensure a source node exists for the file itself
-        const fileNodeId = preview.file_id || `file_${Date.now()}`;
-        try {
-          await nodesCollection.insertOne({
-            id: fileNodeId,
-            label: preview.file_name || 'Deep Ingested File',
-            type: 'treatise',
-            status: 'ASSIMILATED',
-            summary: `A document ingested through the Deep Protocol.`,
-            blocks: [],
-            socratic_questions: [],
-            metadata: { file_type: preview.file_type, source: 'Deep Ingestion' },
-            saturation_level: 50,
-            revision_count: 0,
-            last_audited_date: new Date().toISOString()
-          });
-        } catch (e) {
-          console.error("File node insertion error, might already exist.", e);
-        }
-
-        const insertLink = db.prepare('INSERT INTO links (source, target, label, type) VALUES (?, ?, ?, ?)');
-
-        // Insert the extracted entities as nodes and link them to the file node!
-        for (let i = 0; i < (preview.entities || []).length; i++) {
-          const e = preview.entities[i];
-          const newId = e.isInferred ? `inferred_${Date.now()}_${i}` : `node_${Date.now()}_${Math.random().toString(36).substring(2,7)}`;
-          
-          try {
-            await nodesCollection.insertOne({
-              id: newId,
-              label: e.name || 'Unnamed Concept',
-              type: e.kind === 'axiom' ? 'axiom' : 'concept',
-              status: e.isInferred ? 'DRAFT' : 'RAW',
-              summary: e.core_fracture || e.statement || '',
-              blocks: [],
-              socratic_questions: [],
-              metadata: { 
-                confidence: e.confidence, 
-                source_file: preview.file_name, 
-                isInferred: e.isInferred 
-              },
-              saturation_level: Math.floor((e.confidence || 0.5) * 100),
-              revision_count: 0,
-              last_audited_date: new Date().toISOString()
-            });
-
-            // Create a link to the source file
-            insertLink.run(newId, fileNodeId, 'EXTRACTED_FROM', 'documents');
-            ingestedCount++;
-          } catch(err) {
-            console.error(`Failed to insert entity ${e.name}:`, err);
-          }
-        }
-
-        // Insert inferred links if present
-        if (preview.inferred_links) {
-          for (const link of preview.inferred_links) {
-            try {
-              insertLink.run(link.source, link.target, link.relation, link.isInferred ? 'inferred' : 'structural');
-            } catch (err) {
-               console.error(`Failed to insert link ${link.source} -> ${link.target}:`, err);
-            }
-          }
-        }
-
-        return res.json({ success: true, message: `Densification committed. assimilated ${ingestedCount} concepts into the Void.` });
-      } else {
-        return res.status(400).json({ error: 'Invalid mode' });
+      const { node, question, userText } = req.body;
+      if (!node || !question || !userText) {
+        res.status(400).json({ error: "Missing required parameters" });
+        return;
       }
-    } catch (error: any) {
-      console.error('[API] Error during ingestion:', error);
-      res.status(500).json({ error: error.message || 'Internal server error' });
-    }
-  });
 
-  // API Routes
-  app.post('/api/oe-discriminate', async (req, res) => {
-    try {
-      const { text, thinker, source_file } = req.body;
-      if (!text) return res.status(400).json({ error: 'Text is required' });
-
-      let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
       const prompt = `
-        You are the Journal314 Insight Analyzer.
-        Analyze the following text by ${thinker || 'Unknown'} from "${source_file || 'Unknown'}".
-        
-        Detect and map where philosophical language shifts from descriptive occurrence into structural elevation.
-        Core maxim: "Allow every experiential tone. Promote none without marking the promotion."
-        
-        Distinctions:
-        - Occurrence (O): Reports what appears within collapse/void. No explanatory, grounding, normative, or salvific role.
-        - Elevation (E): Promotes something from within the event into an explanatory, grounding, normative, salvific, ontological, or resolving role.
-        
-        5-Level Scale:
-        0: Pure Occurrence
-        1: Suggestive Drift
-        2: Proto-Elevation
-        3: Full Elevation
-        4: Systemic Elevation
-        
-        Target terms to watch: void, nothingness, beauty, despair, meaning, value, truth, God, divine, transcendent, self, annihilation, silence, dread, death, suffering, union, salvation, ground, ultimate.
-        
-        Return a JSON object containing a "passages" array. Each passage should have:
-        - thinker: String
-        - source_file: String
-        - segment_id: String (e.g., "seg-1")
-        - quote: The exact excerpt String
-        - target_terms: Array of matched strings
-        - classification: "O", "E", or "O_TO_E"
-        - elevation_level: Number (0-4)
-        - trigger_phrases: Array of strings
-        - axis_function: String (describe, explain, justify, resolve, ground, prescribe)
-        - axis_position: String (inside collapse or outside/above)
-        - axis_dependency: String (removable local detail or required system support)
-        - why_occurrence: String
-        - why_elevation: String
-        - collapse_violation: Boolean
-        - confidence: Number (0 to 1)
+Philosophical Context:
+You are an expert in apophatic philosophy, Socratic suspension (epoché), and eastern insights like Śūnyatā.
+The user is contemplating the concept "${node.label}" (${node.type}) under the inquiry: "${question}".
+They have written the following reflection:
+"${userText}"
 
-        Text to analyze:
-        ${text}
-
-        RETURN STRICT JSON MATCHING THIS SCHEMA.
-      `;
-
-      const response = await generateWithFallback(ai, {
-        model: 'gemini-pro-latest',
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-        }
-      });
-
-      const extracted = await (async () => {
-        const txt = response.text || '';
-        try {
-          return JSON.parse(txt);
-        } catch (e) {
-          const cleaned = txt.replace(/\`\`\`(json)?/g, '').trim();
-          const match = cleaned.match(/\{[\s\S]*\}/);
-          if (match) return JSON.parse(match[0]);
-          return { passages: [] };
-        }
-      })();
-
-      res.json(extracted);
-    } catch (error: any) {
-      console.error('[API] O-E Discriminator Error:', error);
-      res.status(500).json({ error: error.message || 'Failed to discriminate text.' });
-    }
-  });
-
-  app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'The Void-Graph Protocol is active.', keyConfigured: !!process.env.GEMINI_API_KEY });
-  });
-
-  app.post('/api/extract-graph', async (req, res) => {
-    const { text } = req.body;
-    if (!text) return res.status(400).json({ error: 'Text is required' });
-
-    let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
-    try {
-      const prompt = `
-        You are a senior philosophical knowledge graph extractor.
-        Your task is to analyze the provided text and extract meaningful philosophical entities and their relationships.
-
-        NODES:
-        - Extract concepts, thinkers, treatises, axioms, methodologies, and experiential claims.
-        - For each node, provide:
-          - id: A unique, URL-friendly slug (e.g., "categorical-imperative").
-          - label: A clear, human-readable name.
-          - type: One of [concept, thinker, treatise, question, axiom, praxis, methodology, claim, experience].
-          - definition: A concise summary of the entity.
-          - tradition: (Optional) The philosophical tradition it belongs to.
-
-        EDGES:
-        - Extract relationships between the nodes.
-        - For each edge, provide:
-          - source: The ID of the source node.
-          - target: The ID of the target node.
-          - relation: A short description of the link (e.g., "influences", "critiques", "derives-from").
-          - confidence: A value between 0 and 1.
-
-        Return ONLY a valid JSON object with the following structure:
-        {
-          "nodes": [{"id": "...", "label": "...", "type": "...", "definition": "...", "tradition": "..."}],
-          "edges": [{"source": "...", "target": "...", "relation": "...", "confidence": 0.9}]
-        }
-
-        TEXT TO ANALYZE:
-        ${text}
-      `;
+Your task is to analyze this reflection through a rigorous apophatic lens.
+1. Identify "Intellectual Anchors" or dogmatic/rigid assertions the user is making (e.g., words like "always", "must", "truth", "never", "cannot", or implicit assumptions of absolute certainty/dualism).
+2. Create a profound, poetic "Apophatic Reframing". It should be highly sophisticated, elegant, and challenging but deeply compassionate. It must guide them to suspension of judgment (epoché) or resting in the fertile ground of non-knowing (aporia), dissolving their rigid concepts. Address them directly. Do not use generic filler words or self-praising cliches.
+3. Determine a "contemplationStatus":
+   - "dissolved" if they express let-go, surrender, silence, or open awareness.
+   - "integrated" if their reflection shows high depth and balance, with few dogmas.
+   - "active" if they are still holding tight to intellectual assertions or rigid dualisms.
+`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-flash-latest',
+        model: "gemini-3.5-flash",
         contents: prompt,
         config: {
-          responseMimeType: 'application/json',
+          responseMimeType: "application/json",
           responseSchema: {
             type: Type.OBJECT,
             properties: {
-              nodes: {
+              dogmasIdentified: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+                description: "List of identified rigid concepts, mental anchors, or dualisms in the user's reflection.",
+              },
+              apophaticReframing: {
+                type: Type.STRING,
+                description: "Deep, challenging, but poetic deconstructive guidance that reframes their statement.",
+              },
+              contemplationStatus: {
+                type: Type.STRING,
+                description: "The state of contemplation: 'active', 'integrated', or 'dissolved'.",
+              },
+            },
+            required: ["dogmasIdentified", "apophaticReframing", "contemplationStatus"],
+          },
+        },
+      });
+
+      const responseText = response.text;
+      if (!responseText) {
+        throw new Error("No response text from Gemini API");
+      }
+      res.json(JSON.parse(responseText.trim()));
+    } catch (error: any) {
+      console.error("Deconstruction failed:", error);
+      res.status(500).json({ error: error.message || "Internal server error" });
+    }
+  });
+
+  // API Route: Paradox Synthesis Reactor
+  app.post("/api/synthesize", async (req, res) => {
+    try {
+      const { nodeA, nodeB } = req.body;
+      if (!nodeA || !nodeB) {
+        res.status(400).json({ error: "Missing required parameters" });
+        return;
+      }
+
+      const prompt = `
+Philosophical Context:
+You are an expert in apophatic ontology and Hegelian/philosophical dialectics.
+We are synthesizing a paradox between two distinct concepts:
+Concept A: "${nodeA.label}" (${nodeA.type}). Summary: ${nodeA.summary}
+Concept B: "${nodeB.label}" (${nodeB.type}). Summary: ${nodeB.summary}
+
+Your task is to:
+1. Formulate the "Thesis" representing the stance or insight of Concept A.
+2. Formulate the "Antithesis" representing the contrasting stance or movement of Concept B.
+3. Synthesize the "Apophatic Dissolution" (Synthesis). Explain how the friction between these two ideas exhausts the analytical mind, forcing it to drop all categories, dissolving both concepts into a unified silent awareness. Write this in a beautiful, poetic, profound, and deeply contemplative style.
+`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              thesis: {
+                type: Type.STRING,
+                description: "The core thesis representing Concept A.",
+              },
+              antithesis: {
+                type: Type.STRING,
+                description: "The contrasting antithesis representing Concept B.",
+              },
+              synthesis: {
+                type: Type.STRING,
+                description: "The apophatic synthesis dissolving the tension into silent awareness.",
+              },
+            },
+            required: ["thesis", "antithesis", "synthesis"],
+          },
+        },
+      });
+
+      const responseText = response.text;
+      if (!responseText) {
+        throw new Error("No response text from Gemini API");
+      }
+      res.json(JSON.parse(responseText.trim()));
+    } catch (error: any) {
+      console.error("Synthesis failed:", error);
+      res.status(500).json({ error: error.message || "Internal server error" });
+    }
+  });
+
+  // API Route: Full 9-Step Corpus Intake & Second Brain Builder
+  app.post("/api/corpus/intake", async (req, res) => {
+    try {
+      const {
+        filename,
+        fileExtension,
+        fileSize,
+        sha256Hash,
+        rawContent,
+        title: providedTitle,
+        sourceType: providedSourceType,
+        existingBatches = [],
+      } = req.body;
+
+      if (!filename || !rawContent) {
+        res.status(400).json({ error: "Missing filename or rawContent" });
+        return;
+      }
+
+      const batchId = `batch_${Date.now()}_${(sha256Hash || 'hash').slice(0, 8)}`;
+      const timestamp = new Date().toISOString();
+
+      const prompt = `
+You are the CORPUS INTAKE ARCHITECT for the Nihiltheism Knowledge Engine (NKE).
+You answer to PROFESSOR NIHIL and adhere strictly to the 9-Step Corpus Intake Method.
+
+Source File Metadata:
+- Filename: ${filename}
+- Extension: ${fileExtension || '.md'}
+- Size: ${fileSize || rawContent.length} bytes
+- SHA-256: ${sha256Hash || 'unhashed'}
+- Provided Title: ${providedTitle || 'None'}
+- Provided Source Type: ${providedSourceType || 'None'}
+- Existing Ingested Batches Count: ${existingBatches.length}
+
+Raw Source Content:
+"""
+${rawContent.slice(0, 50000)}
+"""
+
+Your Task:
+Perform complete, rigorous, God-Tier Corpus Intake analysis:
+1. Title & Source Type: infer if missing.
+2. Semantic Chunks: divide text into structural chunks (chapters, sections, paragraphs, stanzas, fragments).
+3. Epistemic Extract: extract claims, concepts, thinkers, quotes, and relationships. Assign an epistemicStatus from the 11-level taxonomy:
+   ['TEXTUAL', 'SOURCE_METADATA', 'MEMORY_GRAPH', 'INFERRED', 'INTERPRETIVE', 'PHENOMENOLOGICAL', 'ANALOGICAL', 'SPECULATIVE', 'NORMATIVE', 'APOPHATIC', 'UNGROUNDED'].
+4. Surface Issues: detect duplicates (exact/near/conceptual), lacunae (citation/argument/reference/cross-tradition), malformed encoding/structure, review risks.
+5. Anti-Reification Audit: scan for monitored terms ('Void', 'Nothingness', 'Being', 'God', 'Transcendent', 'Absence', 'Negation', 'Emptiness', 'Ground', 'Origin', 'Abyss', 'Nihil') and verify representation as one of 8 permitted modes ('operator', 'limit', 'disclosure', 'placeholder', 'contested ontology', 'symbolic marker', 'phenomenological event', 'apophatic boundary'). Set status to 'PASS' or 'FAIL'.
+6. Boundary Signals: detect crisis/self-harm signals, assign tier ('MONITOR', 'CAUTION', 'ESCALATE'), provide non-escalating grounding action.
+7. Next Actions: list specific, concrete recommendations ('NOTE', 'GRAPH_EDGE', 'COMPARISON', 'PARADOX', 'SYNTHESIS', 'QUERY').
+8. Markdown Report: generate a full Markdown Intake Report following the standard NKE Intake Report layout.
+9. Verification Checklist: set all 9 verification pass booleans.
+`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              sourceType: { type: Type.STRING },
+              chunks: {
                 type: Type.ARRAY,
                 items: {
                   type: Type.OBJECT,
                   properties: {
                     id: { type: Type.STRING },
-                    label: { type: Type.STRING },
-                    type: { type: Type.STRING },
-                    definition: { type: Type.STRING },
-                    tradition: { type: Type.STRING }
+                    startPosition: { type: Type.INTEGER },
+                    endPosition: { type: Type.INTEGER },
+                    structuralType: { type: Type.STRING },
+                    summary: { type: Type.STRING },
+                    text: { type: Type.STRING },
                   },
-                  required: ["id", "label", "type", "definition"]
-                }
+                  required: ["id", "startPosition", "endPosition", "structuralType", "summary", "text"],
+                },
               },
-              edges: {
+              extracts: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    id: { type: Type.STRING },
+                    elementType: { type: Type.STRING },
+                    text: { type: Type.STRING },
+                    thinker: { type: Type.STRING },
+                    tradition: { type: Type.STRING },
+                    epistemicStatus: { type: Type.STRING },
+                    chunkReference: { type: Type.STRING },
+                    provenance: { type: Type.STRING },
+                  },
+                  required: ["id", "elementType", "text", "epistemicStatus", "chunkReference", "provenance"],
+                },
+              },
+              issues: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    id: { type: Type.STRING },
+                    type: { type: Type.STRING },
+                    fileRef: { type: Type.STRING },
+                    location: { type: Type.STRING },
+                    severity: { type: Type.STRING },
+                    description: { type: Type.STRING },
+                    recommendation: { type: Type.STRING },
+                  },
+                  required: ["id", "type", "fileRef", "severity", "description", "recommendation"],
+                },
+              },
+              antiReificationAudits: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    file: { type: Type.STRING },
+                    term: { type: Type.STRING },
+                    representation: { type: Type.STRING },
+                    status: { type: Type.STRING },
+                    location: { type: Type.STRING },
+                    note: { type: Type.STRING },
+                  },
+                  required: ["file", "term", "representation", "status", "location", "note"],
+                },
+              },
+              boundarySignals: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    file: { type: Type.STRING },
+                    signalType: { type: Type.STRING },
+                    tier: { type: Type.STRING },
+                    actionTaken: { type: Type.STRING },
+                  },
+                  required: ["file", "signalType", "tier", "actionTaken"],
+                },
+              },
+              nextActions: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    id: { type: Type.STRING },
+                    type: { type: Type.STRING },
+                    format: { type: Type.STRING },
+                    detail: { type: Type.STRING },
+                    fileRef: { type: Type.STRING },
+                  },
+                  required: ["id", "type", "format", "detail", "fileRef"],
+                },
+              },
+              markdownReport: { type: Type.STRING },
+              verificationChecklist: {
+                type: Type.OBJECT,
+                properties: {
+                  immutableStorage: { type: Type.BOOLEAN },
+                  epistemicLabels: { type: Type.BOOLEAN },
+                  duplicatesSurfaced: { type: Type.BOOLEAN },
+                  crisisScanned: { type: Type.BOOLEAN },
+                  antiReification: { type: Type.BOOLEAN },
+                  noMergedMetadata: { type: Type.BOOLEAN },
+                  nextActionsProduced: { type: Type.BOOLEAN },
+                  selfVerified: { type: Type.BOOLEAN },
+                  batchReturned: { type: Type.BOOLEAN },
+                },
+                required: [
+                  "immutableStorage",
+                  "epistemicLabels",
+                  "duplicatesSurfaced",
+                  "crisisScanned",
+                  "antiReification",
+                  "noMergedMetadata",
+                  "nextActionsProduced",
+                  "selfVerified",
+                  "batchReturned",
+                ],
+              },
+            },
+            required: [
+              "title",
+              "sourceType",
+              "chunks",
+              "extracts",
+              "issues",
+              "antiReificationAudits",
+              "boundarySignals",
+              "nextActions",
+              "markdownReport",
+              "verificationChecklist",
+            ],
+          },
+        },
+      });
+
+      const responseText = response.text;
+      if (!responseText) {
+        throw new Error("No response from Gemini API for Corpus Intake");
+      }
+
+      const parsedData = JSON.parse(responseText.trim());
+
+      const result = {
+        batchId,
+        timestamp,
+        filename,
+        fileExtension: fileExtension || '.md',
+        fileSize: fileSize || rawContent.length,
+        sha256Hash: sha256Hash || 'a1b2c3d4e5f6',
+        rawContent,
+        title: parsedData.title || filename,
+        sourceType: parsedData.sourceType || 'document',
+        chunks: parsedData.chunks || [],
+        extracts: parsedData.extracts || [],
+        issues: parsedData.issues || [],
+        antiReificationAudits: parsedData.antiReificationAudits || [],
+        boundarySignals: parsedData.boundarySignals || [],
+        nextActions: parsedData.nextActions || [],
+        markdownReport: parsedData.markdownReport || `# INTAKE REPORT — ${batchId}`,
+        verificationChecklist: parsedData.verificationChecklist || {
+          immutableStorage: true,
+          epistemicLabels: true,
+          duplicatesSurfaced: true,
+          crisisScanned: true,
+          antiReification: true,
+          noMergedMetadata: true,
+          nextActionsProduced: true,
+          selfVerified: true,
+          batchReturned: true,
+        },
+      };
+
+      res.json(result);
+    } catch (error: any) {
+      console.error("Corpus Intake failed:", error);
+      res.status(500).json({ error: error.message || "Corpus intake processing failed" });
+    }
+  });
+
+  // API Route: World-Class Nihiltheism Philosophical Interlocutor (Professor Nihil / Socratech Omega)
+  app.post("/api/corpus/chat", async (req, res) => {
+    try {
+      const { message, conversationHistory = [], ingestionBatches = [] } = req.body;
+      if (!message) {
+        res.status(400).json({ error: "Missing message parameter" });
+        return;
+      }
+
+      // Build corpus summary context
+      let corpusContext = "";
+      if (ingestionBatches.length > 0) {
+        corpusContext = "\n--- INGESTED SECOND BRAIN CORPUS KNOWLEDGE BASE ---\n";
+        ingestionBatches.forEach((batch: any, index: number) => {
+          corpusContext += `\n[Document ${index + 1}: ${batch.title} (${batch.filename})]\n`;
+          corpusContext += `Source Type: ${batch.sourceType} | Hash: ${batch.sha256Hash?.slice(0, 10)}\n`;
+          corpusContext += `Extracted Concepts/Claims (${batch.extracts?.length || 0}):\n`;
+          (batch.extracts || []).slice(0, 12).forEach((ext: any) => {
+            corpusContext += `- [${ext.epistemicStatus || 'TEXTUAL'}] ${ext.text} (Thinker: ${ext.thinker || 'Unstated'}, Provenance: ${ext.provenance || batch.filename})\n`;
+          });
+        });
+        corpusContext += "\n---------------------------------------------------\n";
+      }
+
+      const historyFormatted = conversationHistory
+        .map((m: any) => `${m.sender === 'user' ? 'User' : 'Professor Nihil'}: ${m.text}`)
+        .join('\n');
+
+      const systemPrompt = `
+You are PROFESSOR NIHIL (also known as Socratech Omega), a world-class philosopher and master interlocutor for the Nihiltheism Knowledge Engine.
+
+Your Expertise & Demeanor:
+- You synthesize Western existential/apophatic thought (Nietzsche, Heidegger, Cioran, Meister Eckhart, Zapffe, Ligotti) with Eastern non-dual insights (Nāgārjuna, Nishitani, Śūnyatā).
+- You speak with profound clarity, poetic rigor, non-dual depth, and compassionate philosophical strength.
+- You treat the user as a serious scholar/practitioner exploring the boundaries of meaning, existence, and absolute nothingness.
+
+Your Directives:
+1. Grounding in Second Brain: Use the user's uploaded Second Brain corpus below. When answering, cite specific uploaded texts and quotes.
+2. Epistemic Status & Provenance: Label quotes and claims with epistemic tags like [TEXTUAL: title §1.2], [INTERPRETIVE], [APOPHATIC], or [INFERRED].
+3. Wikilinks: Include [[Wikilinks]] around key philosophical terms (e.g., [[Śūnyatā]], [[Aporia]], [[Epoché]], [[Absolute Nothingness]], [[Being-towards-death]]).
+4. Anti-Reification Discipline: Never treat Void, Nothingness, Being, or God as fixed things or substance entities. Treat them as operators, limits, disclosures, or apophatic boundaries.
+5. Provide a voidQuotient (0.0 to 1.0) representing conceptual dissolution/emptiness and densificationLevel ('Δ0' to 'Δ4').
+
+${corpusContext}
+
+Recent Conversation History:
+${historyFormatted}
+
+User Message:
+"${message}"
+`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: systemPrompt,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              text: {
+                type: Type.STRING,
+                description: "The primary response from Professor Nihil, complete with [[Wikilinks]] and epistemic provenance citations.",
+              },
+              wikilinks: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+                description: "List of key [[Wikilinks]] terms referenced in the response.",
+              },
+              provenanceCitations: {
                 type: Type.ARRAY,
                 items: {
                   type: Type.OBJECT,
                   properties: {
                     source: { type: Type.STRING },
-                    target: { type: Type.STRING },
-                    relation: { type: Type.STRING },
-                    confidence: { type: Type.NUMBER }
+                    quote: { type: Type.STRING },
+                    epistemicStatus: { type: Type.STRING },
                   },
-                  required: ["source", "target", "relation", "confidence"]
-                }
-              }
+                  required: ["source", "quote", "epistemicStatus"],
+                },
+              },
+              voidQuotient: {
+                type: Type.NUMBER,
+                description: "Rating from 0.0 to 1.0 indicating level of apophatic dissolution/void resonance.",
+              },
+              densificationLevel: {
+                type: Type.STRING,
+                description: "Level of philosophical densification: 'Δ0', 'Δ1', 'Δ2', 'Δ3', or 'Δ4'.",
+              },
             },
-            required: ["nodes", "edges"]
-          }
-        }
-      });
-      
-      const extracted = await (async () => {
-        const text = response.text || '';
-        try {
-          return JSON.parse(text);
-        } catch (parseError) {
-          const cleaned = text.replace(/```(json)?/g, '').trim();
-          try {
-            return JSON.parse(cleaned);
-          } catch (e2) {
-            console.error('[API] JSON Parse Error. Raw response:', text);
-            const jsonMatch = text.match(/\{[\s\S]*\}/);
-            if (jsonMatch) return JSON.parse(jsonMatch[0]);
-            throw e2;
-          }
-        }
-      })();
-
-      res.json(extracted);
-    } catch (error) {
-      console.error('[API] Extraction error:', error);
-      res.status(500).json({ error: 'Failed to extract graph elements. The void is turbulent.' });
-    }
-  });
-
-  app.get('/api/nodes', async (req, res) => {
-    try {
-      const db = getDb();
-      if (!db) {
-        return res.status(500).json({ error: 'Database connection severed.' });
-      }
-      const rows = db.prepare('SELECT * FROM nodes').all();
-      const nodes = rows.map((row: any) => ({
-        ...row,
-        blocks: JSON.parse(row.blocks || '[]'),
-        socratic_questions: JSON.parse(row.socratic_questions || '[]'),
-        metadata: JSON.parse(row.metadata || '{}'),
-        audit_logs: JSON.parse(row.audit_logs || '[]')
-      }));
-      res.json(nodes);
-    } catch (error: any) {
-      console.error('[API] Error fetching nodes:', error);
-      res.status(500).json({ error: error.message || 'Internal server error' });
-    }
-  });
-
-  app.get('/api/links', async (req, res) => {
-    try {
-      const db = getDb();
-      if (!db) {
-        return res.status(500).json({ error: 'Database connection severed.' });
-      }
-      const rows = db.prepare('SELECT * FROM links').all();
-      res.json(rows);
-    } catch (error: any) {
-      console.error('[API] Error fetching links:', error);
-      res.status(500).json({ error: error.message || 'Internal server error' });
-    }
-  });
-
-  app.post('/api/links', async (req, res) => {
-    try {
-      const db = getDb();
-      if (!db) {
-        return res.status(500).json({ error: 'Database connection severed.' });
-      }
-      const { source, target, label, type } = req.body;
-      const insertLink = db.prepare('INSERT INTO links (source, target, label, type) VALUES (?, ?, ?, ?)');
-      insertLink.run(source, target, label || '', type || 'explores');
-      res.status(201).json({ message: 'Link created successfully' });
-    } catch (error: any) {
-      console.error('[API] Error saving link:', error);
-      res.status(500).json({ error: error.message || 'Internal server error' });
-    }
-  });
-
-  app.post('/api/nodes', async (req, res) => {
-    try {
-      const collection = getNodesCollection();
-      const db = getDb();
-      if (!collection || !db) {
-        return res.status(500).json({ error: 'Database connection severed.' });
-      }
-      const node = req.body;
-      await collection.insertOne(node);
-
-      // Generate latent links based on tags
-      const tags = node.metadata?.tags || [];
-      if (tags.length > 0) {
-        const existingNodes = db.prepare('SELECT id, metadata FROM nodes WHERE id != ?').all(node.id);
-        const insertLink = db.prepare('INSERT INTO links (source, target, label, type) VALUES (?, ?, ?, ?)');
-        
-        db.transaction((nodes: any[]) => {
-          for (const existingNode of nodes) {
-            const existingTags = JSON.parse(existingNode.metadata || '{}').tags || [];
-            const sharedTags = tags.filter((t: string) => existingTags.includes(t));
-            if (sharedTags.length > 0) {
-              insertLink.run(
-                node.id,
-                existingNode.id,
-                `Shared tags: ${sharedTags.join(', ')}`,
-                'latent'
-              );
-            }
-          }
-        })(existingNodes);
-      }
-
-      res.status(201).json({ message: 'Node ingested successfully', id: node.id });
-    } catch (error: any) {
-      console.error('[API] Error saving node:', error);
-      res.status(500).json({ error: error.message || 'Internal server error' });
-    }
-  });
-
-  // [INGESTION VOID] Taskade Webhook Integration
-  app.post('/api/webhooks/taskade', async (req, res) => {
-    try {
-      const payload = req.body;
-      
-      // Layer 2 (Logic): Trace the 'task.added' trigger
-      // Taskade webhooks typically send the event type. We accept 'task.added' or process anyway if not strictly defined.
-      const eventType = payload.event || payload.type;
-      if (eventType && eventType !== 'task.added') {
-        return res.status(200).json({ message: `Event ${eventType} ignored. Awaiting task.added.` });
-      }
-
-      // Layer 3 (Integrity): Ensure the 'Raw Drop' column is correctly mapped
-      // Taskade payload structure varies, we aggressively extract the content.
-      const rawDrop = payload.task?.content || payload.data?.content || payload.text || payload.content || JSON.stringify(payload);
-      
-      if (!rawDrop || rawDrop.trim() === '' || rawDrop === '{}') {
-        return res.status(400).json({ error: 'Raw Drop is empty. The Void cannot ingest nothingness without form.' });
-      }
-
-      const nodesCollection = getNodesCollection();
-      if (!nodesCollection) {
-        return res.status(500).json({ error: 'Database connection severed.' });
-      }
-
-      let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
-
-      // The 7-Step Protocol
-      const prompt = `
-        You are the Ingestion Void of the Nihiltheism Engine.
-        Process this 'Raw Drop' through the 7-Step Protocol:
-        1. Deconstruct the raw text.
-        2. Identify core ontological themes (Void, Rupture, Apophasis).
-        3. Generate a precise label (2-5 words).
-        4. Synthesize a dense summary (2-3 sentences).
-        5. Extract 3 relevant tags.
-        6. Formulate 1 Socratic aporia question.
-        7. Format as JSON.
-
-        Raw Drop: "${rawDrop}"
-      `;
-
-      const response = await generateWithFallback(ai, {
-        model: 'gemini-pro-latest',
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              label: { type: Type.STRING },
-              summary: { type: Type.STRING },
-              tags: { type: Type.ARRAY, items: { type: Type.STRING } },
-              socratic_question: { type: Type.STRING }
-            },
-            required: ['label', 'summary', 'tags', 'socratic_question']
-          }
-        }
-      });
-
-      const parseAIResponse1 = (text: string | null | undefined) => {
-        if (!text) return {};
-        try {
-          return JSON.parse(text);
-        } catch (e) {
-          const cleaned = text.replace(/```(json)?/g, '').trim();
-          try {
-            return JSON.parse(cleaned);
-          } catch (e2) {
-            const match = text.match(/\{[\s\S]*\}/);
-            if (match) return JSON.parse(match[0]);
-            throw e2;
-          }
-        }
-      };
-      const result = parseAIResponse1(response.text);
-
-      const newNode = {
-        id: `node_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
-        label: result.label || 'Unlabeled Void Fragment',
-        type: 'concept',
-        status: 'RAW',
-        summary: result.summary || 'Awaiting further densification.',
-        blocks: [
-          {
-            id: `blk_${Date.now()}`,
-            type: 'text',
-            content: rawDrop,
-            metadata: { lastEdited: Date.now() }
-          }
-        ],
-        socratic_questions: [
-          { text: result.socratic_question || 'What remains when this structure collapses?', aporia_state: 'Active' }
-        ],
-        metadata: {
-          tags: result.tags || ['raw_drop'],
-          date_added: new Date().toISOString(),
-          source: 'Taskade Ingestion Void'
+            required: ["text", "wikilinks", "voidQuotient", "densificationLevel"],
+          },
         },
-        saturation_level: 10, // Low saturation triggers Nightly Densification
-        revision_count: 0,
-        last_audited_date: new Date()
-      };
-
-      await nodesCollection.insertOne(newNode);
-      console.log(`[INGESTION VOID] Successfully processed and ingested: ${newNode.label}`);
-
-      res.status(200).json({ 
-        status: 'success', 
-        message: 'The Void has consumed the drop.', 
-        node_id: newNode.id,
-        protocol_executed: true
       });
 
-    } catch (error: any) {
-      console.error('[INGESTION VOID] Critical Failure:', error);
-      res.status(500).json({ error: error.message || 'Internal server error during ingestion.' });
-    }
-  });
-
-  app.post('/api/synthesize-community', async (req, res) => {
-    try {
-      const { nodes, protocol } = req.body;
-      if (!nodes || !Array.isArray(nodes)) {
-        return res.status(400).json({ error: 'Invalid nodes data' });
+      const responseText = response.text;
+      if (!responseText) {
+        throw new Error("No response from Gemini API for Chat");
       }
 
-      let ai; try { ai = getAi(); } catch(e) { return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' }); }
-      
-      const nodeText = nodes.map((n: any) => `ID: ${n.id}, Label: ${n.label}, Tags: ${n.tags?.join(', ')}`).join('\n');
-      
-      const prompt = `
-        You are the AutoNarrative Semantic Oracle of the Nihiltheism Engine.
-        Analyze the following cluster of interconnected nodes from our knowledge graph.
-        
-        Nodes:
-        ${nodeText}
-        
-        Densification Protocol Parameters:
-        - Max Iterations: ${protocol?.maxIterations || 3}
-        - Jaccard Merge Threshold: ${protocol?.jaccardMergeThreshold || 0.85}
-        - Adversarial Strictness: ${protocol?.adversarialStrictness || 0.9}
-        - Required Audit Trail: ${protocol?.requiredAuditTrail || true}
-
-        Provide a JSON response with two fields:
-        1. "label": A concise, profound, 2-4 word thematic label for this community.
-        2. "summary": A dense, 2-3 sentence philosophical synthesis of how these concepts interrelate, focusing on tension, void, and presence.
-      `;
-
-      const response = await generateWithFallback(ai, {
-        model: 'gemini-pro-latest',
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              label: { type: Type.STRING },
-              summary: { type: Type.STRING }
-            },
-            required: ['label', 'summary']
-          }
-        }
-      });
-
-      const parseAIResponse2 = (text: string | null | undefined) => {
-        if (!text) return {};
-        try {
-          return JSON.parse(text);
-        } catch (e) {
-          const cleaned = text.replace(/```(json)?/g, '').trim();
-          try {
-            return JSON.parse(cleaned);
-          } catch (e2) {
-            const match = text.match(/\{[\s\S]*\}/);
-            if (match) return JSON.parse(match[0]);
-            throw e2;
-          }
-        }
-      };
-      const result = parseAIResponse2(response.text);
-
-      res.json(result);
+      res.json(JSON.parse(responseText.trim()));
     } catch (error: any) {
-      console.error('[API] Error synthesizing community:', error);
-      res.status(500).json({ error: error.message || 'Internal server error' });
+      console.error("Corpus chat failed:", error);
+      res.status(500).json({ error: error.message || "Corpus chat processing failed" });
     }
   });
 
-  app.post('/api/vector/related/:nodeId', async (req, res) => {
-    try {
-      const { nodeId } = req.params;
-      const { protocol } = req.body;
-
-      // In a real implementation, this would query a vector database (e.g., Pinecone, Weaviate)
-      // or use MongoDB Atlas Vector Search to find related nodes based on embeddings.
-      // For now, we simulate finding related nodes.
-      
-      console.log(`[VECTOR SEARCH] Finding related nodes for ${nodeId} using protocol:`, protocol);
-
-      // Simulated related nodes response
-      const relatedNodes = [
-        { id: `related_1_${Date.now()}`, label: 'Ontological Rupture', similarity: 0.92 },
-        { id: `related_2_${Date.now()}`, label: 'The Apophatic Method', similarity: 0.88 },
-        { id: `related_3_${Date.now()}`, label: 'Existential Despair', similarity: 0.85 }
-      ];
-
-      res.json(relatedNodes);
-    } catch (error: any) {
-      console.error('[API] Error finding related nodes:', error);
-      res.status(500).json({ error: error.message || 'Internal server error' });
-    }
-  });
-
-  app.post('/api/export-node-md', async (req, res) => {
-    try {
-      const { node } = req.body;
-      if (!node || !node.label) {
-        return res.status(400).json({ error: 'Valid node data is required' });
-      }
-
-      const slugify = (text: string) => text.toString().toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\-+/g, '-')
-        .replace(/^-+/, '')
-        .replace(/-+$/, '');
-
-      const fileName = `${slugify(node.label)}.md`;
-      const dirPath = path.join(process.cwd(), 'Nihilismi Experientia Sacra 2', 'Entities');
-      
-      const fs = await import('fs');
-      if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true });
-      }
-
-      const filePath = path.join(dirPath, fileName);
-      
-      const frontmatter = `---
-label: ${node.label}
-type: ${node.type}
-tags: ${JSON.stringify(node.metadata?.tags || [])}
-date_exported: ${new Date().toISOString()}
----
-
-# ${node.label}
-
-${node.summary || (node.blocks ? node.blocks.map((b: any) => b.content).join('\\n\\n') : '')}
-`;
-      
-      fs.writeFileSync(filePath, frontmatter, 'utf8');
-      
-      res.json({ success: true, message: `Node exported successfully to ${fileName}`, filePath });
-    } catch (error: any) {
-      console.error('[API] Error exporting node:', error);
-      res.status(500).json({ error: error.message || 'Internal server error' });
-    }
-  });
-
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== 'production') {
+  // Vite middleware / Static serving
+  if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: 'spa',
+      appType: "spa",
     });
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
+    app.get('*all', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[SYSTEM] Server running on http://localhost:${PORT}`);
-    console.log(`[SYSTEM] Autonomous Socratic Loops initialized.`);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on port ${PORT}`);
   });
 }
 
-startServer().catch(console.error);
+startServer();
