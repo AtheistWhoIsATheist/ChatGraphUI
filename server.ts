@@ -7,7 +7,8 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(express.json());
+  app.use(express.json({ limit: "50mb" }));
+  app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
   // Initialize Gemini client on server-side
   const ai = new GoogleGenAI({
@@ -487,6 +488,14 @@ User Message:
       console.error("Corpus chat failed:", error);
       res.status(500).json({ error: error.message || "Corpus chat processing failed" });
     }
+  });
+
+  // Global API error handler ensuring JSON response
+  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error("Express API error caught:", err);
+    res.status(err.status || err.statusCode || 500).json({
+      error: err.message || "Internal server error"
+    });
   });
 
   // Vite middleware / Static serving

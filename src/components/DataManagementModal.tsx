@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Upload, Trash2, X, FileJson, FileText, Check, AlertCircle, Database } from 'lucide-react';
+import { Upload, Trash2, X, FileText, Check, AlertCircle, Database, FileCode } from 'lucide-react';
 import { JournalEntry, Marginalia, ParadoxSynthesis } from '../types';
 
 interface DataManagementModalProps {
@@ -32,28 +32,70 @@ export const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Export JSON backup
-  const handleExportJSON = () => {
-    const backupData = {
-      version: '1.0',
-      exportedAt: new Date().toISOString(),
-      journalEntries,
-      marginalia,
-      synthesisHistory,
-    };
+  // Export Plain Text (.txt) archive
+  const handleExportPlainText = () => {
+    let txt = `===================================================\n`;
+    txt += `NIHILISMI EXPERIENTIA SACRA - ARCHIVED REFLECTIONS\n`;
+    txt += `Exported on ${new Date().toLocaleString()}\n`;
+    txt += `===================================================\n\n`;
 
-    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+    txt += `SECTION 1: VOID JOURNAL REFLECTIONS (${journalEntries.length})\n`;
+    txt += `---------------------------------------------------\n\n`;
+    if (journalEntries.length === 0) {
+      txt += `[No journal reflections recorded.]\n\n`;
+    } else {
+      journalEntries.forEach((entry, idx) => {
+        txt += `Reflective Note #${idx + 1}\n`;
+        txt += `Concept: ${entry.nodeLabel}\n`;
+        txt += `Date: ${new Date(entry.timestamp).toLocaleString()}\n`;
+        txt += `Question: ${entry.question}\n`;
+        txt += `User Reflection:\n${entry.userText}\n\n`;
+        txt += `Apophatic Reframing:\n${entry.analysis.apophaticReframing}\n\n`;
+        txt += `Status: ${entry.analysis.contemplationStatus.toUpperCase()}\n`;
+        txt += `---------------------------------------------------\n\n`;
+      });
+    }
+
+    txt += `SECTION 2: SCHOLARLY MARGINALIA (${marginalia.length})\n`;
+    txt += `---------------------------------------------------\n\n`;
+    if (marginalia.length === 0) {
+      txt += `[No marginalia notes recorded.]\n\n`;
+    } else {
+      marginalia.forEach((item, idx) => {
+        txt += `Marginalia #${idx + 1}\n`;
+        txt += `Corpus ID: ${item.corpusId}\n`;
+        txt += `Date: ${new Date(item.timestamp).toLocaleString()}\n`;
+        txt += `Note Content:\n${item.noteText}\n`;
+        txt += `---------------------------------------------------\n\n`;
+      });
+    }
+
+    txt += `SECTION 3: PARADOX CODEX SYNTHESES (${synthesisHistory.length})\n`;
+    txt += `---------------------------------------------------\n\n`;
+    if (synthesisHistory.length === 0) {
+      txt += `[No paradox syntheses recorded.]\n\n`;
+    } else {
+      synthesisHistory.forEach((synth, idx) => {
+        txt += `Paradox #${idx + 1}: ${synth.nodeALabel} vs ${synth.nodeBLabel}\n`;
+        txt += `Thesis: ${synth.thesis}\n`;
+        txt += `Antithesis: ${synth.antithesis}\n`;
+        txt += `Apophatic Dissolution: ${synth.synthesis}\n`;
+        txt += `---------------------------------------------------\n\n`;
+      });
+    }
+
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `nihilismi_sacra_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `nihilismi_reflections_archive_${new Date().toISOString().slice(0, 10)}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
-  // Export Markdown report
+  // Export Markdown (.md) report
   const handleExportMarkdown = () => {
     let md = `# Nihilismi Experientia Sacra - Archived Reflections\n\n`;
     md += `*Exported on ${new Date().toLocaleString()}*\n\n`;
@@ -97,7 +139,7 @@ export const DataManagementModal: React.FC<DataManagementModalProps> = ({
       });
     }
 
-    const blob = new Blob([md], { type: 'text/markdown' });
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -108,44 +150,93 @@ export const DataManagementModal: React.FC<DataManagementModalProps> = ({
     URL.revokeObjectURL(url);
   };
 
-  // Import JSON backup
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Import Markdown (.md, .markdown) or Plain Text (.txt, .text) files
+  const handleImportMarkdownOrText = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const content = event.target?.result as string;
-        const parsed = JSON.parse(content);
-
-        if (!parsed || (typeof parsed !== 'object')) {
-          throw new Error('Invalid JSON structure.');
+        const text = event.target?.result as string;
+        if (!text || !text.trim()) {
+          throw new Error('File content is empty.');
         }
 
-        const validJournal = Array.isArray(parsed.journalEntries) ? parsed.journalEntries : [];
-        const validMarginalia = Array.isArray(parsed.marginalia) ? parsed.marginalia : [];
-        const validSynthesis = Array.isArray(parsed.synthesisHistory) ? parsed.synthesisHistory : [];
+        // Parse Markdown / Plain Text blocks into journal entries and marginalia
+        const newJournalEntries: JournalEntry[] = [];
+        const newMarginalia: Marginalia[] = [];
+        const newSyntheses: ParadoxSynthesis[] = [];
+
+        // Split by major Markdown headers (e.g., # or ## or ---)
+        const sections = text.split(/(?=\n#{1,3}\s+|\n---+\n|\nSECTION\s+\d+:)/i).map(s => s.trim()).filter(Boolean);
+
+        sections.forEach((sec, idx) => {
+          // Check if section looks like a reflection or note
+          if (sec.toLowerCase().includes('concept:') || sec.toLowerCase().includes('reflection') || sec.toLowerCase().includes('question:')) {
+            const conceptMatch = sec.match(/concept:\s*([^\n]+)/i);
+            const questionMatch = sec.match(/question:\s*"([^"]+)"|question:\s*([^\n]+)/i);
+            const reflectionMatch = sec.match(/(?:reflection|user reflection):\s*([\s\S]+?)(?=\n\*\*|\n---|\napophatic|$)/i);
+            
+            const concept = conceptMatch ? conceptMatch[1].trim() : `Imported Markdown Note #${idx + 1}`;
+            const question = questionMatch ? (questionMatch[1] || questionMatch[2]).trim() : 'What is the ground of this imported reflection?';
+            const userContent = reflectionMatch ? reflectionMatch[1].trim() : sec.slice(0, 400);
+
+            newJournalEntries.push({
+              id: `imported_journal_${Date.now()}_${idx}`,
+              nodeId: 'imported_node',
+              nodeLabel: concept,
+              question,
+              userText: userContent,
+              timestamp: new Date().toISOString(),
+              analysis: {
+                dogmasIdentified: ['Reification Anchor'],
+                apophaticReframing: `In imported Markdown context: "${userContent.slice(0, 120)}..."`,
+                contemplationStatus: 'active'
+              }
+            });
+          } else if (sec.toLowerCase().includes('marginalia') || sec.toLowerCase().includes('corpus id:')) {
+            const noteMatch = sec.match(/(?:note|note content):\s*([\s\S]+?)(?=\n---|$$)/i);
+            const noteContent = noteMatch ? noteMatch[1].trim() : sec.slice(0, 300);
+
+            newMarginalia.push({
+              corpusId: `imported_doc_${idx + 1}`,
+              noteText: noteContent,
+              timestamp: new Date().toISOString()
+            });
+          } else {
+            // General Plain Text or Markdown paragraph
+            newMarginalia.push({
+              corpusId: `markdown_import_${idx + 1}`,
+              noteText: sec,
+              timestamp: new Date().toISOString()
+            });
+          }
+        });
+
+        // Merge with existing
+        const mergedJournal = [...newJournalEntries, ...journalEntries];
+        const mergedMarginalia = [...newMarginalia, ...marginalia];
+        const mergedSyntheses = [...newSyntheses, ...synthesisHistory];
 
         onImportData({
-          journalEntries: validJournal,
-          marginalia: validMarginalia,
-          synthesisHistory: validSynthesis,
+          journalEntries: mergedJournal,
+          marginalia: mergedMarginalia,
+          synthesisHistory: mergedSyntheses
         });
 
         setImportStatus({
           type: 'success',
-          message: `Successfully imported ${validJournal.length} journal reflections, ${validMarginalia.length} marginalia notes, and ${validSynthesis.length} paradox syntheses.`
+          message: `Successfully imported "${file.name}"! Created ${newJournalEntries.length} reflections and ${newMarginalia.length} marginalia entries from Markdown/Text.`
         });
       } catch (err: any) {
         setImportStatus({
           type: 'error',
-          message: `Failed to import JSON file: ${err.message || 'Invalid format'}`
+          message: `Failed to import file: ${err.message || 'Invalid Markdown or Text file'}`
         });
       }
     };
     reader.readAsText(file);
-    // Reset file input
     e.target.value = '';
   };
 
@@ -165,16 +256,16 @@ export const DataManagementModal: React.FC<DataManagementModalProps> = ({
               <Database className="w-5 h-5 text-neutral-400" />
               <div>
                 <h2 className="font-display text-sm uppercase tracking-wider font-semibold text-neutral-100">
-                  Data Backup & Management
+                  Markdown & Plain Text Archives
                 </h2>
                 <p className="text-[10px] font-mono text-neutral-500">
-                  Export, import, or manage your personal local archives
+                  Import and export your Second Brain reflections in Markdown (.md) or Plain Text (.txt)
                 </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 text-neutral-500 hover:text-neutral-200 hover:bg-neutral-900 rounded-lg transition-colors"
+              className="p-1.5 text-neutral-500 hover:text-neutral-200 hover:bg-neutral-900 rounded-lg transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -199,43 +290,43 @@ export const DataManagementModal: React.FC<DataManagementModalProps> = ({
           {/* Action Sections */}
           <div className="flex flex-col gap-3">
             <label className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider font-semibold">
-              Export Archive Options
+              Export Archive Files
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
-                onClick={handleExportJSON}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-xl text-xs font-mono font-medium text-neutral-200 transition-all hover:border-neutral-700"
+                onClick={handleExportMarkdown}
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-xl text-xs font-mono font-medium text-emerald-300 transition-all hover:border-emerald-700 cursor-pointer"
               >
-                <FileJson className="w-4 h-4 text-sky-400" />
-                <span>Export JSON Backup</span>
+                <FileCode className="w-4 h-4 text-emerald-400" />
+                <span>Export Markdown (.md)</span>
               </button>
               <button
-                onClick={handleExportMarkdown}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-xl text-xs font-mono font-medium text-neutral-200 transition-all hover:border-neutral-700"
+                onClick={handleExportPlainText}
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-xl text-xs font-mono font-medium text-amber-300 transition-all hover:border-amber-700 cursor-pointer"
               >
-                <FileText className="w-4 h-4 text-emerald-400" />
-                <span>Export Markdown</span>
+                <FileText className="w-4 h-4 text-amber-400" />
+                <span>Export Plain Text (.txt)</span>
               </button>
             </div>
           </div>
 
           <div className="flex flex-col gap-3">
             <label className="text-[11px] font-mono text-neutral-400 uppercase tracking-wider font-semibold">
-              Import Archive File
+              Import / Upload Markdown or Plain Text
             </label>
             <input
               type="file"
               ref={fileInputRef}
-              accept=".json"
-              onChange={handleFileChange}
+              accept=".md,.markdown,.txt,.text"
+              onChange={handleImportMarkdownOrText}
               className="hidden"
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-xl text-xs font-mono font-medium text-neutral-200 transition-all hover:border-neutral-700"
+              className="flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-xl text-xs font-mono font-medium text-neutral-200 transition-all hover:border-amber-500/50 cursor-pointer"
             >
               <Upload className="w-4 h-4 text-amber-400" />
-              <span>Import .JSON Backup File</span>
+              <span>Upload / Import (.md or .txt)</span>
             </button>
           </div>
 
@@ -269,13 +360,13 @@ export const DataManagementModal: React.FC<DataManagementModalProps> = ({
                     setShowConfirmClear(false);
                     setImportStatus({ type: 'success', message: 'All local archive records cleared.' });
                   }}
-                  className="px-3 py-1.5 bg-rose-900/80 hover:bg-rose-800 border border-rose-700 text-rose-100 rounded-lg text-xs font-mono transition-colors"
+                  className="px-3 py-1.5 bg-rose-900/80 hover:bg-rose-800 border border-rose-700 text-rose-100 rounded-lg text-xs font-mono transition-colors cursor-pointer"
                 >
                   Confirm Delete All
                 </button>
                 <button
                   onClick={() => setShowConfirmClear(false)}
-                  className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-400 rounded-lg text-xs font-mono"
+                  className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-400 rounded-lg text-xs font-mono cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -283,7 +374,7 @@ export const DataManagementModal: React.FC<DataManagementModalProps> = ({
             ) : (
               <button
                 onClick={() => setShowConfirmClear(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/30 rounded-lg text-xs font-mono transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/30 rounded-lg text-xs font-mono transition-colors cursor-pointer"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Reset Local Data</span>

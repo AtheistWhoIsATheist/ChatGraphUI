@@ -129,6 +129,26 @@ const STATIC_PARADOX_REGISTRY: Record<string, StaticParadox> = {
 };
 
 /**
+ * Helper to ensure every ParadoxSynthesis has valid complexity and synthesizedTruth metrics
+ */
+export function getParadoxMetrics(p: ParadoxSynthesis): { complexity: number; synthesizedTruth: number } {
+  if (p.complexity !== undefined && p.synthesizedTruth !== undefined) {
+    return { complexity: p.complexity, synthesizedTruth: p.synthesizedTruth };
+  }
+  // Deterministic fallback metrics derived from string hashes
+  let hash = 0;
+  const str = (p.id || '') + p.nodeALabel + p.nodeBLabel + p.thesis + p.synthesis;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  const absHash = Math.abs(hash);
+  const complexity = p.complexity ?? Math.min(98, Math.max(55, 65 + (absHash % 32)));
+  const synthesizedTruth = p.synthesizedTruth ?? Math.min(99, Math.max(60, 72 + ((absHash >> 3) % 26)));
+  return { complexity, synthesizedTruth };
+}
+
+/**
  * Dynamically synthesizes a paradox between any two philosophical nodes.
  * If a static paradox is available, it uses it; otherwise, it creates a beautifully
  * structured custom synthesis on-the-fly.
@@ -143,7 +163,7 @@ export function synthesizeParadox(
   let staticParadox = STATIC_PARADOX_REGISTRY[pairKey1] || STATIC_PARADOX_REGISTRY[pairKey2];
 
   if (staticParadox) {
-    return {
+    const raw: ParadoxSynthesis = {
       id: `${nodeA.id}_${nodeB.id}_${Date.now()}`,
       nodeAId: nodeA.id,
       nodeBId: nodeB.id,
@@ -154,6 +174,8 @@ export function synthesizeParadox(
       synthesis: staticParadox.synthesis,
       timestamp: new Date().toISOString()
     };
+    const { complexity, synthesizedTruth } = getParadoxMetrics(raw);
+    return { ...raw, complexity, synthesizedTruth };
   }
 
   // Generate dynamic, meaningful synthesis
@@ -162,7 +184,7 @@ export function synthesizeParadox(
   
   const synthesis = `The aporetic friction between ${nodeA.label} and ${nodeB.label} reveals a profound paradox. While the former focuses on the structural or epistemic aspect of ${nodeA.type.toLowerCase()}, the latter directs our attention to the immediate reality of ${nodeB.type.toLowerCase()}. Rather than forcing these paths to reconcile into a dogmatic system, we must allow their contradiction to stand. In the space of this unsolvable tension, the analytical mind is exhausted, and we are forced to drop all labels. They dissolve into a singular, quiet awareness that transcends both positions, inviting us into the sacred stillness of the apophatic void.`;
 
-  return {
+  const raw: ParadoxSynthesis = {
     id: `${nodeA.id}_${nodeB.id}_${Date.now()}`,
     nodeAId: nodeA.id,
     nodeBId: nodeB.id,
@@ -173,4 +195,6 @@ export function synthesizeParadox(
     synthesis,
     timestamp: new Date().toISOString()
   };
+  const { complexity, synthesizedTruth } = getParadoxMetrics(raw);
+  return { ...raw, complexity, synthesizedTruth };
 }

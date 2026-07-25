@@ -1,6 +1,7 @@
 import React from 'react';
 import { OntologyNode, CorpusText } from '../data/ontology';
 import { BookOpen, Sparkles, AlertCircle } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface NodeDetailPanelProps {
   node: OntologyNode;
@@ -27,8 +28,15 @@ export const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
   });
 
   return (
-    <div id="node-inspector-panel" className="bg-neutral-950 border border-neutral-900 rounded-2xl p-6 flex flex-col h-full justify-between gap-6 abyssal-glow">
-      <div className="flex flex-col gap-4">
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.88, y: 12 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.92, y: 8 }}
+      transition={{ type: "spring", stiffness: 380, damping: 26, mass: 0.8 }}
+      id="node-inspector-panel" 
+      className="bg-neutral-950 border border-neutral-900 rounded-2xl p-6 flex flex-col h-full justify-between gap-6 abyssal-glow absolute inset-0 w-full"
+    >
+      <div className="flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar">
         {/* Header Metadata */}
         <div className="flex justify-between items-start">
           <div>
@@ -93,12 +101,12 @@ export const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
       </div>
 
       {/* Socratic Inquiry List */}
-      <div className="border-t border-neutral-900 pt-4 mt-auto">
+      <div className="border-t border-neutral-900 pt-4 mt-auto flex-shrink-0">
         <h4 className="text-xs font-mono text-neutral-400 uppercase tracking-widest flex items-center gap-1.5 mb-3">
           <Sparkles className="w-3.5 h-3.5 text-neutral-500" />
           Apophatic Inquiry Lines
         </h4>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
           {node.questions.map((question, idx) => (
             <button
               key={idx}
@@ -120,6 +128,6 @@ export const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
           <span>Select any inquiry line above to enter the Reflection Chamber.</span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

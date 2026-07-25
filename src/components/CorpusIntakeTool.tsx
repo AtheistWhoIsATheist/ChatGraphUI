@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   Upload,
   FileText,
@@ -16,7 +16,11 @@ import {
   Loader2,
   Trash2,
   Brain,
-  FileCheck
+  FileCheck,
+  Save,
+  ChevronDown,
+  ChevronUp,
+  GitCompare
 } from 'lucide-react';
 import {
   CorpusIngestionBatch,
@@ -28,6 +32,7 @@ import {
   normalizeText,
   parseFrontmatter
 } from '../lib/corpusIngestion';
+import { initialNodes } from '../data/ontology';
 
 interface CorpusIntakeToolProps {
   ingestionBatches: CorpusIngestionBatch[];
@@ -57,6 +62,15 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [ingestionStep, setIngestionStep] = useState<number>(0);
   const [ingestionError, setIngestionError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Collapsible Mini-Diff State
+  const [showMiniDiff, setShowMiniDiff] = useState(false);
+
+  // Auto-save Session Storage State
+  const [lastAutoSave, setLastAutoSave] = useState<string | null>(null);
+
+  // Global File Input Reference (Always mounted at root)
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // --- Chatbot State ---
@@ -75,6 +89,56 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
   const [chatLoading, setChatLoading] = useState(false);
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
+  // --- 1. SESSION STORAGE AUTO-SAVE & RESTORE ---
+  // Restore draft state on mount
+  useEffect(() => {
+    try {
+      const savedDraft = sessionStorage.getItem('nke_corpus_intake_draft');
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft);
+        if (parsed.pastedText) setPastedText(parsed.pastedText);
+        if (parsed.pastedTitle) setPastedTitle(parsed.pastedTitle);
+        if (parsed.sourceType) setSourceType(parsed.sourceType);
+        if (parsed.chatInput) setChatInput(parsed.chatInput);
+        if (parsed.activeSubTab) setActiveSubTab(parsed.activeSubTab);
+        if (parsed.messages && Array.isArray(parsed.messages) && parsed.messages.length > 1) {
+          setMessages(parsed.messages);
+        }
+        if (parsed.updatedAt) {
+          setLastAutoSave(new Date(parsed.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to restore draft from sessionStorage:', e);
+    }
+  }, []);
+
+  // Periodic Auto-Save to sessionStorage (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (pastedText || pastedTitle || chatInput || messages.length > 1) {
+        try {
+          const now = new Date();
+          const draft = {
+            pastedText,
+            pastedTitle,
+            sourceType,
+            chatInput,
+            activeSubTab,
+            messages,
+            updatedAt: now.toISOString()
+          };
+          sessionStorage.setItem('nke_corpus_intake_draft', JSON.stringify(draft));
+          setLastAutoSave(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+        } catch (e) {
+          console.error('Failed to auto-save to sessionStorage:', e);
+        }
+      }
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, [pastedText, pastedTitle, sourceType, chatInput, activeSubTab, messages]);
+
   // Auto-scroll chat
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -86,6 +150,61 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
       setSelectedBatchId(ingestionBatches[0].batchId);
     }
   }, [ingestionBatches, selectedBatchId]);
+
+  // --- 2. MINI-DIFF GENERATOR FOR CONCEPT PREVIEW ---
+  const miniDiffResults = useMemo(() => {
+    if (!pastedText.trim()) return null;
+
+    // Extract potential concept lines / headings from draft text
+    const lines = pastedText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const headings = lines.filter(l => l.startsWith('#') || l.length < 80);
+    
+    // Compare extracted concepts with existing initialNodes and ingested extracts
+    const diffEntries: {
+      concept: string;
+      status: 'ADDED' | 'MODIFIED' | 'IDENTICAL';
+      matchedExisting?: string;
+      epistemicEstimate: EpistemicStatus;
+      detail: string;
+    }[] = [];
+
+    headings.slice(0, 8).forEach((h) => {
+      const cleanH = h.replace(/^#+\s*/, '');
+      if (!cleanH) return;
+
+      const matchedNode = initialNodes.find(n => 
+        n.label.toLowerCase().includes(cleanH.toLowerCase()) || 
+        cleanH.toLowerCase().includes(n.label.toLowerCase())
+      );
+
+      if (matchedNode) {
+        diffEntries.push({
+          concept: cleanH,
+          status: 'MODIFIED',
+          matchedExisting: matchedNode.label,
+          epistemicEstimate: 'MEMORY_GRAPH',
+          detail: `Extends existing ontology entity "${matchedNode.label}" (${matchedNode.type})`
+        });
+      } else {
+        diffEntries.push({
+          concept: cleanH,
+          status: 'ADDED',
+          epistemicEstimate: 'TEXTUAL',
+          detail: 'New epistemic concept node ready for knowledge graph insertion'
+        });
+      }
+    });
+
+    const addedCount = diffEntries.filter(d => d.status === 'ADDED').length;
+    const modifiedCount = diffEntries.filter(d => d.status === 'MODIFIED').length;
+
+    return {
+      entries: diffEntries,
+      addedCount,
+      modifiedCount,
+      totalDraftLines: lines.length
+    };
+  }, [pastedText, ingestionBatches]);
 
   // Handle direct text ingestion submission
   const processRawIngestion = async (rawText: string, filename: string, title?: string, ext: string = '.md') => {
@@ -116,7 +235,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
           fileExtension: ext,
           fileSize: new Blob([normalized]).size,
           sha256Hash: hash,
-          rawContent: contentWithoutFrontmatter,
+          rawContent: contentWithoutFrontmatter.slice(0, 50000), // Slice here to avoid huge payloads
           title: title || metadata.title || filename.replace(/\.[^/.]+$/, ''),
           sourceType: metadata.sourceType || sourceType,
           existingBatches: ingestionBatches.map(b => ({
@@ -128,20 +247,30 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
       });
 
       if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.error || 'Server ingestion endpoint failed');
+        let errMessage = `Server error ${response.status}`;
+        try {
+          const errData = await response.json();
+          if (errData?.error) errMessage = errData.error;
+        } catch {
+          const rawText = await response.text();
+          if (rawText) errMessage = rawText.slice(0, 150);
+        }
+        throw new Error(errMessage);
       }
 
       setIngestionStep(8); // Step 8 & 9: Complete & Self-Verified
       await new Promise(r => setTimeout(r, 400));
 
       const batchResult: CorpusIngestionBatch = await response.json();
+      batchResult.rawContent = contentWithoutFrontmatter; // Restore full content from client state
+      
       onSaveBatch(batchResult);
       setSelectedBatchId(batchResult.batchId);
 
-      // Clear input fields
+      // Clear input fields and session storage draft
       setPastedText('');
       setPastedTitle('');
+      sessionStorage.removeItem('nke_corpus_intake_draft');
 
       // Add confirmation message to chat
       setMessages(prev => [
@@ -166,24 +295,77 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
     }
   };
 
-  // Handle File Upload from disk
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    Array.from(files).forEach((file) => {
+  // Helper to read file as text via Promise
+  const readFileAsText = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (event) => {
-        const text = event.target?.result as string;
-        if (text) {
-          const ext = '.' + file.name.split('.').pop();
-          processRawIngestion(text, file.name, file.name.replace(/\.[^/.]+$/, ''), ext);
-        }
+        resolve((event.target?.result as string) || '');
+      };
+      reader.onerror = (err) => {
+        reject(err);
       };
       reader.readAsText(file);
     });
+  };
 
+  // Handle File Upload from disk (Triggered by hidden file input onChange)
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const fileList = Array.from(files);
+    // Clear value so selecting the same file later re-triggers onChange
     e.target.value = '';
+
+    for (const file of fileList) {
+      try {
+        const text = await readFileAsText(file);
+        if (text && text.trim()) {
+          const ext = '.' + (file.name.split('.').pop() || 'md');
+          await processRawIngestion(text, file.name, file.name.replace(/\.[^/.]+$/, ''), ext);
+        }
+      } catch (err) {
+        console.error(`Error reading file ${file.name}:`, err);
+        setIngestionError(`Failed to read file "${file.name}" from disk.`);
+      }
+    }
+  };
+
+  // Drag and drop handlers for upload box
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = e.dataTransfer.files;
+    if (!files || files.length === 0) return;
+
+    const fileList = Array.from(files);
+    for (const file of fileList) {
+      try {
+        const text = await readFileAsText(file);
+        if (text && text.trim()) {
+          const ext = '.' + (file.name.split('.').pop() || 'md');
+          await processRawIngestion(text, file.name, file.name.replace(/\.[^/.]+$/, ''), ext);
+        }
+      } catch (err) {
+        console.error(`Error reading dropped file ${file.name}:`, err);
+        setIngestionError(`Failed to read dropped file "${file.name}".`);
+      }
+    }
   };
 
   // Send message to Philosophical Interlocutor
@@ -210,12 +392,23 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
         body: JSON.stringify({
           message: userText,
           conversationHistory: messages.slice(-8),
-          ingestionBatches
+          ingestionBatches: ingestionBatches.map(b => ({
+            ...b,
+            rawContent: undefined // Don't send huge raw text over the network for chat
+          }))
         })
       });
 
       if (!response.ok) {
-        throw new Error('Chat API endpoint failure');
+        let errText = `Chat API error ${response.status}`;
+        try {
+          const errData = await response.json();
+          if (errData?.error) errText = errData.error;
+        } catch {
+          const rawText = await response.text();
+          if (rawText) errText = rawText.slice(0, 150);
+        }
+        throw new Error(errText);
       }
 
       const data = await response.json();
@@ -274,8 +467,21 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
   };
 
   return (
-    <div className="h-full flex flex-col bg-neutral-950 text-neutral-200 font-sans border border-neutral-900 rounded-2xl overflow-hidden shadow-2xl">
+    <div className="h-full flex flex-col bg-neutral-950 text-neutral-200 font-sans border border-neutral-900 rounded-2xl overflow-hidden shadow-2xl relative">
       
+      {/* GLOBAL FILE INPUT ELEMENT (Always mounted at root) */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept=".txt,.text,.md,.markdown"
+        multiple
+        onClick={(e) => {
+          (e.target as HTMLInputElement).value = '';
+        }}
+        onChange={handleFileUpload}
+        className="hidden"
+      />
+
       {/* 1. Header Toolbar */}
       <header className="border-b border-neutral-900 bg-neutral-950/90 px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 z-10">
         <div className="flex items-center gap-3">
@@ -291,9 +497,15 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                 God-Tier Directive v1.0
               </span>
             </div>
-            <p className="text-[11px] text-neutral-500 font-mono mt-0.5">
-              Nihiltheism Knowledge Engine • Provenance-Aware Ingestion Pipeline
-            </p>
+            <div className="flex items-center gap-3 text-[11px] text-neutral-500 font-mono mt-0.5">
+              <span>Nihiltheism Knowledge Engine • Provenance-Aware Ingestion Pipeline</span>
+              {lastAutoSave && (
+                <span className="text-emerald-400/90 flex items-center gap-1 bg-emerald-950/40 border border-emerald-900/50 px-2 py-0.5 rounded-md text-[10px]">
+                  <Save className="w-3 h-3 text-emerald-400" />
+                  <span>Draft Auto-Saved ({lastAutoSave})</span>
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -471,18 +683,9 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
               </div>
 
               <div className="flex items-center gap-2">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  accept=".txt,.text,.md,.markdown"
-                  multiple
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="p-3 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-xl text-neutral-400 hover:text-amber-400 transition-colors"
+                  className="p-3 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-xl text-neutral-400 hover:text-amber-400 transition-colors cursor-pointer"
                   title="Upload .txt or .md files directly into Second Brain"
                 >
                   <Upload className="w-4 h-4" />
@@ -521,11 +724,16 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
           <div className="h-full overflow-y-auto p-6 flex flex-col gap-6 max-w-4xl mx-auto">
             {/* Intake Instructions */}
             <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-6 flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <FileText className="w-5 h-5 text-amber-400" />
-                <h3 className="font-display text-sm uppercase tracking-wider font-semibold text-white">
-                  9-Step Philosophical Corpus Ingestion
-                </h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <FileText className="w-5 h-5 text-amber-400" />
+                  <h3 className="font-display text-sm uppercase tracking-wider font-semibold text-white">
+                    9-Step Philosophical Corpus Ingestion
+                  </h3>
+                </div>
+                <span className="text-[10px] font-mono text-neutral-500 bg-neutral-900 px-2.5 py-1 rounded-lg border border-neutral-800">
+                  SHA-256 Hash Guard Active
+                </span>
               </div>
               <p className="text-xs text-neutral-400 leading-relaxed font-sans">
                 Upload raw philosophical texts, markdown notes, journal entries, or essays. The engine will normalize the text, calculate its SHA-256 hash, divide it into semantic chunks, extract claims with 11-level Epistemic Status labels, audit all 12 monitored terms for anti-reification compliance, scan for crisis signals, and generate a complete INTAKE REPORT.
@@ -553,10 +761,17 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
 
             {/* Direct Upload / Drag-and-Drop Dropzone */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Box A: Upload File */}
+              {/* Box A: Upload File (With full working ref and drag-and-drop) */}
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-neutral-950 hover:bg-neutral-900/60 border-2 border-dashed border-neutral-800 hover:border-amber-500/50 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-4 cursor-pointer transition-all group"
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`bg-neutral-950 border-2 border-dashed ${
+                  isDragging
+                    ? 'border-amber-400 bg-amber-500/10 scale-[1.01]'
+                    : 'border-neutral-800 hover:border-amber-500/50 hover:bg-neutral-900/60'
+                } rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-4 cursor-pointer transition-all group`}
               >
                 <div className="p-4 bg-neutral-900 group-hover:bg-amber-500/10 border border-neutral-800 group-hover:border-amber-500/30 rounded-2xl transition-all">
                   <Upload className="w-8 h-8 text-neutral-400 group-hover:text-amber-400 transition-colors" />
@@ -566,7 +781,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                     Upload .md or .txt Files
                   </h4>
                   <p className="text-[11px] font-mono text-neutral-500 mt-1">
-                    Click to select files from your system
+                    Click to select or drag & drop files here
                   </p>
                 </div>
                 <span className="text-[10px] font-mono text-neutral-600 bg-neutral-900 px-3 py-1 rounded-full border border-neutral-800">
@@ -628,6 +843,72 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                 </button>
               </div>
             </div>
+
+            {/* --- COLLAPSIBLE PREVIEW AREA WITH MINI-DIFF VIEW --- */}
+            {miniDiffResults && (
+              <div className="bg-neutral-950 border border-neutral-900 rounded-2xl overflow-hidden transition-all">
+                <button
+                  onClick={() => setShowMiniDiff(!showMiniDiff)}
+                  className="w-full px-6 py-4 bg-neutral-900/60 hover:bg-neutral-900 border-b border-neutral-850 flex items-center justify-between text-xs font-mono cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <GitCompare className="w-4 h-4 text-amber-400" />
+                    <span className="font-semibold text-neutral-200 uppercase tracking-wider">
+                      Knowledge Graph Mini-Diff Preview
+                    </span>
+                    <span className="text-[10px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/80 px-2 py-0.5 rounded">
+                      +{miniDiffResults.addedCount} New Concepts
+                    </span>
+                    <span className="text-[10px] text-purple-400 bg-purple-950/60 border border-purple-800/80 px-2 py-0.5 rounded">
+                      ~{miniDiffResults.modifiedCount} Existing Node Connections
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-neutral-400 text-[11px]">
+                    <span>{showMiniDiff ? 'Collapse Diff' : 'Expand Diff'}</span>
+                    {showMiniDiff ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </div>
+                </button>
+
+                {showMiniDiff && (
+                  <div className="p-5 flex flex-col gap-4 bg-black/60 font-mono text-xs">
+                    <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
+                      This mini-diff compares concepts detected in your draft input with existing core ontology entities before final commit.
+                    </p>
+
+                    <div className="space-y-2">
+                      {miniDiffResults.entries.map((entry, idx) => (
+                        <div
+                          key={idx}
+                          className={`p-3 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 ${
+                            entry.status === 'ADDED'
+                              ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-200'
+                              : 'bg-purple-950/30 border-purple-800/50 text-purple-200'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            {entry.status === 'ADDED' ? (
+                              <span className="px-1.5 py-0.5 bg-emerald-900 border border-emerald-700 text-emerald-300 rounded text-[9px] font-bold">
+                                + ADDED
+                              </span>
+                            ) : (
+                              <span className="px-1.5 py-0.5 bg-purple-900 border border-purple-700 text-purple-300 rounded text-[9px] font-bold">
+                                ~ MODIFIED
+                              </span>
+                            )}
+                            <span className="font-semibold text-white">{entry.concept}</span>
+                          </div>
+
+                          <div className="text-[10px] text-neutral-400 flex items-center gap-2">
+                            <span>{entry.detail}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Error Message */}
             {ingestionError && (
@@ -806,15 +1087,25 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                 </p>
               </div>
 
-              {ingestionBatches.length > 0 && (
+              <div className="flex items-center gap-2">
                 <button
-                  onClick={onClearAllBatches}
-                  className="px-3 py-1.5 bg-rose-950/40 border border-rose-900/60 hover:bg-rose-900 text-rose-300 text-xs font-mono rounded-xl transition-colors flex items-center gap-1.5"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-3 py-1.5 bg-neutral-900 border border-neutral-800 hover:border-amber-500/50 text-neutral-200 text-xs font-mono rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  <span>Clear All Archives</span>
+                  <Upload className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Upload Files</span>
                 </button>
-              )}
+
+                {ingestionBatches.length > 0 && (
+                  <button
+                    onClick={onClearAllBatches}
+                    className="px-3 py-1.5 bg-rose-950/40 border border-rose-900/60 hover:bg-rose-900 text-rose-300 text-xs font-mono rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Clear All Archives</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {ingestionBatches.length === 0 ? (
@@ -826,7 +1117,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                 </p>
                 <button
                   onClick={() => setActiveSubTab('ingest')}
-                  className="px-4 py-2 bg-gradient-to-r from-amber-600 to-purple-600 text-white rounded-xl text-xs font-mono font-semibold"
+                  className="px-4 py-2 bg-gradient-to-r from-amber-600 to-purple-600 text-white rounded-xl text-xs font-mono font-semibold cursor-pointer"
                 >
                   Open Ingestion Console
                 </button>
@@ -865,14 +1156,14 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                           setSelectedBatchId(batch.batchId);
                           setActiveSubTab('audit');
                         }}
-                        className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 text-neutral-200 rounded-xl text-xs font-mono transition-colors"
+                        className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 text-neutral-200 rounded-xl text-xs font-mono transition-colors cursor-pointer"
                       >
                         Inspect Audit
                       </button>
 
                       <button
                         onClick={() => onDeleteBatch(batch.batchId)}
-                        className="p-1.5 text-neutral-600 hover:text-rose-400 hover:bg-rose-950/30 rounded-lg transition-colors"
+                        className="p-1.5 text-neutral-600 hover:text-rose-400 hover:bg-rose-950/30 rounded-lg transition-colors cursor-pointer"
                         title="Delete Batch"
                       >
                         <Trash2 className="w-4 h-4" />

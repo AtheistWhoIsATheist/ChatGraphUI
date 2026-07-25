@@ -4,6 +4,7 @@ export interface JournalEntry {
   nodeLabel: string;
   question: string;
   userText: string;
+  tags?: string[];
   analysis: {
     dogmasIdentified: string[];
     apophaticReframing: string;
@@ -28,6 +29,8 @@ export interface ParadoxSynthesis {
   antithesis: string;
   synthesis: string;
   timestamp: string;
+  complexity?: number;
+  synthesizedTruth?: number;
 }
 
 // --- Corpus Intake & Second Brain System Types ---

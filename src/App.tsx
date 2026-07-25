@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { initialNodes, initialLinks, corpusTexts } from './data/ontology';
 import { JournalEntry, Marginalia, ParadoxSynthesis, CorpusIngestionBatch } from './types';
-import { InteractiveGraph } from './components/InteractiveGraph';
-import { NodeDetailPanel } from './components/NodeDetailPanel';
+import { OntologyMap } from './components/OntologyMap';
 import { ReflectionChamber } from './components/ReflectionChamber';
 import { CorpusBrowser } from './components/CorpusBrowser';
 import { ParadoxSynthesizer } from './components/ParadoxSynthesizer';
@@ -35,6 +34,7 @@ export default function App() {
   const [marginalia, setMarginalia] = useState<Marginalia[]>([]);
   const [synthesisHistory, setSynthesisHistory] = useState<ParadoxSynthesis[]>([]);
   const [ingestionBatches, setIngestionBatches] = useState<CorpusIngestionBatch[]>([]);
+  const [lastSavedAt, setLastSavedAt] = useState<number>(0);
 
   // Time clock display (strictly literal and compliant)
   const [currentTime, setCurrentTime] = useState('');
@@ -74,17 +74,20 @@ export default function App() {
     const updated = [newBatch, ...ingestionBatches.filter(b => b.batchId !== newBatch.batchId)];
     setIngestionBatches(updated);
     localStorage.setItem('nes2_ingestion_batches', JSON.stringify(updated));
+    setLastSavedAt(Date.now());
   };
 
   const handleDeleteBatch = (batchId: string) => {
     const updated = ingestionBatches.filter(b => b.batchId !== batchId);
     setIngestionBatches(updated);
     localStorage.setItem('nes2_ingestion_batches', JSON.stringify(updated));
+    setLastSavedAt(Date.now());
   };
 
   const handleClearAllBatches = () => {
     setIngestionBatches([]);
     localStorage.removeItem('nes2_ingestion_batches');
+    setLastSavedAt(Date.now());
   };
 
   // 3. Helper to update and persist journal entries
@@ -92,12 +95,14 @@ export default function App() {
     const updated = [newEntry, ...journalEntries];
     setJournalEntries(updated);
     localStorage.setItem('nes2_journal_entries', JSON.stringify(updated));
+    setLastSavedAt(Date.now());
   };
 
   const handleDeleteJournalEntry = (id: string) => {
     const updated = journalEntries.filter(entry => entry.id !== id);
     setJournalEntries(updated);
     localStorage.setItem('nes2_journal_entries', JSON.stringify(updated));
+    setLastSavedAt(Date.now());
   };
 
   // 4. Helper to update and persist marginalia
@@ -116,12 +121,14 @@ export default function App() {
     }
     setMarginalia(updated);
     localStorage.setItem('nes2_marginalia', JSON.stringify(updated));
+    setLastSavedAt(Date.now());
   };
 
   const handleDeleteMarginalia = (corpusId: string) => {
     const updated = marginalia.filter(m => m.corpusId !== corpusId);
     setMarginalia(updated);
     localStorage.setItem('nes2_marginalia', JSON.stringify(updated));
+    setLastSavedAt(Date.now());
   };
 
   // 5. Helper to update and persist paradox synthesis
@@ -129,6 +136,7 @@ export default function App() {
     const updated = [newSynthesis, ...synthesisHistory];
     setSynthesisHistory(updated);
     localStorage.setItem('nes2_synthesis_history', JSON.stringify(updated));
+    setLastSavedAt(Date.now());
   };
 
   const handleClearSynthesisHistory = () => {
@@ -165,9 +173,6 @@ export default function App() {
     localStorage.removeItem('nes2_marginalia');
     localStorage.removeItem('nes2_synthesis_history');
   };
-
-  // Safe node selector
-  const activeNode = selectedNodeId ? initialNodes.find(n => n.id === selectedNodeId) : null;
 
   // Jump to reflection chamber with selected question
   const handleSelectQuestion = (question: string) => {
@@ -321,47 +326,17 @@ export default function App() {
               
               {/* Tab Content: Graph / Map View */}
               {activeTab === 'graph' && (
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full items-start">
-                  {/* Left SVG Graph panel (7 cols) */}
-                  <div className="lg:col-span-7 h-full flex flex-col gap-4">
-                    <InteractiveGraph
-                      nodes={initialNodes}
-                      links={initialLinks}
-                      selectedNodeId={selectedNodeId}
-                      hoveredNodeId={hoveredNodeId}
-                      onSelectNode={handleSelectNode}
-                      onHoverNode={handleHoverNode}
-                    />
-                  </div>
-
-                  {/* Right Node details panel (5 cols) */}
-                  <div className="lg:col-span-5 h-full">
-                    {activeNode ? (
-                      <NodeDetailPanel
-                        node={activeNode}
-                        corpusTexts={corpusTexts}
-                        onSelectQuestion={handleSelectQuestion}
-                        onNavigateToTab={setActiveTab}
-                      />
-                    ) : (
-                      <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-4 h-full min-h-[300px] abyssal-glow justify-between py-16">
-                        <div className="flex flex-col items-center gap-3">
-                          <Network className="w-10 h-10 text-neutral-800 animate-pulse" />
-                          <h3 className="font-display text-sm tracking-widest text-neutral-400 uppercase font-medium">No Parameter Selected</h3>
-                          <p className="text-xs text-neutral-500 leading-relaxed max-w-xs font-sans">
-                            Select any concept node in the active network projection grid to examine its ontological parameters, connected texts, and reflective pathways.
-                          </p>
-                        </div>
-                        <div className="bg-neutral-900/30 border border-neutral-900 p-3.5 rounded-xl text-[10px] font-mono text-neutral-500 leading-normal max-w-sm mt-4 text-left select-none">
-                          <span className="text-neutral-400 font-semibold block mb-1">Recommended Starting Gateways:</span>
-                          • The Absolute Void (Ontological Core)<br />
-                          • Socratic Epoché (Epistemological Suspension)<br />
-                          • Śūnyatā (Radical Emptiness Insight)
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <OntologyMap
+                  nodes={initialNodes}
+                  links={initialLinks}
+                  corpusTexts={corpusTexts}
+                  selectedNodeId={selectedNodeId}
+                  hoveredNodeId={hoveredNodeId}
+                  onSelectNode={handleSelectNode}
+                  onHoverNode={handleHoverNode}
+                  onSelectQuestion={handleSelectQuestion}
+                  onNavigateToTab={setActiveTab}
+                />
               )}
 
               {/* Tab Content: Void Journal / Reflection */}
@@ -375,6 +350,7 @@ export default function App() {
                   journalEntries={journalEntries}
                   onSaveEntry={handleSaveJournalEntry}
                   onDeleteEntry={handleDeleteJournalEntry}
+                  lastSavedAt={lastSavedAt}
                 />
               )}
 

@@ -11,6 +11,7 @@ interface NetworkGraph3DProps {
   onHoverNode: (nodeId: string | null) => void;
   width: number;
   height: number;
+  distanceMap: Map<string, number>;
 }
 
 const COLOR_MAPPINGS: Record<string, number> = {
@@ -31,7 +32,8 @@ export const NetworkGraph3DComponent: React.FC<NetworkGraph3DProps> = ({
   onSelectNode,
   onHoverNode,
   width,
-  height
+  height,
+  distanceMap
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   
@@ -211,28 +213,55 @@ export const NetworkGraph3DComponent: React.FC<NetworkGraph3DProps> = ({
       mesh.position.copy(pos);
 
       // Handle active state highlights on node meshes
-      const isSelected = selectedNodeId === node.id;
       const isHovered = hoveredNodeId === node.id;
       const mat = mesh.material as THREE.MeshPhongMaterial;
+      const dist = selectedNodeId ? distanceMap.get(node.id) : undefined;
 
-      if (isSelected) {
-        mat.emissiveIntensity = 0.85;
-        mat.opacity = 1.0;
-        
-        // Position hover highlight ring around selected node
-        if (hoverRingRef.current) {
-          hoverRingRef.current.position.copy(pos);
-          hoverRingRef.current.visible = true;
-          // Scale based on selected node size
-          const scale = node.id === 'void' ? 1.0 : 0.8;
-          hoverRingRef.current.scale.set(scale, scale, scale);
+      if (selectedNodeId) {
+        if (dist === 0) {
+          mat.emissiveIntensity = 0.95;
+          mat.opacity = 1.0;
+          mesh.scale.set(1.25, 1.25, 1.25);
+          mat.color.setHex(0xffffff);
+
+          if (hoverRingRef.current) {
+            hoverRingRef.current.position.copy(pos);
+            hoverRingRef.current.visible = true;
+            const scale = node.id === 'void' ? 1.15 : 0.95;
+            hoverRingRef.current.scale.set(scale, scale, scale);
+          }
+        } else if (dist === 1) {
+          mat.emissiveIntensity = 0.65;
+          mat.opacity = 0.85;
+          mesh.scale.set(1.1, 1.1, 1.1);
+          mat.color.setHex(COLOR_MAPPINGS[node.type] || 0xdddddd);
+        } else if (dist === 2) {
+          mat.emissiveIntensity = 0.3;
+          mat.opacity = 0.60;
+          mesh.scale.set(1.0, 1.0, 1.0);
+          mat.color.setHex(0x737373);
+        } else {
+          mat.emissiveIntensity = 0.05;
+          mat.opacity = 0.15;
+          mesh.scale.set(0.9, 0.9, 0.9);
+          mat.color.setHex(0x404040);
         }
-      } else if (isHovered) {
-        mat.emissiveIntensity = 0.55;
-        mat.opacity = 1.0;
+      } else if (hoveredNodeId) {
+        if (isHovered) {
+          mat.emissiveIntensity = 0.55;
+          mat.opacity = 1.0;
+          mesh.scale.set(1.15, 1.15, 1.15);
+        } else {
+          mat.emissiveIntensity = 0.15;
+          mat.opacity = 0.22;
+          mesh.scale.set(1.0, 1.0, 1.0);
+        }
+        mat.color.setHex(COLOR_MAPPINGS[node.type] || 0xdddddd);
       } else {
         mat.emissiveIntensity = 0.15;
-        mat.opacity = 0.8;
+        mat.opacity = 0.95;
+        mesh.scale.set(1.0, 1.0, 1.0);
+        mat.color.setHex(COLOR_MAPPINGS[node.type] || 0xdddddd);
       }
     });
 
@@ -271,11 +300,28 @@ export const NetworkGraph3DComponent: React.FC<NetworkGraph3DProps> = ({
 
         linePoints.push(pStart, pEnd);
 
-        // Compute highlighting colors
-        const activeId = selectedNodeId || hoveredNodeId;
-        const isHighlighted = activeId && (sNode.id === activeId || tNode.id === activeId);
+        let col = new THREE.Color(0x222222);
 
-        const col = isHighlighted ? new THREE.Color(0xffffff) : new THREE.Color(0x222222);
+        if (selectedNodeId) {
+          const sDist = distanceMap.get(sNode.id);
+          const tDist = distanceMap.get(tNode.id);
+          const sIn = sDist !== undefined && sDist <= 2;
+          const tIn = tDist !== undefined && tDist <= 2;
+
+          if (sIn && tIn) {
+            if ((sDist === 0 && tDist === 1) || (sDist === 1 && tDist === 0)) {
+              col = new THREE.Color(0xffffff);
+            } else {
+              col = new THREE.Color(0x888888);
+            }
+          } else {
+            col = new THREE.Color(0x111111);
+          }
+        } else if (hoveredNodeId) {
+          const isHighlighted = sNode.id === hoveredNodeId || tNode.id === hoveredNodeId;
+          col = isHighlighted ? new THREE.Color(0xffffff) : new THREE.Color(0x111111);
+        }
+
         lineColors.push(col, col);
       }
     });
@@ -303,7 +349,7 @@ export const NetworkGraph3DComponent: React.FC<NetworkGraph3DProps> = ({
       linkLinesRef.current = lineSegments;
     }
 
-  }, [nodes, links, selectedNodeId, hoveredNodeId]);
+  }, [nodes, links, selectedNodeId, hoveredNodeId, distanceMap]);
 
   // Raycasting helper to pick/hover nodes
   const performRaycasting = (clientX: number, clientY: number, action: 'hover' | 'click') => {

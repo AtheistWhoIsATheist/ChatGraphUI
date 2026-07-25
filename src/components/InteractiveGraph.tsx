@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sliders, Compass, RefreshCw } from 'lucide-react';
+import { Sliders, Compass, RefreshCw, Network, Route } from 'lucide-react';
 import { OntologyNode, OntologyLink } from '../data/ontology';
 import { useSimulation, PhysicsParams } from '../hooks/useSimulation';
 import { NetworkGraph } from './NetworkGraph';
@@ -13,6 +13,8 @@ interface InteractiveGraphProps {
   hoveredNodeId: string | null;
   onSelectNode: (nodeId: string | null) => void;
   onHoverNode: (nodeId: string | null) => void;
+  searchQuery?: string;
+  matchedNodeIds?: Set<string>;
 }
 
 const DEFAULT_PHYSICS: PhysicsParams = {
@@ -28,13 +30,16 @@ export const InteractiveGraph: React.FC<InteractiveGraphProps> = ({
   selectedNodeId,
   hoveredNodeId,
   onSelectNode,
-  onHoverNode
+  onHoverNode,
+  searchQuery = '',
+  matchedNodeIds = new Set()
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   
   // 1. Interactive settings & dimension states
   const [dimensions, setDimensions] = useState({ width: 600, height: 450 });
   const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
+  const [layoutMode, setLayoutMode] = useState<'force' | 'tree'>('force');
   const [showSettings, setShowSettings] = useState(false);
   const [physics, setPhysics] = useState<PhysicsParams>(DEFAULT_PHYSICS);
 
@@ -60,7 +65,7 @@ export const InteractiveGraph: React.FC<InteractiveGraphProps> = ({
   }, []);
 
   // 3. Harness our optimized custom simulation hook
-  const { simulatedNodes, simulatedLinks, dragNode } = useSimulation(
+  const { simulatedNodes, simulatedLinks } = useSimulation(
     nodes,
     links,
     dimensions.width,
@@ -69,6 +74,39 @@ export const InteractiveGraph: React.FC<InteractiveGraphProps> = ({
   );
 
   const activeNode = nodes.find(n => n.id === (selectedNodeId || hoveredNodeId)) || null;
+
+  // Compute distance map for 2-Step Distance Neighborhood Highlighting
+  const distanceMap = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!selectedNodeId) return map;
+
+    const adj = new Map<string, string[]>();
+    nodes.forEach(n => adj.set(n.id, []));
+    links.forEach(l => {
+      const s = typeof l.source === 'object' && l.source !== null ? (l.source as any).id : (l.source as string);
+      const t = typeof l.target === 'object' && l.target !== null ? (l.target as any).id : (l.target as string);
+      if (adj.has(s)) adj.get(s)!.push(t);
+      if (adj.has(t)) adj.get(t)!.push(s);
+    });
+
+    const queue: { id: string; dist: number }[] = [{ id: selectedNodeId, dist: 0 }];
+    map.set(selectedNodeId, 0);
+
+    let head = 0;
+    while (head < queue.length) {
+      const { id, dist } = queue[head++];
+      if (dist >= 2) continue; // max distance 2
+
+      const neighbors = adj.get(id) || [];
+      for (const neighbor of neighbors) {
+        if (!map.has(neighbor)) {
+          map.set(neighbor, dist + 1);
+          queue.push({ id: neighbor, dist: dist + 1 });
+        }
+      }
+    }
+    return map;
+  }, [selectedNodeId, nodes, links]);
 
   return (
     <div
@@ -79,15 +117,18 @@ export const InteractiveGraph: React.FC<InteractiveGraphProps> = ({
       {/* 2D Render Canvas / SVG Viewport */}
       {viewMode === '2d' ? (
         <NetworkGraph
-          nodes={simulatedNodes}
-          links={simulatedLinks}
+          nodes={nodes}
+          links={links}
           selectedNodeId={selectedNodeId}
           hoveredNodeId={hoveredNodeId}
           onSelectNode={onSelectNode}
           onHoverNode={onHoverNode}
-          dragNode={dragNode}
           width={dimensions.width}
           height={dimensions.height}
+          distanceMap={distanceMap}
+          layoutMode={layoutMode}
+          searchQuery={searchQuery}
+          matchedNodeIds={matchedNodeIds}
         />
       ) : (
         /* 3D WebGL Cosmos Rendering */
@@ -100,6 +141,7 @@ export const InteractiveGraph: React.FC<InteractiveGraphProps> = ({
           onHoverNode={onHoverNode}
           width={dimensions.width}
           height={dimensions.height}
+          distanceMap={distanceMap}
         />
       )}
 
@@ -110,12 +152,40 @@ export const InteractiveGraph: React.FC<InteractiveGraphProps> = ({
           Ontological Dynamic Map
         </h3>
         <p className="text-[10px] text-neutral-600 font-mono">
-          {viewMode === '2d' ? '2D Force Projection' : '3D Multi-Dimensional Cosmos'}
+          {viewMode === '2d' ? (layoutMode === 'force' ? '2D Force Projection' : '2D Hierarchical Tree') : '3D Multi-Dimensional Cosmos'}
         </p>
       </div>
 
       {/* Control Overlays (Top Right) */}
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+        {/* Layout Toggle (Force vs Tree) only in 2D mode */}
+        {viewMode === '2d' && (
+          <div className="bg-neutral-950/90 border border-neutral-900 rounded-xl p-0.5 flex mr-2">
+            <button
+              onClick={() => setLayoutMode('force')}
+              className={`px-3 py-1.5 rounded-lg text-[10px] flex items-center gap-1.5 font-mono tracking-wider transition-all duration-200 uppercase ${
+                layoutMode === 'force'
+                  ? 'bg-neutral-800 text-neutral-100 font-semibold shadow-sm'
+                  : 'text-neutral-500 hover:text-neutral-300'
+              }`}
+            >
+              <Network className="w-3 h-3" />
+              Force
+            </button>
+            <button
+              onClick={() => setLayoutMode('tree')}
+              className={`px-3 py-1.5 rounded-lg text-[10px] flex items-center gap-1.5 font-mono tracking-wider transition-all duration-200 uppercase ${
+                layoutMode === 'tree'
+                  ? 'bg-neutral-800 text-neutral-100 font-semibold shadow-sm'
+                  : 'text-neutral-500 hover:text-neutral-300'
+              }`}
+            >
+              <Route className="w-3 h-3" />
+              Tree
+            </button>
+          </div>
+        )}
+
         {/* Toggle between 2D Projection and 3D Cosmos */}
         <div className="bg-neutral-950/90 border border-neutral-900 rounded-xl p-0.5 flex">
           <button
