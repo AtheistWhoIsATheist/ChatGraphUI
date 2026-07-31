@@ -45,3 +45,18 @@
   animation: pulseGlow 4s ease-in-out infinite;
 }
 
+/* Crisp SVG font rendering for graphs */
+svg text {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1;
+}
+
+#svg-network-canvas text {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+  letter-spacing: 0.015em;
+}
+

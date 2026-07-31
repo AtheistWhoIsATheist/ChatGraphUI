@@ -45,7 +45,11 @@ export const NetworkGraph3DComponent: React.FC<NetworkGraph3DProps> = ({
   const linkLinesRef = useRef<THREE.LineSegments | null>(null);
   const hoverRingRef = useRef<THREE.Mesh | null>(null);
   
-  // Custom rotation params
+  const [screenPositions, setScreenPositions] = React.useState<Record<string, { x: number; y: number; opacity: number; visible: boolean }>>({});
+  const nodesRef = useRef(nodes);
+  nodesRef.current = nodes;
+  const dimsRef = useRef({ width, height });
+  dimsRef.current = { width, height };
   const isDraggingRef = useRef(false);
   const previousMousePositionRef = useRef({ x: 0, y: 0 });
   const rotationRef = useRef({ x: 0.2, y: -0.4 });
@@ -137,6 +141,30 @@ export const NetworkGraph3DComponent: React.FC<NetworkGraph3DProps> = ({
         // Orient highlight ring to face the camera
         if (hoverRingRef.current) {
           hoverRingRef.current.quaternion.copy(cameraRef.current.quaternion);
+        }
+
+        // Screen space projection for crisp 2D HTML node labels
+        if (nodesRef.current.length > 0) {
+          const cam = cameraRef.current;
+          const w = dimsRef.current.width;
+          const h = dimsRef.current.height;
+          const tempVec = new THREE.Vector3();
+          const nextPositions: Record<string, { x: number; y: number; opacity: number; visible: boolean }> = {};
+
+          nodesRef.current.forEach(node => {
+            const mesh = nodeMeshesRef.current[node.id];
+            if (mesh) {
+              tempVec.copy(mesh.position);
+              tempVec.project(cam);
+              const x = (tempVec.x * 0.5 + 0.5) * w;
+              const y = (-tempVec.y * 0.5 + 0.5) * h;
+              const inBounds = tempVec.z < 1 && x >= -40 && x <= w + 40 && y >= -40 && y <= h + 40;
+              const dist = cam.position.distanceTo(mesh.position);
+              const opacity = Math.max(0.4, Math.min(1, 1 - (dist - 400) / 800));
+              nextPositions[node.id] = { x, y, opacity, visible: inBounds };
+            }
+          });
+          setScreenPositions(nextPositions);
         }
       }
 
@@ -428,15 +456,48 @@ export const NetworkGraph3DComponent: React.FC<NetworkGraph3DProps> = ({
   };
 
   return (
-    <div
-      ref={containerRef}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onWheel={handleWheel}
-      className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing overflow-hidden z-0 select-none bg-black"
-      style={{ touchAction: 'none' }}
-    />
+    <div className="relative w-full h-full overflow-hidden">
+      <div
+        ref={containerRef}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onWheel={handleWheel}
+        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing overflow-hidden z-0 select-none bg-black"
+        style={{ touchAction: 'none' }}
+      />
+
+      {/* High-contrast crisp HTML labels overlaid on 3D Cosmos Nodes */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden z-10">
+        {nodes.map(node => {
+          const pos = screenPositions[node.id];
+          if (!pos || !pos.visible) return null;
+          const isSelected = node.id === selectedNodeId;
+          const isHovered = node.id === hoveredNodeId;
+          const showLabel = isSelected || isHovered || node.resonance > 75 || node.id === 'void';
+          if (!showLabel) return null;
+
+          return (
+            <div
+              key={`3d-label-${node.id}`}
+              style={{
+                transform: `translate3d(${pos.x}px, ${pos.y + 14}px, 0) translate(-50%, 0)`,
+                opacity: pos.opacity,
+              }}
+              className={`absolute top-0 left-0 px-2.5 py-1 rounded-md text-[11px] font-sans font-semibold whitespace-nowrap border transition-all duration-75 ${
+                isSelected
+                  ? 'bg-neutral-950/95 border-amber-400 text-amber-300 shadow-lg shadow-amber-500/20 scale-105'
+                  : isHovered
+                  ? 'bg-neutral-950/95 border-white text-white shadow-md'
+                  : 'bg-neutral-950/90 border-neutral-800 text-neutral-200'
+              }`}
+            >
+              {node.label}
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 

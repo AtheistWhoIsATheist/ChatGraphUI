@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { initialNodes, initialLinks, corpusTexts } from './data/ontology';
+import { parseNihilismJson } from './data/ontologyParser';
+import graphData from './data/graph-data.json';
 import { JournalEntry, Marginalia, ParadoxSynthesis, CorpusIngestionBatch } from './types';
 import { OntologyMap } from './components/OntologyMap';
 import { ReflectionChamber } from './components/ReflectionChamber';
@@ -12,7 +14,7 @@ import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
   // Navigation tabs: 'graph' | 'journal' | 'corpus' | 'paradox' | 'intake'
-  const [activeTab, setActiveTab] = useState<'graph' | 'journal' | 'corpus' | 'paradox' | 'intake'>('intake');
+  const [activeTab, setActiveTab] = useState<'graph' | 'journal' | 'corpus' | 'paradox' | 'intake'>('graph');
 
   // Core application states
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -38,6 +40,28 @@ export default function App() {
 
   // Time clock display (strictly literal and compliant)
   const [currentTime, setCurrentTime] = useState('');
+
+  
+  const [displayNodes, setDisplayNodes] = useState(initialNodes);
+  const [displayLinks, setDisplayLinks] = useState(initialLinks);
+
+  useEffect(() => {
+    try {
+      if (Object.keys(graphData).length > 0) {
+        const parsed = parseNihilismJson(graphData as any);
+        if (parsed.nodes.length > 0) {
+          setDisplayNodes(parsed.nodes);
+          setDisplayLinks(parsed.links);
+          return;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to parse graphData', e);
+    }
+    setDisplayNodes(initialNodes);
+    setDisplayLinks(initialLinks);
+  }, []);
+
 
   // 1. Initialize persistent data from localStorage
   useEffect(() => {
@@ -327,8 +351,8 @@ export default function App() {
               {/* Tab Content: Graph / Map View */}
               {activeTab === 'graph' && (
                 <OntologyMap
-                  nodes={initialNodes}
-                  links={initialLinks}
+                  nodes={displayNodes}
+                  links={displayLinks}
                   corpusTexts={corpusTexts}
                   selectedNodeId={selectedNodeId}
                   hoveredNodeId={hoveredNodeId}
@@ -342,7 +366,7 @@ export default function App() {
               {/* Tab Content: Void Journal / Reflection */}
               {activeTab === 'journal' && (
                 <ReflectionChamber
-                  nodes={initialNodes}
+                  nodes={displayNodes}
                   selectedNodeId={selectedNodeId}
                   selectedQuestion={selectedQuestion}
                   onSelectNode={setSelectedNodeId}
@@ -367,7 +391,7 @@ export default function App() {
               {/* Tab Content: Paradox Synthesizer */}
               {activeTab === 'paradox' && (
                 <ParadoxSynthesizer
-                  nodes={initialNodes}
+                  nodes={displayNodes}
                   synthesisHistory={synthesisHistory}
                   onSaveSynthesis={handleSaveSynthesis}
                   onClearHistory={handleClearSynthesisHistory}

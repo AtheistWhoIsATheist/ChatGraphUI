@@ -50,11 +50,6 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
   // Navigation mode within the tool
   const [activeSubTab, setActiveSubTab] = useState<'chat' | 'ingest' | 'audit' | 'second-brain'>('chat');
 
-  // Selected batch for detailed audit
-  const [selectedBatchId, setSelectedBatchId] = useState<string | null>(
-    ingestionBatches.length > 0 ? ingestionBatches[0].batchId : null
-  );
-
   // --- Ingestion Console State ---
   const [pastedText, setPastedText] = useState('');
   const [pastedTitle, setPastedTitle] = useState('');
@@ -63,6 +58,35 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
   const [ingestionStep, setIngestionStep] = useState<number>(0);
   const [ingestionError, setIngestionError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  // Batch / Multi-file processing state
+  const [processingSource, setProcessingSource] = useState<'upload' | 'paste' | null>(null);
+  const [activeFileName, setActiveFileName] = useState<string>('');
+  const [batchTotalFiles, setBatchTotalFiles] = useState<number>(0);
+  const [batchCurrentIndex, setBatchCurrentIndex] = useState<number>(0);
+
+  // Audit Sub-Tab View Mode ('all' for aggregate Second Brain stats, or batchId)
+  const [auditViewMode, setAuditViewMode] = useState<string>('all');
+
+  // Aggregate stats across all batches for Second Brain Summary
+  const aggregateStats = useMemo(() => {
+    if (ingestionBatches.length === 0) {
+      return { totalBatches: 0, totalChunks: 0, totalExtracts: 0, totalAudits: 0, totalNextActions: 0 };
+    }
+    return {
+      totalBatches: ingestionBatches.length,
+      totalChunks: ingestionBatches.reduce((acc, b) => acc + (b.chunks?.length || 0), 0),
+      totalExtracts: ingestionBatches.reduce((acc, b) => acc + (b.extracts?.length || 0), 0),
+      totalAudits: ingestionBatches.reduce((acc, b) => acc + (b.antiReificationAudits?.length || 0), 0),
+      totalNextActions: ingestionBatches.reduce((acc, b) => acc + (b.nextActions?.length || 0), 0),
+    };
+  }, [ingestionBatches]);
+
+  // Selected batch for detailed audit
+  const selectedBatch = useMemo(() => {
+    if (auditViewMode === 'all') return null;
+    return ingestionBatches.find(b => b.batchId === auditViewMode) || (ingestionBatches.length > 0 ? ingestionBatches[0] : null);
+  }, [ingestionBatches, auditViewMode]);
 
   // Collapsible Mini-Diff State
   const [showMiniDiff, setShowMiniDiff] = useState(false);
@@ -144,12 +168,12 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
     chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, chatLoading]);
 
-  // Keep selectedBatchId valid if batches change
+  // Keep auditViewMode valid if batches change
   useEffect(() => {
-    if (ingestionBatches.length > 0 && (!selectedBatchId || !ingestionBatches.find(b => b.batchId === selectedBatchId))) {
-      setSelectedBatchId(ingestionBatches[0].batchId);
+    if (auditViewMode !== 'all' && ingestionBatches.length > 0 && !ingestionBatches.find(b => b.batchId === auditViewMode)) {
+      setAuditViewMode(ingestionBatches[0].batchId);
     }
-  }, [ingestionBatches, selectedBatchId]);
+  }, [ingestionBatches, auditViewMode]);
 
   // --- 2. MINI-DIFF GENERATOR FOR CONCEPT PREVIEW ---
   const miniDiffResults = useMemo(() => {
@@ -206,27 +230,45 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
     };
   }, [pastedText, ingestionBatches]);
 
+  // 9-Step Metadata for Stepper UI
+  const INGESTION_STEPS_META = [
+    { step: 1, name: 'Cryptographic Lock', desc: 'SHA-256 hash & immutable lock' },
+    { step: 2, name: 'Text Normalization', desc: 'Parsing metadata & line structure' },
+    { step: 3, name: 'Semantic Chunking', desc: 'Dividing into line-accurate passages' },
+    { step: 4, name: 'Epistemic Claims', desc: '11-level taxonomy extraction' },
+    { step: 5, name: 'Anti-Reification', desc: 'Auditing all 12 monitored terms' },
+    { step: 6, name: 'Boundary Signals', desc: 'Crisis & existential risk scan' },
+    { step: 7, name: 'Graph Synthesis', desc: 'Generating knowledge graph edges' },
+    { step: 8, name: 'Report Assembly', desc: 'Compiling INTAKE REPORT markdown' },
+    { step: 9, name: 'Vault Commit', desc: 'Self-verification & Second Brain commit' },
+  ];
+
   // Handle direct text ingestion submission
-  const processRawIngestion = async (rawText: string, filename: string, title?: string, ext: string = '.md') => {
+  const processRawIngestion = async (
+    rawText: string,
+    filename: string,
+    title?: string,
+    ext: string = '.md',
+    source: 'upload' | 'paste' = 'paste'
+  ) => {
     if (!rawText.trim() || isProcessing) return;
 
     setIsProcessing(true);
+    setProcessingSource(source);
+    setActiveFileName(filename);
     setIngestionError(null);
     setIngestionStep(1); // Step 1: Hash & Preserve
+
+    // Smooth step interval while waiting for AI processing
+    const stepInterval = setInterval(() => {
+      setIngestionStep((prev) => (prev < 7 ? prev + 1 : prev));
+    }, 700);
 
     try {
       const normalized = normalizeText(rawText);
       const hash = await calculateSHA256(normalized);
       const { metadata, contentWithoutFrontmatter } = parseFrontmatter(normalized);
 
-      setIngestionStep(2); // Step 2: Normalize & Parse
-      await new Promise(r => setTimeout(r, 400));
-
-      setIngestionStep(3); // Step 3: Semantic Chunking
-      await new Promise(r => setTimeout(r, 400));
-
-      setIngestionStep(4); // Step 4: Epistemic Extraction & 9-Step Verification
-      
       const response = await fetch('/api/corpus/intake', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -246,6 +288,8 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
         })
       });
 
+      clearInterval(stepInterval);
+
       if (!response.ok) {
         let errMessage = `Server error ${response.status}`;
         try {
@@ -258,19 +302,23 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
         throw new Error(errMessage);
       }
 
-      setIngestionStep(8); // Step 8 & 9: Complete & Self-Verified
-      await new Promise(r => setTimeout(r, 400));
+      setIngestionStep(8); // Step 8: Assembly
+      await new Promise(r => setTimeout(r, 200));
+      setIngestionStep(9); // Step 9: Vault Commit
+      await new Promise(r => setTimeout(r, 200));
 
       const batchResult: CorpusIngestionBatch = await response.json();
       batchResult.rawContent = contentWithoutFrontmatter; // Restore full content from client state
       
       onSaveBatch(batchResult);
-      setSelectedBatchId(batchResult.batchId);
+      setAuditViewMode(batchResult.batchId);
 
-      // Clear input fields and session storage draft
-      setPastedText('');
-      setPastedTitle('');
-      sessionStorage.removeItem('nke_corpus_intake_draft');
+      // Clear input fields and session storage draft if source was paste
+      if (source === 'paste') {
+        setPastedText('');
+        setPastedTitle('');
+        sessionStorage.removeItem('nke_corpus_intake_draft');
+      }
 
       // Add confirmation message to chat
       setMessages(prev => [
@@ -278,19 +326,22 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
         {
           id: `msg_ingest_${Date.now()}`,
           sender: 'model',
-          text: `**Corpus Intake Complete for "${batchResult.title}"** (SHA-256: \`${batchResult.sha256Hash.slice(0, 10)}...\`).\n\n- Extracted **${batchResult.chunks.length}** semantic chunks and **${batchResult.extracts.length}** epistemically-labeled claims.\n- **Anti-Reification Status:** ${batchResult.antiReificationAudits.every(a => a.status === 'PASS') ? 'PASS (All 12 Monitored Terms Verified)' : 'FLAGGED FOR REVIEW'}\n- **Next Actions Produced:** ${batchResult.nextActions.length} recommendations.\n\nYou can now consult me regarding this newly ingested Second Brain material.`,
+          text: `**Corpus Intake Complete for "${batchResult.title}"** (\`${batchResult.filename}\` • SHA-256: \`${batchResult.sha256Hash.slice(0, 10)}...\`).\n\n- Extracted **${batchResult.chunks.length}** semantic chunks and **${batchResult.extracts.length}** epistemically-labeled claims.\n- **Anti-Reification Audit:** ${batchResult.antiReificationAudits.every(a => a.status === 'PASS') ? 'PASS (All 12 Monitored Terms Verified)' : 'FLAGGED FOR REVIEW'}\n- **Next Actions Produced:** ${batchResult.nextActions.length} recommendations.\n\nStored in your Second Brain Vault.`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           voidQuotient: 0.92,
           densificationLevel: 'Δ4'
         }
       ]);
 
+      setAuditViewMode(batchResult.batchId);
       setActiveSubTab('audit');
     } catch (err: any) {
+      clearInterval(stepInterval);
       console.error('Ingestion error:', err);
       setIngestionError(err.message || 'Failed to complete corpus intake.');
     } finally {
       setIsProcessing(false);
+      setProcessingSource(null);
       setIngestionStep(0);
     }
   };
@@ -311,25 +362,30 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
 
   // Handle File Upload from disk (Triggered by hidden file input onChange)
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setActiveSubTab("ingest");
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     const fileList = Array.from(files);
-    // Clear value so selecting the same file later re-triggers onChange
     e.target.value = '';
 
-    for (const file of fileList) {
+    setBatchTotalFiles(fileList.length);
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList[i];
+      setBatchCurrentIndex(i + 1);
       try {
         const text = await readFileAsText(file);
         if (text && text.trim()) {
           const ext = '.' + (file.name.split('.').pop() || 'md');
-          await processRawIngestion(text, file.name, file.name.replace(/\.[^/.]+$/, ''), ext);
+          await processRawIngestion(text, file.name, file.name.replace(/\.[^/.]+$/, ''), ext, 'upload');
         }
       } catch (err) {
         console.error(`Error reading file ${file.name}:`, err);
         setIngestionError(`Failed to read file "${file.name}" from disk.`);
       }
     }
+    setBatchTotalFiles(0);
+    setBatchCurrentIndex(0);
   };
 
   // Drag and drop handlers for upload box
@@ -349,23 +405,29 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
+    setActiveSubTab("ingest");
 
     const files = e.dataTransfer.files;
     if (!files || files.length === 0) return;
 
     const fileList = Array.from(files);
-    for (const file of fileList) {
+    setBatchTotalFiles(fileList.length);
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList[i];
+      setBatchCurrentIndex(i + 1);
       try {
         const text = await readFileAsText(file);
         if (text && text.trim()) {
           const ext = '.' + (file.name.split('.').pop() || 'md');
-          await processRawIngestion(text, file.name, file.name.replace(/\.[^/.]+$/, ''), ext);
+          await processRawIngestion(text, file.name, file.name.replace(/\.[^/.]+$/, ''), ext, 'upload');
         }
       } catch (err) {
         console.error(`Error reading dropped file ${file.name}:`, err);
         setIngestionError(`Failed to read dropped file "${file.name}".`);
       }
     }
+    setBatchTotalFiles(0);
+    setBatchCurrentIndex(0);
   };
 
   // Send message to Philosophical Interlocutor
@@ -440,8 +502,6 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
       setChatLoading(false);
     }
   };
-
-  const selectedBatch = ingestionBatches.find(b => b.batchId === selectedBatchId);
 
   // Color helper for epistemic status tags
   const getEpistemicBadgeColor = (status: EpistemicStatus) => {
@@ -722,6 +782,88 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
         {/* --- SUB-TAB 2: FILE INTAKE CONSOLE --- */}
         {activeSubTab === 'ingest' && (
           <div className="h-full overflow-y-auto p-6 flex flex-col gap-6 max-w-4xl mx-auto">
+            {/* Active Ingestion Stepper Console (Visible during processing) */}
+            {isProcessing && (
+              <div className="bg-neutral-950 border-2 border-amber-500/50 rounded-2xl p-6 flex flex-col gap-5 shadow-2xl shadow-amber-500/10 animate-in fade-in duration-300">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-900 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+                      <Loader2 className="w-5 h-5 text-amber-400 animate-spin" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-sm uppercase tracking-wider font-bold text-white flex items-center gap-2">
+                        <span>Ingestion Pipeline Executing</span>
+                        <span className="text-[10px] font-mono text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800">
+                          Step {ingestionStep}/9
+                        </span>
+                      </h3>
+                      <p className="text-xs font-mono text-neutral-400 mt-0.5">
+                        Active Target: <span className="text-neutral-200 font-semibold">{activeFileName || 'Pasted Document'}</span>
+                        {batchTotalFiles > 1 && (
+                          <span className="text-amber-400 ml-2 font-bold">
+                            (Batch File {batchCurrentIndex} of {batchTotalFiles})
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  {batchTotalFiles > 1 && (
+                    <div className="w-full sm:w-48 flex flex-col gap-1 text-[10px] font-mono">
+                      <div className="flex justify-between text-neutral-400">
+                        <span>Batch Progress</span>
+                        <span className="text-amber-400 font-bold">{Math.round((batchCurrentIndex / batchTotalFiles) * 100)}%</span>
+                      </div>
+                      <div className="w-full h-2 bg-neutral-900 rounded-full overflow-hidden border border-neutral-800">
+                        <div
+                          className="h-full bg-gradient-to-r from-amber-500 to-purple-500 transition-all duration-300"
+                          style={{ width: `${(batchCurrentIndex / batchTotalFiles) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Grid of 9 Steps with Real-Time Status Indicators */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  {INGESTION_STEPS_META.map((stepMeta) => {
+                    const isDone = ingestionStep > stepMeta.step;
+                    const isActive = ingestionStep === stepMeta.step;
+                    return (
+                      <div
+                        key={stepMeta.step}
+                        className={`p-3 rounded-xl border flex items-center gap-3 text-xs font-mono transition-all ${
+                          isDone
+                            ? 'bg-emerald-950/20 border-emerald-900/50 text-emerald-300'
+                            : isActive
+                            ? 'bg-amber-950/40 border-amber-500/80 text-amber-200 shadow-md shadow-amber-500/10 scale-[1.02]'
+                            : 'bg-neutral-900/40 border-neutral-900 text-neutral-600'
+                        }`}
+                      >
+                        <div className="shrink-0">
+                          {isDone ? (
+                            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                          ) : isActive ? (
+                            <Loader2 className="w-4 h-4 text-amber-400 animate-spin" />
+                          ) : (
+                            <span className="w-4 h-4 rounded-full border border-neutral-800 text-[10px] flex items-center justify-center font-bold">
+                              {stepMeta.step}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className={`font-semibold truncate text-[11px] ${isActive ? 'text-white' : ''}`}>
+                            {stepMeta.name}
+                          </span>
+                          <span className="text-[9px] text-neutral-500 truncate">{stepMeta.desc}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Intake Instructions */}
             <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-6 flex flex-col gap-4">
               <div className="flex items-center justify-between">
@@ -736,7 +878,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                 </span>
               </div>
               <p className="text-xs text-neutral-400 leading-relaxed font-sans">
-                Upload raw philosophical texts, markdown notes, journal entries, or essays. The engine will normalize the text, calculate its SHA-256 hash, divide it into semantic chunks, extract claims with 11-level Epistemic Status labels, audit all 12 monitored terms for anti-reification compliance, scan for crisis signals, and generate a complete INTAKE REPORT.
+                Upload raw philosophical texts, markdown notes, journal entries, or essays. The engine will normalize the text, calculate its SHA-256 hash, divide it into line-accurate semantic chunks, extract claims with 11-level Epistemic Status labels, audit all 12 monitored terms for anti-reification compliance, scan for crisis signals, and generate a complete INTAKE REPORT.
               </p>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono">
@@ -761,36 +903,58 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
 
             {/* Direct Upload / Drag-and-Drop Dropzone */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Box A: Upload File (With full working ref and drag-and-drop) */}
+              {/* Box A: Upload File */}
               <div
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => !isProcessing && fileInputRef.current?.click()}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 className={`bg-neutral-950 border-2 border-dashed ${
-                  isDragging
+                  isProcessing && processingSource === 'upload'
+                    ? 'border-amber-400/80 bg-amber-500/10'
+                    : isDragging
                     ? 'border-amber-400 bg-amber-500/10 scale-[1.01]'
                     : 'border-neutral-800 hover:border-amber-500/50 hover:bg-neutral-900/60'
-                } rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-4 cursor-pointer transition-all group`}
+                } rounded-2xl p-8 flex flex-col items-center justify-center text-center gap-4 transition-all group ${
+                  isProcessing && processingSource !== 'upload' ? 'opacity-50 pointer-events-none' : 'cursor-pointer'
+                }`}
               >
-                <div className="p-4 bg-neutral-900 group-hover:bg-amber-500/10 border border-neutral-800 group-hover:border-amber-500/30 rounded-2xl transition-all">
-                  <Upload className="w-8 h-8 text-neutral-400 group-hover:text-amber-400 transition-colors" />
-                </div>
-                <div>
-                  <h4 className="font-display text-xs uppercase tracking-wider font-semibold text-neutral-200">
-                    Upload .md or .txt Files
-                  </h4>
-                  <p className="text-[11px] font-mono text-neutral-500 mt-1">
-                    Click to select or drag & drop files here
-                  </p>
-                </div>
-                <span className="text-[10px] font-mono text-neutral-600 bg-neutral-900 px-3 py-1 rounded-full border border-neutral-800">
-                  Supported: .md, .markdown, .txt, .text
-                </span>
+                {isProcessing && processingSource === 'upload' ? (
+                  <div className="flex flex-col items-center gap-3 py-4">
+                    <Loader2 className="w-10 h-10 text-amber-400 animate-spin" />
+                    <div>
+                      <h4 className="font-display text-xs uppercase tracking-wider font-bold text-white">
+                        Ingesting File {batchCurrentIndex > 0 ? `${batchCurrentIndex}/${batchTotalFiles}` : ''}
+                      </h4>
+                      <p className="text-[11px] font-mono text-amber-300 mt-1">
+                        {activeFileName || 'Reading document from disk...'}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="p-4 bg-neutral-900 group-hover:bg-amber-500/10 border border-neutral-800 group-hover:border-amber-500/30 rounded-2xl transition-all">
+                      <Upload className="w-8 h-8 text-neutral-400 group-hover:text-amber-400 transition-colors" />
+                    </div>
+                    <div>
+                      <h4 className="font-display text-xs uppercase tracking-wider font-semibold text-neutral-200">
+                        Upload .md or .txt Files
+                      </h4>
+                      <p className="text-[11px] font-mono text-neutral-500 mt-1">
+                        Click to select single or multiple files, or drag & drop here
+                      </p>
+                    </div>
+                    <span className="text-[10px] font-mono text-neutral-600 bg-neutral-900 px-3 py-1 rounded-full border border-neutral-800">
+                      Supported: .md, .markdown, .txt, .text
+                    </span>
+                  </>
+                )}
               </div>
 
               {/* Box B: Fast Paste Console */}
-              <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-5 flex flex-col gap-3">
+              <div className={`bg-neutral-950 border border-neutral-900 rounded-2xl p-5 flex flex-col gap-3 ${
+                isProcessing && processingSource === 'upload' ? 'opacity-50 pointer-events-none' : ''
+              }`}>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-mono uppercase tracking-wider text-neutral-300 font-semibold">
                     Paste Raw Text / Note
@@ -799,6 +963,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                     value={sourceType}
                     onChange={(e) => setSourceType(e.target.value)}
                     className="bg-neutral-900 border border-neutral-800 text-neutral-300 text-[10px] font-mono rounded-lg px-2 py-1 focus:outline-none"
+                    disabled={isProcessing}
                   >
                     <option value="essay">Essay / Treatise</option>
                     <option value="journal_entry">Journal Reflection</option>
@@ -814,6 +979,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                   onChange={(e) => setPastedTitle(e.target.value)}
                   placeholder="Document Title (e.g., Nishitani on the Experience of Nothingness)"
                   className="bg-neutral-900 border border-neutral-800 text-neutral-200 text-xs px-3 py-2 rounded-xl focus:outline-none font-sans"
+                  disabled={isProcessing}
                 />
 
                 <textarea
@@ -822,22 +988,23 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                   placeholder="Paste your raw philosophical text or markdown content here..."
                   rows={5}
                   className="bg-neutral-900 border border-neutral-800 text-neutral-200 text-xs p-3 rounded-xl focus:outline-none font-mono resize-none"
+                  disabled={isProcessing}
                 />
 
                 <button
-                  onClick={() => processRawIngestion(pastedText, `${pastedTitle || 'pasted_note'}.md`, pastedTitle)}
+                  onClick={() => processRawIngestion(pastedText, `${pastedTitle || 'pasted_note'}.md`, pastedTitle, '.md', 'paste')}
                   disabled={!pastedText.trim() || isProcessing}
                   className="w-full py-2.5 bg-gradient-to-r from-amber-600 to-purple-600 hover:from-amber-500 hover:to-purple-500 disabled:opacity-50 text-white rounded-xl font-mono text-xs uppercase font-semibold tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
                 >
-                  {isProcessing ? (
+                  {isProcessing && processingSource === 'paste' ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Processing Step {ingestionStep}/9...</span>
+                      <span>Ingesting Step {ingestionStep}/9...</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4 text-amber-300" />
-                      <span>Ingest Into Second Brain</span>
+                      <span>Ingest Text Into Second Brain</span>
                     </>
                   )}
                 </button>
@@ -923,7 +1090,114 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
         {/* --- SUB-TAB 3: INGESTION AUDIT & VERIFICATION REPORT --- */}
         {activeSubTab === 'audit' && (
           <div className="h-full overflow-y-auto p-6 flex flex-col gap-6 max-w-5xl mx-auto">
-            {selectedBatch ? (
+            {/* Audit View Selector Dropdown */}
+            <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <FileCheck className="w-5 h-5 text-amber-400 shrink-0" />
+                <div>
+                  <h3 className="font-display text-sm font-bold text-white uppercase tracking-wider">
+                    Corpus Audit & Verification Center
+                  </h3>
+                  <p className="text-[11px] font-mono text-neutral-500">
+                    Inspect epistemic provenance, anti-reification status, and graph recommendations
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <label className="text-[11px] font-mono text-neutral-400 whitespace-nowrap">View Audit Scope:</label>
+                <select
+                  value={auditViewMode}
+                  onChange={(e) => setAuditViewMode(e.target.value)}
+                  className="bg-neutral-900 border border-neutral-800 text-amber-300 text-xs font-mono rounded-xl px-3 py-1.5 focus:outline-none w-full sm:w-64"
+                >
+                  <option value="all">📁 All Ingested Files Combined ({ingestionBatches.length})</option>
+                  {ingestionBatches.map(b => (
+                    <option key={b.batchId} value={b.batchId}>
+                      📄 {b.title} ({b.filename})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* View Mode 1: Aggregate Second Brain Audit Summary */}
+            {auditViewMode === 'all' ? (
+              <>
+                {/* Aggregate Stats Cards */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="bg-neutral-950 border border-neutral-900 p-4 rounded-xl text-center">
+                    <span className="block text-2xl font-display font-bold text-white">{aggregateStats.totalBatches}</span>
+                    <span className="text-[10px] font-mono text-neutral-500 uppercase">Documents Ingested</span>
+                  </div>
+                  <div className="bg-neutral-950 border border-neutral-900 p-4 rounded-xl text-center">
+                    <span className="block text-2xl font-display font-bold text-amber-400">{aggregateStats.totalChunks}</span>
+                    <span className="text-[10px] font-mono text-neutral-500 uppercase">Semantic Chunks</span>
+                  </div>
+                  <div className="bg-neutral-950 border border-neutral-900 p-4 rounded-xl text-center">
+                    <span className="block text-2xl font-display font-bold text-purple-400">{aggregateStats.totalExtracts}</span>
+                    <span className="text-[10px] font-mono text-neutral-500 uppercase">Epistemic Claims</span>
+                  </div>
+                  <div className="bg-neutral-950 border border-neutral-900 p-4 rounded-xl text-center">
+                    <span className="block text-2xl font-display font-bold text-sky-400">{aggregateStats.totalNextActions}</span>
+                    <span className="text-[10px] font-mono text-neutral-500 uppercase">Next Actions Generated</span>
+                  </div>
+                </div>
+
+                {/* Second Brain File Inventory Table */}
+                <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-6 flex flex-col gap-4">
+                  <h4 className="font-display text-xs uppercase tracking-wider font-semibold text-neutral-200 flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <Database className="w-4 h-4 text-amber-400" />
+                      <span>Ingested Second Brain File Inventory</span>
+                    </span>
+                    <span className="text-[10px] font-mono text-neutral-500">
+                      Total Size: {(ingestionBatches.reduce((acc, b) => acc + (b.fileSize || 0), 0) / 1024).toFixed(1)} KB
+                    </span>
+                  </h4>
+
+                  {ingestionBatches.length === 0 ? (
+                    <div className="p-8 text-center text-neutral-500 font-mono text-xs">
+                      No files ingested yet. Return to the File Intake Console to upload philosophical material.
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse text-xs font-mono">
+                        <thead>
+                          <tr className="border-b border-neutral-900 text-neutral-500">
+                            <th className="py-2 px-3">Document Title</th>
+                            <th className="py-2 px-3">Filename</th>
+                            <th className="py-2 px-3">Chunks</th>
+                            <th className="py-2 px-3">Claims</th>
+                            <th className="py-2 px-3">SHA-256 Hash</th>
+                            <th className="py-2 px-3">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {ingestionBatches.map((batch) => (
+                            <tr key={batch.batchId} className="border-b border-neutral-900/50 hover:bg-neutral-900/30">
+                              <td className="py-2.5 px-3 font-semibold text-white">{batch.title}</td>
+                              <td className="py-2.5 px-3 text-neutral-400">{batch.filename}</td>
+                              <td className="py-2.5 px-3 text-amber-400 font-bold">{batch.chunks.length}</td>
+                              <td className="py-2.5 px-3 text-purple-400 font-bold">{batch.extracts.length}</td>
+                              <td className="py-2.5 px-3 text-neutral-500 font-mono">{batch.sha256Hash.slice(0, 10)}...</td>
+                              <td className="py-2.5 px-3">
+                                <button
+                                  onClick={() => setAuditViewMode(batch.batchId)}
+                                  className="px-2.5 py-1 bg-neutral-900 hover:bg-amber-950/60 hover:text-amber-300 text-neutral-300 rounded-lg border border-neutral-800 text-[10px] transition-colors cursor-pointer"
+                                >
+                                  Inspect Single Audit →
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : selectedBatch ? (
               <>
                 {/* Batch Header card */}
                 <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -937,7 +1211,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                       </span>
                     </div>
                     <p className="text-[11px] font-mono text-neutral-500 mt-1">
-                      Batch ID: <span className="text-neutral-300">{selectedBatch.batchId}</span> • SHA-256: <span className="text-neutral-300">{selectedBatch.sha256Hash}</span>
+                      Filename: <span className="text-neutral-200">{selectedBatch.filename}</span> • SHA-256: <span className="text-neutral-300">{selectedBatch.sha256Hash}</span>
                     </p>
                   </div>
 
@@ -949,7 +1223,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                   </div>
                 </div>
 
-                {/* Grid stats */}
+                {/* Grid stats for selected file */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div className="bg-neutral-950 border border-neutral-900 p-4 rounded-xl text-center">
                     <span className="block text-2xl font-display font-bold text-white">{selectedBatch.chunks.length}</span>
@@ -1128,7 +1402,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                   <div
                     key={batch.batchId}
                     className={`bg-neutral-950 border ${
-                      selectedBatchId === batch.batchId ? 'border-amber-500/60 shadow-lg shadow-amber-500/5' : 'border-neutral-900 hover:border-neutral-800'
+                      auditViewMode === batch.batchId ? 'border-amber-500/60 shadow-lg shadow-amber-500/5' : 'border-neutral-900 hover:border-neutral-800'
                     } rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all`}
                   >
                     <div className="flex flex-col gap-1.5">
@@ -1153,7 +1427,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => {
-                          setSelectedBatchId(batch.batchId);
+                          setAuditViewMode(batch.batchId);
                           setActiveSubTab('audit');
                         }}
                         className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 text-neutral-200 rounded-xl text-xs font-mono transition-colors cursor-pointer"

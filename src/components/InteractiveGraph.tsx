@@ -112,7 +112,7 @@ export const InteractiveGraph: React.FC<InteractiveGraphProps> = ({
     <div
       id="interactive-ontology-graph-container"
       ref={containerRef}
-      className="relative w-full h-[400px] md:h-[520px] bg-black border border-neutral-900 rounded-2xl overflow-hidden flex items-center justify-center select-none shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
+      className="relative w-full h-[500px] md:h-[620px] bg-black border border-neutral-900 rounded-2xl overflow-hidden flex items-center justify-center select-none shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
     >
       {/* 2D Render Canvas / SVG Viewport */}
       {viewMode === '2d' ? (
