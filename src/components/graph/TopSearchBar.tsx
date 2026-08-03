@@ -1,20 +1,22 @@
 import React from 'react';
-import { Search, X, Bookmark, HelpCircle, RefreshCw, AlertTriangle, Filter } from 'lucide-react';
+import { Search, X, Bookmark, HelpCircle, RefreshCw, AlertTriangle, Filter, PanelRight, Focus } from 'lucide-react';
 import { GraphDataset } from '../../data/knowledgeGraphDataset';
 
 interface TopSearchBarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  activeLens: 'source_clusters' | 'concept_hubs' | 'thinker_network' | 'audit_mode' | 'path_mode';
-  onLensChange: (lens: 'source_clusters' | 'concept_hubs' | 'thinker_network' | 'audit_mode' | 'path_mode') => void;
+  activeLens: 'source_clusters' | 'concept_hubs' | 'thinker_network' | 'audit_mode' | 'path_mode' | 'selected_relations';
+  onLensChange: (lens: 'source_clusters' | 'concept_hubs' | 'thinker_network' | 'audit_mode' | 'path_mode' | 'selected_relations') => void;
   summary: GraphDataset['summary'];
   activeFilterCount: number;
   onToggleSidebar: () => void;
+  onToggleRightSidebar: () => void;
   onOpenSavedViews: () => void;
   onOpenDuplicateDrawer: () => void;
   onOpenHelpModal: () => void;
   onResetView: () => void;
   isSidebarOpen: boolean;
+  isRightSidebarOpen: boolean;
 }
 
 export const TopSearchBar: React.FC<TopSearchBarProps> = ({
@@ -25,11 +27,13 @@ export const TopSearchBar: React.FC<TopSearchBarProps> = ({
   summary,
   activeFilterCount,
   onToggleSidebar,
+  onToggleRightSidebar,
   onOpenSavedViews,
   onOpenDuplicateDrawer,
   onOpenHelpModal,
   onResetView,
-  isSidebarOpen
+  isSidebarOpen,
+  isRightSidebarOpen
 }) => {
   return (
     <header className="bg-neutral-950 border-b border-neutral-900 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs select-none">
@@ -137,11 +141,38 @@ export const TopSearchBar: React.FC<TopSearchBarProps> = ({
         >
           Path Trace
         </button>
+
+        <button
+          onClick={() => onLensChange('selected_relations')}
+          className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
+            activeLens === 'selected_relations'
+              ? 'bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-bold shadow-sm'
+              : 'text-neutral-400 hover:text-cyan-200 hover:bg-neutral-800/50'
+          }`}
+          title="Isolate and render ONLY the selected node(s) and their immediate relations"
+        >
+          <Focus className="w-3 h-3 text-cyan-400" />
+          <span>Selected & Relations</span>
+        </button>
       </div>
 
       {/* Right: Graph Stats Summary & Action Triggers */}
       <div className="flex items-center gap-2 font-mono text-[11px] text-neutral-400">
         
+        {/* Toggle Inspector Right Sidebar Button */}
+        <button
+          onClick={onToggleRightSidebar}
+          className={`px-2.5 py-1.5 rounded-lg border flex items-center gap-1.5 transition-all cursor-pointer font-mono text-[11px] ${
+            isRightSidebarOpen
+              ? 'bg-neutral-850 border-neutral-700 text-white shadow-sm'
+              : 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-cyan-300'
+          }`}
+          title={isRightSidebarOpen ? "Hide Inspector Panel" : "Show Inspector Panel"}
+        >
+          <PanelRight className="w-3.5 h-3.5 text-cyan-400" />
+          <span className="hidden sm:inline font-bold">Inspector</span>
+        </button>
+
         {/* Duplicate label badge */}
         <button
           onClick={onOpenDuplicateDrawer}

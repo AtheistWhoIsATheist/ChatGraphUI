@@ -47,6 +47,7 @@ interface CorpusIntakeToolProps {
   onSaveBatch: (batch: CorpusIngestionBatch) => void;
   onDeleteBatch: (batchId: string) => void;
   onClearAllBatches: () => void;
+  onNavigateToTab?: (tab: string, selectedSource?: string) => void;
 }
 
 // --- Epistemic Distribution D3/SVG Visualizer Component ---
@@ -481,7 +482,8 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
   ingestionBatches,
   onSaveBatch,
   onDeleteBatch,
-  onClearAllBatches
+  onClearAllBatches,
+  onNavigateToTab
 }) => {
   // Navigation mode within the tool
   const [activeSubTab, setActiveSubTab] = useState<'chat' | 'ingest' | 'audit' | 'second-brain'>('chat');
@@ -2182,12 +2184,22 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                               <td className="py-2.5 px-3 text-purple-400 font-bold">{batch.extracts.length}</td>
                               <td className="py-2.5 px-3 text-neutral-500 font-mono">{batch.sha256Hash.slice(0, 10)}...</td>
                               <td className="py-2.5 px-3">
-                                <button
-                                  onClick={() => setAuditViewMode(batch.batchId)}
-                                  className="px-2.5 py-1 bg-neutral-900 hover:bg-amber-950/60 hover:text-amber-300 text-neutral-300 rounded-lg border border-neutral-800 text-[10px] transition-colors cursor-pointer"
-                                >
-                                  Inspect Single Audit →
-                                </button>
+                                <div className="flex items-center gap-1.5">
+                                  <button
+                                    onClick={() => onNavigateToTab?.('graph', batch.title)}
+                                    className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 rounded-lg border border-amber-500/30 text-[10px] transition-colors cursor-pointer flex items-center gap-1 font-semibold"
+                                    title="View & isolate this upload in Knowledge Graph"
+                                  >
+                                    <Activity className="w-3 h-3 text-amber-400" />
+                                    <span>View in Graph</span>
+                                  </button>
+                                  <button
+                                    onClick={() => setAuditViewMode(batch.batchId)}
+                                    className="px-2.5 py-1 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 rounded-lg border border-neutral-800 text-[10px] transition-colors cursor-pointer"
+                                  >
+                                    Inspect Audit →
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           ))}
@@ -2216,6 +2228,14 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                   </div>
 
                   <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => onNavigateToTab?.('graph', selectedBatch.title)}
+                      className="px-3.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-xl border border-amber-500/40 text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-2 shadow-lg shadow-amber-950/40"
+                    >
+                      <Activity className="w-4 h-4 text-amber-400" />
+                      <span>View In Knowledge Graph</span>
+                    </button>
+
                     <span className="text-xs font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-900/60 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                       <span>All 9 Verifications Passed</span>

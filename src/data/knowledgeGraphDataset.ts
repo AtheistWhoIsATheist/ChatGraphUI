@@ -1,3 +1,95 @@
+export interface NodeStyleConfig {
+  fill: string;
+  border: string;
+  bg: string;
+  glow: string;
+  text: string;
+  label: string;
+}
+
+export const NODE_COLORS: Record<string, NodeStyleConfig> = {
+  concept: {
+    fill: '#38bdf8', // Sky / Cyan
+    border: '#0284c7',
+    bg: 'rgba(56, 189, 248, 0.15)',
+    glow: 'rgba(56, 189, 248, 0.4)',
+    text: '#7dd3fc',
+    label: 'Concept'
+  },
+  thinker: {
+    fill: '#c084fc', // Violet
+    border: '#9333ea',
+    bg: 'rgba(192, 132, 252, 0.15)',
+    glow: 'rgba(192, 132, 252, 0.4)',
+    text: '#e9d5ff',
+    label: 'Thinker'
+  },
+  document: {
+    fill: '#f59e0b', // Amber
+    border: '#d97706',
+    bg: 'rgba(245, 158, 11, 0.15)',
+    glow: 'rgba(245, 158, 11, 0.4)',
+    text: '#fde68a',
+    label: 'Document'
+  },
+  'Ontological Core': {
+    fill: '#a855f7',
+    border: '#7e22ce',
+    bg: 'rgba(168, 85, 247, 0.15)',
+    glow: 'rgba(168, 85, 247, 0.4)',
+    text: '#e9d5ff',
+    label: 'Ontological Core'
+  },
+  'Conceptual Core': {
+    fill: '#38bdf8',
+    border: '#0284c7',
+    bg: 'rgba(56, 189, 248, 0.15)',
+    glow: 'rgba(56, 189, 248, 0.4)',
+    text: '#bae6fd',
+    label: 'Conceptual Core'
+  },
+  Epistemological: {
+    fill: '#3b82f6',
+    border: '#1d4ed8',
+    bg: 'rgba(59, 130, 246, 0.15)',
+    glow: 'rgba(59, 130, 246, 0.4)',
+    text: '#93c5fd',
+    label: 'Epistemological'
+  },
+  Theological: {
+    fill: '#fbbf24',
+    border: '#d97706',
+    bg: 'rgba(251, 191, 36, 0.15)',
+    glow: 'rgba(251, 191, 36, 0.4)',
+    text: '#fef08a',
+    label: 'Theological'
+  },
+  Phenomenological: {
+    fill: '#f43f5e',
+    border: '#be123c',
+    bg: 'rgba(244, 63, 94, 0.15)',
+    glow: 'rgba(244, 63, 94, 0.4)',
+    text: '#fecdd3',
+    label: 'Phenomenological'
+  },
+  Existential: {
+    fill: '#8b5cf6',
+    border: '#6d28d9',
+    bg: 'rgba(139, 92, 246, 0.15)',
+    glow: 'rgba(139, 92, 246, 0.4)',
+    text: '#ddd6fe',
+    label: 'Existential'
+  },
+  Praxis: {
+    fill: '#10b981',
+    border: '#047857',
+    bg: 'rgba(16, 185, 129, 0.15)',
+    glow: 'rgba(16, 185, 129, 0.4)',
+    text: '#a7f3d0',
+    label: 'Praxis'
+  }
+};
+
 export interface GraphNode {
   id: string;
   label: string;

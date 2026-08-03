@@ -8,13 +8,22 @@ import { ReflectionChamber } from './components/ReflectionChamber';
 import { CorpusBrowser } from './components/CorpusBrowser';
 import { ParadoxSynthesizer } from './components/ParadoxSynthesizer';
 import { CorpusIntakeTool } from './components/CorpusIntakeTool';
+import ReasoningEnginePage from '../app/page';
 import { DataManagementModal } from './components/DataManagementModal';
-import { Network, PenTool, BookOpen, Activity, Clock, Info, Database, Brain } from 'lucide-react';
+import { Network, PenTool, BookOpen, Activity, Clock, Info, Database, Brain, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
-  // Navigation tabs: 'graph' | 'journal' | 'corpus' | 'paradox' | 'intake'
-  const [activeTab, setActiveTab] = useState<'graph' | 'journal' | 'corpus' | 'paradox' | 'intake'>('graph');
+  // Navigation tabs: 'graph' | 'journal' | 'corpus' | 'paradox' | 'intake' | 'engine'
+  const [activeTab, setActiveTab] = useState<'graph' | 'journal' | 'corpus' | 'paradox' | 'intake' | 'engine'>('graph');
+  const [targetFocusSource, setTargetFocusSource] = useState<string | null>(null);
+
+  const handleNavigateToGraphWithSource = (tab: any, sourceTitle?: string) => {
+    if (sourceTitle) {
+      setTargetFocusSource(sourceTitle);
+    }
+    setActiveTab(tab);
+  };
 
   // Core application states
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
@@ -25,6 +34,11 @@ export default function App() {
   // Stable callbacks to maintain reference integrity
   const handleSelectNode = useCallback((nodeId: string | null) => {
     setSelectedNodeId(nodeId);
+  }, []);
+
+  const handleNavigateToNode = useCallback((nodeId: string) => {
+    setSelectedNodeId(nodeId);
+    setActiveTab('graph');
   }, []);
 
   const handleHoverNode = useCallback((nodeId: string | null) => {
@@ -324,6 +338,19 @@ export default function App() {
               <Brain className="w-4 h-4 flex-shrink-0 text-amber-400" />
               <span>Corpus Intake & AI</span>
             </button>
+
+            {/* Tab: Reasoning Engine & Live Preview */}
+            <button
+              onClick={() => setActiveTab('engine')}
+              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
+                activeTab === 'engine'
+                  ? 'bg-purple-600 text-white font-semibold shadow-lg shadow-purple-950/50'
+                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
+              }`}
+            >
+              <Sparkles className="w-4 h-4 flex-shrink-0 text-purple-400" />
+              <span>Reasoning Engine</span>
+            </button>
           </div>
 
           {/* Socratic Motto / Info card at bottom of navigation (desktop only) */}
@@ -360,6 +387,8 @@ export default function App() {
                   onHoverNode={handleHoverNode}
                   onSelectQuestion={handleSelectQuestion}
                   onNavigateToTab={setActiveTab}
+                  ingestionBatches={ingestionBatches}
+                  initialFocusSource={targetFocusSource}
                 />
               )}
 
@@ -405,7 +434,13 @@ export default function App() {
                   onSaveBatch={handleSaveBatch}
                   onDeleteBatch={handleDeleteBatch}
                   onClearAllBatches={handleClearAllBatches}
+                  onNavigateToTab={handleNavigateToGraphWithSource}
                 />
+              )}
+
+              {/* Tab Content: Reasoning Engine & Live Preview */}
+              {activeTab === 'engine' && (
+                <ReasoningEnginePage onNavigateToNode={handleNavigateToNode} />
               )}
 
             </motion.div>

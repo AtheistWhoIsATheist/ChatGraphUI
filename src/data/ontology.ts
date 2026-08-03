@@ -1,3 +1,6 @@
+import { NODE_COLORS } from './knowledgeGraphDataset';
+export { NODE_COLORS };
+
 export interface OntologyNode {
   id: string;
   label: string;

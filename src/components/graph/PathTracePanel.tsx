@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Route, ArrowRight, CheckCircle2, RotateCcw } from 'lucide-react';
+import { Route, ArrowRight, CheckCircle2, RotateCcw, Eye, EyeOff } from 'lucide-react';
 import { GraphNode, GraphEdge } from '../../data/knowledgeGraphDataset';
 
 interface PathTracePanelProps {
@@ -9,6 +9,8 @@ interface PathTracePanelProps {
   onSelectNode: (id: string) => void;
   onHighlightPath: (nodeIds: string[], edgeIds: string[]) => void;
   onClearPath: () => void;
+  isPathIsolated?: boolean;
+  onToggleIsolatePath?: () => void;
 }
 
 export const PathTracePanel: React.FC<PathTracePanelProps> = ({
@@ -17,7 +19,9 @@ export const PathTracePanel: React.FC<PathTracePanelProps> = ({
   selectedNodeId,
   onSelectNode,
   onHighlightPath,
-  onClearPath
+  onClearPath,
+  isPathIsolated = false,
+  onToggleIsolatePath
 }) => {
   const [startNodeId, setStartNodeId] = useState<string | null>(selectedNodeId);
   const [targetNodeId, setTargetNodeId] = useState<string | null>(null);
@@ -189,12 +193,27 @@ export const PathTracePanel: React.FC<PathTracePanelProps> = ({
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   <span>Path Found: {pathResult.steps.length} Step(s) ({pathResult.pathNodes.length} Nodes)</span>
                 </div>
-                <button
-                  onClick={handleApplyTrace}
-                  className="px-3 py-1 bg-emerald-500 text-black font-bold rounded hover:bg-emerald-400 transition-all cursor-pointer text-[11px]"
-                >
-                  Highlight on Canvas
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleApplyTrace}
+                    className="px-3 py-1 bg-emerald-500 text-black font-bold rounded hover:bg-emerald-400 transition-all cursor-pointer text-[11px]"
+                  >
+                    Highlight & Fit Path
+                  </button>
+                  {onToggleIsolatePath && (
+                    <button
+                      onClick={onToggleIsolatePath}
+                      className={`px-3 py-1 rounded border text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                        isPathIsolated
+                          ? 'bg-emerald-500/20 text-emerald-200 border-emerald-500/50'
+                          : 'bg-neutral-900 border-neutral-700 text-neutral-300 hover:text-white'
+                      }`}
+                    >
+                      {isPathIsolated ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                      <span>{isPathIsolated ? 'Show All' : 'Isolate Path'}</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Step Sequence */}

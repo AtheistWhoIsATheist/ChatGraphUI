@@ -6,7 +6,7 @@ export interface SavedViewConfig {
   id: string;
   name: string;
   timestamp: number;
-  lens: 'source_clusters' | 'concept_hubs' | 'thinker_network' | 'audit_mode' | 'path_mode';
+  lens: 'source_clusters' | 'concept_hubs' | 'thinker_network' | 'audit_mode' | 'path_mode' | 'selected_relations';
   filters: FilterState;
   pinnedNodeIds: string[];
 }
@@ -14,7 +14,7 @@ export interface SavedViewConfig {
 interface SavedViewsMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  currentLens: 'source_clusters' | 'concept_hubs' | 'thinker_network' | 'audit_mode' | 'path_mode';
+  currentLens: 'source_clusters' | 'concept_hubs' | 'thinker_network' | 'audit_mode' | 'path_mode' | 'selected_relations';
   currentFilters: FilterState;
   pinnedNodeIds: string[];
   onLoadView: (view: SavedViewConfig) => void;

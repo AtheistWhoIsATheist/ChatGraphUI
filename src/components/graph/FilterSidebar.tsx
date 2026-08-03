@@ -1,6 +1,14 @@
 import React from 'react';
-import { Filter, RotateCcw, ShieldAlert, CheckSquare, Square, ChevronRight } from 'lucide-react';
+import { Filter, RotateCcw, ShieldAlert, CheckSquare, Square, ChevronRight, Upload, Eye } from 'lucide-react';
 import { SOURCE_DOCUMENTS, GraphDataset } from '../../data/knowledgeGraphDataset';
+
+export interface SourceDocumentInfo {
+  id: string;
+  title: string;
+  author: string;
+  era: string;
+  isUserUpload?: boolean;
+}
 
 export interface FilterState {
   showConcepts: boolean;
@@ -23,6 +31,7 @@ interface FilterSidebarProps {
   onResetFilters: () => void;
   onOpenDuplicateDrawer: () => void;
   onCloseSidebar?: () => void;
+  sourceDocuments?: SourceDocumentInfo[];
 }
 
 export const FilterSidebar: React.FC<FilterSidebarProps> = ({
@@ -31,8 +40,15 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   summary,
   onResetFilters,
   onOpenDuplicateDrawer,
-  onCloseSidebar
+  onCloseSidebar,
+  sourceDocuments
 }) => {
+  const activeSources: SourceDocumentInfo[] = sourceDocuments && sourceDocuments.length > 0
+    ? sourceDocuments
+    : SOURCE_DOCUMENTS.map(d => ({ ...d, isUserUpload: false }));
+
+  const userUploadCount = activeSources.filter(s => s.isUserUpload).length;
+
   const toggleSource = (sourceTitle: string) => {
     const next = new Set(filters.selectedSources);
     if (next.has(sourceTitle)) {
@@ -44,7 +60,22 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   };
 
   const selectAllSources = () => {
-    onFilterChange({ ...filters, selectedSources: new Set(SOURCE_DOCUMENTS.map(d => d.title)) });
+    onFilterChange({ ...filters, selectedSources: new Set(activeSources.map(d => d.title)) });
+  };
+
+  const selectUploadsOnly = () => {
+    const uploadTitles = activeSources.filter(s => s.isUserUpload).map(s => s.title);
+    onFilterChange({ ...filters, selectedSources: new Set(uploadTitles) });
+  };
+
+  const selectCanonicalOnly = () => {
+    const canonicalTitles = activeSources.filter(s => !s.isUserUpload).map(s => s.title);
+    onFilterChange({ ...filters, selectedSources: new Set(canonicalTitles) });
+  };
+
+  const focusSingleSource = (sourceTitle: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onFilterChange({ ...filters, selectedSources: new Set([sourceTitle]) });
   };
 
   const clearAllSources = () => {
@@ -296,35 +327,88 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
         {/* Section 5: Source Document Provenance Filter */}
         <div>
-          <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-neutral-500 mb-2.5 font-bold">
-            <span>Source Document Provenance</span>
-            <div className="flex gap-2">
-              <button onClick={selectAllSources} className="text-cyan-400 hover:underline">All</button>
-              <span className="text-neutral-700">|</span>
-              <button onClick={clearAllSources} className="text-neutral-500 hover:underline">None</button>
+          <div className="flex flex-col gap-1.5 mb-2.5 font-mono text-[10px]">
+            <div className="flex items-center justify-between uppercase tracking-wider text-neutral-500 font-bold">
+              <span className="flex items-center gap-1.5">
+                <span>Source Documents</span>
+                <span className="text-neutral-600 font-normal">({activeSources.length})</span>
+              </span>
+              <button onClick={selectAllSources} className="text-cyan-400 hover:underline">Select All</button>
+            </div>
+
+            {/* Quick Source Filter Presets */}
+            <div className="flex items-center gap-1.5 text-[9px] pt-1 border-b border-neutral-900 pb-2">
+              <button
+                onClick={selectAllSources}
+                className="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 font-bold"
+              >
+                All ({activeSources.length})
+              </button>
+              {userUploadCount > 0 && (
+                <button
+                  onClick={selectUploadsOnly}
+                  className="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold border border-amber-500/40 flex items-center gap-1"
+                >
+                  <Upload className="w-2.5 h-2.5" />
+                  <span>Uploads Only ({userUploadCount})</span>
+                </button>
+              )}
+              <button
+                onClick={selectCanonicalOnly}
+                className="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-400"
+              >
+                Canonical
+              </button>
+              <button
+                onClick={clearAllSources}
+                className="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-500"
+              >
+                None
+              </button>
             </div>
           </div>
 
-          <div className="max-h-48 overflow-y-auto space-y-1 pr-1 font-mono text-[11px]">
-            {SOURCE_DOCUMENTS.map((doc) => {
+          <div className="max-h-56 overflow-y-auto space-y-1 pr-1 font-mono text-[11px]">
+            {activeSources.map((doc) => {
               const isSelected = filters.selectedSources.has(doc.title);
               return (
-                <button
+                <div
                   key={doc.id}
                   onClick={() => toggleSource(doc.title)}
-                  className={`w-full text-left p-1.5 rounded flex items-center justify-between transition-all cursor-pointer ${
+                  className={`w-full text-left p-1.5 rounded flex items-center justify-between transition-all cursor-pointer group ${
                     isSelected
-                      ? 'bg-neutral-850 text-neutral-200 border border-neutral-750'
+                      ? doc.isUserUpload
+                        ? 'bg-amber-950/40 text-amber-200 border border-amber-500/40'
+                        : 'bg-neutral-850 text-neutral-200 border border-neutral-750'
                       : 'text-neutral-600 hover:text-neutral-400 hover:bg-neutral-900/40'
                   }`}
                 >
-                  <span className="truncate pr-2">{doc.title}</span>
-                  {isSelected ? (
-                    <CheckSquare className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                  ) : (
-                    <Square className="w-3.5 h-3.5 text-neutral-700 flex-shrink-0" />
-                  )}
-                </button>
+                  <div className="flex items-center gap-1.5 truncate pr-1">
+                    {doc.isUserUpload ? (
+                      <span className="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-400 text-[9px] font-bold border border-amber-500/30 flex-shrink-0 flex items-center gap-1">
+                        <Upload className="w-2.5 h-2.5" />
+                        <span>Upload</span>
+                      </span>
+                    ) : null}
+                    <span className="truncate">{doc.title}</span>
+                  </div>
+
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button
+                      onClick={(e) => focusSingleSource(doc.title, e)}
+                      title={`Isolate "${doc.title}" only in graph`}
+                      className="opacity-0 group-hover:opacity-100 p-1 rounded bg-neutral-800 hover:bg-cyan-500 hover:text-black text-neutral-300 transition-all text-[9px] font-bold flex items-center gap-1"
+                    >
+                      <Eye className="w-2.5 h-2.5" />
+                      <span>Focus</span>
+                    </button>
+                    {isSelected ? (
+                      <CheckSquare className="w-3.5 h-3.5 text-amber-400" />
+                    ) : (
+                      <Square className="w-3.5 h-3.5 text-neutral-700" />
+                    )}
+                  </div>
+                </div>
               );
             })}
           </div>

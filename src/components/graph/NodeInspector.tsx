@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, Pin, PinOff, AlertTriangle, ArrowRight, Compass, Share2 } from 'lucide-react';
+import { Copy, Check, Pin, PinOff, AlertTriangle, ArrowRight, Compass, Share2, Focus, PanelRightClose } from 'lucide-react';
 import { GraphNode, GraphEdge } from '../../data/knowledgeGraphDataset';
 
 interface NodeInspectorProps {
@@ -15,6 +15,8 @@ interface NodeInspectorProps {
   compareSet: GraphNode[];
   onRemoveFromCompare: (nodeId: string) => void;
   onClose?: () => void;
+  isRelationsIsolated?: boolean;
+  onToggleIsolateRelations?: () => void;
 }
 
 export const NodeInspector: React.FC<NodeInspectorProps> = ({
@@ -29,7 +31,9 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
   onAddToCompare,
   compareSet,
   onRemoveFromCompare,
-  onClose
+  onClose,
+  isRelationsIsolated = false,
+  onToggleIsolateRelations
 }) => {
   const [copiedId, setCopiedId] = useState(false);
   const [activeTab, setActiveTab] = useState<'relations' | 'provenance' | 'duplicates'>('relations');
@@ -138,13 +142,28 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
               {copiedId ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
 
+            {/* Isolate Node & Relations Button */}
+            {onToggleIsolateRelations && (
+              <button
+                onClick={onToggleIsolateRelations}
+                className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                  isRelationsIsolated
+                    ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50'
+                    : 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-cyan-300'
+                }`}
+                title={isRelationsIsolated ? 'Show Full Graph' : 'Isolate Node & Relations'}
+              >
+                <Focus className="w-3.5 h-3.5 text-cyan-400" />
+              </button>
+            )}
+
             {onClose && (
               <button
                 onClick={onClose}
-                className="p-1.5 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-all cursor-pointer"
-                title="Close Inspector"
+                className="p-1.5 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-all cursor-pointer flex items-center justify-center"
+                title="Close Inspector Sidebar"
               >
-                &times;
+                <PanelRightClose className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -374,6 +393,20 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
 
       {/* Inspector Bottom Action Footer */}
       <div className="p-3 border-t border-neutral-900 bg-neutral-950 flex flex-col gap-2 font-mono text-xs">
+        {onToggleIsolateRelations && (
+          <button
+            onClick={onToggleIsolateRelations}
+            className={`w-full py-2 rounded-lg border font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+              isRelationsIsolated
+                ? 'bg-cyan-500/20 border-cyan-500/60 text-cyan-200'
+                : 'bg-cyan-950/40 hover:bg-cyan-900 border-cyan-500/40 text-cyan-300'
+            }`}
+          >
+            <Focus className="w-3.5 h-3.5 text-cyan-400" />
+            <span>{isRelationsIsolated ? "Show Full Graph" : "Isolate Node & Relations"}</span>
+          </button>
+        )}
+
         <button
           onClick={() => onTracePathFromHere(node.id)}
           className="w-full py-2 rounded-lg bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
