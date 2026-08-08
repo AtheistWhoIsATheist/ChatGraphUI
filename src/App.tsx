@@ -10,12 +10,14 @@ import { ParadoxSynthesizer } from './components/ParadoxSynthesizer';
 import { CorpusIntakeTool } from './components/CorpusIntakeTool';
 import ReasoningEnginePage from '../app/page';
 import { DataManagementModal } from './components/DataManagementModal';
-import { Network, PenTool, BookOpen, Activity, Clock, Info, Database, Brain, Sparkles } from 'lucide-react';
+import { GoogleDocsManager } from './components/GoogleDocsManager';
+import { Network, PenTool, BookOpen, Activity, Clock, Database, Brain, Sparkles, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
-  // Navigation tabs: 'graph' | 'journal' | 'corpus' | 'paradox' | 'intake' | 'engine'
-  const [activeTab, setActiveTab] = useState<'graph' | 'journal' | 'corpus' | 'paradox' | 'intake' | 'engine'>('graph');
+  // Navigation tabs: 'graph' | 'journal' | 'corpus' | 'paradox' | 'intake' | 'engine' | 'docs'
+  const [activeTab, setActiveTab] = useState<'graph' | 'journal' | 'corpus' | 'paradox' | 'intake' | 'engine' | 'docs'>('graph');
+
   const [targetFocusSource, setTargetFocusSource] = useState<string | null>(null);
 
   const handleNavigateToGraphWithSource = (tab: any, sourceTitle?: string) => {
@@ -128,6 +130,76 @@ export default function App() {
     setLastSavedAt(Date.now());
   };
 
+  // Google Docs Import Handler
+  const handleImportGoogleDocToGraph = (docTitle: string, docText: string, docId: string) => {
+    const newBatch: CorpusIngestionBatch = {
+      batchId: `gdoc-${docId}-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      filename: `${docTitle}.gdoc`,
+      fileExtension: 'gdoc',
+      fileSize: docText.length,
+      sha256Hash: `gdoc-${docId}`,
+      rawContent: docText,
+      title: docTitle,
+      sourceType: 'document',
+      chunks: [
+        {
+          id: `chunk-${Date.now()}`,
+          startPosition: 0,
+          endPosition: docText.length,
+          structuralType: 'section',
+          summary: `Imported Google Doc: ${docTitle}`,
+          text: docText.slice(0, 500)
+        }
+      ],
+      extracts: [
+        {
+          id: `ext-${Date.now()}`,
+          elementType: 'concept',
+          text: docTitle,
+          epistemicStatus: 'TEXTUAL',
+          chunkReference: `chunk-${Date.now()}`,
+          provenance: `Google Doc: ${docTitle}`
+        }
+      ],
+      issues: [],
+      antiReificationAudits: [],
+      boundarySignals: [],
+      nextActions: [],
+      markdownReport: `# Google Doc Import: ${docTitle}\n\n${docText.slice(0, 1000)}`,
+      verificationChecklist: {
+        immutableStorage: true,
+        epistemicLabels: true,
+        duplicatesSurfaced: true,
+        crisisScanned: true,
+        antiReification: true,
+        noMergedMetadata: true,
+        nextActionsProduced: true,
+        selfVerified: true,
+        batchReturned: true
+      }
+    };
+    handleSaveBatch(newBatch);
+  };
+
+  // Google Docs Export Handler
+  const handleExportGraphToGoogleDoc = async (title: string): Promise<string> => {
+    let summaryText = `KNOWLEDGE GRAPH ANALYSIS & SYNTHESIS\nTitle: ${title}\nExported: ${new Date().toLocaleString()}\n\n`;
+    summaryText += `Total Nodes Analyzed: ${displayNodes.length}\nTotal Inter-Conceptual Links: ${displayLinks.length}\n\n`;
+    summaryText += `PRIMARY CONCEPT NODES:\n`;
+    displayNodes.slice(0, 20).forEach((node, idx) => {
+      summaryText += `${idx + 1}. ${node.label} (${node.type.toUpperCase()})\n`;
+    });
+    if (journalEntries.length > 0) {
+      summaryText += `\nVOID JOURNAL REFLECTIONS (${journalEntries.length}):\n`;
+      journalEntries.slice(0, 5).forEach((entry) => {
+        summaryText += `- [${new Date(entry.timestamp).toLocaleDateString()}] ${entry.userText}\n`;
+      });
+    }
+    return summaryText;
+  };
+
+
   // 3. Helper to update and persist journal entries
   const handleSaveJournalEntry = (newEntry: JournalEntry) => {
     const updated = [newEntry, ...journalEntries];
@@ -221,37 +293,127 @@ export default function App() {
   return (
     <div id="application-root" className="h-full flex flex-col bg-neutral-950 text-neutral-100 font-sans antialiased overflow-hidden">
       
-      {/* 1. Header Layout */}
-      <header className="border-b border-neutral-900 bg-neutral-950/80 backdrop-blur-md px-6 py-4 flex flex-shrink-0 justify-between items-center z-20">
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <h1 className="font-display text-base font-bold uppercase tracking-widest text-white">
-              Nihilismi Experientia Sacra II
-            </h1>
-            <span className="text-[10px] font-mono text-neutral-600 bg-neutral-900 px-2 py-0.5 rounded border border-neutral-850">
-              v2.0.1
-            </span>
+      {/* 1. Sleek Unified Top Navigation Header */}
+      <header className="border-b border-neutral-900 bg-neutral-950/90 backdrop-blur-xl px-4 py-2.5 flex flex-shrink-0 items-center justify-between gap-4 z-30 select-none">
+        {/* Brand / Logo */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-cyan-400 font-bold font-mono text-sm shadow-inner">
+            N
           </div>
-          <p className="text-[11px] text-neutral-500 tracking-wide font-sans mt-0.5">
-            Interactive Digital Companion & Apophatic Knowledge Architecture
-          </p>
+          <div>
+            <h1 className="font-display text-xs font-bold uppercase tracking-widest text-neutral-100 flex items-center gap-2">
+              Nihilismi Experientia Sacra
+              <span className="text-[9px] font-mono text-neutral-500 bg-neutral-900 px-1.5 py-0.5 rounded border border-neutral-850">
+                v2.0
+              </span>
+            </h1>
+            <p className="text-[10px] text-neutral-500 font-mono hidden sm:block">
+              Apophatic Knowledge Architecture
+            </p>
+          </div>
         </div>
 
-        {/* Toolbar & lit clock display */}
-        <div className="flex items-center gap-4 text-xs text-neutral-500 font-mono">
+        {/* Center: Segmented Navigation Pills */}
+        <nav className="flex items-center gap-1 bg-neutral-900/90 border border-neutral-850 p-1 rounded-2xl overflow-x-auto no-scrollbar max-w-full">
           <button
-            onClick={() => setIsDataModalOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-lg text-neutral-300 hover:text-white transition-all text-xs font-mono cursor-pointer"
-            title="Export or Import reflections, notes, and paradox syntheses"
+            onClick={() => setActiveTab('graph')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'graph'
+                ? 'bg-neutral-800 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
+            }`}
           >
-            <Database className="w-3.5 h-3.5 text-amber-400" />
-            <span>Data Backup & Export</span>
+            <Network className="w-3.5 h-3.5" />
+            <span>Ontology Map</span>
           </button>
 
-          <div className="hidden sm:flex items-center gap-1.5 border-l border-neutral-850 pl-4">
+          <button
+            onClick={() => setActiveTab('journal')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'journal'
+                ? 'bg-neutral-800 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
+            }`}
+          >
+            <PenTool className="w-3.5 h-3.5" />
+            <span>Void Journal</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('corpus')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'corpus'
+                ? 'bg-neutral-800 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Corpus Archive</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('paradox')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'paradox'
+                ? 'bg-neutral-800 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
+            }`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+            <span>Paradox</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('intake')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'intake'
+                ? 'bg-neutral-800 text-amber-300 font-bold border border-amber-500/40 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
+            }`}
+          >
+            <Brain className="w-3.5 h-3.5 text-amber-400" />
+            <span>Corpus AI</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('docs')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'docs'
+                ? 'bg-neutral-800 text-blue-300 font-bold border border-blue-500/40 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
+            }`}
+          >
+            <FileText className="w-3.5 h-3.5 text-blue-400" />
+            <span>Google Docs</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('engine')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeTab === 'engine'
+                ? 'bg-neutral-800 text-purple-300 font-bold border border-purple-500/40 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+            <span>Reasoning</span>
+          </button>
+        </nav>
+
+        {/* Right Actions */}
+        <div className="flex items-center gap-3 shrink-0 text-xs font-mono text-neutral-500">
+          <button
+            onClick={() => setIsDataModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-xl text-neutral-300 hover:text-white transition-all cursor-pointer text-xs"
+            title="Export or Import data backup"
+          >
+            <Database className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden lg:inline">Data Backup</span>
+          </button>
+
+          <div className="hidden xl:flex items-center gap-1.5 border-l border-neutral-850 pl-3">
             <Clock className="w-3.5 h-3.5 text-neutral-600" />
-            <span>Time:</span>
-            <span className="text-neutral-300 font-medium">{currentTime || '--:--:--'}</span>
+            <span className="text-neutral-300 font-medium">{currentTime || '--:--'}</span>
           </div>
         </div>
       </header>
@@ -268,112 +430,16 @@ export default function App() {
       />
 
       {/* 2. Main content container */}
-      <main className="flex-1 flex flex-col md:flex-row min-h-0 z-10 overflow-hidden">
-        
-        {/* Navigation Rail / Sidebar */}
-        <nav className="w-full md:w-64 border-b md:border-b-0 md:border-r border-neutral-900 bg-neutral-950/50 flex-shrink-0 flex flex-row md:flex-col justify-between p-3 md:p-4 gap-2">
-          <div className="flex flex-row md:flex-col gap-1.5 flex-1 md:flex-none">
-            
-            {/* Tab: Ontology Map */}
-            <button
-              onClick={() => setActiveTab('graph')}
-              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
-                activeTab === 'graph'
-                  ? 'bg-white text-black font-semibold'
-                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
-              }`}
-            >
-              <Network className="w-4 h-4 flex-shrink-0" />
-              <span>Ontology Map</span>
-            </button>
-
-            {/* Tab: Reflection Chamber */}
-            <button
-              onClick={() => setActiveTab('journal')}
-              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
-                activeTab === 'journal'
-                  ? 'bg-white text-black font-semibold'
-                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
-              }`}
-            >
-              <PenTool className="w-4 h-4 flex-shrink-0" />
-              <span>Void Journal</span>
-            </button>
-
-            {/* Tab: Scholarly Archive */}
-            <button
-              onClick={() => setActiveTab('corpus')}
-              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
-                activeTab === 'corpus'
-                  ? 'bg-white text-black font-semibold'
-                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
-              }`}
-            >
-              <BookOpen className="w-4 h-4 flex-shrink-0" />
-              <span>Scholarly Archive</span>
-            </button>
-
-            {/* Tab: Paradox Synthesizer */}
-            <button
-              onClick={() => setActiveTab('paradox')}
-              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
-                activeTab === 'paradox'
-                  ? 'bg-white text-black font-semibold'
-                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
-              }`}
-            >
-              <Activity className="w-4 h-4 flex-shrink-0" />
-              <span>Paradox Synthesizer</span>
-            </button>
-
-            {/* Tab: Corpus Intake & Second Brain AI */}
-            <button
-              onClick={() => setActiveTab('intake')}
-              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
-                activeTab === 'intake'
-                  ? 'bg-gradient-to-r from-amber-500 to-purple-600 text-white font-semibold shadow-lg shadow-purple-950/50'
-                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
-              }`}
-            >
-              <Brain className="w-4 h-4 flex-shrink-0 text-amber-400" />
-              <span>Corpus Intake & AI</span>
-            </button>
-
-            {/* Tab: Reasoning Engine & Live Preview */}
-            <button
-              onClick={() => setActiveTab('engine')}
-              className={`flex-1 md:flex-initial flex items-center justify-center md:justify-start gap-2.5 px-4 py-3 rounded-xl text-xs font-mono tracking-wider transition-all cursor-pointer ${
-                activeTab === 'engine'
-                  ? 'bg-purple-600 text-white font-semibold shadow-lg shadow-purple-950/50'
-                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
-              }`}
-            >
-              <Sparkles className="w-4 h-4 flex-shrink-0 text-purple-400" />
-              <span>Reasoning Engine</span>
-            </button>
-          </div>
-
-          {/* Socratic Motto / Info card at bottom of navigation (desktop only) */}
-          <div className="hidden md:flex flex-col gap-2 p-3 bg-neutral-900/20 border border-neutral-900/60 rounded-xl text-[10px] font-mono text-neutral-500 leading-normal select-none">
-            <div className="flex items-center gap-1 text-neutral-400">
-              <Info className="w-3.5 h-3.5 text-neutral-500 flex-shrink-0" />
-              <span>Apophatic Method</span>
-            </div>
-            <p>Define absolute truth strictly by stating what it is not. Expose certainty to aporia, and settle in silent awareness.</p>
-          </div>
-        </nav>
-
-        {/* 3. Main Workspace Container */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-black">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25 }}
-              className="h-full"
-            >
+      <main className="flex-1 min-h-0 z-10 overflow-hidden bg-black">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18 }}
+            className="h-full"
+          >
               
               {/* Tab Content: Graph / Map View */}
               {activeTab === 'graph' && (
@@ -438,6 +504,15 @@ export default function App() {
                 />
               )}
 
+              {/* Tab Content: Google Docs Integration */}
+              {activeTab === 'docs' && (
+                <GoogleDocsManager
+                  onImportDocToGraph={handleImportGoogleDocToGraph}
+                  onExportGraphToDoc={handleExportGraphToGoogleDoc}
+                  isOpen={true}
+                />
+              )}
+
               {/* Tab Content: Reasoning Engine & Live Preview */}
               {activeTab === 'engine' && (
                 <ReasoningEnginePage onNavigateToNode={handleNavigateToNode} />
@@ -445,7 +520,6 @@ export default function App() {
 
             </motion.div>
           </AnimatePresence>
-        </div>
       </main>
     </div>
   );

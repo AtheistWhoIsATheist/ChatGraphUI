@@ -1,10 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { getFullKnowledgeGraphDataset, GraphDataset, GraphNode, GraphEdge, SOURCE_DOCUMENTS } from '../data/knowledgeGraphDataset';
+import { UNIVERSAL_NIHILISM_STATEMENTS } from '../data/universalNihilismDataset';
+import { NIHILTHEISM_WIKI_LINKS_TEXT, parseWikiLinksText } from '../data/nihiltheismWikiLinkDataset';
 import { TopSearchBar } from './graph/TopSearchBar';
 import { FilterSidebar, FilterState, SourceDocumentInfo } from './graph/FilterSidebar';
 import { GraphCanvas } from './graph/GraphCanvas';
 import { NodeInspector } from './graph/NodeInspector';
 import { DuplicateGroupDrawer } from './graph/DuplicateGroupDrawer';
+import { StatementsDrawer, InfraNodusStatement } from './graph/StatementsDrawer';
 import { PathTracePanel } from './graph/PathTracePanel';
 import { SavedViewsMenu, SavedViewConfig } from './graph/SavedViewsMenu';
 import { MiniMap } from './graph/MiniMap';
@@ -37,15 +40,27 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
   ingestionBatches,
   initialFocusSource
 }) => {
-  // Compute full list of source documents including user uploaded files
+  // Compute parsed wiki-links graph data
+  const wikiLinkData = useMemo(() => parseWikiLinksText(NIHILTHEISM_WIKI_LINKS_TEXT), []);
+
+  // Compute full list of source documents including user uploaded files and wiki-links ontology
   const allSourceDocuments = useMemo<SourceDocumentInfo[]>(() => {
-    const list: SourceDocumentInfo[] = SOURCE_DOCUMENTS.map(d => ({
-      id: d.id,
-      title: d.title,
-      author: d.author,
-      era: d.era,
-      isUserUpload: false
-    }));
+    const list: SourceDocumentInfo[] = [
+      {
+        id: 'DOC-WIKI-NIHILTHEISM',
+        title: 'Nihiltheism Wiki-Links Ontology',
+        author: 'Nihiltheism Graph Wiki-Links Corpus',
+        era: 'Nihiltheism Ontology',
+        isUserUpload: false
+      },
+      ...SOURCE_DOCUMENTS.map(d => ({
+        id: d.id,
+        title: d.title,
+        author: d.author,
+        era: d.era,
+        isUserUpload: false
+      }))
+    ];
 
     if (ingestionBatches && ingestionBatches.length > 0) {
       ingestionBatches.forEach(b => {
@@ -64,19 +79,51 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
     return list;
   }, [ingestionBatches]);
 
-  // Load primary canonical dataset synthesized with any user uploaded documents
+  // Load primary canonical dataset synthesized with wiki-links and user uploaded documents
   const fullDataset: GraphDataset = useMemo(() => {
     const baseDataset = getFullKnowledgeGraphDataset();
-    if (!ingestionBatches || ingestionBatches.length === 0) {
-      return baseDataset;
-    }
-
     const mergedNodes: GraphNode[] = [...baseDataset.nodes];
     const mergedEdges: GraphEdge[] = [...baseDataset.edges];
     const nodeSet = new Set(mergedNodes.map(n => n.id));
     const edgeSet = new Set(mergedEdges.map(e => e.id));
 
-    ingestionBatches.forEach(batch => {
+    // Add Wiki-Link Document Node
+    const wikiDocId = 'DOC-WIKI-NIHILTHEISM';
+    if (!nodeSet.has(wikiDocId)) {
+      mergedNodes.push({
+        id: wikiDocId,
+        label: 'Nihiltheism Wiki-Links Ontology',
+        type: 'document',
+        sourceFile: 'Nihiltheism Wiki-Links Ontology',
+        degree: 0,
+        confidence: 1.0,
+        warrantLevel: 'TEXTUAL',
+        summary: 'Primary Wiki-Link Graph ontology defining core Nihiltheism nodes, attributes, dependencies, and oppositions.',
+        clusterId: wikiDocId,
+        isDuplicateLabel: false,
+        era: 'Nihiltheism Ontology',
+        lineLocation: 'Wiki-Links Corpus',
+        tags: ['wiki_links', 'nihiltheism', 'ontology']
+      });
+      nodeSet.add(wikiDocId);
+    }
+
+    // Merge Wiki-Link Nodes & Edges
+    wikiLinkData.graphNodes.forEach(node => {
+      if (!nodeSet.has(node.id)) {
+        mergedNodes.push(node);
+        nodeSet.add(node.id);
+      }
+    });
+
+    wikiLinkData.graphEdges.forEach(edge => {
+      if (!edgeSet.has(edge.id)) {
+        mergedEdges.push(edge);
+        edgeSet.add(edge.id);
+      }
+    });
+
+    (ingestionBatches || []).forEach(batch => {
       const docNodeId = `DOC-USER-${batch.batchId}`;
       const docTitle = batch.title || batch.filename;
 
@@ -212,7 +259,7 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
         orphanCount
       }
     };
-  }, [ingestionBatches]);
+  }, [ingestionBatches, wikiLinkData]);
 
   // Primary state variables
   const [searchQuery, setSearchQuery] = useState('');
@@ -264,8 +311,83 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
   const [isDuplicateDrawerOpen, setIsDuplicateDrawerOpen] = useState(false);
+  const [isStatementsDrawerOpen, setIsStatementsDrawerOpen] = useState(false);
   const [isSavedViewsOpen, setIsSavedViewsOpen] = useState(false);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+
+  // InfraNodus Statements State
+  const [statementsList, setStatementsList] = useState<InfraNodusStatement[]>(() => {
+    return UNIVERSAL_NIHILISM_STATEMENTS.map(s => ({
+      uid: s.uid,
+      text: s.text,
+      tags: JSON.parse(s.tags),
+      timestamp: s.timestamp,
+      context: s.context
+    }));
+  });
+  const [activeStatementUid, setActiveStatementUid] = useState<string | number | null>(null);
+
+  const handleLoadNihilismDataset = () => {
+    setStatementsList(UNIVERSAL_NIHILISM_STATEMENTS.map(s => ({
+      uid: s.uid,
+      text: s.text,
+      tags: JSON.parse(s.tags),
+      timestamp: s.timestamp,
+      context: s.context
+    })));
+  };
+
+  const handleLoadWikiLinksDataset = () => {
+    setStatementsList(wikiLinkData.statements.map(s => ({
+      uid: s.uid,
+      text: s.text,
+      tags: s.tags,
+      timestamp: Date.now(),
+      context: 1
+    })));
+  };
+
+  const handleImportStatementsJson = (jsonStr: string) => {
+    try {
+      const parsedJson = JSON.parse(jsonStr);
+      if (parsedJson.statements && Array.isArray(parsedJson.statements)) {
+        const newStmts: InfraNodusStatement[] = [];
+        parsedJson.statements.forEach((item: any, idx: number) => {
+          const arr = Array.isArray(item) ? item : [item];
+          arr.forEach((st: any) => {
+            if (st && st.text) {
+              let tags: string[] = [];
+              try {
+                tags = typeof st.tags === 'string' ? JSON.parse(st.tags) : (Array.isArray(st.tags) ? st.tags : []);
+              } catch {
+                tags = [];
+              }
+              newStmts.push({
+                uid: st.uid || Date.now() + idx,
+                text: st.text,
+                tags: tags.length > 0 ? tags : ['custom-statement'],
+                timestamp: st.timestamp || Date.now(),
+                context: st.context || 1
+              });
+            }
+          });
+        });
+        if (newStmts.length > 0) {
+          setStatementsList(prev => [...newStmts, ...prev]);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to parse statement json', e);
+    }
+  };
+
+  const handleSelectStatement = (stmt: InfraNodusStatement) => {
+    setActiveStatementUid(stmt.uid);
+    const matchWord = stmt.text.split(/\s+/).find(w => w.length > 5);
+    if (matchWord) {
+      setSearchQuery(matchWord);
+    }
+  };
 
   // Lens Isolation Flags
   const [isRelationsIsolated, setIsRelationsIsolated] = useState(false);
@@ -446,6 +568,8 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
         onToggleRightSidebar={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
         onOpenSavedViews={() => setIsSavedViewsOpen(true)}
         onOpenDuplicateDrawer={() => setIsDuplicateDrawerOpen(true)}
+        onOpenStatementsDrawer={() => setIsStatementsDrawerOpen(true)}
+        statementCount={statementsList.length}
         onOpenHelpModal={() => setIsHelpModalOpen(true)}
         onResetView={() => {
           setFilters(createDefaultFilters(allSourceDocuments));
@@ -601,6 +725,17 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
       </div>
 
       {/* Overlay Drawers & Modals */}
+      <StatementsDrawer
+        isOpen={isStatementsDrawerOpen}
+        onClose={() => setIsStatementsDrawerOpen(false)}
+        statements={statementsList}
+        onSelectStatement={handleSelectStatement}
+        onImportStatementsJson={handleImportStatementsJson}
+        onLoadNihilismDataset={handleLoadNihilismDataset}
+        onLoadWikiLinksDataset={handleLoadWikiLinksDataset}
+        activeStatementUid={activeStatementUid}
+      />
+
       <DuplicateGroupDrawer
         isOpen={isDuplicateDrawerOpen}
         onClose={() => setIsDuplicateDrawerOpen(false)}

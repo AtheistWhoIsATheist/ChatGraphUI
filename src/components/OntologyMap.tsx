@@ -25,7 +25,7 @@ export const OntologyMap: React.FC<OntologyMapProps> = ({
   initialFocusSource
 }) => {
   return (
-    <div className="h-full w-full rounded-2xl overflow-hidden border border-neutral-900 bg-neutral-950">
+    <div className="h-full w-full overflow-hidden bg-black">
       <ProductionGraphViewer
         customNodes={nodes}
         customLinks={links}

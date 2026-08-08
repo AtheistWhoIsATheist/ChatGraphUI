@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, X, Bookmark, HelpCircle, RefreshCw, AlertTriangle, Filter, PanelRight, Focus } from 'lucide-react';
+import { Search, X, Bookmark, HelpCircle, RefreshCw, AlertTriangle, Filter, PanelRight, Focus, FileText } from 'lucide-react';
 import { GraphDataset } from '../../data/knowledgeGraphDataset';
 
 interface TopSearchBarProps {
@@ -13,10 +13,12 @@ interface TopSearchBarProps {
   onToggleRightSidebar: () => void;
   onOpenSavedViews: () => void;
   onOpenDuplicateDrawer: () => void;
+  onOpenStatementsDrawer?: () => void;
   onOpenHelpModal: () => void;
   onResetView: () => void;
   isSidebarOpen: boolean;
   isRightSidebarOpen: boolean;
+  statementCount?: number;
 }
 
 export const TopSearchBar: React.FC<TopSearchBarProps> = ({
@@ -30,10 +32,12 @@ export const TopSearchBar: React.FC<TopSearchBarProps> = ({
   onToggleRightSidebar,
   onOpenSavedViews,
   onOpenDuplicateDrawer,
+  onOpenStatementsDrawer,
   onOpenHelpModal,
   onResetView,
   isSidebarOpen,
-  isRightSidebarOpen
+  isRightSidebarOpen,
+  statementCount = 10
 }) => {
   return (
     <header className="bg-neutral-950 border-b border-neutral-900 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs select-none">
@@ -159,6 +163,21 @@ export const TopSearchBar: React.FC<TopSearchBarProps> = ({
       {/* Right: Graph Stats Summary & Action Triggers */}
       <div className="flex items-center gap-2 font-mono text-[11px] text-neutral-400">
         
+        {/* InfraNodus Statements Drawer Button */}
+        {onOpenStatementsDrawer && (
+          <button
+            onClick={onOpenStatementsDrawer}
+            className="px-2.5 py-1.5 rounded-lg border bg-neutral-900 border-cyan-500/30 hover:border-cyan-500/60 text-cyan-300 flex items-center gap-1.5 transition-all cursor-pointer font-mono text-[11px] font-bold shadow-sm"
+            title="Open InfraNodus Statements & Data Feed"
+          >
+            <FileText className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="hidden sm:inline">Statements</span>
+            <span className="bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-1.5 py-0.2 rounded-full text-[10px]">
+              {statementCount}
+            </span>
+          </button>
+        )}
+
         {/* Toggle Inspector Right Sidebar Button */}
         <button
           onClick={onToggleRightSidebar}
