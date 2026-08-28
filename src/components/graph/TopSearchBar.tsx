@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, X, Bookmark, HelpCircle, RefreshCw, AlertTriangle, Filter, PanelRight, Focus, FileText } from 'lucide-react';
+import { Search, X, Bookmark, HelpCircle, RefreshCw, AlertTriangle, Filter, PanelRight, Focus, FileText, Layers } from 'lucide-react';
 import { GraphDataset } from '../../data/knowledgeGraphDataset';
 
 interface TopSearchBarProps {
@@ -19,6 +19,8 @@ interface TopSearchBarProps {
   isSidebarOpen: boolean;
   isRightSidebarOpen: boolean;
   statementCount?: number;
+  voidDepth?: number;
+  onVoidDepthChange?: (depth: number) => void;
 }
 
 export const TopSearchBar: React.FC<TopSearchBarProps> = ({
@@ -37,7 +39,9 @@ export const TopSearchBar: React.FC<TopSearchBarProps> = ({
   onResetView,
   isSidebarOpen,
   isRightSidebarOpen,
-  statementCount = 10
+  statementCount = 10,
+  voidDepth = 0,
+  onVoidDepthChange
 }) => {
   return (
     <header className="bg-neutral-950 border-b border-neutral-900 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs select-none">
@@ -159,6 +163,40 @@ export const TopSearchBar: React.FC<TopSearchBarProps> = ({
           <span>Selected & Relations</span>
         </button>
       </div>
+
+      {/* Void Depth State Filter Slider */}
+      {onVoidDepthChange && (
+        <div className="flex items-center gap-2 bg-neutral-900/90 border border-neutral-800 px-3 py-1 rounded-xl font-mono text-[11px]">
+          <div className="flex items-center gap-1.5 text-violet-400">
+            <Layers className="w-3.5 h-3.5" />
+            <span className="font-bold uppercase tracking-wider text-[10px]">Void Depth</span>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={voidDepth}
+            onChange={(e) => onVoidDepthChange(parseFloat(e.target.value))}
+            className="w-20 md:w-28 h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-violet-500 hover:accent-violet-400"
+            title="Adjust Void Depth filter to dynamically dim non-conforming nodes"
+          />
+          <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+            voidDepth > 0.6 ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40' : voidDepth > 0 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-neutral-500'
+          }`}>
+            {(voidDepth * 100).toFixed(0)}%
+          </span>
+          {voidDepth > 0 && (
+            <button
+              onClick={() => onVoidDepthChange(0)}
+              className="text-[10px] text-neutral-500 hover:text-neutral-300 p-0.5"
+              title="Reset Void Depth"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Right: Graph Stats Summary & Action Triggers */}
       <div className="flex items-center gap-2 font-mono text-[11px] text-neutral-400">

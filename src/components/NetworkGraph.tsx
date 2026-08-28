@@ -204,6 +204,26 @@ export const NetworkGraph: React.FC<NetworkGraphProps> = ({
         svg.transition().duration(750).ease(d3.easeCubicInOut).call(zoom.transform, transform);
       });
 
+    // Dynamic absorption glow halo using SVG filter effects
+    nodeElements.append('circle')
+      .attr('class', 'absorption-glow')
+      .attr('r', d => {
+        const absorption = d.metadata?.absorptionAxis ?? d.absorptionAxis ?? 0.5;
+        return d.radius + (absorption * 8);
+      })
+      .attr('fill', d => getStyle(d.type).color)
+      .attr('filter', d => {
+        const absorption = d.metadata?.absorptionAxis ?? d.absorptionAxis ?? 0.5;
+        if (absorption >= 0.85) return 'url(#svg-glow-abyssal)';
+        if (absorption >= 0.70) return 'url(#svg-glow-intense)';
+        if (absorption >= 0.50) return 'url(#svg-glow-medium)';
+        return 'url(#svg-glow-subtle)';
+      })
+      .style('opacity', d => {
+        const absorption = d.metadata?.absorptionAxis ?? d.absorptionAxis ?? 0.5;
+        return 0.25 + (absorption * 0.55);
+      });
+
     // Solid core, no blur, crisp
     nodeElements.append('circle')
       .attr('class', 'core')
@@ -566,6 +586,54 @@ export const NetworkGraph: React.FC<NetworkGraphProps> = ({
             <pattern id="canvas-grid" width="40" height="40" patternUnits="userSpaceOnUse">
                 <circle cx="2" cy="2" r="1" fill="rgba(255, 255, 255, 0.04)" shapeRendering="geometricPrecision" />
             </pattern>
+
+            {/* Dynamic SVG Glow Filters for Node Absorption Axis scaling */}
+            <filter id="svg-glow-subtle" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <filter id="svg-glow-medium" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+              <feComponentTransfer in="blur" result="boost">
+                <feFuncA type="linear" slope="1.4" />
+              </feComponentTransfer>
+              <feMerge>
+                <feMergeNode in="boost" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <filter id="svg-glow-intense" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1" />
+              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur2" />
+              <feComponentTransfer in="blur1" result="boost1">
+                <feFuncA type="linear" slope="1.8" />
+              </feComponentTransfer>
+              <feMerge>
+                <feMergeNode in="boost1" />
+                <feMergeNode in="blur2" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <filter id="svg-glow-abyssal" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur1" />
+              <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur2" />
+              <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur3" />
+              <feComponentTransfer in="blur1" result="boost1">
+                <feFuncA type="linear" slope="2.2" />
+              </feComponentTransfer>
+              <feMerge>
+                <feMergeNode in="boost1" />
+                <feMergeNode in="blur2" />
+                <feMergeNode in="blur3" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
         </defs>
         <rect width="100%" height="100%" fill="url(#canvas-grid)" />
     </svg>

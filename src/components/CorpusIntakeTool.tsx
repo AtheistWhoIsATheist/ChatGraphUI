@@ -41,6 +41,7 @@ import {
   parseFrontmatter
 } from '../lib/corpusIngestion';
 import { initialNodes } from '../data/ontology';
+import { VisualCorpusGraph } from './VisualCorpusGraph';
 
 interface CorpusIntakeToolProps {
   ingestionBatches: CorpusIngestionBatch[];
@@ -492,6 +493,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
   const [pastedText, setPastedText] = useState('');
   const [pastedTitle, setPastedTitle] = useState('');
   const [sourceType, setSourceType] = useState('essay');
+  const [autoSuggestEpistemicTags, setAutoSuggestEpistemicTags] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [ingestionStep, setIngestionStep] = useState<number>(0);
   const [ingestionStepDetail, setIngestionStepDetail] = useState<string>('');
@@ -795,6 +797,30 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
 
       const batchResult: CorpusIngestionBatch = await response.json();
       batchResult.rawContent = contentWithoutFrontmatter;
+
+      if (autoSuggestEpistemicTags && batchResult.extracts) {
+        batchResult.extracts = batchResult.extracts.map(ext => {
+          let suggestedStatus = ext.epistemicStatus;
+          const textLower = ext.text.toLowerCase();
+          
+          for (const node of initialNodes) {
+             const labelLower = node.label.toLowerCase();
+             if (textLower.includes(labelLower)) {
+                switch(node.type) {
+                   case 'Phenomenological': suggestedStatus = 'PHENOMENOLOGICAL'; break;
+                   case 'Theological': suggestedStatus = 'APOPHATIC'; break;
+                   case 'Existential': suggestedStatus = 'INTERPRETIVE'; break;
+                   case 'Ontological Core': suggestedStatus = 'SPECULATIVE'; break;
+                   case 'Conceptual Core': suggestedStatus = 'INFERRED'; break;
+                   case 'Epistemological': suggestedStatus = 'MEMORY_GRAPH'; break;
+                   case 'Praxis': suggestedStatus = 'NORMATIVE'; break;
+                }
+                break;
+             }
+          }
+          return { ...ext, epistemicStatus: suggestedStatus as EpistemicStatus };
+        });
+      }
 
       // --- Anti-Reification Gate Validation ---
       const reificationViolations = batchResult.antiReificationAudits?.filter(
@@ -1897,6 +1923,29 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
               </div>
             </div>
 
+            {/* Intake Options */}
+            <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-500/10 border border-purple-500/30 rounded-xl">
+                  <Brain className="w-4 h-4 text-purple-400" />
+                </div>
+                <div>
+                  <h4 className="font-display text-xs uppercase tracking-wider font-bold text-white">Auto-Suggest Epistemic Tags</h4>
+                  <p className="text-[10px] font-mono text-neutral-400">Match ingested text with existing philosophical node semantics</p>
+                </div>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer" title="Automatically suggest epistemic status tags based on philosophical ontology node matching">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={autoSuggestEpistemicTags}
+                  onChange={(e) => setAutoSuggestEpistemicTags(e.target.checked)}
+                  disabled={isProcessing}
+                />
+                <div className="w-9 h-5 bg-neutral-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-neutral-300 after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-500"></div>
+              </label>
+            </div>
+
             {/* Direct Upload / Drag-and-Drop Dropzone */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Box A: Upload File */}
@@ -2423,54 +2472,15 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-4">
-                {ingestionBatches.map((batch) => (
-                  <div
-                    key={batch.batchId}
-                    className={`bg-neutral-950 border ${
-                      auditViewMode === batch.batchId ? 'border-amber-500/60 shadow-lg shadow-amber-500/5' : 'border-neutral-900 hover:border-neutral-800'
-                    } rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all`}
-                  >
-                    <div className="flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-amber-400" />
-                        <h4 className="font-display text-sm font-bold text-white uppercase tracking-wider">
-                          {batch.title}
-                        </h4>
-                        <span className="text-[10px] font-mono text-neutral-500 bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800">
-                          {batch.filename}
-                        </span>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-3 text-[10px] font-mono text-neutral-500">
-                        <span>Chunks: <strong className="text-neutral-300">{batch.chunks.length}</strong></span>
-                        <span>Extracts: <strong className="text-amber-400">{batch.extracts.length}</strong></span>
-                        <span>Hash: <strong className="text-neutral-300">{batch.sha256Hash.slice(0, 10)}...</strong></span>
-                        <span>Date: <strong className="text-neutral-400">{new Date(batch.timestamp).toLocaleDateString()}</strong></span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => {
-                          setAuditViewMode(batch.batchId);
-                          setActiveSubTab('audit');
-                        }}
-                        className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 text-neutral-200 rounded-xl text-xs font-mono transition-colors cursor-pointer"
-                      >
-                        Inspect Audit
-                      </button>
-
-                      <button
-                        onClick={() => onDeleteBatch(batch.batchId)}
-                        className="p-1.5 text-neutral-600 hover:text-rose-400 hover:bg-rose-950/30 rounded-lg transition-colors cursor-pointer"
-                        title="Delete Batch"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+              <div className="flex-1 w-full relative min-h-[600px]">
+                <VisualCorpusGraph 
+                  batches={ingestionBatches}
+                  onSelectBatch={(id) => {
+                    setAuditViewMode(id);
+                    setActiveSubTab('audit');
+                  }}
+                  onDeleteBatch={onDeleteBatch}
+                />
               </div>
             )}
           </div>

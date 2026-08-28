@@ -106,6 +106,9 @@ export interface GraphNode {
   era?: string;
   lineLocation?: string;
   tags: string[];
+  metadata?: {
+    absorptionAxis?: number;
+  };
 }
 
 export interface GraphEdge {
@@ -227,7 +230,8 @@ export function getFullKnowledgeGraphDataset(): GraphDataset {
       isDuplicateLabel: false,
       era: doc.era,
       lineLocation: 'Lines 1-500',
-      tags: ['primary_source', 'document', doc.era]
+      tags: ['primary_source', 'document', doc.era],
+      metadata: { absorptionAxis: rng() }
     });
   });
 
@@ -265,7 +269,8 @@ export function getFullKnowledgeGraphDataset(): GraphDataset {
       isDuplicateLabel: isDup,
       era: docObj.era,
       lineLocation: `Section ${Math.floor(rng() * 20) + 1}, p. ${Math.floor(rng() * 300) + 10}`,
-      tags: ['thinker', docObj.era.toLowerCase()]
+      tags: ['thinker', docObj.era.toLowerCase()],
+      metadata: { absorptionAxis: rng() }
     });
   }
 
@@ -300,7 +305,8 @@ export function getFullKnowledgeGraphDataset(): GraphDataset {
       isDuplicateLabel: isDup,
       era: docObj.era,
       lineLocation: `Line ${Math.floor(rng() * 800) + 12}`,
-      tags: ['concept', warrant.toLowerCase()]
+      tags: ['concept', warrant.toLowerCase()],
+      metadata: { absorptionAxis: rng() }
     });
   }
 

@@ -1,0 +1,7 @@
+bun install v1.4.0 (34cbb9a40)
+
++ playwright@1.62.1
++ tsx@4.23.12
++ @google/genai@2.19.0
+
+6 packages installed [159.00ms]

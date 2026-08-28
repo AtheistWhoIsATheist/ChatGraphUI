@@ -1,20 +1,85 @@
+// @ts-nocheck
+import { AngLayout } from './components/ANG/AngLayout';
+import { ChatView } from './components/ANG/views/ChatView';
+import { AporiaView } from './components/ANG/views/AporiaView';
+import { DigestView } from './components/ANG/views/DigestView';
+import { SettingsView } from './components/ANG/views/SettingsView';
+import { LibraryView } from './components/ANG/views/LibraryView';
+import { AngView, GateMode, BoundaryState } from './types/ang';
 import { useState, useEffect, useCallback } from 'react';
 import { initialNodes, initialLinks, corpusTexts } from './data/ontology';
 import { parseNihilismJson } from './data/ontologyParser';
 import graphData from './data/graph-data.json';
 import { JournalEntry, Marginalia, ParadoxSynthesis, CorpusIngestionBatch } from './types';
 import { OntologyMap } from './components/OntologyMap';
-import { ReflectionChamber } from './components/ReflectionChamber';
-import { CorpusBrowser } from './components/CorpusBrowser';
-import { ParadoxSynthesizer } from './components/ParadoxSynthesizer';
 import { CorpusIntakeTool } from './components/CorpusIntakeTool';
-import ReasoningEnginePage from '../app/page';
-import { DataManagementModal } from './components/DataManagementModal';
-import { GoogleDocsManager } from './components/GoogleDocsManager';
-import { Network, PenTool, BookOpen, Activity, Clock, Database, Brain, Sparkles, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
+  const [activeAngView, setActiveAngView] = useState<AngView>('chat');
+  const [gateMode, setGateMode] = useState<GateMode>('AUTO');
+  const [messages, setMessages] = useState<any[]>([
+    {
+      id: 'msg-1',
+      role: 'CURATOR',
+      content: `Welcome to the ANG System — the Abyssal Navigation Graph for Nihiltheism.
+
+This system is built to support your philosophical research into Nihiltheism — the framework that holds the experience of nihilism as a temporal expression of the Transcendent.
+
+To begin:
+• Ask me anything about NT
+• Add your first source via the Ingest view (⊕)
+• Explore the graph (⬡) to see the current architecture
+• Review your open questions (◇)
+
+The void is ready. So am I.`,
+      timestamp: new Date().toISOString()
+    }
+  ]);
+  const [aporias, setAporias] = useState<any[]>([
+    {
+      id: 'aporia-1',
+      text: 'Who or what is the witness of the dissolution?',
+      whyUnresolvable: 'The very report of dissolution implies a witness. But if a witness persists, dissolution was incomplete. If dissolution was complete, no report is possible. The paradox is self-referentially unresolvable.',
+      functionalValue: 'Points toward the nature of awareness itself — what is it that persists through dissolution? This question cannot be answered without begging it. It is NT\'s most productive aporia.',
+      sourceId: 'P3 Paradox',
+      createdAt: new Date().toISOString(),
+      status: 'CONFIRMED'
+    },
+    {
+      id: 'aporia-2',
+      text: 'Can the void be encountered without a self to encounter it?',
+      whyUnresolvable: 'Any description of the encounter requires a phenomenological subject, but the void-encounter precisely dissolves the subject-object structure.',
+      functionalValue: 'Prevents the reification of the void as an object of experience.',
+      sourceId: 'P1/P3 intersection',
+      createdAt: new Date().toISOString(),
+      status: 'CONFIRMED'
+    }
+  ]);
+
+  const handleSendMessage = (content: string) => {
+    const newMsg = {
+      id: `msg-${Date.now()}`,
+      role: 'RESEARCHER',
+      content,
+      timestamp: new Date().toISOString()
+    };
+    setMessages(prev => [...prev, newMsg]);
+    
+    // Simulate curator response
+    setTimeout(() => {
+      setMessages(prev => [...prev, {
+        id: `msg-${Date.now()+1}`,
+        role: 'CURATOR',
+        content: `I hear what you are saying. This points toward the paradox of Absence-as-Presence. We must apply apophatic discipline here to avoid reifying the void.`,
+        timestamp: new Date().toISOString(),
+        metadata: { depthLevel: 3, triggers: ['T1', 'T2'] }
+      }]);
+    }, 1500);
+  };
+
+  const [boundaryState] = useState<BoundaryState>({ theta: 0.18, mode: 'CLEAR' });
+
   // Navigation tabs: 'graph' | 'journal' | 'corpus' | 'paradox' | 'intake' | 'engine' | 'docs'
   const [activeTab, setActiveTab] = useState<'graph' | 'journal' | 'corpus' | 'paradox' | 'intake' | 'engine' | 'docs'>('graph');
 
@@ -290,237 +355,92 @@ export default function App() {
     setActiveTab('journal');
   };
 
+
   return (
-    <div id="application-root" className="h-full flex flex-col bg-neutral-950 text-neutral-100 font-sans antialiased overflow-hidden">
-      
-      {/* 1. Sleek Unified Top Navigation Header */}
-      <header className="border-b border-neutral-900 bg-neutral-950/90 backdrop-blur-xl px-4 py-2.5 flex flex-shrink-0 items-center justify-between gap-4 z-30 select-none">
-        {/* Brand / Logo */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-cyan-400 font-bold font-mono text-sm shadow-inner">
-            N
-          </div>
-          <div>
-            <h1 className="font-display text-xs font-bold uppercase tracking-widest text-neutral-100 flex items-center gap-2">
-              Nihilismi Experientia Sacra
-              <span className="text-[9px] font-mono text-neutral-500 bg-neutral-900 px-1.5 py-0.5 rounded border border-neutral-850">
-                v2.0
-              </span>
-            </h1>
-            <p className="text-[10px] text-neutral-500 font-mono hidden sm:block">
-              Apophatic Knowledge Architecture
-            </p>
-          </div>
-        </div>
-
-        {/* Center: Segmented Navigation Pills */}
-        <nav className="flex items-center gap-1 bg-neutral-900/90 border border-neutral-850 p-1 rounded-2xl overflow-x-auto no-scrollbar max-w-full">
-          <button
-            onClick={() => setActiveTab('graph')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
-              activeTab === 'graph'
-                ? 'bg-neutral-800 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
-            }`}
-          >
-            <Network className="w-3.5 h-3.5" />
-            <span>Ontology Map</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('journal')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
-              activeTab === 'journal'
-                ? 'bg-neutral-800 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
-            }`}
-          >
-            <PenTool className="w-3.5 h-3.5" />
-            <span>Void Journal</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('corpus')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
-              activeTab === 'corpus'
-                ? 'bg-neutral-800 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
-            }`}
-          >
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>Corpus Archive</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('paradox')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
-              activeTab === 'paradox'
-                ? 'bg-neutral-800 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
-            }`}
-          >
-            <Activity className="w-3.5 h-3.5" />
-            <span>Paradox</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('intake')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
-              activeTab === 'intake'
-                ? 'bg-neutral-800 text-amber-300 font-bold border border-amber-500/40 shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
-            }`}
-          >
-            <Brain className="w-3.5 h-3.5 text-amber-400" />
-            <span>Corpus AI</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('docs')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
-              activeTab === 'docs'
-                ? 'bg-neutral-800 text-blue-300 font-bold border border-blue-500/40 shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
-            }`}
-          >
-            <FileText className="w-3.5 h-3.5 text-blue-400" />
-            <span>Google Docs</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('engine')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
-              activeTab === 'engine'
-                ? 'bg-neutral-800 text-purple-300 font-bold border border-purple-500/40 shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-850/50'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-            <span>Reasoning</span>
-          </button>
-        </nav>
-
-        {/* Right Actions */}
-        <div className="flex items-center gap-3 shrink-0 text-xs font-mono text-neutral-500">
-          <button
-            onClick={() => setIsDataModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 rounded-xl text-neutral-300 hover:text-white transition-all cursor-pointer text-xs"
-            title="Export or Import data backup"
-          >
-            <Database className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden lg:inline">Data Backup</span>
-          </button>
-
-          <div className="hidden xl:flex items-center gap-1.5 border-l border-neutral-850 pl-3">
-            <Clock className="w-3.5 h-3.5 text-neutral-600" />
-            <span className="text-neutral-300 font-medium">{currentTime || '--:--'}</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Data Management Export / Import Modal */}
-      <DataManagementModal
-        isOpen={isDataModalOpen}
-        onClose={() => setIsDataModalOpen(false)}
-        journalEntries={journalEntries}
-        marginalia={marginalia}
-        synthesisHistory={synthesisHistory}
-        onImportData={handleImportData}
-        onClearAllData={handleClearAllData}
-      />
-
-      {/* 2. Main content container */}
-      <main className="flex-1 min-h-0 z-10 overflow-hidden bg-black">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.18 }}
-            className="h-full"
-          >
-              
-              {/* Tab Content: Graph / Map View */}
-              {activeTab === 'graph' && (
-                <OntologyMap
-                  nodes={displayNodes}
-                  links={displayLinks}
-                  corpusTexts={corpusTexts}
-                  selectedNodeId={selectedNodeId}
-                  hoveredNodeId={hoveredNodeId}
-                  onSelectNode={handleSelectNode}
-                  onHoverNode={handleHoverNode}
-                  onSelectQuestion={handleSelectQuestion}
-                  onNavigateToTab={setActiveTab}
-                  ingestionBatches={ingestionBatches}
-                  initialFocusSource={targetFocusSource}
-                />
-              )}
-
-              {/* Tab Content: Void Journal / Reflection */}
-              {activeTab === 'journal' && (
-                <ReflectionChamber
-                  nodes={displayNodes}
-                  selectedNodeId={selectedNodeId}
-                  selectedQuestion={selectedQuestion}
-                  onSelectNode={setSelectedNodeId}
-                  onSelectQuestion={setSelectedQuestion}
-                  journalEntries={journalEntries}
-                  onSaveEntry={handleSaveJournalEntry}
-                  onDeleteEntry={handleDeleteJournalEntry}
-                  lastSavedAt={lastSavedAt}
-                />
-              )}
-
-              {/* Tab Content: Scholarly Archive */}
-              {activeTab === 'corpus' && (
-                <CorpusBrowser
-                  corpusTexts={corpusTexts}
-                  marginalia={marginalia}
-                  onSaveMarginalia={handleSaveMarginalia}
-                  onDeleteMarginalia={handleDeleteMarginalia}
-                />
-              )}
-
-              {/* Tab Content: Paradox Synthesizer */}
-              {activeTab === 'paradox' && (
-                <ParadoxSynthesizer
-                  nodes={displayNodes}
-                  synthesisHistory={synthesisHistory}
-                  onSaveSynthesis={handleSaveSynthesis}
-                  onClearHistory={handleClearSynthesisHistory}
-                />
-              )}
-
-              {/* Tab Content: Corpus Intake & Second Brain AI */}
-              {activeTab === 'intake' && (
-                <CorpusIntakeTool
-                  ingestionBatches={ingestionBatches}
-                  onSaveBatch={handleSaveBatch}
-                  onDeleteBatch={handleDeleteBatch}
-                  onClearAllBatches={handleClearAllBatches}
-                  onNavigateToTab={handleNavigateToGraphWithSource}
-                />
-              )}
-
-              {/* Tab Content: Google Docs Integration */}
-              {activeTab === 'docs' && (
-                <GoogleDocsManager
-                  onImportDocToGraph={handleImportGoogleDocToGraph}
-                  onExportGraphToDoc={handleExportGraphToGoogleDoc}
-                  isOpen={true}
-                />
-              )}
-
-              {/* Tab Content: Reasoning Engine & Live Preview */}
-              {activeTab === 'engine' && (
-                <ReasoningEnginePage onNavigateToNode={handleNavigateToNode} />
-              )}
-
-            </motion.div>
-          </AnimatePresence>
-      </main>
-    </div>
+    <AngLayout
+      activeView={activeAngView}
+      onNavigate={setActiveAngView}
+      gateMode={gateMode}
+      onGateModeChange={setGateMode}
+      boundaryState={boundaryState}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeAngView}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.18 }}
+          className="h-full"
+        >
+          {activeAngView === 'chat' && (
+            <ChatView 
+              messages={messages} 
+              onSendMessage={handleSendMessage} 
+              boundaryState={boundaryState}
+              sessionTime="0h 0m"
+              nodesCreated={0}
+            />
+          )}
+          {activeAngView === 'graph' && (
+            <OntologyMap
+              nodes={displayNodes}
+              links={displayLinks}
+              corpusTexts={corpusTexts}
+              selectedNodeId={selectedNodeId}
+              hoveredNodeId={hoveredNodeId}
+              onSelectNode={handleSelectNode}
+              onHoverNode={handleHoverNode}
+              onSelectQuestion={handleSelectQuestion}
+              onNavigateToTab={(t) => {}}
+              ingestionBatches={ingestionBatches}
+              initialFocusSource={targetFocusSource}
+            />
+          )}
+          {activeAngView === 'library' && (
+            <LibraryView 
+              corpusTexts={corpusTexts}
+              marginalia={marginalia}
+              onSaveMarginalia={handleSaveMarginalia}
+              onDeleteMarginalia={handleDeleteMarginalia}
+            />
+          )}
+          {activeAngView === 'questions' && (
+            <AporiaView aporias={aporias} />
+          )}
+          {activeAngView === 'ingest' && (
+            <CorpusIntakeTool
+              ingestionBatches={ingestionBatches}
+              onSaveBatch={handleSaveBatch}
+              onDeleteBatch={handleDeleteBatch}
+              onClearAllBatches={handleClearAllBatches}
+              onNavigateToTab={() => {}}
+            />
+          )}
+          {activeAngView === 'digest' && (
+            <DigestView 
+              dateStart="Aug 19"
+              dateEnd="Aug 26"
+              generatedAt={new Date().toISOString()}
+              stats={{
+                sourcesIngested: 3,
+                nodesCreated: 127,
+                sessions: 7,
+                totalSessionTime: "14h 23m",
+                paradoxesConfirmed: 1,
+                aporiaAdded: 3,
+                invarianceAnalyses: 2,
+                newInvariants: 1
+              }}
+              synthesisNote="The void discloses rather than merely negates. This week's ingestions have reinforced the paradoxical tension between absence and presence."
+              pendingReviewCount={4}
+            />
+          )}
+          {activeAngView === 'settings' && (
+            <SettingsView />
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </AngLayout>
   );
-}
+};

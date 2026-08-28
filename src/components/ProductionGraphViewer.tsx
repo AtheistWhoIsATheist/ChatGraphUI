@@ -20,6 +20,8 @@ interface ProductionGraphViewerProps {
   onNavigateToTab?: (tab: string) => void;
   ingestionBatches?: CorpusIngestionBatch[];
   initialFocusSource?: string | null;
+  voidDepth?: number;
+  onVoidDepthChange?: (depth: number) => void;
 }
 
 const createDefaultFilters = (sources: SourceDocumentInfo[]): FilterState => ({
@@ -38,8 +40,13 @@ const createDefaultFilters = (sources: SourceDocumentInfo[]): FilterState => ({
 
 export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
   ingestionBatches,
-  initialFocusSource
+  initialFocusSource,
+  voidDepth: externalVoidDepth,
+  onVoidDepthChange: externalOnVoidDepthChange
 }) => {
+  const [internalVoidDepth, setInternalVoidDepth] = useState<number>(0);
+  const currentVoidDepth = externalVoidDepth !== undefined ? externalVoidDepth : internalVoidDepth;
+  const handleVoidDepthChange = externalOnVoidDepthChange || setInternalVoidDepth;
   // Compute parsed wiki-links graph data
   const wikiLinkData = useMemo(() => parseWikiLinksText(NIHILTHEISM_WIKI_LINKS_TEXT), []);
 
@@ -571,6 +578,8 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
         onOpenStatementsDrawer={() => setIsStatementsDrawerOpen(true)}
         statementCount={statementsList.length}
         onOpenHelpModal={() => setIsHelpModalOpen(true)}
+        voidDepth={currentVoidDepth}
+        onVoidDepthChange={handleVoidDepthChange}
         onResetView={() => {
           setFilters(createDefaultFilters(allSourceDocuments));
           setSearchQuery('');
@@ -580,6 +589,7 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
           setHighlightedPathEdgeIds(new Set());
           setIsRelationsIsolated(false);
           setIsPathIsolated(false);
+          handleVoidDepthChange(0);
         }}
         isSidebarOpen={isSidebarOpen}
         isRightSidebarOpen={isRightSidebarOpen}
@@ -651,6 +661,7 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
             onToggleIsolatePath={() => setIsPathIsolated(!isPathIsolated)}
             isRightSidebarOpen={isRightSidebarOpen}
             onToggleRightSidebar={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+            voidDepth={currentVoidDepth}
           />
 
           {/* Bottom Left MiniMap */}

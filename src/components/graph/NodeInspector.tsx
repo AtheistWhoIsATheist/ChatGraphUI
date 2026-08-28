@@ -229,6 +229,12 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
           <span>Confidence Score:</span>
           <span className="text-amber-400 font-bold">{Math.round(node.confidence * 100)}%</span>
         </div>
+        {node.metadata?.absorptionAxis !== undefined && (
+          <div className="flex items-center justify-between text-neutral-400 text-[11px]">
+            <span>Absorption Axis:</span>
+            <span className="text-violet-400 font-bold">{node.metadata.absorptionAxis.toFixed(3)}</span>
+          </div>
+        )}
       </div>
 
       {/* Navigation Tabs for Inspector Details */}

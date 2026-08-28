@@ -25,6 +25,7 @@ interface GraphCanvasProps {
   isRightSidebarOpen?: boolean;
   onToggleRightSidebar?: () => void;
   stylingOptions?: NodeStylingOptions;
+  voidDepth?: number;
 }
 
 interface NodePosition {
@@ -53,7 +54,8 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
   onToggleIsolatePath,
   isRightSidebarOpen = true,
   onToggleRightSidebar,
-  stylingOptions
+  stylingOptions,
+  voidDepth = 0
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -68,6 +70,7 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
   const [spreadMultiplier, setSpreadMultiplier] = useState<number>(1.8);
   const [edgeMode, setEdgeMode] = useState<'subtle' | 'selected_only' | 'full'>('subtle');
   const [showAllLabels, setShowAllLabels] = useState<boolean>(true);
+  const [isVoidDepthActive, setIsVoidDepthActive] = useState<boolean>(false);
 
   // Layout Node Positions Cache
   const positionsRef = useRef<Map<string, NodePosition>>(new Map());
@@ -290,6 +293,18 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
     ctx.scale(scale, scale);
 
     const posMap = positionsRef.current;
+    const nodeMap = new Map<string, GraphNode>();
+    nodes.forEach(n => nodeMap.set(n.id, n));
+
+    // Pre-calculate connected nodes for graph dimming interaction
+    const connectedToSelected = new Set<string>();
+    if (selectedNodeId) {
+      connectedToSelected.add(selectedNodeId);
+      edges.forEach(edge => {
+        if (edge.source === selectedNodeId) connectedToSelected.add(edge.target);
+        if (edge.target === selectedNodeId) connectedToSelected.add(edge.source);
+      });
+    }
 
     // 1. Draw Cluster Hull Backgrounds & Region Titles
     if (activeLens === 'source_clusters' || activeLens === 'audit_mode') {
@@ -375,6 +390,19 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
         alpha = 0.02; // Drastically dim background edges when something is selected
       }
 
+      // Void Depth Link Dimming based on absorption axis
+      if (voidDepth > 0 && !isPathEdge && !isConnectedToSelected) {
+        const srcNode = nodeMap.get(edge.source);
+        const tgtNode = nodeMap.get(edge.target);
+        const srcAbs = srcNode?.metadata?.absorptionAxis ?? (srcNode as any)?.absorptionAxis ?? 0.5;
+        const tgtAbs = tgtNode?.metadata?.absorptionAxis ?? (tgtNode as any)?.absorptionAxis ?? 0.5;
+        const avgAbs = (srcAbs + tgtAbs) / 2;
+        if (avgAbs < voidDepth) {
+          const shortfall = voidDepth - avgAbs;
+          alpha *= Math.max(0.04, 1.0 - (shortfall * 2.2));
+        }
+      }
+
       // Curved Arc Edge Calculation
       const dx = tgtPos.x - srcPos.x;
       const dy = tgtPos.y - srcPos.y;
@@ -420,16 +448,49 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
       const radius = isSelected ? pos.radius * 1.4 : isHovered ? pos.radius * 1.25 : pos.radius;
 
       ctx.save();
+      
+      // Dim non-connected nodes
+      if (selectedNodeId && !connectedToSelected.has(node.id)) {
+        ctx.globalAlpha = 0.08;
+      }
+
+      // Void Depth state-based filter: dynamically dim non-conforming nodes
+      const nodeAbsorption = node.metadata?.absorptionAxis ?? (node as any).absorptionAxis ?? 0.5;
+      if (voidDepth > 0 && !isSelected && !isHovered && !isPathNode) {
+        if (nodeAbsorption < voidDepth) {
+          const shortfall = voidDepth - nodeAbsorption;
+          const dimAlpha = Math.max(0.04, 1.0 - (shortfall * 2.4));
+          ctx.globalAlpha = Math.min(ctx.globalAlpha, dimAlpha);
+        }
+      }
+
       ctx.translate(pos.x, pos.y);
 
       // Radial Glow Halo
-      if (isSelected || isHovered || isPathNode || stylingOptions?.showGlow) {
-        const glowGrad = ctx.createRadialGradient(0, 0, radius * 0.5, 0, 0, radius * 2.2);
-        glowGrad.addColorStop(0, isPathNode ? 'rgba(16, 185, 129, 0.45)' : typeStyle.glow);
+      const showBaseGlow = isSelected || isHovered || isPathNode || stylingOptions?.showGlow;
+      if (showBaseGlow || isVoidDepthActive || voidDepth > 0) {
+        const absorption = nodeAbsorption;
+        const glowMultiplier = (isVoidDepthActive || voidDepth > 0) ? 1.0 + (absorption * 2.5) : (1.0 + (absorption * 0.8));
+        const outerRadius = radius * (1.8 + absorption * 1.2) * glowMultiplier;
+
+        const glowGrad = ctx.createRadialGradient(0, 0, radius * 0.4, 0, 0, outerRadius);
+        let coreGlow = isPathNode ? 'rgba(16, 185, 129, 0.55)' : typeStyle.glow;
+
+        if (isVoidDepthActive || voidDepth > 0) {
+          if (absorption >= 0.75) {
+            coreGlow = `rgba(139, 92, 246, ${0.35 + absorption * 0.55})`; // glow-violet
+          } else if (absorption >= 0.4) {
+            coreGlow = `rgba(34, 211, 238, ${0.35 + absorption * 0.55})`; // glow-cyan
+          } else {
+            coreGlow = typeStyle.glow.replace(/[\d.]+\)$/, `${0.2 + absorption * 0.4})`);
+          }
+        }
+
+        glowGrad.addColorStop(0, coreGlow);
         glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = glowGrad;
         ctx.beginPath();
-        ctx.arc(0, 0, radius * 2.2, 0, 2 * Math.PI);
+        ctx.arc(0, 0, outerRadius, 0, 2 * Math.PI);
         ctx.fill();
       }
 
@@ -521,7 +582,7 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
     });
 
     ctx.restore();
-  }, [dimensions, transform, nodes, edges, selectedNodeId, hoveredNodeId, activeLens, highlightedPathNodeIds, highlightedPathEdgeIds, searchQuery, clusterCenters, spreadMultiplier, edgeMode, showAllLabels, stylingOptions]);
+  }, [dimensions, transform, nodes, edges, selectedNodeId, hoveredNodeId, activeLens, highlightedPathNodeIds, highlightedPathEdgeIds, searchQuery, clusterCenters, spreadMultiplier, edgeMode, showAllLabels, stylingOptions, isVoidDepthActive, voidDepth]);
 
   useEffect(() => {
     render();
@@ -782,6 +843,19 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
           }`}
         >
           {showAllLabels ? 'Labels: All Pills' : 'Labels: Smart Only'}
+        </button>
+
+        {/* Void Depth Visualizer Toggle */}
+        <button
+          onClick={() => setIsVoidDepthActive(!isVoidDepthActive)}
+          className={`px-2.5 py-1 rounded-xl border font-bold transition-all cursor-pointer text-[11px] ${
+            isVoidDepthActive
+              ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
+              : 'bg-neutral-850 border-neutral-750 text-neutral-400'
+          }`}
+          title="Visualize metadata 'absorption axis' via node glow intensity"
+        >
+          Void Depth: {isVoidDepthActive ? 'ON' : 'OFF'}
         </button>
       </div>
 

@@ -9,6 +9,10 @@ export interface OntologyNode {
   resonance: number; // 0 to 100
   questions: string[];
   era: string;
+  metadata?: {
+    absorptionAxis?: number;
+  };
+  absorptionAxis?: number;
 }
 
 export interface OntologyLink {
@@ -38,7 +42,8 @@ export const initialNodes: OntologyNode[] = [
       "Can the Void be experienced without collapsing into conceptual dogmatism?",
       "How does the withdrawal of the Void manifest in daily temporal awareness?"
     ],
-    era: "Primordial"
+    era: "Primordial",
+    metadata: { absorptionAxis: 0.96 }
   },
   {
     id: "nihil",
@@ -50,7 +55,8 @@ export const initialNodes: OntologyNode[] = [
       "Is negation a secondary cognitive event, or the primary state of reality?",
       "Does Active Nihil liberate the self or accelerate existential vertigo?"
     ],
-    era: "Modern / Post-Structural"
+    era: "Modern / Post-Structural",
+    metadata: { absorptionAxis: 0.89 }
   },
   {
     id: "epoche",
@@ -62,7 +68,8 @@ export const initialNodes: OntologyNode[] = [
       "How does one maintain Epoché in a culture demanding immediate certainty?",
       "Is the silence of Epoché a defeat of reason, or its absolute peak?"
     ],
-    era: "Classical Greece"
+    era: "Classical Greece",
+    metadata: { absorptionAxis: 0.72 }
   },
   {
     id: "apophasis",
@@ -74,7 +81,8 @@ export const initialNodes: OntologyNode[] = [
       "If the Absolute is unnamed, does language serve as a bridge or a barrier?",
       "How does apophasis distinguish itself from simple blankness?"
     ],
-    era: "Medieval Mysticism"
+    era: "Medieval Mysticism",
+    metadata: { absorptionAxis: 0.85 }
   },
   {
     id: "entropy",
@@ -86,7 +94,8 @@ export const initialNodes: OntologyNode[] = [
       "Is thermodynamic entropy the physical shadow of philosophical negation?",
       "Can human creativity be viewed as a localized rebellion against cosmic decay?"
     ],
-    era: "Scientific Era"
+    era: "Scientific Era",
+    metadata: { absorptionAxis: 0.91 }
   },
   {
     id: "absurd",
@@ -98,7 +107,8 @@ export const initialNodes: OntologyNode[] = [
       "Must the recognition of the Absurd lead to despair, or is it the source of true freedom?",
       "How does revolt sustain itself in the presence of the Absurd?"
     ],
-    era: "20th Century Existentialism"
+    era: "20th Century Existentialism",
+    metadata: { absorptionAxis: 0.81 }
   },
   {
     id: "detachment",
@@ -110,7 +120,8 @@ export const initialNodes: OntologyNode[] = [
       "Can one operate in the social realm while remaining in complete detachment?",
       "Does Gelassenheit require the abandonment of personal identity?"
     ],
-    era: "14th Century German Mysticism"
+    era: "14th Century German Mysticism",
+    metadata: { absorptionAxis: 0.78 }
   },
   {
     id: "sunyata",
@@ -122,7 +133,8 @@ export const initialNodes: OntologyNode[] = [
       "How does emptiness differ from Western nihilism's concept of nothingness?",
       "If all things are empty, how does compassion arise naturally from this void?"
     ],
-    era: "Ancient India / Mahayana"
+    era: "Ancient India / Mahayana",
+    metadata: { absorptionAxis: 0.94 }
   },
   {
     id: "aporia",
@@ -134,7 +146,8 @@ export const initialNodes: OntologyNode[] = [
       "Is aporia a breakdown of the logical machinery or the disclosure of its limits?",
       "How can aporia be used to cultivate active intellectual humility?"
     ],
-    era: "Socratic Dialogues"
+    era: "Socratic Dialogues",
+    metadata: { absorptionAxis: 0.68 }
   }
 ];
 
