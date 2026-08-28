@@ -1,0 +1,126 @@
+{
+  "meta": {
+    "title": "Nihiltheism REN Knowledge Graph",
+    "exported": "2026-08-28T03:21:00.604Z",
+    "note": "Session export without persistent storage."
+  },
+  "graph": {
+    "nodes": [
+      {
+        "id": "nihiltheism",
+        "label": "Nihiltheism",
+        "category": "core",
+        "theme": ["transcendence", "absurdity", "religion"],
+        "size": 22,
+        "description": "A proposed bridge position in which the universal experience of meaninglessness does not cancel transcendence but becomes the condition under which transcendence is reinterpreted.",
+        "significance": "Master concept integrating nihilistic phenomenology, apophatic reserve, and a critique of both reductive naturalism and easy religiosity.",
+        "stakes": "If coherent, it offers a dissertation-level alternative to theism/atheism binaries.",
+        "index": 0
+      },
+      {
+        "id": "ren",
+        "label": "Religious Experience of Nihilism",
+        "category": "core",
+        "theme": ["transcendence", "anxiety", "phenomenology"],
+        "size": 20,
+        "description": "The lived encounter with radical meaninglessness as spiritually charged rather than merely intellectually concluded.",
+        "significance": "Reframes nihilism as an existential event rather than a thesis alone.",
+        "stakes": "Anchors the dissertation in experience instead of abstract polemic.",
+        "index": 1
+      },
+      {
+        "id": "absurd-perspective",
+        "label": "Absurd Perspective",
+        "category": "core",
+        "theme": ["absurdity"],
+        "size": 18,
+        "description": "The standpoint from which action appears groundless because values lack final warrant and every finite project is exposed as contingent.",
+        "significance": "Connects REN to paralysis, triviality, and the levelling of practical significance.",
+        "stakes": "Essential for distinguishing REN from heroic existentialism.",
+        "index": 2
+      },
+      {
+        "id": "divided-self",
+        "label": "Divided Self",
+        "category": "core",
+        "theme": ["transcendence", "phenomenology"],
+        "size": 18,
+        "description": "The human subject as split between worldly absorption and a pull toward what exceeds finite explanation.",
+        "significance": "Provides anthropological structure for why nihilism can be universal yet differently articulated.",
+        "stakes": "Connects Plato, Christianity, Kierkegaard, and phenomenological accounts of falling.",
+        "index": 3
+      },
+      {
+        "id": "infinite-nothingness",
+        "label": "Infinite Nothingness",
+        "category": "core",
+        "theme": ["transcendence", "anxiety"],
+        "size": 18,
+        "description": "The experience of the finite as null before the infinite, where annihilation and disclosure coincide.",
+        "significance": "Central paradox of REN: void as devastation and opening.",
+        "stakes": "Supports dialogue with Pascal, Cioran, apophatic theology, and mystical language.",
+        "index": 4
+      },
+      {
+        "id": "madness-suicide-other",
+        "label": "Madness, Suicide, and the Other",
+        "category": "core",
+        "theme": ["suicide", "anxiety"],
+        "size": 17,
+        "description": "The zone where nihilism appears to terminate reason, threaten self-destruction, or gesture toward a reality irreducible to ordinary worldhood.",
+        "significance": "Brings REN into contact with its darkest implications instead of sanitizing them.",
+        "stakes": "Necessary for robustness because the dissertation must answer what follows when the world is experienced as nothing.",
+        "index": 5
+      },
+      {
+        "id": "christian-nihilism",
+        "label": "Christian Nihilism",
+        "category": "core",
+        "theme": ["religion", "transcendence"],
+        "size": 17,
+        "description": "A paradoxical configuration in which God is everything and the world is nothing, reversing secular immanence without restoring ordinary meaning.",
+        "significance": "Shows REN is not merely secularized despair.",
+        "stakes": "Opens comparative theology without collapsing into confessional apologetics.",
+        "index": 6
+      }
+    ],
+    "links": [
+      { "source": "nihiltheism", "target": "ren", "relationship": "articulates" },
+      { "source": "nihiltheism", "target": "christian-nihilism", "relationship": "includes" },
+      { "source": "nihiltheism", "target": "absurd-perspective", "relationship": "contains" },
+      { "source": "nihiltheism", "target": "divided-self", "relationship": "presupposes" },
+      { "source": "nihiltheism", "target": "infinite-nothingness", "relationship": "culminates in" }
+    ]
+  },
+  "recursiveQuestions": [
+    "If nihilism is universal, what exactly is universal: a proposition, a mood, a phenomenological event, or a structural condition of finite consciousness?",
+    "Does REN describe transcendence, infer transcendence, or merely preserve a space that naturalism cannot close?",
+    "What differentiates transformative nihilistic conversion from psychological breakdown or aesthetic self-dramatization?"
+  ],
+  "argumentTrails": [
+    {
+      "title": "Universal nihilism → divided self → transcendental yearning",
+      "desc": "Use this when defending the move from meaninglessness to a non-dogmatic account of transcendence."
+    },
+    {
+      "title": "Naturalism critique → illusion of reality → apophatic reserve",
+      "desc": "Use this to show that rejecting flat naturalism need not entail positive metaphysical possession."
+    }
+  ],
+  "tensions": [
+    {
+      "title": "Universal claim vs anti-foundationalism",
+      "desc": "REN says nihilism is universally experienced while also insisting that final systems break down."
+    },
+    {
+      "title": "Transcendence vs vagueness",
+      "desc": "The more REN protects transcendence from reduction, the more it risks becoming indeterminate."
+    }
+  ],
+  "examinerQuestions": [
+    {
+      "title": "How is Nihiltheism different from negative theology?",
+      "desc": "Answer by stressing the primacy of nihilistic phenomenology rather than inherited doctrine alone."
+    }
+  ]
+}
