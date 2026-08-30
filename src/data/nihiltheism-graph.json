@@ -1,126 +1,118 @@
 {
   "meta": {
     "title": "Nihiltheism REN Knowledge Graph",
-    "exported": "2026-08-28T03:21:00.604Z",
-    "note": "Session export without persistent storage."
+    "exported": "2026-08-27T21:00:00.000Z",
+    "note": "Expanded dataset with epistemic confidence, quotes, and topological collisions."
   },
   "graph": {
     "nodes": [
-      {
-        "id": "nihiltheism",
-        "label": "Nihiltheism",
-        "category": "core",
-        "theme": ["transcendence", "absurdity", "religion"],
-        "size": 22,
-        "description": "A proposed bridge position in which the universal experience of meaninglessness does not cancel transcendence but becomes the condition under which transcendence is reinterpreted.",
-        "significance": "Master concept integrating nihilistic phenomenology, apophatic reserve, and a critique of both reductive naturalism and easy religiosity.",
-        "stakes": "If coherent, it offers a dissertation-level alternative to theism/atheism binaries.",
-        "index": 0
-      },
-      {
-        "id": "ren",
-        "label": "Religious Experience of Nihilism",
-        "category": "core",
-        "theme": ["transcendence", "anxiety", "phenomenology"],
-        "size": 20,
-        "description": "The lived encounter with radical meaninglessness as spiritually charged rather than merely intellectually concluded.",
-        "significance": "Reframes nihilism as an existential event rather than a thesis alone.",
-        "stakes": "Anchors the dissertation in experience instead of abstract polemic.",
-        "index": 1
-      },
-      {
-        "id": "absurd-perspective",
-        "label": "Absurd Perspective",
-        "category": "core",
-        "theme": ["absurdity"],
-        "size": 18,
-        "description": "The standpoint from which action appears groundless because values lack final warrant and every finite project is exposed as contingent.",
-        "significance": "Connects REN to paralysis, triviality, and the levelling of practical significance.",
-        "stakes": "Essential for distinguishing REN from heroic existentialism.",
-        "index": 2
-      },
-      {
-        "id": "divided-self",
-        "label": "Divided Self",
-        "category": "core",
-        "theme": ["transcendence", "phenomenology"],
-        "size": 18,
-        "description": "The human subject as split between worldly absorption and a pull toward what exceeds finite explanation.",
-        "significance": "Provides anthropological structure for why nihilism can be universal yet differently articulated.",
-        "stakes": "Connects Plato, Christianity, Kierkegaard, and phenomenological accounts of falling.",
-        "index": 3
-      },
-      {
-        "id": "infinite-nothingness",
-        "label": "Infinite Nothingness",
-        "category": "core",
-        "theme": ["transcendence", "anxiety"],
-        "size": 18,
-        "description": "The experience of the finite as null before the infinite, where annihilation and disclosure coincide.",
-        "significance": "Central paradox of REN: void as devastation and opening.",
-        "stakes": "Supports dialogue with Pascal, Cioran, apophatic theology, and mystical language.",
-        "index": 4
-      },
-      {
-        "id": "madness-suicide-other",
-        "label": "Madness, Suicide, and the Other",
-        "category": "core",
-        "theme": ["suicide", "anxiety"],
-        "size": 17,
-        "description": "The zone where nihilism appears to terminate reason, threaten self-destruction, or gesture toward a reality irreducible to ordinary worldhood.",
-        "significance": "Brings REN into contact with its darkest implications instead of sanitizing them.",
-        "stakes": "Necessary for robustness because the dissertation must answer what follows when the world is experienced as nothing.",
-        "index": 5
-      },
-      {
-        "id": "christian-nihilism",
-        "label": "Christian Nihilism",
-        "category": "core",
-        "theme": ["religion", "transcendence"],
-        "size": 17,
-        "description": "A paradoxical configuration in which God is everything and the world is nothing, reversing secular immanence without restoring ordinary meaning.",
-        "significance": "Shows REN is not merely secularized despair.",
-        "stakes": "Opens comparative theology without collapsing into confessional apologetics.",
-        "index": 6
-      }
+      {"id":"nt", "label":"Nihiltheism", "type":"concept", "cluster":"core", "size":29, "confidence":"interpretive", "source":"Dissertation Architecture", "desc":"A philosophical architecture in which nihilistic meaning-collapse may become a negative disclosure of an indeterminate Transcendent.", "tags":["core","thesis","bridge"], "quote":"Meaninglessness is treated neither as final negation nor as covert proof, but as a possible phenomenological aperture."},
+      {"id":"core-thesis", "label":"Core Thesis", "type":"claim", "cluster":"core", "size":21, "confidence":"argument", "source":"Dissertation Defense Dossier", "desc":"The collapse of objective meaning may disclose ultimacy negatively without demonstrating a determinate deity.", "tags":["thesis","scope"], "quote":"The modality is possibility, not proof."},
+      {"id":"worldly", "label":"Worldly Nihilism", "type":"concept", "cluster":"core", "size":19, "confidence":"defined", "source":"Nihiltheism Lexicon", "desc":"The temporal experience of meaninglessness, alienation, finitude, dread, and the failure of ordinary projects to ground existence.", "tags":["phenomenology","temporal"]},
+      {"id":"transcendent", "label":"Transcendent Nihilism", "type":"concept", "cluster":"core", "size":19, "confidence":"defined", "source":"Nihiltheism Lexicon", "desc":"The possibility that the nihilistic encounter carries a surplus irreducible to ordinary negation and points beyond finite categories.", "tags":["transcendent","apophatic"]},
+      {"id":"une", "label":"Universal Nihilistic Event", "type":"concept", "cluster":"core", "size":20, "confidence":"working", "source":"JOURNAL314 Method", "desc":"A recurring phenomenological pattern: meaning-collapse, destabilized selfhood, linguistic failure, dread, and ambiguous ultimacy.", "tags":["UNE","method","comparative"]},
+      {"id":"meaning-collapse", "label":"Meaning Collapse", "type":"concept", "cluster":"phenom", "size":15, "confidence":"textual", "source":"JOURNAL314", "desc":"The breakdown of inherited, social, religious, or personal structures that previously rendered existence intelligible.", "tags":["dread","meaning"]},
+      {"id":"groundlessness", "label":"Groundlessness", "type":"concept", "cluster":"phenom", "size":16, "confidence":"textual", "source":"JOURNAL314", "desc":"The felt and conceptual absence of a final foundation capable of justifying existence as a whole.", "tags":["abyss","foundation"]},
+      {"id":"dread", "label":"Existential Dread", "type":"concept", "cluster":"phenom", "size":17, "confidence":"textual", "source":"JOURNAL314", "desc":"An affective disclosure in which beings and ordinary significance recede, exposing existence without secure ground.", "tags":["Angst","phenomenology"]},
+      {"id":"divided-self", "label":"Divided Self", "type":"concept", "cluster":"phenom", "size":14, "confidence":"textual", "source":"JOURNAL314", "desc":"The oscillation between temporal involvement and a consciousness that sees through its claims to ultimacy.", "tags":["double-mindedness","self"]},
+      {"id":"apophasis", "label":"Apophatic Unknowing", "type":"concept", "cluster":"transcendent", "size":17, "confidence":"textual", "source":"REN / Mystical Corpus", "desc":"A disciplined negation of predicates that refuses to convert transcendence into a positively mastered object.", "tags":["negative theology","unknowing"]},
+      {"id":"symbolic-rupture", "label":"Symbolic Rupture", "type":"concept", "cluster":"transcendent", "size":14, "confidence":"interpretive", "source":"Nihiltheism Architecture", "desc":"The moment religious and philosophical symbols confess their insufficiency and cease pretending to be literal possession of the Real.", "tags":["symbols","idolatry"]},
+      {"id":"latent-divine", "label":"Latent Divine", "type":"concept", "cluster":"transcendent", "size":18, "confidence":"speculative", "source":"Nihiltheism Architecture", "desc":"A deliberately indeterminate name for the surplus disclosed through the failure of finite meaning and predication.", "tags":["divine","void"]},
+      {"id":"recursive-negation", "label":"Recursive Negation", "type":"concept", "cluster":"transcendent", "size":14, "confidence":"interpretive", "source":"Iterative Densification Protocol", "desc":"Negation applied to its own conclusions so that neither atheistic nor theistic closure becomes dogmatic.", "tags":["method","recursion"]},
+      {"id":"ontic-placeholder", "label":"Ontic Placeholder", "type":"concept", "cluster":"transcendent", "size":14, "confidence":"speculative", "source":"Iterative Densification Protocol", "desc":"A limit-marker occupying the position of ultimate reference without claiming determinate content.", "tags":["limit","God-function"]},
+      {"id":"sacred-dread", "label":"Sacred Dread", "type":"concept", "cluster":"phenom", "size":14, "confidence":"interpretive", "source":"REN", "desc":"Dread received without therapeutic conversion into positivity, while remaining open to a transcendent register.", "tags":["dread","sacred"]},
+      {"id":"renunciation", "label":"Renunciation", "type":"concept", "cluster":"ethics", "size":14, "confidence":"comparative", "source":"JOURNAL314", "desc":"The withdrawal of ultimacy from finite projects, desires, identities, and self-assertions.", "tags":["ethics","ascetic"]},
+      {"id":"compassion", "label":"Compassion after Groundlessness", "type":"claim", "cluster":"ethics", "size":15, "confidence":"conditional", "source":"Dissertation Chapter: Ethics", "desc":"Compassion may arise from shared exposure to suffering and finitude, but is not logically guaranteed by the void encounter.", "tags":["ethics","conditional"]},
+      {"id":"faith-doubt", "label":"Faith–Doubt Co-Constitution", "type":"claim", "cluster":"thesis", "size":14, "confidence":"textual", "source":"Citation-Hardened Synthesis", "desc":"Faith becomes mature not by eliminating doubt but by incorporating it as a purifying structure against idolatry.", "tags":["faith","doubt"], "quote":"Doubt works deep within you like a disease or, even more effectively, like a faith."},
+      {"id":"symbol-insuff", "label":"Symbolic Insufficiency", "type":"claim", "cluster":"thesis", "size":14, "confidence":"textual", "source":"Citation-Hardened Synthesis", "desc":"A religious symbol is most truthful when it confesses its own insufficiency.", "tags":["symbol","idolatry"]},
+      {"id":"ethics-ground", "label":"Ethics without Guarantee", "type":"claim", "cluster":"ethics", "size":14, "confidence":"open", "source":"Dissertation Chapter: Ethics", "desc":"Can ethical seriousness survive after metaphysical guarantees collapse, and on what non-arbitrary basis?", "tags":["ethics","aporia"]},
+      {"id":"heidegger", "label":"Martin Heidegger", "type":"thinker", "cluster":"thinkers-west", "size":18, "confidence":"textual", "source":"JOURNAL314", "desc":"Anxiety, the Nothing, world-collapse, and the disclosure of beings as a whole.", "tags":["phenomenology","Angst"]},
+      {"id":"kierkegaard", "label":"Søren Kierkegaard", "type":"thinker", "cluster":"thinkers-west", "size":18, "confidence":"textual", "source":"JOURNAL314", "desc":"Despair, faith, possibility, inwardness, and the self as a relation relating itself to itself.", "tags":["despair","faith"]},
+      {"id":"cioran", "label":"Emil Cioran", "type":"thinker", "cluster":"thinkers-west", "size":18, "confidence":"textual", "source":"JOURNAL314", "desc":"Lucid despair, futility, insomnia, doubt, and the failure of philosophical consolation.", "tags":["despair","doubt"]},
+      {"id":"tillich", "label":"Paul Tillich", "type":"thinker", "cluster":"thinkers-west", "size":17, "confidence":"textual", "source":"JOURNAL314", "desc":"Nonbeing, ultimate concern, courage, symbols, and the idolatrous danger of literalism.", "tags":["nonbeing","symbol"]},
+      {"id":"nietzsche", "label":"Friedrich Nietzsche", "type":"thinker", "cluster":"thinkers-west", "size":15, "confidence":"textual", "source":"JOURNAL314", "desc":"The death of God, nihilism, self-overcoming, and the unresolved problem of inhabiting one’s own philosophical therapy.", "tags":["nihilism","genealogy"]},
+      {"id":"pascal", "label":"Blaise Pascal", "type":"thinker", "cluster":"thinkers-west", "size":14, "confidence":"textual", "source":"JOURNAL314", "desc":"Wretchedness, greatness, diversion, terror before infinity, and the instability of reason.", "tags":["wretchedness","infinity"]},
+      {"id":"ligotti", "label":"Thomas Ligotti", "type":"thinker", "cluster":"thinkers-west", "size":14, "confidence":"textual", "source":"JOURNAL314", "desc":"Consciousness as malignancy, horror, anti-natal metaphysics, and the demolition of consolatory meaning.", "tags":["horror","consciousness"]},
+      {"id":"zapffe", "label":"Peter Wessel Zapffe", "type":"thinker", "cluster":"thinkers-west", "size":14, "confidence":"textual", "source":"JOURNAL314", "desc":"Overdeveloped consciousness and the mechanisms by which humanity represses its existential predicament.", "tags":["consciousness","isolation"]},
+      {"id":"eckhart", "label":"Meister Eckhart", "type":"thinker", "cluster":"thinkers-mystic", "size":17, "confidence":"textual", "source":"JOURNAL314", "desc":"Detachment, Godhead, groundlessness, divine nothingness, and the emptying of self.", "tags":["mysticism","Godhead"]},
+      {"id":"nagarjuna", "label":"Nāgārjuna", "type":"thinker", "cluster":"thinkers-mystic", "size":17, "confidence":"comparative", "source":"Comparative Corpus", "desc":"Emptiness, dependent arising, the emptiness of emptiness, and freedom from ontological extremes.", "tags":["Madhyamaka","emptiness"]},
+      {"id":"john-cross", "label":"John of the Cross", "type":"thinker", "cluster":"thinkers-mystic", "size":16, "confidence":"textual", "source":"JOURNAL314", "desc":"Dark night, purification, divine absence, and transformation through the loss of consolation.", "tags":["dark night","mysticism"]},
+      {"id":"vivekananda", "label":"Swami Vivekananda", "type":"thinker", "cluster":"thinkers-mystic", "size":15, "confidence":"textual", "source":"JOURNAL314", "desc":"Direct realization, critique of verbal religion, Atman, and the overcoming of merely conceptual faith.", "tags":["Vedanta","realization"]},
+      {"id":"william-james", "label":"William James", "type":"thinker", "cluster":"thinkers-mystic", "size":15, "confidence":"textual", "source":"JOURNAL314", "desc":"Varieties of religious experience, noetic quality, conversion, divided self, and pragmatic fruits.", "tags":["experience","pragmatism"]},
+      {"id":"journal314", "label":"JOURNAL314", "type":"document", "cluster":"documents", "size":18, "confidence":"primary", "source":"Corpus", "desc":"The comparative quote corpus and unified-voice evidence base spanning 53 indexed entries/voices.", "tags":["corpus","quotes","53"]},
+      {"id":"ren", "label":"REN Manuscript", "type":"document", "cluster":"documents", "size":16, "confidence":"primary", "source":"Manuscript", "desc":"The long-form book architecture developing the abyssal, phenomenological, apophatic, and transcendent dimensions of Nihiltheism.", "tags":["book","manuscript"]},
+      {"id":"dissertation", "label":"Dissertation Draft", "type":"document", "cluster":"documents", "size":17, "confidence":"working", "source":"PhD Workspace", "desc":"The defensible academic formulation of Nihiltheism, including scope limits, method, objections, and contribution claim.", "tags":["dissertation","draft"]},
+      {"id":"evidence-matrix", "label":"Evidence Matrix", "type":"document", "cluster":"documents", "size":13, "confidence":"audit", "source":"PhD Workspace", "desc":"Claim-to-source mapping with textual, interpretive, inferred, and speculative status labels.", "tags":["citations","audit"]},
+      {"id":"experience", "label":"Experiential Account", "type":"document", "cluster":"documents", "size":13, "confidence":"phenomenological", "source":"Primary Reflection", "desc":"First-person record of ego dissolution, timelessness, familiarity, and the return to renewed doubt.", "tags":["phenomenology","mystical"]},
+      {"id":"defense-dossier", "label":"Defense Dossier", "type":"document", "cluster":"documents", "size":13, "confidence":"working", "source":"PhD Workspace", "desc":"Committee questions, concise answers, objection trees, evidence gaps, and rehearsal notes.", "tags":["defense","questions"]}
     ],
     "links": [
-      { "source": "nihiltheism", "target": "ren", "relationship": "articulates" },
-      { "source": "nihiltheism", "target": "christian-nihilism", "relationship": "includes" },
-      { "source": "nihiltheism", "target": "absurd-perspective", "relationship": "contains" },
-      { "source": "nihiltheism", "target": "divided-self", "relationship": "presupposes" },
-      { "source": "nihiltheism", "target": "infinite-nothingness", "relationship": "culminates in" }
+      {"id":"e0","source":"nt","target":"worldly","relationship":"contains"},
+      {"id":"e1","source":"nt","target":"transcendent","relationship":"contains"},
+      {"id":"e2","source":"nt","target":"core-thesis","relationship":"articulates"},
+      {"id":"e3","source":"nt","target":"une","relationship":"models"},
+      {"id":"e4","source":"worldly","target":"meaning-collapse","relationship":"contains"},
+      {"id":"e5","source":"worldly","target":"groundlessness","relationship":"contains"},
+      {"id":"e6","source":"worldly","target":"dread","relationship":"contains"},
+      {"id":"e7","source":"worldly","target":"divided-self","relationship":"contains"},
+      {"id":"e8","source":"transcendent","target":"apophasis","relationship":"contains"},
+      {"id":"e9","source":"transcendent","target":"latent-divine","relationship":"contains"},
+      {"id":"e10","source":"transcendent","target":"symbolic-rupture","relationship":"contains"},
+      {"id":"e11","source":"transcendent","target":"recursive-negation","relationship":"contains"},
+      {"id":"e12","source":"latent-divine","target":"ontic-placeholder","relationship":"resonance"},
+      {"id":"e13","source":"dread","target":"sacred-dread","relationship":"transforms"},
+      {"id":"e14","source":"groundlessness","target":"compassion","relationship":"challenges"},
+      {"id":"e15","source":"renunciation","target":"compassion","relationship":"supports"},
+      {"id":"e16","source":"une","target":"meaning-collapse","relationship":"contains"},
+      {"id":"e17","source":"une","target":"dread","relationship":"contains"},
+      {"id":"e18","source":"une","target":"symbolic-rupture","relationship":"contains"},
+      {"id":"e19","source":"core-thesis","target":"faith-doubt","relationship":"supports"},
+      {"id":"e20","source":"core-thesis","target":"symbol-insuff","relationship":"supports"},
+      {"id":"e21","source":"core-thesis","target":"ethics-ground","relationship":"challenges"},
+      {"id":"e22","source":"faith-doubt","target":"tillich","relationship":"source"},
+      {"id":"e23","source":"faith-doubt","target":"cioran","relationship":"source"},
+      {"id":"e24","source":"faith-doubt","target":"kierkegaard","relationship":"source"},
+      {"id":"e25","source":"symbol-insuff","target":"tillich","relationship":"source"},
+      {"id":"e26","source":"symbol-insuff","target":"eckhart","relationship":"resonance"},
+      {"id":"e27","source":"heidegger","target":"dread","relationship":"source"},
+      {"id":"e29","source":"kierkegaard","target":"divided-self","relationship":"source"},
+      {"id":"e30","source":"kierkegaard","target":"faith-doubt","relationship":"source"},
+      {"id":"e31","source":"cioran","target":"meaning-collapse","relationship":"source"},
+      {"id":"e32","source":"cioran","target":"faith-doubt","relationship":"source"},
+      {"id":"e33","source":"tillich","target":"symbolic-rupture","relationship":"source"},
+      {"id":"e34","source":"tillich","target":"groundlessness","relationship":"resonance"},
+      {"id":"e35","source":"nietzsche","target":"worldly","relationship":"source"},
+      {"id":"e36","source":"pascal","target":"dread","relationship":"source"},
+      {"id":"e37","source":"ligotti","target":"worldly","relationship":"source"},
+      {"id":"e38","source":"ligotti","target":"transcendent","relationship":"challenges"},
+      {"id":"e39","source":"zapffe","target":"divided-self","relationship":"source"},
+      {"id":"e41","source":"eckhart","target":"latent-divine","relationship":"resonance"},
+      {"id":"e43","source":"nagarjuna","target":"apophasis","relationship":"resonance"},
+      {"id":"e44","source":"john-cross","target":"sacred-dread","relationship":"source"},
+      {"id":"e45","source":"john-cross","target":"apophasis","relationship":"source"},
+      {"id":"e46","source":"vivekananda","target":"symbolic-rupture","relationship":"source"},
+      {"id":"e47","source":"william-james","target":"une","relationship":"supports"}
     ]
   },
-  "recursiveQuestions": [
-    "If nihilism is universal, what exactly is universal: a proposition, a mood, a phenomenological event, or a structural condition of finite consciousness?",
-    "Does REN describe transcendence, infer transcendence, or merely preserve a space that naturalism cannot close?",
-    "What differentiates transformative nihilistic conversion from psychological breakdown or aesthetic self-dramatization?"
+  "defenseSimulator": [
+    "What makes Nihiltheism more than a poetic redescription of apophatic theology combined with existential despair?",
+    "Why should the phenomenology of dread be treated as disclosure rather than as mood-dependent distortion?",
+    "How do you avoid converting radically different thinkers and traditions into a single “unified voice”?",
+    "Is “the Transcendent” doing explanatory work, or is it merely an ontic placeholder for what you cannot explain?",
+    "What is the strongest naturalistic account of your core experience, and why does it fail to close the question?"
   ],
-  "argumentTrails": [
+  "collisions": [
     {
-      "title": "Universal nihilism → divided self → transcendental yearning",
-      "desc": "Use this when defending the move from meaninglessness to a non-dogmatic account of transcendence."
-    },
-    {
-      "title": "Naturalism critique → illusion of reality → apophatic reserve",
-      "desc": "Use this to show that rejecting flat naturalism need not entail positive metaphysical possession."
-    }
-  ],
-  "tensions": [
-    {
-      "title": "Universal claim vs anti-foundationalism",
-      "desc": "REN says nihilism is universally experienced while also insisting that final systems break down."
-    },
-    {
-      "title": "Transcendence vs vagueness",
-      "desc": "The more REN protects transcendence from reduction, the more it risks becoming indeterminate."
-    }
-  ],
-  "examinerQuestions": [
-    {
-      "title": "How is Nihiltheism different from negative theology?",
-      "desc": "Answer by stressing the primacy of nihilistic phenomenology rather than inherited doctrine alone."
+      "triggerId": "latent-divine",
+      "header": "Active Collision: disclosure or projection?",
+      "poleA": {
+        "title": "Pole A — Negative Disclosure",
+        "desc": "Meaning-collapse can disclose a dimension of ultimacy inaccessible to affirmative metaphysics. Dread is not proof, but may be an epistemically distinctive mode of encounter."
+      },
+      "poleB": {
+        "title": "Pole B — Psychological Projection",
+        "desc": "The perceived “transcendent” surplus may be generated by cognitive destabilization, affective extremity, or retrospective interpretation rather than by an ontological disclosure."
+      }
     }
   ]
 }

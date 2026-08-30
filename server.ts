@@ -14,15 +14,24 @@ async function startServer() {
   });
 
 
-  // Initialize Gemini client on server-side
-  const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
+  // Initialize Gemini client lazily
+  let ai: any = null;
+  function getAi() {
+    if (!ai) {
+      if (!process.env.GEMINI_API_KEY) {
+        throw new Error('GEMINI_API_KEY environment variable is missing');
       }
+      ai = new GoogleGenAI({
+        apiKey: process.env.GEMINI_API_KEY,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          }
+        }
+      });
     }
-  });
+    return ai;
+  }
 
   // API Route: Apophatic Deconstruction of Certainty
   app.post("/api/deconstruct", async (req, res) => {
@@ -51,7 +60,7 @@ Your task is to analyze this reflection through a rigorous apophatic lens.
 
       let responseText = "";
       try {
-        const response = await ai.models.generateContent({
+        const response = await getAi().models.generateContent({
           model: "gemini-pro-latest",
           contents: prompt,
           config: {
@@ -123,7 +132,7 @@ Your task is to:
 
       let responseText = "";
       try {
-        const response = await ai.models.generateContent({
+        const response = await getAi().models.generateContent({
           model: "gemini-pro-latest",
           contents: prompt,
           config: {
@@ -283,7 +292,7 @@ ${rawContent.slice(0, 50000)}
 
       let parsedData: any = null;
       try {
-        const response = await ai.models.generateContent({
+        const response = await getAi().models.generateContent({
           model: "gemini-pro-latest",
           contents: prompt,
           config: {
@@ -656,7 +665,7 @@ User Message:
 
       let responseText = "";
       try {
-        const response = await ai.models.generateContent({
+        const response = await getAi().models.generateContent({
           model: "gemini-pro-latest",
           contents: systemPrompt,
           config: {
