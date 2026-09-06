@@ -1,11 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { 
-  Package, ChevronLeft,
-  Database, Sparkles, Cpu, ChevronRight, Layers, Send, Network, Brain, Fingerprint, BookOpen, ScrollText, Swords
+  ChevronLeft,
+  Database, Sparkles, Cpu, ChevronRight, Layers, Send, Network, Brain, Fingerprint, BookOpen, Swords, HardDrive, Search, Sliders
 } from 'lucide-react';
 import { AngView, GateMode, BoundaryState } from '../../types/ang';
 import { VoidCanvas } from './VoidCanvas';
+import { D3Graph } from './D3Graph';
+import { FileManager } from './FileManager';
+import { IntelligenceSidebar } from './IntelligenceSidebar';
+import { MetadataPanel } from './MetadataPanel';
 import nihilData from '../../data/nihiltheism-graph.json';
+
+import { DisparityHistoryChart } from './DisparityHistoryChart';
 
 interface AngLayoutProps {
   activeView: AngView;
@@ -19,11 +25,19 @@ interface AngLayoutProps {
 type LensType = 'overview' | 'provenance' | 'conflict';
 
 export const AngLayout: React.FC<AngLayoutProps> = ({
+  activeView,
+  onNavigate,
+  children,
   gateMode,
   onGateModeChange,
 }) => {
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
   const [activeLens, setActiveLens] = useState<LensType>('overview');
+  const [clusteringMode, setClusteringMode] = useState<'none' | 'doctrinal' | 'structural'>('none');
+  const [isFileManagerOpen, setIsFileManagerOpen] = useState(false);
+  const [scentedSearch, setScentedSearch] = useState('');
+  const [gravityStrength, setGravityStrength] = useState(50);
+  const [activeMetadataNodeId, setActiveMetadataNodeId] = useState<string | null>(null);
   
   const activeNode = activeNodeId 
     ? nihilData.graph.nodes.find(n => n.id === activeNodeId) 
@@ -32,10 +46,6 @@ export const AngLayout: React.FC<AngLayoutProps> = ({
   const connectedLinks = activeNodeId
     ? nihilData.graph.links.filter(l => l.source === activeNodeId || l.target === activeNodeId)
     : [];
-
-  const collisionData = activeNodeId 
-    ? nihilData.collisions.find(c => c.triggerId === activeNodeId)
-    : null;
 
   const filteredNodes = useMemo(() => {
     switch (activeLens) {
@@ -55,13 +65,6 @@ export const AngLayout: React.FC<AngLayoutProps> = ({
     }
   };
 
-  const getConfidenceStyle = (confidence: string) => {
-    const status = confidence?.toLowerCase() || 'unrated';
-    if (['textual', 'verified', 'defined'].includes(status)) return 'text-green-300 border-green-900/50 bg-green-900/20';
-    if (['speculative', 'open'].includes(status)) return 'text-red-400 border-red-900/50 bg-red-900/20';
-    return 'text-amber-300 border-amber-900/50 bg-amber-900/20';
-  };
-
   return (
     <div className="h-screen w-screen bg-void-surface overflow-hidden flex flex-col font-sans">
       <VoidCanvas />
@@ -78,14 +81,61 @@ export const AngLayout: React.FC<AngLayoutProps> = ({
           </div>
         </div>
         
-        <button disabled className="neumorphic-button px-3 py-1.5 text-xs font-mono flex items-center gap-2 text-white/40 hover:text-cyan-cosmic disabled:opacity-30 transition-all">
-          <Package size={12} />
-          Pack Vault
-        </button>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => onNavigate('workspace')} 
+            className={`neumorphic-button px-3 py-1.5 text-xs font-mono flex items-center gap-1.5 transition-all border ${
+              activeView === 'workspace' 
+                ? 'border-violet-400/60 text-violet-200 bg-violet-600/20 font-bold shadow-[0_0_12px_rgba(168,85,247,0.3)]' 
+                : 'border-white/10 text-white/80 hover:text-violet-300'
+            }`}
+          >
+            <Sparkles size={12} className="text-violet-400" /> Visual Core
+          </button>
+          <button 
+            onClick={() => onNavigate('graph')} 
+            className={`neumorphic-button px-3 py-1.5 text-xs font-mono flex items-center gap-1.5 transition-all border ${
+              activeView === 'graph' 
+                ? 'border-cyan-cosmic/50 text-cyan-cosmic bg-cyan-cosmic/10 font-bold' 
+                : 'border-white/10 text-white/70 hover:text-cyan-cosmic'
+            }`}
+          >
+            <Network size={12} /> Graph
+          </button>
+          <button 
+            onClick={() => onNavigate('academic')} 
+            className={`neumorphic-button px-3 py-1.5 text-xs font-mono flex items-center gap-1.5 transition-all border ${
+              activeView === 'academic' 
+                ? 'border-amber-500/50 text-amber-400 bg-amber-500/10 font-bold' 
+                : 'border-white/10 text-white/70 hover:text-amber-500'
+            }`}
+          >
+            <BookOpen size={12} /> Academia
+          </button>
+          <button 
+            onClick={() => onNavigate('chat')} 
+            className={`neumorphic-button px-3 py-1.5 text-xs font-mono flex items-center gap-1.5 transition-all border ${
+              activeView === 'chat' 
+                ? 'border-violet-ethereal/50 text-violet-300 bg-violet-ethereal/10 font-bold' 
+                : 'border-white/10 text-white/70 hover:text-violet-ethereal'
+            }`}
+          >
+            <Brain size={12} /> Dialectic
+          </button>
+          <button onClick={() => setIsFileManagerOpen(true)} className="neumorphic-button px-3 py-1.5 text-xs font-mono flex items-center gap-1.5 text-white/70 hover:text-cyan-cosmic transition-all border border-cyan-cosmic/30">
+            <HardDrive size={12} /> DataHub
+          </button>
+        </div>
       </header>
 
       <main className="relative z-10 flex-1 flex overflow-hidden">
-        {/* Left Column: The Library (Nodes) */}
+        {activeView && activeView !== 'graph' ? (
+          <div className="flex-1 h-full overflow-hidden bg-void-surface">
+            {children}
+          </div>
+        ) : (
+          <>
+            {/* Left Column: The Library (Nodes) */}
         <div className="w-72 h-full glass-panel flex flex-col border-y-0 border-l-0 bg-void-surface/40">
           <div className="p-3 border-b border-white/5 flex items-center justify-between">
             <h2 className="font-display text-sm text-white/80">Ontological Corpus</h2>
@@ -126,7 +176,7 @@ export const AngLayout: React.FC<AngLayoutProps> = ({
         </div>
 
         {/* Center Column: Void/Synthesis Engine */}
-        <div className="flex-1 flex flex-col h-full max-w-3xl mx-auto px-4">
+        <div className="flex-1 flex flex-col h-full min-w-0 px-4">
           <div className="py-4 flex items-center justify-between gap-4 border-b border-white/5">
             <div className="flex items-center gap-2">
               <button 
@@ -147,6 +197,39 @@ export const AngLayout: React.FC<AngLayoutProps> = ({
                 <Sparkles size={12} />
                 CREATIVE
               </button>
+              <select 
+                value={clusteringMode}
+                onChange={(e) => setClusteringMode(e.target.value as any)}
+                className={`neumorphic-button px-3 py-1.5 text-xs font-mono outline-none transition-all ${
+                  clusteringMode !== 'none' ? 'text-violet-ethereal glow-violet bg-violet-ethereal/10' : 'text-white/40 bg-black/40'
+                }`}
+              >
+                <option value="none">NO CLUSTERING</option>
+                <option value="doctrinal">DOCTRINAL (Topic)</option>
+                <option value="structural">STRUCTURAL (Type)</option>
+              </select>
+            </div>
+            
+            <div className="flex items-center gap-4 flex-1 justify-end">
+              <div className="flex items-center gap-2 text-white/50">
+                <Sliders size={12} />
+                <input 
+                  type="range" min="0" max="100" value={gravityStrength} 
+                  onChange={(e) => setGravityStrength(Number(e.target.value))}
+                  className="w-24 accent-violet-ethereal cursor-pointer"
+                  title="Gravity Matrix (Pull influential nodes to center)"
+                />
+              </div>
+              <div className="relative">
+                <Search size={12} className="absolute left-2 top-1.5 text-white/40" />
+                <input 
+                  type="text"
+                  placeholder="Scented Search..."
+                  value={scentedSearch}
+                  onChange={(e) => setScentedSearch(e.target.value)}
+                  className="w-40 bg-black/40 border border-white/10 rounded pl-7 pr-2 py-1 text-xs text-white/90 focus:border-cyan-cosmic/50 outline-none"
+                />
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <span className="text-[10px] text-white/30 font-mono">SHORT-TERM</span>
@@ -161,84 +244,64 @@ export const AngLayout: React.FC<AngLayoutProps> = ({
             </div>
           </div>
           
-          <div className="flex-1 overflow-auto py-6 space-y-6 relative flex items-center justify-center pointer-events-none">
-            {activeNode ? (
-              <div className="text-center space-y-6 max-w-2xl w-full z-10 p-6 glass-panel border border-white/10 rounded-xl pointer-events-auto shadow-2xl bg-void-surface/80 backdrop-blur-xl">
-                
-                <div className="flex items-center justify-center gap-3 mb-2">
-                  <div className={`px-3 py-1 border rounded-full text-[9px] font-mono uppercase tracking-widest ${getConfidenceStyle(activeNode.confidence || 'unrated')}`}>
-                    EPISTEMIC: {activeNode.confidence || 'UNRATED'}
-                  </div>
-                  <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] text-white/60 font-mono uppercase tracking-widest">
-                    {activeNode.type || 'CONCEPT'}
-                  </div>
-                </div>
-
-                <h1 className="font-display text-3xl text-white/90 text-glow-violet leading-tight">{activeNode.label}</h1>
-                <p className="text-sm text-white/60 font-mono leading-relaxed max-w-lg mx-auto">{activeNode.desc}</p>
-                
-                {(activeNode as any).quote && (
-                  <div className="mt-4 p-4 border-l-2 border-violet-ethereal bg-violet-ethereal/5 text-left italic text-white/70 text-sm font-mono relative">
-                    <ScrollText size={16} className="absolute -left-2 -top-2 text-violet-ethereal bg-void-surface" />
-                    "{ (activeNode as any).quote }"
-                  </div>
-                )}
-
-                {collisionData && (
-                  <div className="mt-6 border border-orange-500/30 bg-orange-500/5 rounded-lg p-4 text-left">
-                    <div className="text-[10px] font-mono text-orange-400 uppercase tracking-widest border-b border-orange-500/20 pb-2 mb-3 flex items-center justify-between">
-                      <span>{collisionData.header}</span>
-                      <span className="px-2 py-0.5 bg-orange-500/20 text-orange-300 rounded">UNRESOLVED</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="text-xs font-bold text-white/80 mb-1">{collisionData.poleA.title}</h4>
-                        <p className="text-[10px] text-white/50">{collisionData.poleA.desc}</p>
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-white/80 mb-1">{collisionData.poleB.title}</h4>
-                        <p className="text-[10px] text-white/50">{collisionData.poleB.desc}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
-                {connectedLinks.length > 0 && !collisionData && (
-                  <div className="mt-6 pt-6 border-t border-white/5">
-                    <p className="text-[10px] text-cyan-cosmic font-mono mb-3 uppercase tracking-widest">Topological Vectors</p>
-                    <div className="flex flex-col gap-2 max-h-32 overflow-auto pr-2">
-                      {connectedLinks.map((link, i) => (
-                        <div key={i} className="text-[11px] text-white/60 font-mono flex items-center justify-center gap-2 bg-black/20 py-1 rounded">
-                          <span className="text-white/40 truncate w-32 text-right">{link.source === activeNode.id ? activeNode.label : link.source}</span>
-                          <span className="text-cyan-cosmic/70 text-[9px] uppercase">--[{link.relationship}]--&gt;</span>
-                          <span className="text-white/40 truncate w-32 text-left">{link.target === activeNode.id ? activeNode.label : link.target}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="text-center space-y-6 z-10 pointer-events-auto max-w-lg">
-                <h1 className="font-display text-4xl text-white/60 text-glow-violet">The Void Awaits Input.</h1>
-                
-                <div className="mt-12 p-6 border border-red-500/20 bg-red-500/5 rounded-xl shadow-2xl backdrop-blur-md">
-                  <div className="flex items-center justify-center gap-2 mb-4 text-red-400">
-                    <Swords size={18} />
-                    <span className="text-xs font-mono uppercase tracking-widest">Defense Simulator Active</span>
-                  </div>
-                  <p className="text-sm text-white/70 italic leading-relaxed">
-                    "{nihilData.defenseSimulator[Math.floor(Date.now() / 10000) % nihilData.defenseSimulator.length]}"
-                  </p>
-                  <div className="mt-6 text-[10px] text-white/30 font-mono uppercase">
-                    Select a node from the corpus to mount a defense.
-                  </div>
-                </div>
-              </div>
-            )}
+          <div className="flex-1 overflow-hidden relative border-t border-b border-white/5 bg-black/20">
+            <D3Graph 
+              nodes={filteredNodes} 
+              links={nihilData.graph.links} 
+              activeNodeId={activeNodeId} 
+              onNodeClick={setActiveNodeId}
+              clusteringMode={clusteringMode}
+                gravityStrength={gravityStrength}
+                searchTerm={scentedSearch}
+            />
           </div>
 
-          <form className="py-4 border-t border-white/5 z-10 relative" onSubmit={(e) => e.preventDefault()}>
+          
+          <div className="flex">
+            <div className="h-48 border-t border-white/5 bg-black/40 p-4 overflow-y-auto flex flex-col gap-4 relative z-10 flex-1">
+              <div className="text-[10px] text-white/40 font-mono uppercase tracking-widest border-b border-white/10 pb-2 flex items-center gap-2">
+                <Layers size={12} className="text-violet-ethereal" />
+                Reasoning Feed
+              </div>
+
+              {/* Cluster 1: Metaphysical Vector */}
+              <div className="space-y-2 border-l-2 border-violet-ethereal/30 pl-3">
+                <div className="text-[10px] uppercase font-mono text-violet-ethereal/70 tracking-widest">Cluster: Metaphysical Vector</div>
+                <div className="bg-white/5 border border-white/10 p-3 rounded text-sm text-white/70 font-mono">
+                  <p className="mb-2">System detected axiological collapse within the metaphysical vector. Cross-referencing phenomenological tension states.</p>
+                  <button 
+                    onClick={() => setActiveMetadataNodeId('sacred-dread')}
+                    title="Navigate directly to node metadata"
+                    className="group inline-flex items-center gap-1.5 px-2.5 py-1 bg-violet-ethereal/10 text-violet-ethereal border border-violet-ethereal/30 rounded text-xs hover:bg-violet-ethereal/30 transition-colors"
+                  >
+                    <Fingerprint size={12} className="group-hover:animate-pulse" />
+                    Node Anchor: Sacred Dread
+                  </button>
+                </div>
+              </div>
+
+              {/* Cluster 2: Ontological Subtraction */}
+              <div className="space-y-2 border-l-2 border-cyan-cosmic/30 pl-3 mt-2">
+                <div className="text-[10px] uppercase font-mono text-cyan-cosmic/70 tracking-widest">Cluster: Ontological Subtraction</div>
+                <div className="bg-white/5 border border-white/10 p-3 rounded text-sm text-white/70 font-mono">
+                  <p className="mb-2">Correlating existential finitude markers with active ontological subtraction methodologies.</p>
+                  <button 
+                    onClick={() => setActiveMetadataNodeId('renunciation')}
+                    title="Navigate directly to node metadata"
+                    className="group inline-flex items-center gap-1.5 px-2.5 py-1 bg-cyan-cosmic/10 text-cyan-cosmic border border-cyan-cosmic/30 rounded text-xs hover:bg-cyan-cosmic/30 transition-colors"
+                  >
+                    <Fingerprint size={12} className="group-hover:animate-pulse" />
+                    Node Anchor: Renunciation
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <DisparityHistoryChart />
+            <MetadataPanel nodeId={activeMetadataNodeId} />
+          </div>
+
+          <form className="py-4 border-t border-white/5 z-10 relative bg-void-surface" onSubmit={(e) => e.preventDefault()}>
             <div className="glass-panel rounded-none border-0 flex items-center gap-3 p-2 focus-within:border-violet-ethereal/30 transition-colors bg-black/40">
               <input 
                 type="text" 
@@ -334,7 +397,17 @@ export const AngLayout: React.FC<AngLayoutProps> = ({
             )}
           </div>
         </div>
+          </>
+        )}
       </main>
+
+      
+      {/* Intelligence Sidebar / Semantic Oracle */}
+      <IntelligenceSidebar activeNodeId={activeNodeId} />
+
+      {/* File Manager DataHub Overlay */}
+      {isFileManagerOpen && <FileManager onClose={() => setIsFileManagerOpen(false)} />}
+
 
       <footer className="relative z-10 px-4 py-2 border-t border-white/5 flex items-center justify-between text-[9px] text-white/30 font-mono bg-black/60">
         <div className="flex items-center gap-4">

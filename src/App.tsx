@@ -5,6 +5,8 @@ import { AporiaView } from './components/ANG/views/AporiaView';
 import { DigestView } from './components/ANG/views/DigestView';
 import { SettingsView } from './components/ANG/views/SettingsView';
 import { LibraryView } from './components/ANG/views/LibraryView';
+import { AcademicPipelineView } from './components/ANG/views/AcademicPipelineView';
+import { NihiltheismWorkspace } from './components/Nihiltheism/NihiltheismWorkspace';
 import { AngView, GateMode, BoundaryState } from './types/ang';
 import { useState, useEffect, useCallback } from 'react';
 import { initialNodes, initialLinks, corpusTexts } from './data/ontology';
@@ -16,7 +18,7 @@ import { CorpusIntakeTool } from './components/CorpusIntakeTool';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
-  const [activeAngView, setActiveAngView] = useState<AngView>('chat');
+  const [activeAngView, setActiveAngView] = useState<AngView>('workspace');
   const [gateMode, setGateMode] = useState<GateMode>('AUTO');
   const [messages, setMessages] = useState<any[]>([
     {
@@ -356,6 +358,35 @@ The void is ready. So am I.`,
   };
 
 
+  if (activeAngView === 'workspace') {
+    return (
+      <NihiltheismWorkspace
+        messages={messages}
+        onSendMessage={handleSendMessage}
+        gateMode={gateMode}
+        onGateModeChange={setGateMode}
+        boundaryState={boundaryState}
+        displayNodes={displayNodes}
+        displayLinks={displayLinks}
+        corpusTexts={corpusTexts}
+        marginalia={marginalia}
+        selectedNodeId={selectedNodeId}
+        hoveredNodeId={hoveredNodeId}
+        onSelectNode={handleSelectNode}
+        onHoverNode={handleHoverNode}
+        onSelectQuestion={handleSelectQuestion}
+        targetFocusSource={targetFocusSource}
+        ingestionBatches={ingestionBatches}
+        aporias={aporias}
+        onSaveMarginalia={handleSaveMarginalia}
+        onDeleteMarginalia={handleDeleteMarginalia}
+        onSaveBatch={handleSaveBatch}
+        onDeleteBatch={handleDeleteBatch}
+        onClearAllBatches={handleClearAllBatches}
+      />
+    );
+  }
+
   return (
     <AngLayout
       activeView={activeAngView}
@@ -387,6 +418,7 @@ The void is ready. So am I.`,
               nodes={displayNodes}
               links={displayLinks}
               corpusTexts={corpusTexts}
+              marginalia={marginalia}
               selectedNodeId={selectedNodeId}
               hoveredNodeId={hoveredNodeId}
               onSelectNode={handleSelectNode}
@@ -438,6 +470,9 @@ The void is ready. So am I.`,
           )}
           {activeAngView === 'settings' && (
             <SettingsView />
+          )}
+          {activeAngView === 'academic' && (
+            <AcademicPipelineView />
           )}
         </motion.div>
       </AnimatePresence>

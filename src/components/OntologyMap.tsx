@@ -16,12 +16,13 @@ import {
 } from 'lucide-react';
 import { OntologyNode, OntologyLink, CorpusText, initialNodes, initialLinks } from '../data/ontology';
 import { ProductionGraphViewer } from './ProductionGraphViewer';
-import { CorpusIngestionBatch } from '../types';
+import { CorpusIngestionBatch, Marginalia } from '../types';
 
 interface OntologyMapProps {
   nodes?: OntologyNode[];
   links?: OntologyLink[];
   corpusTexts?: CorpusText[];
+  marginalia?: Marginalia[];
   selectedNodeId?: string | null;
   hoveredNodeId?: string | null;
   onSelectNode?: (nodeId: string | null) => void;
@@ -55,7 +56,8 @@ export const OntologyMap: React.FC<OntologyMapProps> = ({
   onSelectQuestion,
   onNavigateToTab,
   ingestionBatches,
-  initialFocusSource
+  initialFocusSource,
+  marginalia = []
 }) => {
   // Local state for interactive nodes with live-tunable absorptionAxis metadata
   const [localNodes, setLocalNodes] = useState<OntologyNode[]>(() => {
@@ -534,6 +536,8 @@ export const OntologyMap: React.FC<OntologyMapProps> = ({
                   const glowClass = isVioletGlow ? 'glow-violet' : 'glow-cyan';
                   const textGlowClass = isVioletGlow ? 'text-glow-violet' : 'text-glow-cyan';
 
+                  const isInvariant = marginalia.some(m => m.corpusId === node.id && m.noteText.toLowerCase().includes('invariant'));
+
                   // Dynamic Void Depth Dimming Calculation:
                   // If node's absorption axis is less than voidDepth threshold, calculate proportional dimming opacity
                   const isNonConforming = absorptionAxis < voidDepth;
@@ -636,6 +640,11 @@ export const OntologyMap: React.FC<OntologyMapProps> = ({
                           className="absolute -inset-1 rounded-2xl border border-violet-400/60 pointer-events-none"
                           transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                         />
+                      )}
+
+                      {/* Invariant Glowing Pulse Tag */}
+                      {isInvariant && (
+                        <div className="absolute -inset-1.5 rounded-2xl border-2 border-amber-500/60 animate-pulse pointer-events-none shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
                       )}
                     </motion.div>
                   );
