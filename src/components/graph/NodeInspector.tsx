@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, Pin, PinOff, AlertTriangle, ArrowRight, Compass, Share2, Focus, PanelRightClose } from 'lucide-react';
+import { Copy, Check, Pin, PinOff, AlertTriangle, ArrowRight, Compass, Share2, Focus, PanelRightClose, Brain } from 'lucide-react';
 import { GraphNode, GraphEdge } from '../../data/knowledgeGraphDataset';
 
 interface NodeInspectorProps {
@@ -17,6 +17,7 @@ interface NodeInspectorProps {
   onClose?: () => void;
   isRelationsIsolated?: boolean;
   onToggleIsolateRelations?: () => void;
+  onOpenAgentsWithNode?: (nodeId: string) => void;
 }
 
 export const NodeInspector: React.FC<NodeInspectorProps> = ({
@@ -33,7 +34,8 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
   onRemoveFromCompare,
   onClose,
   isRelationsIsolated = false,
-  onToggleIsolateRelations
+  onToggleIsolateRelations,
+  onOpenAgentsWithNode
 }) => {
   const [copiedId, setCopiedId] = useState(false);
   const [activeTab, setActiveTab] = useState<'relations' | 'provenance' | 'duplicates'>('relations');
@@ -410,6 +412,16 @@ export const NodeInspector: React.FC<NodeInspectorProps> = ({
           >
             <Focus className="w-3.5 h-3.5 text-cyan-400" />
             <span>{isRelationsIsolated ? "Show Full Graph" : "Isolate Node & Relations"}</span>
+          </button>
+        )}
+
+        {onOpenAgentsWithNode && (
+          <button
+            onClick={() => onOpenAgentsWithNode(node.id)}
+            className="w-full py-2 rounded-lg bg-violet-950/60 hover:bg-violet-900 border border-violet-500/40 text-violet-300 font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
+          >
+            <Brain className="w-3.5 h-3.5 text-violet-400" />
+            <span>Run AI Agent Analysis</span>
           </button>
         )}
 

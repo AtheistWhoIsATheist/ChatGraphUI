@@ -427,6 +427,10 @@ The void is ready. So am I.`,
               onNavigateToTab={(t) => {}}
               ingestionBatches={ingestionBatches}
               initialFocusSource={targetFocusSource}
+              onSaveBatch={handleSaveBatch}
+              onDeleteBatch={handleDeleteBatch}
+              aporias={aporias}
+              onSaveMarginalia={handleSaveMarginalia}
             />
           )}
           {activeAngView === 'library' && (

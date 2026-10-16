@@ -11,6 +11,8 @@ import { StatementsDrawer, InfraNodusStatement } from './graph/StatementsDrawer'
 import { PathTracePanel } from './graph/PathTracePanel';
 import { SavedViewsMenu, SavedViewConfig } from './graph/SavedViewsMenu';
 import { MiniMap } from './graph/MiniMap';
+import { GraphFileManagerModal } from './graph/GraphFileManagerModal';
+import { GraphAgentsModal } from './graph/GraphAgentsModal';
 import { X, ShieldCheck } from 'lucide-react';
 import { CorpusIngestionBatch } from '../types';
 
@@ -22,6 +24,10 @@ interface ProductionGraphViewerProps {
   initialFocusSource?: string | null;
   voidDepth?: number;
   onVoidDepthChange?: (depth: number) => void;
+  onSaveBatch?: (batch: CorpusIngestionBatch) => void;
+  onDeleteBatch?: (id: string) => void;
+  onAddAporia?: (aporia: any) => void;
+  onSaveMarginalia?: (nodeId: string, noteText: string) => void;
 }
 
 const createDefaultFilters = (sources: SourceDocumentInfo[]): FilterState => ({
@@ -42,7 +48,11 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
   ingestionBatches,
   initialFocusSource,
   voidDepth: externalVoidDepth,
-  onVoidDepthChange: externalOnVoidDepthChange
+  onVoidDepthChange: externalOnVoidDepthChange,
+  onSaveBatch,
+  onDeleteBatch,
+  onAddAporia,
+  onSaveMarginalia
 }) => {
   const [internalVoidDepth, setInternalVoidDepth] = useState<number>(0);
   const currentVoidDepth = externalVoidDepth !== undefined ? externalVoidDepth : internalVoidDepth;
@@ -321,6 +331,8 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
   const [isStatementsDrawerOpen, setIsStatementsDrawerOpen] = useState(false);
   const [isSavedViewsOpen, setIsSavedViewsOpen] = useState(false);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [isFileManagerOpen, setIsFileManagerOpen] = useState(false);
+  const [isAgentsModalOpen, setIsAgentsModalOpen] = useState(false);
 
   // InfraNodus Statements State
   const [statementsList, setStatementsList] = useState<InfraNodusStatement[]>(() => {
@@ -576,6 +588,8 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
         onOpenSavedViews={() => setIsSavedViewsOpen(true)}
         onOpenDuplicateDrawer={() => setIsDuplicateDrawerOpen(true)}
         onOpenStatementsDrawer={() => setIsStatementsDrawerOpen(true)}
+        onOpenFileManagement={() => setIsFileManagerOpen(true)}
+        onOpenAgentsModal={() => setIsAgentsModalOpen(true)}
         statementCount={statementsList.length}
         onOpenHelpModal={() => setIsHelpModalOpen(true)}
         voidDepth={currentVoidDepth}
@@ -705,6 +719,10 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
             onSelectNode={setSelectedNodeId}
             isPinned={selectedNodeId ? pinnedNodeIds.has(selectedNodeId) : false}
             onTogglePin={handleTogglePin}
+            onOpenAgentsWithNode={(id: string) => {
+              setSelectedNodeId(id);
+              setIsAgentsModalOpen(true);
+            }}
             onTracePathFromHere={(id: string) => {
               setActiveLens('path_mode');
               setSelectedNodeId(id);
@@ -807,6 +825,35 @@ export const ProductionGraphViewer: React.FC<ProductionGraphViewerProps> = ({
           </div>
         </div>
       )}
+
+      {/* Graph File Manager & Grounding Modal */}
+      <GraphFileManagerModal
+        isOpen={isFileManagerOpen}
+        onClose={() => setIsFileManagerOpen(false)}
+        ingestionBatches={ingestionBatches}
+        onSaveBatch={onSaveBatch}
+        onDeleteBatch={onDeleteBatch}
+        onFocusDocumentInGraph={(docTitle) => {
+          setFilters(prev => ({
+            ...prev,
+            selectedSources: new Set([docTitle])
+          }));
+        }}
+        graphNodes={fullDataset.nodes}
+        graphEdges={fullDataset.edges}
+      />
+
+      {/* Nihiltheism Philosophical AI Agents Modal */}
+      <GraphAgentsModal
+        isOpen={isAgentsModalOpen}
+        onClose={() => setIsAgentsModalOpen(false)}
+        selectedNode={activeNode}
+        allNodes={fullDataset.nodes}
+        allEdges={fullDataset.edges}
+        onSelectNode={setSelectedNodeId}
+        onAddAporia={onAddAporia}
+        onAddMarginalia={onSaveMarginalia}
+      />
 
     </div>
   );

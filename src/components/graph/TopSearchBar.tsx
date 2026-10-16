@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, X, Bookmark, HelpCircle, RefreshCw, AlertTriangle, Filter, PanelRight, Focus, FileText, Layers } from 'lucide-react';
+import { Search, X, Bookmark, HelpCircle, RefreshCw, AlertTriangle, Filter, PanelRight, Focus, FileText, Layers, FolderOpen, Brain } from 'lucide-react';
 import { GraphDataset } from '../../data/knowledgeGraphDataset';
 
 interface TopSearchBarProps {
@@ -14,6 +14,8 @@ interface TopSearchBarProps {
   onOpenSavedViews: () => void;
   onOpenDuplicateDrawer: () => void;
   onOpenStatementsDrawer?: () => void;
+  onOpenFileManagement?: () => void;
+  onOpenAgentsModal?: () => void;
   onOpenHelpModal: () => void;
   onResetView: () => void;
   isSidebarOpen: boolean;
@@ -35,6 +37,8 @@ export const TopSearchBar: React.FC<TopSearchBarProps> = ({
   onOpenSavedViews,
   onOpenDuplicateDrawer,
   onOpenStatementsDrawer,
+  onOpenFileManagement,
+  onOpenAgentsModal,
   onOpenHelpModal,
   onResetView,
   isSidebarOpen,
@@ -201,6 +205,30 @@ export const TopSearchBar: React.FC<TopSearchBarProps> = ({
       {/* Right: Graph Stats Summary & Action Triggers */}
       <div className="flex items-center gap-2 font-mono text-[11px] text-neutral-400">
         
+        {/* File Management & Ingestion Modal Button */}
+        {onOpenFileManagement && (
+          <button
+            onClick={onOpenFileManagement}
+            className="px-2.5 py-1.5 rounded-lg border bg-violet-950/40 border-violet-500/40 hover:border-violet-400 text-violet-200 flex items-center gap-1.5 transition-all cursor-pointer font-mono text-[11px] font-semibold shadow-sm hover:bg-violet-900/40"
+            title="Open Graph Corpus & File Management (Treatises, Ingestion, Grounding)"
+          >
+            <FolderOpen className="w-3.5 h-3.5 text-violet-400" />
+            <span className="hidden sm:inline">Treatises</span>
+          </button>
+        )}
+
+        {/* Nihiltheism Philosophical Agents Button */}
+        {onOpenAgentsModal && (
+          <button
+            onClick={onOpenAgentsModal}
+            className="px-2.5 py-1.5 rounded-lg border bg-amber-950/40 border-amber-500/40 hover:border-amber-400 text-amber-200 flex items-center gap-1.5 transition-all cursor-pointer font-mono text-[11px] font-semibold shadow-sm hover:bg-amber-900/40"
+            title="Open Nihiltheism Philosophical Agents (Hermeneutics, Anti-Reification Audit, Aporia Synthesis)"
+          >
+            <Brain className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">AI Agents</span>
+          </button>
+        )}
+
         {/* InfraNodus Statements Drawer Button */}
         {onOpenStatementsDrawer && (
           <button

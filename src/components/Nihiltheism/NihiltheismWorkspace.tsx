@@ -1004,6 +1004,10 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
                   onNavigateToTab={() => {}}
                   ingestionBatches={ingestionBatches}
                   initialFocusSource={targetFocusSource}
+                  onSaveBatch={onSaveBatch}
+                  onDeleteBatch={onDeleteBatch}
+                  aporias={aporias}
+                  onSaveMarginalia={onSaveMarginalia}
                 />
               </div>
             )}
@@ -1280,7 +1284,10 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
                 </div>
 
                 {/* Live Animated Visual Disparity Index */}
-                <DisparityHistoryChart className="w-full rounded-2xl border border-white/10" />
+                <DisparityHistoryChart
+                  className="w-full rounded-2xl border border-white/10"
+                  onSelectGraphNode={onSelectNode}
+                />
               </div>
             )}
 

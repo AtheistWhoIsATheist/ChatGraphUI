@@ -282,15 +282,34 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
     const { width, height } = dimensions;
     const { x: panX, y: panY, k: scale } = transform;
 
-    ctx.clearRect(0, 0, width, height);
+    // Canvas Background: Deep Obsidian Cosmic Void with subtle radial ambient glow
+    ctx.fillStyle = '#06040c';
+    ctx.fillRect(0, 0, width, height);
 
-    // Canvas Background
-    ctx.fillStyle = '#09090b'; // dark slate
+    // Subtle ambient radial background glow
+    const ambientGrad = ctx.createRadialGradient(width / 2, height / 2, 50, width / 2, height / 2, Math.max(width, height) * 0.8);
+    ambientGrad.addColorStop(0, 'rgba(139, 92, 246, 0.05)');
+    ambientGrad.addColorStop(0.5, 'rgba(6, 182, 212, 0.03)');
+    ambientGrad.addColorStop(1, 'rgba(3, 2, 8, 0)');
+    ctx.fillStyle = ambientGrad;
     ctx.fillRect(0, 0, width, height);
 
     ctx.save();
     ctx.translate(panX, panY);
     ctx.scale(scale, scale);
+
+    // Deterministic Celestial Starfield in Graph Space
+    const starCount = 140;
+    for (let i = 0; i < starCount; i++) {
+      const sx = ((i * 1973 + 89) % 5000) - 2500;
+      const sy = ((i * 3821 + 137) % 5000) - 2500;
+      const sRadius = (i % 6 === 0 ? 1.4 : i % 3 === 0 ? 1.0 : 0.6) / Math.max(0.7, scale * 0.5);
+      const sAlpha = 0.15 + ((i % 8) / 12);
+      ctx.fillStyle = `rgba(226, 232, 240, ${sAlpha * 0.35})`;
+      ctx.beginPath();
+      ctx.arc(sx, sy, sRadius, 0, 2 * Math.PI);
+      ctx.fill();
+    }
 
     const posMap = positionsRef.current;
     const nodeMap = new Map<string, GraphNode>();
@@ -306,41 +325,49 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
       });
     }
 
-    // 1. Draw Cluster Hull Backgrounds & Region Titles
+    // 1. Draw Ethereal Cluster Nebulae & Region Titles
     if (activeLens === 'source_clusters' || activeLens === 'audit_mode') {
       clusterCenters.forEach((center) => {
-        const hullRadius = 180 * spreadMultiplier;
+        const hullRadius = 210 * spreadMultiplier;
+        
+        // Soft cosmic nebula gradient
+        const nebulaGrad = ctx.createRadialGradient(center.x, center.y, 20, center.x, center.y, hullRadius);
+        nebulaGrad.addColorStop(0, 'rgba(139, 92, 246, 0.07)');
+        nebulaGrad.addColorStop(0.5, 'rgba(6, 182, 212, 0.03)');
+        nebulaGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = nebulaGrad;
         ctx.beginPath();
         ctx.arc(center.x, center.y, hullRadius, 0, 2 * Math.PI);
-        ctx.fillStyle = 'rgba(24, 24, 27, 0.25)';
         ctx.fill();
-        ctx.strokeStyle = 'rgba(63, 63, 70, 0.25)';
-        ctx.lineWidth = 1.2 / scale;
-        ctx.setLineDash([6 / scale, 6 / scale]);
+
+        // Subtle celestial orbit boundary
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.18)';
+        ctx.lineWidth = 1.0 / scale;
+        ctx.setLineDash([4 / scale, 8 / scale]);
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Cluster Title Pill Badge
+        // Cluster Title Pill Badge with dignified typography
         const titleText = center.title;
-        const fontSize = Math.max(11, Math.min(16, 13 / scale));
-        ctx.font = `700 ${fontSize}px 'IBM Plex Mono', monospace`;
+        const fontSize = Math.max(11, Math.min(15, 12 / scale));
+        ctx.font = `600 ${fontSize}px sans-serif`;
         const metrics = ctx.measureText(titleText);
-        const paddingX = 12 / scale;
-        const paddingY = 6 / scale;
+        const paddingX = 10 / scale;
+        const paddingY = 5 / scale;
         const pillW = metrics.width + paddingX * 2;
         const pillH = fontSize + paddingY * 2;
         const pillX = center.x - pillW / 2;
-        const pillY = center.y - hullRadius - pillH;
+        const pillY = center.y - hullRadius - pillH - (4 / scale);
 
-        ctx.fillStyle = 'rgba(15, 15, 18, 0.92)';
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+        ctx.fillStyle = 'rgba(12, 10, 24, 0.88)';
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.35)';
         ctx.lineWidth = 1 / scale;
         ctx.beginPath();
-        ctx.roundRect(pillX, pillY, pillW, pillH, 8 / scale);
+        ctx.roundRect(pillX, pillY, pillW, pillH, 6 / scale);
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = '#38bdf8';
+        ctx.fillStyle = '#c4b5fd';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(titleText, center.x, pillY + pillH / 2);
@@ -421,6 +448,51 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
       ctx.globalAlpha = alpha;
       ctx.lineWidth = lineWidth / scale;
       ctx.stroke();
+
+      // Draw subtle directional arrow & relation title on focus
+      if ((isConnectedToSelected || isConnectedToHovered || isPathEdge) && alpha > 0.35) {
+        const t = 0.58;
+        const invT = 1 - t;
+        const arrowX = invT * invT * srcPos.x + 2 * invT * t * ctrlX + t * t * tgtPos.x;
+        const arrowY = invT * invT * srcPos.y + 2 * invT * t * ctrlY + t * t * tgtPos.y;
+        const tangentX = 2 * invT * (ctrlX - srcPos.x) + 2 * t * (tgtPos.x - ctrlX);
+        const tangentY = 2 * invT * (ctrlY - srcPos.y) + 2 * t * (tgtPos.y - ctrlY);
+        const angle = Math.atan2(tangentY, tangentX);
+
+        const arrowSize = Math.max(4.5, 6.5 / scale);
+        ctx.fillStyle = strokeColor;
+        ctx.beginPath();
+        ctx.moveTo(arrowX + Math.cos(angle) * arrowSize, arrowY + Math.sin(angle) * arrowSize);
+        ctx.lineTo(arrowX + Math.cos(angle + 2.5) * arrowSize, arrowY + Math.sin(angle + 2.5) * arrowSize);
+        ctx.lineTo(arrowX + Math.cos(angle - 2.5) * arrowSize, arrowY + Math.sin(angle - 2.5) * arrowSize);
+        ctx.closePath();
+        ctx.fill();
+
+        // Edge relation label with translucent dark backdrop
+        if (edge.relation && (scale > 0.65 || isConnectedToSelected)) {
+          const relLabel = edge.relation.toLowerCase().replace(/_/g, ' ');
+          const relFontSize = Math.max(8, Math.min(10, 9 / scale));
+          ctx.font = `600 ${relFontSize}px sans-serif`;
+          const textMetrics = ctx.measureText(relLabel);
+          const pW = textMetrics.width + (8 / scale);
+          const pH = relFontSize + (4 / scale);
+          const pillOffset = 14 / scale;
+
+          ctx.fillStyle = 'rgba(10, 8, 20, 0.92)';
+          ctx.strokeStyle = strokeColor;
+          ctx.lineWidth = 0.8 / scale;
+          ctx.beginPath();
+          ctx.roundRect(arrowX - pW / 2, arrowY - pillOffset - pH / 2, pW, pH, 3 / scale);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = isConnectedToSelected ? '#e0f2fe' : '#ddd6fe';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(relLabel, arrowX, arrowY - pillOffset);
+        }
+      }
+
       ctx.globalAlpha = 1.0;
     });
 
@@ -494,17 +566,37 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
         ctx.fill();
       }
 
-      // Node Shape
+      // Refined Dignified Node Geometry
       ctx.fillStyle = fillColor;
       ctx.strokeStyle = strokeColor;
       ctx.lineWidth = (isSelected ? 2.8 : isHovered ? 2.0 : 1.4) / scale;
 
-      if (node.type === 'concept') {
+      const isOntologicalCore = (node.type as string) === 'Ontological Core' || 
+        ['The Absolute Void', 'Active Nihil', 'The Void', 'Sunyata', 'Nothingness', 'Apophasis', 'Aporia'].includes(node.label);
+
+      if (isOntologicalCore) {
+        // Concentric celestial corona ring for Ontological Core
+        ctx.strokeStyle = isSelected ? '#ffffff' : 'rgba(167, 139, 250, 0.7)';
+        ctx.lineWidth = 1.2 / scale;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * 1.4, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        // Inner glowing sphere
+        ctx.fillStyle = isSelected ? '#a855f7' : '#7e22ce';
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = '#c084fc';
+        ctx.stroke();
+      } else if (node.type === 'concept') {
+        // Crystalline ice-cyan sphere
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, 2 * Math.PI);
         ctx.fill();
         ctx.stroke();
       } else if (node.type === 'thinker') {
+        // Hexagonal Amethyst Seal with initials
         ctx.beginPath();
         for (let a = 0; a < 6; a++) {
           const angle = (a * Math.PI) / 3;
@@ -516,13 +608,39 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
+
+        // Thinker Monogram Initials
+        if (radius * scale >= 10) {
+          const words = node.label.split(' ');
+          const initials = words.length > 1
+            ? (words[0][0] + words[1][0]).toUpperCase()
+            : node.label.slice(0, 2).toUpperCase();
+          ctx.fillStyle = '#ffffff';
+          ctx.font = `bold ${Math.max(7, Math.min(10, 8.5 / scale))}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(initials, 0, 0);
+        }
       } else {
+        // Document / Ingested Treatise Parchment Amber Seal
         const w = radius * 2.2;
         const h = radius * 1.6;
         ctx.beginPath();
         ctx.roundRect(-w / 2, -h / 2, w, h, 4);
         ctx.fill();
         ctx.stroke();
+
+        // Subtle document lines glyph
+        if (w * scale >= 14) {
+          ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+          ctx.lineWidth = 1 / scale;
+          ctx.beginPath();
+          ctx.moveTo(-w * 0.25, -h * 0.15);
+          ctx.lineTo(w * 0.25, -h * 0.15);
+          ctx.moveTo(-w * 0.25, h * 0.15);
+          ctx.lineTo(w * 0.15, h * 0.15);
+          ctx.stroke();
+        }
       }
 
       // Duplicate Badge
@@ -684,11 +802,20 @@ export const GraphCanvas: React.FC<GraphCanvasProps> = ({
 
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault();
-    const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const zoomFactor = e.deltaY < 0 ? 1.12 : 0.89;
+
     setTransform(prev => {
-      const newScale = Math.min(5, Math.max(0.2, prev.k * zoomFactor));
+      const newScale = Math.min(6, Math.max(0.15, prev.k * zoomFactor));
+      const newX = mouseX - (mouseX - prev.x) * (newScale / prev.k);
+      const newY = mouseY - (mouseY - prev.y) * (newScale / prev.k);
       return {
-        ...prev,
+        x: newX,
+        y: newY,
         k: newScale
       };
     });
