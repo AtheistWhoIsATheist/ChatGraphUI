@@ -15,10 +15,17 @@ import graphData from './data/graph-data.json';
 import { JournalEntry, Marginalia, ParadoxSynthesis, CorpusIngestionBatch } from './types';
 import { OntologyMap } from './components/OntologyMap';
 import { CorpusIntakeTool } from './components/CorpusIntakeTool';
+import { OccurrenceElevationBalanceView } from './components/Nihiltheism/OccurrenceElevationBalanceView';
+import { HyperMarkmapView } from './components/HyperMarkmap/HyperMarkmapView';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
-  const [activeAngView, setActiveAngView] = useState<AngView>('workspace');
+  const [activeAngView, setActiveAngView] = useState<AngView>(() => {
+    if (typeof window !== 'undefined' && (window.location.pathname.includes('hypermarkmap') || window.location.hash.includes('hypermarkmap'))) {
+      return 'hypermarkmap';
+    }
+    return 'workspace';
+  });
   const [gateMode, setGateMode] = useState<GateMode>('AUTO');
   const [messages, setMessages] = useState<any[]>([
     {
@@ -477,6 +484,16 @@ The void is ready. So am I.`,
           )}
           {activeAngView === 'academic' && (
             <AcademicPipelineView />
+          )}
+          {activeAngView === 'balance' && (
+            <OccurrenceElevationBalanceView
+              ingestionBatches={ingestionBatches}
+              onNavigateToTab={(tab) => setActiveAngView(tab as any)}
+              onSaveBatch={handleSaveBatch}
+            />
+          )}
+          {activeAngView === 'hypermarkmap' && (
+            <HyperMarkmapView />
           )}
         </motion.div>
       </AnimatePresence>

@@ -1,16 +1,39 @@
 import express from "express";
 import path from "path";
-import { createServer as createViteServer } from "vite";
+import multer from "multer";
 import { GoogleGenAI, Type } from "@google/genai";
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
+  });
+
+  // Multipart/form-data Corpus Upload Route
+  app.post("/api/corpus/upload", upload.single("file"), (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No file provided in form-data payload" });
+      }
+      const rawText = req.file.buffer.toString("utf-8");
+      const filename = req.file.originalname;
+      const size = req.file.size;
+      return res.json({
+        success: true,
+        filename,
+        size,
+        content: rawText,
+        message: `Successfully processed ${filename} (${(size / 1024).toFixed(1)} KB)`
+      });
+    } catch (uploadErr: any) {
+      console.error("Corpus upload processing error:", uploadErr);
+      return res.status(500).json({ error: uploadErr.message || "Failed to process uploaded corpus file" });
+    }
   });
 
 
@@ -189,6 +212,7 @@ Your task is to:
         rawContent,
         title: providedTitle,
         sourceType: providedSourceType,
+        claimType: providedClaimType,
         existingBatches = [],
       } = req.body;
 
@@ -454,6 +478,8 @@ ${rawContent.slice(0, 50000)}
           const chunkLines = c.text.split('\n').filter(l => l.trim().length > 15 && !l.startsWith('#'));
           chunkLines.slice(0, 3).forEach((lineStr, lIdx) => {
             const epistemicStatus = epistemicTaxonomy[(cIdx + lIdx) % epistemicTaxonomy.length];
+            const isElevation = /transcend|potential|timeless|sacred|form|kenosis|abgrund|sunyata|freedom|apophasis|eckhart|nishitani/i.test(lineStr);
+            const assignedClaimType = providedClaimType || (isElevation ? 'Elevation' : 'Occurrence');
             fallbackExtracts.push({
               id: `ext_${c.id}_${lIdx + 1}`,
               elementType: lIdx === 0 ? 'concept' : 'claim',
@@ -461,6 +487,8 @@ ${rawContent.slice(0, 50000)}
               thinker: lineStr.toLowerCase().includes('nietzsche') ? 'Nietzsche' : lineStr.toLowerCase().includes('heidegger') ? 'Heidegger' : lineStr.toLowerCase().includes('eckhart') ? 'Meister Eckhart' : 'Philosophical Text',
               tradition: 'Nihiltheism / Apophatics',
               epistemicStatus: epistemicStatus,
+              claimType: assignedClaimType,
+              occurrenceElevationLabel: assignedClaimType,
               chunkReference: c.id,
               provenance: `${filename} (${c.id})`,
             });
@@ -574,6 +602,17 @@ ${rawContent.slice(0, 50000)}
         };
       });
 
+      const rawExtracts = parsedData.extracts || fallbackExtracts;
+      const normalizedExtracts = rawExtracts.map((ext: any) => {
+        const isElev = /transcend|potential|timeless|sacred|form|kenosis|abgrund|sunyata|freedom|apophasis|eckhart|nishitani/i.test(ext.text || '');
+        const resolvedType = providedClaimType || ext.claimType || ext.occurrenceElevationLabel || (isElev ? 'Elevation' : 'Occurrence');
+        return {
+          ...ext,
+          claimType: resolvedType,
+          occurrenceElevationLabel: resolvedType
+        };
+      });
+
       const result = {
         batchId,
         timestamp,
@@ -585,7 +624,7 @@ ${rawContent.slice(0, 50000)}
         title: parsedData.title || providedTitle || filename,
         sourceType: parsedData.sourceType || providedSourceType || 'essay',
         chunks: finalChunks,
-        extracts: parsedData.extracts || [],
+        extracts: normalizedExtracts,
         issues: parsedData.issues || [],
         antiReificationAudits: completeAudits,
         boundarySignals: parsedData.boundarySignals || [],
@@ -831,6 +870,7 @@ Generate an 'Insight Prompt' for the user (e.g., 'You have discussed X and Y, bu
 
   // Vite middleware / Static serving
   if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true, hmr: false },
       appType: "spa",

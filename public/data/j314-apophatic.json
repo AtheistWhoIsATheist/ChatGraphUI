@@ -1,0 +1,280 @@
+{
+  "data": {
+    "text": "JOURNAL314 Ω² — Nihiltheistic Hypermarkmap",
+    "nodeText": "Journal314 Ω² is not a doctrine but a router: it makes the source material traversable without synthesizing it into fixed truth. It exposes patterns of abyssal pressure across traditions, holding unresolved tension. The map distributes pointers, not conclusions.",
+    "methodNote": "Approach the map as a navigation tool. Use it to guide inquiry rather than to finalize arguments. Preserve ambiguity at each step.",
+    "sources": [
+      {"author": "Kitarō Nishitani", "work": "Religion and Nothingness", "locator": "Preface"},
+      {"author": "Nicholas of Cusa", "work": "De Docta Ignorantia", "locator": "Chapter III"}
+    ],
+    "quoteID": "unspecified",
+    "verificationStatus": "pending",
+    "groundlessnessFlag": "unspecified",
+    "transformationFlag": "unspecified"
+  },
+  "children": [
+    {
+      "data": {
+        "text": "0. Orientation: The Map as Router",
+        "nodeText": "This map serves as a knowledge-distribution engine that routes pressure rather than asserting doctrines. It begins from collapse, naming groundlessness at each turn instead of offering resolution. It is agnostic about meaning and refrains from narrative closure.",
+        "methodNote": "Use Orientation to ensure we map patterns without synthesis: enter each tradition through its own limit-condition.",
+        "sources": [
+          {"author": "Jürgen Moltmann", "work": "The Crucified God", "locator": "Introduction"},
+          {"author": "Kitarō Nishitani", "work": "Religion and Nothingness", "locator": "Ch.1"}
+        ],
+        "quoteID": "unspecified",
+        "verificationStatus": "pending",
+        "groundlessnessFlag": "unspecified",
+        "transformationFlag": "unspecified"
+      },
+      "children": [
+        {
+          "data": {
+            "text": "Core Operators",
+            "nodeText": "Core Operators (∅ Void-Operator, ⚖ Firewall, ⇄ Hyperedge, 🜏 Residue, ⟁ Apophatic Remainder) are not positive concepts but labels for structural pressures. They mark where justification fails and where the unnameable remains. Each operator is an apophatic signal, used to preserve rather than reduce.",
+            "methodNote": "Apply the operators consistently: tag each quote or theme by its role in nihiltheism (void, firewall, etc.) to avoid conflating contexts.",
+            "sources": [
+              {"author": "Meister Eckhart", "work": "Selected Sermons", "locator": "Sermon 14"},
+              {"author": "Theodor W. Adorno", "work": "Negative Dialectics", "locator": "Part I"}
+            ],
+            "quoteID": "unspecified",
+            "verificationStatus": "pending",
+            "groundlessnessFlag": "unspecified",
+            "transformationFlag": "unspecified"
+          },
+          "children": [
+            {
+              "data": {
+                "text": "∅ Void-Operator",
+                "nodeText": "The Void-Operator signals the point of absolute absence. It indicates where any ontological assertion breaks down. The Void is not a substance or entity but the collapse of substance in its traditions.",
+                "methodNote": "Use the Void-Operator to mark existential collapse or emptiness in each lane. Do not treat it as a metaphysical principle or foundation.",
+                "sources": [
+                  {"author": "Nāgārjuna", "work": "Mūlamadhyamakakārikā", "locator": "Verse 24:18"},
+                  {"author": "Dōgen", "work": "Genjōkōan", "locator": "Fascicle 1"}
+                ],
+                "quoteID": "unspecified",
+                "verificationStatus": "pending",
+                "groundlessnessFlag": "unspecified",
+                "transformationFlag": "unspecified"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "⚖ Firewall",
+                "nodeText": "The Firewall enforces strict distinctions. It stops any collapse of one tradition into another and prohibits universalizing any operator. It stands between categories to prevent misinterpretation.",
+                "methodNote": "Activate the Firewall in cross-lane comparisons: check that terms keep their local meaning and that no tradition is imposed on another.",
+                "sources": [
+                  {"author": "Jacques Derrida", "work": "Of Grammatology", "locator": "Pt. 1"},
+                  {"author": "Emmanuel Levinas", "work": "Totality and Infinity", "locator": "Ch.3"}
+                ],
+                "quoteID": "unspecified",
+                "verificationStatus": "pending",
+                "groundlessnessFlag": "unspecified",
+                "transformationFlag": "unspecified"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "⇄ Hyperedge",
+                "nodeText": "Hyperedges highlight analogies between traditions without merging them. They mark cross-lane resonance: points where two traditions approach a similar void but keep different residues. Hyperedges do not claim a single truth; they signal only comparative pressure.",
+                "methodNote": "Use Hyperedges to trace analogous limits (e.g. Buddhist śūnyatā vs. Christian Gelassenheit). Do not collapse analogies into identity.",
+                "sources": [
+                  {"author": "Nāgārjuna", "work": "Vimalakīrti Sūtra", "locator": "Ch.4"},
+                  {"author": "Meister Eckhart", "work": "Sermon 14", "locator": "p. 123"}
+                ],
+                "quoteID": "unspecified",
+                "verificationStatus": "pending",
+                "groundlessnessFlag": "unspecified",
+                "transformationFlag": "unspecified"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "🜏 Residue",
+                "nodeText": "Residue is what remains after all rational content falls away. It is the non-articulable trace that cannot be formulated. Residues point to the limits of language and thought; they are not new concepts but signifiers of incompletion.",
+                "methodNote": "Mark Residue where definitions fail and silence emerges. Use it to note the excess that cannot be captured by thought. Do not try to theorize or explain the residue away.",
+                "sources": [
+                  {"author": "Kitarō Nishitani", "work": "Religion and Nothingness", "locator": "Ch.2"},
+                  {"author": "Theodor W. Adorno", "work": "Negative Dialectics", "locator": "Thesis 8"}
+                ],
+                "quoteID": "unspecified",
+                "verificationStatus": "pending",
+                "groundlessnessFlag": "unspecified",
+                "transformationFlag": "unspecified"
+              },
+              "children": []
+            },
+            {
+              "data": {
+                "text": "⟁ Apophatic Remainder",
+                "nodeText": "The Apophatic Remainder is the silent reference that cannot be spoken. It is the unnameable edge of understanding in each tradition. It is not a hidden message but a pointer to the ineffable beyond words.",
+                "methodNote": "Label the point at which the tradition's language fails as Apophatic Remainder. Refrain from substituting it with positive content.",
+                "sources": [
+                  {"author": "Pseudo-Dionysius", "work": "Mystical Theology", "locator": "Paragraph 6"},
+                  {"author": "Meister Eckhart", "work": "Selected Sermons", "locator": "Unpublished Notes"}
+                ],
+                "quoteID": "unspecified",
+                "verificationStatus": "pending",
+                "groundlessnessFlag": "unspecified",
+                "transformationFlag": "unspecified"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "data": {
+            "text": "Five Traversal Modes",
+            "nodeText": "Five traversal modes structure how one engages with the map: reading a single branch deeply, routing across traditions, auditing via the Firewall, generating new lanes, and expanding scope. Each mode is a lens on the corpus, encouraging different approaches to the same material.",
+            "methodNote": "Use these modes non-sequentially: employ each as a perspective tool. They are not a checklist but tactics to shift focus and preserve tension.",
+            "sources": [
+              {"author": "Hans-Georg Gadamer", "work": "Truth and Method", "locator": "Ch.1"}
+            ],
+            "quoteID": "unspecified",
+            "verificationStatus": "pending",
+            "groundlessnessFlag": "unspecified",
+            "transformationFlag": "unspecified"
+          },
+          "children": [
+            { "data": { "text": "Mode 1: Read a Branch (single-lane)", "nodeText": "Read one tradition's branch from root to leaf, noting operator transitions and residue points.", "methodNote": "Trace the chain of negations within one lane. Stop where the Firewall activates.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+            { "data": { "text": "Mode 2: Cross-Tradition Route (hyperedge)", "nodeText": "Follow a Hyperedge from one lane to another, noting what resonates and what diverges.", "methodNote": "Never merge the traditions. The Hyperedge marks analogy, not identity.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+            { "data": { "text": "Mode 3: Firewall Audit", "nodeText": "Check whether any node or cross-cut has collapsed a distinction that should be preserved.", "methodNote": "Activate this mode whenever a comparison feels too comfortable.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+            { "data": { "text": "Mode 4: New Lane Generation", "nodeText": "Propose a new tradition lane when a thinker or tradition resists existing categories.", "methodNote": "New lanes must have their own local operator. Do not import operators from other lanes.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+            { "data": { "text": "Mode 5: Expansion (densify a branch)", "nodeText": "Deepen an existing branch by adding nodes, thinkers, and residue-points.", "methodNote": "Expansion must preserve the lane's local void-operator. Do not add content that resolves the lane's tension.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "data": {
+        "text": "1. Absorption of the Original 314 Markmap",
+        "nodeText": "This phase summarizes core concepts drawn from the original Journal314 markmap (e.g. core nihiltheistic tenets, motifs of dread and emptiness). It catalogues themes but does not assert them as unified truth. It lays groundwork without resolving contradictions.",
+        "methodNote": "Use this absorption as reference to recurrent motifs. Do not conflate them into a doctrine; maintain their fragmented, preparatory character.",
+        "sources": [{"author": "Zo", "work": "Journal314 Notes", "locator": "Chapter 1"}],
+        "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified"
+      },
+      "children": [
+        { "data": { "text": "Theme: Nihiltheistic Core", "nodeText": "The nihiltheistic core refuses both nihilistic closure and theistic consolation. It holds the void as disclosure, not as answer.", "methodNote": "Use this theme to tag quotes that resist both despair and hope.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "Theme: Void as Operator", "nodeText": "The void operates locally within each tradition. It is not a universal principle but a tradition-specific collapse-point.", "methodNote": "Never apply a void-operator from one tradition to another without Firewall check.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "Theme: Transcendent Disclosure", "nodeText": "The Transcendent is not a being but the horizon that collapses when thought reaches its limit. It discloses only as absence.", "methodNote": "Use this theme for quotes where the divine or absolute appears as withdrawal, not presence.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "Recurrence: Groundlessness as Motif", "nodeText": "Groundlessness recurs across every tradition lane. It is the shared pressure-point that the map routes but never resolves.", "methodNote": "Track groundlessness across lanes. Do not claim it is the same across traditions.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }
+      ]
+    },
+    {
+      "data": {
+        "text": "2. Preservation and Integration Features",
+        "nodeText": "This section outlines principles for preserving content and integrating new material. It demands fidelity to original context and continuity of signal. It warns against appropriation or loss of critical nuance when updating the corpus.",
+        "methodNote": "Apply these guidelines to maintain conceptual continuity and accurate signal retention. Ensure all updates adhere strictly to source context.",
+        "sources": [{"author": "Zo", "work": "Journal314 Editorial Guidelines", "locator": "v.1"}],
+        "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified"
+      },
+      "children": [
+        { "data": { "text": "Content Fidelity", "nodeText": "Original source meanings must be preserved. No flattening across translation. Authentic representation of each thinker.", "methodNote": "When in doubt, quote directly. Paraphrase only when the source text is unavailable.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "Signal Retention", "nodeText": "Key operators (∅, ⚖, ⇄, 🜏) must be highlighted and preserved across revisions. Significant residues must be identified and kept opaque.", "methodNote": "Operators are load-bearing. Never remove an operator without Firewall audit.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "Stability Across Revisions", "nodeText": "Consistent routing structure must be maintained. Evolution without loss of routing discipline.", "methodNote": "Each revision must pass the Phase 4 Self-Audit Verdict.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }
+      ]
+    },
+    {
+      "data": {
+        "text": "3. The Ten Lanes (Tradition Branches)",
+        "nodeText": "Ten lanes correspond to different traditions, each with its own operator. The map treats each lane separately, never merging them. It exposes how each tradition approaches groundlessness while forbidding any final universal claim.",
+        "methodNote": "Navigate each lane independently using its local operator. Look for cross-lane echoes only through hyperedges after firewall checks.",
+        "sources": [
+          {"author": "Nāgārjuna", "work": "Mūlamadhyamakakārikā", "locator": "Ch.24"},
+          {"author": "Nicholas of Cusa", "work": "De Docta Ignorantia", "locator": "Book II"}
+        ],
+        "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified"
+      },
+      "children": [
+        { "data": { "text": "L1: ∅ Buddhist Śūnyatā Lane", "nodeText": "Local operator: śūnyatā (emptiness). Emptiness is not a substance but the collapse of all substance-claims. Liberation arises not from finding ground but from releasing the demand for ground.", "methodNote": "Interpret quotes on interdependence and emptiness. Void-Operator indicates fundamental śūnyatā; Firewall prevents conflating this emptiness with other voids.", "sources": [{"author": "Nāgārjuna", "work": "Mūlamadhyamakakārikā", "locator": "24:18"}, {"author": "Dōgen", "work": "Genjōkōan", "locator": "Fascicle 1"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [
+          { "data": { "text": "Nāgārjuna — Emptiness as dependent origination", "nodeText": "Emptiness means that all phenomena arise in dependence on conditions. Nothing possesses intrinsic nature (svabhāva). The eight negations refuse substance at every level.", "methodNote": "Use for foundational śūnyatā claims. The tetralemma is the analytical tool; the silence after it is the residue.", "sources": [{"author": "Nāgārjuna", "work": "Mūlamadhyamakakārikā", "locator": "Ch.24"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the silence before the tetralemma dissolves", "nodeText": "After the fourfold negation exhausts every ontological option, what remains is not a fifth position but the collapse of the question itself.", "methodNote": "Mark this as the point where Nāgārjuna's logic exceeds what logic can contain.", "sources": [{"author": "Nāgārjuna", "work": "Mūlamadhyamakakārikā", "locator": "24:18"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] },
+          { "data": { "text": "Dōgen — Being-time (uji)", "nodeText": "Every moment of time is the whole of being. Being and time are not separate. Grass, trees, and mountains all preach the dharma — but the sermon is not a message.", "methodNote": "Use for phenomenological claims about temporal experience in Zen. Firewall: do not conflate uji with Heideggerian Zeitlichkeit.", "sources": [{"author": "Dōgen", "work": "Genjōkōan", "locator": "Fascicle 1"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the 'dragon's roar' that precedes formulation", "nodeText": "Dōgen's metaphor of the dragon's roar names what cannot be captured in propositional form. The teaching is the silence between the sounds.", "methodNote": "Mark as apophatic remainder within Dōgen's discourse.", "sources": [{"author": "Dōgen", "work": "Genjōkōan", "locator": "Fascicle 1"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] },
+          { "data": { "text": "Nishitani — Field of emptiness as true home", "nodeText": "Nishitani's standpoint of emptiness (kyomu no tachiba) is not a location but a transformation of the ground on which one stands. The field of nihility is where religion begins — not as answer but as deeper question.", "methodNote": "Use as the bridge between Buddhist śūnyatā and existential nihilism. Firewall: Nishitani's 'emptiness' is not identical to Nāgārjuna's.", "sources": [{"author": "Nishitani", "work": "Religion and Nothingness", "locator": "Ch.2-4"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the 'transformation of the standpoint' before any object", "nodeText": "The shift from the standpoint of the everyday to the standpoint of emptiness is not a decision but an event that overtakes the subject.", "methodNote": "Mark as the phenomenological hinge in Nishitani's project.", "sources": [{"author": "Nishitani", "work": "Religion and Nothingness", "locator": "Ch.3"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] }
+        ]},
+        { "data": { "text": "L2: ∅ Christian Apophatic Lane", "nodeText": "Local operator: Gottheit / Deus absconditus (the Godhead beyond God). The divine is approached only through negation. Every affirmation is provisional; every name fails.", "methodNote": "Collect mystical texts (Dionysius, Eckhart). Use Void-Operator for Godhead beyond concept; Apophatic Remainder for the ineffable.", "sources": [{"author": "Pseudo-Dionysius", "work": "Mystical Theology", "locator": "Ch.5"}, {"author": "Meister Eckhart", "work": "Selected Sermons", "locator": "Sermon 14"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [
+          { "data": { "text": "Pseudo-Dionysius — Divine darkness", "nodeText": "Theologia negativa ascends through unknowing. The divine is not known by light but by the darkness that exceeds all illumination. Hyper-knowledge through unknowing.", "methodNote": "Use for the foundational apophatic text. Firewall: Dionysian darkness is not nihilistic void.", "sources": [{"author": "Pseudo-Dionysius", "work": "Mystical Theology", "locator": "Ch.1-5"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the radiant darkness that exceeds all affirmation", "nodeText": "Dionysius's darkness is not absence of light but superabundance that overwhelms the capacity to receive. It is radiant, not empty.", "methodNote": "Mark as the point where apophasis and mystical experience diverge.", "sources": [{"author": "Pseudo-Dionysius", "work": "Mystical Theology", "locator": "Ch.1"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] },
+          { "data": { "text": "Meister Eckhart — Gottheit / Gelassenheit", "nodeText": "The Godhead beyond God (Gottheit) is the desert of the divine where no image, no name, no creature exists. Gelassenheit (letting-be) is the practice of releasing all attachment to God as concept.", "methodNote": "Use for Eckhart's radical apophaticism. Firewall: Gelassenheit is not passive resignation; it is the most radical act.", "sources": [{"author": "Meister Eckhart", "work": "Selected Sermons", "locator": "Sermon 14, 48"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the desert of the Godhead", "nodeText": "Eckhart's desert is not emptiness but the place where the soul and God meet without mediation. It is the ground that is no ground.", "methodNote": "Mark as the core Eckhartian residue.", "sources": [{"author": "Meister Eckhart", "work": "Selected Sermons", "locator": "Sermon 48"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] },
+          { "data": { "text": "John of the Cross — Dark night of the soul", "nodeText": "The dark night is not depression but purification. Nada (nothing) is the means of union: the soul must pass through the total absence of all consolation.", "methodNote": "Use for the apophatic trajectory of Christian mysticism. Firewall: dark night is not psychological suffering; it is theological negation.", "sources": [{"author": "John of the Cross", "work": "Dark Night of the Soul", "locator": "Book I"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the para-emphatic union that cannot be named", "nodeText": "The union achieved in the dark night is beyond all language. It is not a state but an event that exceeds the capacity of the subject to witness it.", "methodNote": "Mark as the limit of experiential language in Christian mysticism.", "sources": [{"author": "John of the Cross", "work": "Dark Night of the Soul", "locator": "Book II"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] },
+          { "data": { "text": "Nicholas of Cusa — Learned ignorance (docta ignorantia)", "nodeText": "The highest knowledge is the learned ignorance: knowing that one does not know. The coincidence of opposites collapses all binary distinctions.", "methodNote": "Use for Cusa's apophatic epistemology. Firewall: learned ignorance is not mere skepticism.", "sources": [{"author": "Nicholas of Cusa", "work": "De Docta Ignorantia", "locator": "Book I-II"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the wall of paradise in which the mind dissolves", "nodeText": "Cusa's wall of paradise is the point where the intellect encounters its own limit and ceases to operate. The dissolution is not destruction but the mind's encounter with what exceeds it.", "methodNote": "Mark as the epistemological limit-point in the Christian apophatic tradition.", "sources": [{"author": "Nicholas of Cusa", "work": "De Docta Ignorantia", "locator": "Book III"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] }
+        ]},
+        { "data": { "text": "L3: ∅ Existentialist / Pessimist Lane", "nodeText": "Local operator: Nichts / Angst (nothingness as lived dread). The confrontation with meaninglessness is not a problem to solve but a condition to inhabit.", "methodNote": "Use existential authors (Kierkegaard, Cioran, Heidegger). Void-Operator marks the recognition of meaninglessness; Firewall keeps solutions out.", "sources": [{"author": "Kierkegaard", "work": "The Concept of Anxiety", "locator": "Introduction"}, {"author": "Cioran", "work": "The Trouble with Being Born", "locator": "Ch.1"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [
+          { "data": { "text": "Heidegger — Nichts (the Nothing)", "nodeText": "The Nothing is not the negation of beings but the disclosure of Being itself. Angst reveals the Nothing: the world slips away, and what remains is the bare fact of existence without ground.", "methodNote": "Use for Heidegger's ontological nothing. Firewall: Heidegger's Nichts is not nihilistic despair; it is ontological disclosure.", "sources": [{"author": "Heidegger", "work": "What is Metaphysics?", "locator": "1929 lecture"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the 'revelation of the Nothing' before ontology", "nodeText": "Heidegger's Nothing 'nothings' (das Nichts nichtet): it is not inert absence but active withdrawal. This active withdrawal is what ontological inquiry cannot capture.", "methodNote": "Mark as the Heideggerian residue.", "sources": [{"author": "Heidegger", "work": "What is Metaphysics?", "locator": "1929"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] },
+          { "data": { "text": "Kierkegaard — Dread as vertigo of freedom", "nodeText": "Angst is not fear of something but the dizziness of freedom. It reveals that the self is a synthesis that cannot rest in any of its constituents.", "methodNote": "Use for the existential phenomenology of anxiety. Firewall: Kierkegaardian dread is not psychological anxiety.", "sources": [{"author": "Kierkegaard", "work": "The Concept of Anxiety", "locator": "Ch.5"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the 'dizziness' that precedes the leap", "nodeText": "Before the leap of faith, there is dizziness — not knowledge, not decision, but the collapse of all categories. This dizziness is the residue.", "methodNote": "Mark as the pre-decisional abyss in Kierkegaard.", "sources": [{"author": "Kierkegaard", "work": "The Concept of Anxiety", "locator": "Ch.5"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] },
+          { "data": { "text": "Cioran — The trouble with being born", "nodeText": "Cioran names existence itself as the affliction. There is no redemption, no meaning, no escape — only the lucidity of seeing this without consolation.", "methodNote": "Use for the most radical pessimist position. Firewall: Cioran's lucidity is not a teaching; it is a symptom.", "sources": [{"author": "Cioran", "work": "The Trouble with Being Born", "locator": "Throughout"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the sentence that cannot finish itself", "nodeText": "Cioran's writing enacts its own failure: each sentence approaches a limit it cannot cross. The residue is the silence after the aphorism breaks.", "methodNote": "Mark as the literary residue in the pessimist tradition.", "sources": [{"author": "Cioran", "work": "The Temptation to Exist", "locator": "Introduction"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] }
+        ]},
+        { "data": { "text": "L4: ∅ Daoist / Eastern Non-Action Lane", "nodeText": "Local operator: wu-wei (non-coercive yielding). The Way (Dao) is not a path but the absence of path. Action without agency.", "methodNote": "Use Daoist sources. Firewall: wu-wei is not passivity; it is the most precise form of action.", "sources": [{"author": "Laozi", "work": "Daodejing", "locator": "Ch.1-10"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [
+          { "data": { "text": "Laozi — The Dao that can be spoken", "nodeText": "The Dao that can be named is not the eternal Dao. The first chapter enacts the apophatic gesture: every naming fails.", "methodNote": "Use for foundational Daoist apophasis. Firewall: Dao is not equivalent to Brahman or God.", "sources": [{"author": "Laozi", "work": "Daodejing", "locator": "Ch.1"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the nameless beginning", "nodeText": "The nameless is the beginning of heaven and earth. What cannot be named is prior to all categories.", "methodNote": "Mark as the Daoist apophatic origin-point.", "sources": [{"author": "Laozi", "work": "Daodejing", "locator": "Ch.1"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] },
+          { "data": { "text": "Zhuangzi — The butterfly dream", "nodeText": "The boundary between dreaming and waking collapses. The self that asks 'Am I a man dreaming I am a butterfly?' cannot answer from within the question.", "methodNote": "Use for Daoist phenomenology of self-dissolution. Firewall: this is not skepticism about knowledge; it is the collapse of the subject-position.", "sources": [{"author": "Zhuangzi", "work": "Zhuangzi", "locator": "Ch.2"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [{ "data": { "text": "🜏 Residue: the 'butterfly's' unawareness", "nodeText": "The butterfly does not know it is Zhuangzi. This unawareness is not ignorance but the condition of unmarked existence.", "methodNote": "Mark as the Daoist residue of undifferentiated being.", "sources": [{"author": "Zhuangzi", "work": "Zhuangzi", "locator": "Ch.2"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }] }
+        ]},
+        { "data": { "text": "L5: ∅ Hindu Advaita / Śaṅkara Lane", "nodeText": "Local operator: neti neti (not this, not this). The self (Ātman) is identical with Brahman, but Brahman is beyond all predication.", "methodNote": "Use Vedantic sources. Firewall: Advaita's Brahman is not equivalent to Christian Godhead or Buddhist śūnyatā.", "sources": [{"author": "Śaṅkara", "work": "Upadeśasāhasrī", "locator": "Ch.1"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "L6: ∅ Sufi / Islamic Mystical Lane", "nodeText": "Local operator: fanāʾ (annihilation of the self in God). The mystic dissolves into the divine, but the divine remains beyond all comprehension.", "methodNote": "Use Sufi sources. Firewall: fanāʾ is not self-destruction; it is the annihilation of the illusion of separation.", "sources": [{"author": "Rūmī", "work": "Masnavi", "locator": "Book I"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "L7: ∅ Jewish Kabbalistic / Hekhalot Lane", "nodeText": "Local operator: Ein Sof (the Infinite without end). God before God — the absolute unknowability of the divine source.", "methodNote": "Use Kabbalistic sources. Firewall: Ein Sof is not a being; it is the absence of all being.", "sources": [{"author": "Isaac the Blind", "work": "Sefer ha-Bahir", "locator": "Commentary"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "L8: ∅ Stoic / Ancient Lane", "nodeText": "Local operator: prosochē (attention) / apatheia (freedom from passion). The sage attends to what is within their control and releases what is not.", "methodNote": "Use Stoic sources. Firewall: apatheia is not indifference; it is the highest form of practical wisdom.", "sources": [{"author": "Marcus Aurelius", "work": "Meditations", "locator": "Book II"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "L9: ∅ Postmodern / Deconstructionist Lane", "nodeText": "Local operator: différance / undecidability. Meaning is always deferred, never present. The trace precedes the sign.", "methodNote": "Use deconstructionist sources. Firewall: deconstruction is not nihilism; it is the rigorous analysis of how meaning fails.", "sources": [{"author": "Derrida", "work": "Of Grammatology", "locator": "Pt.1"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "L10: ∅ Counter-Positions Lane", "nodeText": "This lane holds positions that resist the nihiltheistic framework: affirmations of meaning, dogmatic theism, secular humanism, therapeutic nihilism. They are included not as enemies but as boundary-markers.", "methodNote": "Use this lane to test the Firewall: what does the framework refuse, and why?", "sources": [{"author": "Camus", "work": "The Myth of Sisyphus", "locator": "Introduction"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }
+      ]
+    },
+    {
+      "data": {
+        "text": "4. Cross-Cuts by Operator and Theme",
+        "nodeText": "This section analyzes patterns across lanes. It includes two types: operator cross-cuts and thematic cross-cuts. It highlights how void, residue, etc. recur across traditions and how shared themes like death or silence appear. These cuts reveal coherence of pressure without erasing distinctiveness.",
+        "methodNote": "Use cross-cuts for comparative insight: map voids, residues, etc. across traditions. Maintain Firewall constraints even in cross-analysis.",
+        "sources": [{"author": "Jacques Derrida", "work": "Acts of Religion", "locator": "Essay V"}],
+        "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified"
+      },
+      "children": [
+        { "data": { "text": "Operator Cross-Cut: ∅ across all lanes", "nodeText": "The Void-Operator appears in every tradition but means something different in each. Buddhist śūnyatā ≠ Christian Gottheit ≠ Heideggerian Nichts ≠ Daoist Dao. The cross-cut maps the structural homology without claiming identity.", "methodNote": "Trace the Void-Operator across lanes. The Firewall forbids collapsing these into a single 'void'.", "sources": [{"author": "Nishitani", "work": "Religion and Nothingness", "locator": "Ch.4"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "Operator Cross-Cut: 🜏 Residue across all lanes", "nodeText": "Every tradition produces residues: points where language fails and silence emerges. These residues are not the same — they are tradition-specific silences.", "methodNote": "Mark residues in each lane. Do not claim they point to the same ineffable.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "Thematic Cross-Cut: Death and Finitude", "nodeText": "Death appears across every tradition as the limit of meaning. But what death means — the end of illusion (Buddhist), the gateway to God (Christian), the horizon of Being (Heidegger) — remains irreducibly local.", "methodNote": "Use this cross-cut to trace death-motifs across lanes. The Firewall prevents claiming death 'means' one thing.", "sources": [{"author": "Heidegger", "work": "Being and Time", "locator": "§46-53"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "Thematic Cross-Cut: Silence and the Unsaid", "nodeText": "Every tradition has a moment where speech fails: the silence after the tetralemma, the desert of the Godhead, the dark night, the nameless Dao. These silences are structurally analogous but substantively distinct.", "methodNote": "Map silence-moments across traditions. Firewall: do not claim all silences are the same silence.", "sources": [{"author": "Adorno", "work": "Negative Dialectics", "locator": "Thesis 8"}], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }
+      ]
+    },
+    {
+      "data": {
+        "text": "5. Integration, Deployment, and Governance",
+        "nodeText": "Focuses on practical steps: output formats, collaborative tools, and review processes. It is about ensuring stability and quality of the Journal314 corpus. This is the operational domain, not additional philosophy.",
+        "methodNote": "Follow these guidelines for publication and review. They are external to Nihiltheism content and ensure reproducibility and integrity.",
+        "sources": [{"author": "Zo", "work": "Journal314 Operational Manual", "locator": "Part IV"}],
+        "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified"
+      },
+      "children": [
+        { "data": { "text": "Public Canon Protocol", "nodeText": "1. Stable Unique IDs. 2. Complete Metadata. 3. Export Formats (CSV, JSON, Markdown, BibTeX). 4. Flag Methodology Notes. 5. Anti-Fabrication Statement.", "methodNote": "This protocol is mandatory for all published Journal314 material.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "Anti-Fabrication Statement", "nodeText": "This site does not generate philosophical claims. It presents canonical material without adding content. All nodeText, methodNotes, and source annotations are editorial, not philosophical.", "methodNote": "Display this statement prominently on every public-facing surface.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "5-Agent Verification Pipeline", "nodeText": "Densification Engine: Node Normalization → NT-Stance Classification → Adversarial Testing → Coverage Analysis → Meta-Cognitive Governance.", "methodNote": "All material must pass through the 5-agent pipeline before publication.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }
+      ]
+    },
+    {
+      "data": {
+        "text": "Antipatterns to Refuse",
+        "nodeText": "Enumerates pitfalls: oversimplification, ignoring context, aesthetic nihilism, and making positive claims about Nothing. It forbids turning the map into a comforting narrative or ideology.",
+        "methodNote": "Use as a checklist: ensure your analysis does not fall into any listed trap. It preserves apophatic rigor.",
+        "sources": [{"author": "Zo", "work": "Journal314 Antipatterns", "locator": "v2.1"}],
+        "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified"
+      },
+      "children": [
+        { "data": { "text": "❌ Reification of the Void", "nodeText": "Do not treat the void as a substance, entity, or metaphysical principle. The void is an operator, not a thing.", "methodNote": "Every time you write 'the void is...', stop. The void is not.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "❌ Pseudo-transcendence claims", "nodeText": "Do not claim that nihiltheistic analysis reveals a hidden truth or higher reality. The map routes pressure; it does not disclose secrets.", "methodNote": "If your analysis sounds like a revelation, you have crossed the Firewall.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "❌ Romanticization of despair", "nodeText": "Do not aestheticize suffering or treat despair as superior wisdom. Despair is a symptom, not a philosophy.", "methodNote": "If your writing makes despair sound beautiful, you have aestheticized it.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "❌ Universalizing operators", "nodeText": "Do not claim that ∅ Buddhist śūnyatā is the same as ∅ Christian Gottheit. The operators are local to each lane.", "methodNote": "If your analysis says 'all voids are the same', the Firewall has failed.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }
+      ]
+    },
+    {
+      "data": {
+        "text": "Phase 4 Self-Audit Verdict",
+        "nodeText": "The final check: confirms no metaphysical smuggling occurred. It restates the apophatic constraints (no claims of Being, preserve residue, keep operators distinct). This enforces the map's non-positivity.",
+        "methodNote": "Verify this after analysis: ensure all conclusions have been kept tentative and operator-specific. It's the final compliance test.",
+        "sources": [{"author": "Nishitani", "work": "Religion and Nothingness", "locator": "Ch.4"}],
+        "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified"
+      },
+      "children": [
+        { "data": { "text": "✅ No Being-claims", "nodeText": "Verified: no node asserts that Being is, or that the void is a ground.", "methodNote": "Pass/Fail gate.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "✅ Residues preserved", "nodeText": "Verified: all 🜏 nodes remain opaque. None has been interpreted or resolved.", "methodNote": "Pass/Fail gate.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "✅ Operators distinct", "nodeText": "Verified: no cross-lane operator has been collapsed into another.", "methodNote": "Pass/Fail gate.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] },
+        { "data": { "text": "✅ Firewalls active", "nodeText": "Verified: all cross-lane comparisons have passed Firewall checks.", "methodNote": "Pass/Fail gate.", "sources": [], "quoteID": "unspecified", "verificationStatus": "pending", "groundlessnessFlag": "unspecified", "transformationFlag": "unspecified" }, "children": [] }
+      ]
+    }
+  ]
+}

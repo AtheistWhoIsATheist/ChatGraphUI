@@ -1,5 +1,38 @@
 export type AutopsyLens = 'structural' | 'doctrinal' | 'rhetorical' | 'tripartite';
 
+export type EpistemicStatusTag =
+  | 'Axiomatic Invariant'
+  | 'Phenomenological Datum'
+  | 'Dialectical Synthesis'
+  | 'Boundary Operator'
+  | 'Horizon-Bound / Unverifiable';
+
+export interface ComparativePhilosopherEntry {
+  philosopher: string;
+  tradition: string;
+  locus: string;
+  constructiveResonance: string;
+  nonEquivalenceRemainder: string;
+  epistemicTag: EpistemicStatusTag;
+}
+
+export interface ConstructiveElevationSynthesis {
+  synthesizedElevationTheorem: string;
+  boundaryMechanism: string;
+  eideticPotentiality: string;
+  actionableHeuristic: string;
+}
+
+export interface OccurrenceVsElevationBreakdown {
+  occurrenceTrap: string;
+  occurrenceDiagnosis?: string;
+  elevationResolution: string;
+  empiricalScore: number;
+  elevationScore: number;
+  ratio: number;
+  statusBadge: string;
+}
+
 export interface PhilocrashPhase1 {
   primaryTarget: string;
   corePillars: { title: string; explanation: string }[];
@@ -47,6 +80,8 @@ export interface PhilocrashPhase4 {
     invariantResolution: string;
   };
   asymptoticInvariantHold: string;
+  constructiveSynthesis: ConstructiveElevationSynthesis;
+  occurrenceVsElevation: OccurrenceVsElevationBreakdown;
 }
 
 export interface MetricAutopsyProfile {
@@ -59,10 +94,25 @@ export interface MetricAutopsyProfile {
   tensorFormula: string;
   defaultLens: 'structural' | 'doctrinal' | 'rhetorical';
   correlatedGraphNodeId: string;
+  epistemicStatus: EpistemicStatusTag;
+  comparativePhilosophers: ComparativePhilosopherEntry[];
   phase1: PhilocrashPhase1;
   phase2: PhilocrashPhase2;
   phase3: PhilocrashPhase3;
   phase4: PhilocrashPhase4;
+}
+
+export interface DifferentialPairwiseProfile {
+  pairKey: string;
+  metricAId: string;
+  metricBId: string;
+  title: string;
+  divergenceVector: string;
+  covarianceRatio: number;
+  constructiveSynthesisIndex: number;
+  crossInterferenceDiagnosis: string;
+  synthesizedTheorem: string;
+  dialecticalResolution: string;
 }
 
 export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = {
@@ -76,6 +126,65 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
     tensorFormula: 'Δtotal = ∮ (∇λ ⊗ ρonto) · dθapoph + ∥δgap∥',
     defaultLens: 'structural',
     correlatedGraphNodeId: 'void',
+    epistemicStatus: 'Axiomatic Invariant',
+    comparativePhilosophers: [
+      {
+        philosopher: 'Nishitani Keiji',
+        tradition: 'Kyoto School Zen Ontology',
+        locus: 'Religion and Nothingness, Ch. III (Nihilism and Śūnyatā)',
+        constructiveResonance: 'Concurs that relative nihilism must be radicalized into absolute Emptiness (Śūnyatā) to dissolve existential despair into unconditioned affirmation.',
+        nonEquivalenceRemainder: 'Nishitani roots Emptiness in Mahāyāna non-duality and Pratītyasamutpāda; Nihiltheism formulates an operational differential tensor (Δtotal) with invariant asymptotic boundaries.',
+        epistemicTag: 'Dialectical Synthesis'
+      },
+      {
+        philosopher: 'Meister Eckhart',
+        tradition: 'Rhineland Apophatic Mysticism',
+        locus: 'German Sermons, Sermon 52 (Beati pauperes spiritu)',
+        constructiveResonance: 'Demands radical kenosis: the soul must abandon even "God" as a conceptual idol to inhabit the silent desert of the Gottheit (the divine groundless ground).',
+        nonEquivalenceRemainder: 'Eckhart assumes an ultimate mystical union (unio mystica) with the unmanifest divine; Nihiltheism refuses metaphysical reunion, treating the Void as an unconditioned clearing.',
+        epistemicTag: 'Boundary Operator'
+      },
+      {
+        philosopher: 'Nāgārjuna',
+        tradition: 'Madhyamaka Buddhism',
+        locus: 'Mūlamadhyamakakārikā XXIV.18',
+        constructiveResonance: 'Employs systematic tetralemma (catuṣkoṭi) to demonstrate that all entities lack intrinsic essence (svabhāva), clearing the field for dependent arising.',
+        nonEquivalenceRemainder: 'Nāgārjuna’s target is soteriological cessation of duḥkha; Nihiltheism applies variance topology to bridge academic metaphysics and aesthetic contemplation of the abyss.',
+        epistemicTag: 'Axiomatic Invariant'
+      },
+      {
+        philosopher: 'Emil Cioran',
+        tradition: 'Tragic Pessimism & Aphoristic Nihilism',
+        locus: 'The Trouble with Being Born (Aphorisms on Birth)',
+        constructiveResonance: 'Shares the acute, unsparing diagnostic eye for the absurdity of existence and the tragic vanity of human ideological edifices.',
+        nonEquivalenceRemainder: 'Cioran remains trapped in passive melancholic paralysis; Nihiltheism enacts J314 Elevation—transmuting nothingness into creative, sacred freedom.',
+        epistemicTag: 'Phenomenological Datum'
+      },
+      {
+        philosopher: 'Sextus Empiricus',
+        tradition: 'Pyrrhonean Skepticism',
+        locus: 'Outlines of Pyrrhonism I.12 (Isostheneia & Epoché)',
+        constructiveResonance: 'Suspension of judgment (epoché) through equipollence of opposing arguments strips dogmatic weight from conceptual systems.',
+        nonEquivalenceRemainder: 'Pyrrhonism aims for quietist tranquility (ataraxia) by conforming to ordinary life; Nihiltheism demands transformative encounter with the groundless ontological limit.',
+        epistemicTag: 'Boundary Operator'
+      },
+      {
+        philosopher: 'Albert Camus',
+        tradition: 'Absurdist Phenomenological Existentialism',
+        locus: 'The Myth of Sisyphus (An Absurd Reasoning)',
+        constructiveResonance: 'Affirms that lucid encounter with the silence of the cosmos requires living without appeal, refusing the leap of religious or intellectual suicide.',
+        nonEquivalenceRemainder: 'Camus grounds the absurd in anthropomorphic friction (man longing for clarity vs. silent universe); Nihiltheism uncovers the Void as an objective, sacred ontological field.',
+        epistemicTag: 'Phenomenological Datum'
+      },
+      {
+        philosopher: 'Plato',
+        tradition: 'Classical Eidetic Metaphysics',
+        locus: 'Republic VI (Form of the Good / Epekeina tes ousias) & Phaedo',
+        constructiveResonance: 'Reveals that once contingent sensory occurrence is stripped away, consciousness encounters an otherworldly realm of timeless, invariant structural clarity.',
+        nonEquivalenceRemainder: 'Plato hypostasizes the Forms as eternal substantial substances in a celestial hierarchy; Nihiltheism understands this liminal space as pure potentiality arising from absolute groundlessness.',
+        epistemicTag: 'Horizon-Bound / Unverifiable'
+      }
+    ],
     phase1: {
       primaryTarget: 'Substantialist ontology and the dogmatic presumption that reality can be grounded in a foundational positive essence.',
       corePillars: [
@@ -205,7 +314,21 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
         aporia: 'Silence cannot defend itself against dogmatism; language cannot utter the Void without betraying it.',
         invariantResolution: 'Rhetoric is deployed as a Wittgensteinian ladder or Nagarjunian raft: an self-consuming fire that burns away its own propositions once understanding has been awakened.'
       },
-      asymptoticInvariantHold: 'Stabilized at θ = 0.18: At this critical boundary, ideological densification is systematically minimized, allowing active negation to function as an unconditioned vector of clarity.'
+      asymptoticInvariantHold: 'Stabilized at θ = 0.18: At this critical boundary, ideological densification is systematically minimized, allowing active negation to function as an unconditioned vector of clarity.',
+      constructiveSynthesis: {
+        synthesizedElevationTheorem: 'Theorem of Integral Variance: Δtotal functions not as a descriptive metric of ontological substance, but as an operational boundary operator that maps cognitive displacement from the unconditioned zero-point, transmuting conceptual friction into an encounter with pure potentiality.',
+        boundaryMechanism: 'De-reifies metaphysical claims by converting static dogmatic propositions into dynamic vectors along the five topological axes, neutralizing reification before it calcifies.',
+        eideticPotentiality: 'By clearing the false density of empirical occurrence, the index discloses the timeless liminal horizon wherein all possible forms subsist without dogmatic coercion.',
+        actionableHeuristic: 'When Δtotal exceeds 0.70, apply subtractive kenosis to reduce ontological density; when Δtotal stabilizes at 0.18, execute constructive synthesis into vault theorems.'
+      },
+      occurrenceVsElevation: {
+        occurrenceTrap: 'Fixating on the numerical value as an empirical ranking or competitive score, relapsing into technocratic reification.',
+        elevationResolution: 'Using the index as an apophatic mirror that dissolves the reifying ego, attuning the intellect to the silent presence of the Void.',
+        empiricalScore: 0.38,
+        elevationScore: 0.88,
+        ratio: 2.32,
+        statusBadge: 'Elevation-Dominant [Constructive Synthesis]'
+      }
     }
   },
 
@@ -219,6 +342,65 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
     tensorFormula: 'Δλ = ∥λ(anchor_A) - λ(anchor_B)∥ / Tr(M_tensor)',
     defaultLens: 'structural',
     correlatedGraphNodeId: 'epoche',
+    epistemicStatus: 'Boundary Operator',
+    comparativePhilosophers: [
+      {
+        philosopher: 'Sextus Empiricus',
+        tradition: 'Pyrrhonean Skepticism',
+        locus: 'Outlines of Pyrrhonism I.12',
+        constructiveResonance: 'Equipollence (isostheneia) of opposing claims demonstrates the inevitable divergence between competing conceptual anchors.',
+        nonEquivalenceRemainder: 'Pyrrhonism accepts divergence as cause for permanent agnosticism; Nihiltheism tracks divergence as a topological gradient toward higher constructive synthesis.',
+        epistemicTag: 'Boundary Operator'
+      },
+      {
+        philosopher: 'Nishitani Keiji',
+        tradition: 'Kyoto School Zen',
+        locus: 'Religion and Nothingness, Ch. II',
+        constructiveResonance: 'Divergence tracks the distance between Cartesian subjectivism and the realization of Śūnyatā as the field of circuminsessional interpenetration.',
+        nonEquivalenceRemainder: 'Nishitani relies on Zen kōan intuition; Nihiltheism formalizes eigenvalue drift within an analytical comparison tensor.',
+        epistemicTag: 'Dialectical Synthesis'
+      },
+      {
+        philosopher: 'Meister Eckhart',
+        tradition: 'Rhineland Mysticism',
+        locus: 'Sermon 52',
+        constructiveResonance: 'The radical divergence between God (the created concept) and Gottheit (the uncreated ground) must never be blurred.',
+        nonEquivalenceRemainder: 'Eckhart retains theological vocabulary; Nihiltheism strips all paternalistic divine imagery into clean ontological vectors.',
+        epistemicTag: 'Axiomatic Invariant'
+      },
+      {
+        philosopher: 'Nāgārjuna',
+        tradition: 'Madhyamaka Buddhism',
+        locus: 'MMK Ch. I (Pratyaya-parīkṣā)',
+        constructiveResonance: 'Shows that no entity arises from itself, from another, from both, or from no cause—divergence unmasks the impossibility of intrinsic causation.',
+        nonEquivalenceRemainder: 'Madhyamaka operates within Buddhist karmic soteriology; Nihiltheism addresses contemporary secular vertigo and digital hyper-reification.',
+        epistemicTag: 'Axiomatic Invariant'
+      },
+      {
+        philosopher: 'Emil Cioran',
+        tradition: 'Existential Pessimism',
+        locus: 'A Short History of Decay',
+        constructiveResonance: 'Tracks the inevitable fracturing and self-betrayal of every intellectual crusade and fanatical dogma.',
+        nonEquivalenceRemainder: 'Cioran revels in the wreckage of thought; Nihiltheism preserves the wreckage as an apophatic foundation for radical peace.',
+        epistemicTag: 'Phenomenological Datum'
+      },
+      {
+        philosopher: 'Albert Camus',
+        tradition: 'Absurdist Philosophy',
+        locus: 'The Myth of Sisyphus',
+        constructiveResonance: 'Recognizes the irreducible divergence between human yearning for unity and the opaque, silent universe.',
+        nonEquivalenceRemainder: 'Camus treats the divergence as absurd friction; Nihiltheism reveals it as the sacred aperture of non-dogmatic potentiality.',
+        epistemicTag: 'Phenomenological Datum'
+      },
+      {
+        philosopher: 'Plato',
+        tradition: 'Eidetic Metaphysics',
+        locus: 'Parmenides & Sophist (On Non-Being)',
+        constructiveResonance: 'Investigates how the One and the Many diverge, establishing the dialectic of Same and Other as structural invariants.',
+        nonEquivalenceRemainder: 'Plato prioritizes the One as supreme being; Nihiltheism identifies the prior unconditioned clearing of the Void that precedes even the One.',
+        epistemicTag: 'Horizon-Bound / Unverifiable'
+      }
+    ],
     phase1: {
       primaryTarget: 'The dogmatic assumption of doctrinal univocity or seamless synthesis between incompatible metaphysical frameworks.',
       corePillars: [
@@ -242,112 +424,111 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
       primaryTexts: [
         {
           author: 'Sextus Empiricus',
-          treatise: 'Outlines of Pyrrhonism (Pyrrhonean Hypotyposes)',
+          treatise: 'Outlines of Pyrrhonism',
           locus: 'Book I, Chapters 12–15',
-          context: 'Systematizing the Ten Tropes of Epoché to demonstrate that for every dogmatic assertion, an equally persuasive counter-assertion exists (isostheneia), causing divergence.'
+          context: 'Systematizing the Ten Tropes of Epoché to demonstrate that for every dogmatic assertion, an equally persuasive counter-assertion exists (isostheneia).'
         },
         {
-          author: 'Jacques Derrida',
-          treatise: 'Margins of Philosophy',
-          locus: 'Différance (pp. 1–28)',
-          context: 'Exposing how meaning is perpetually deferred and differentiated, preventing any concept from achieving self-identical presence.'
-        },
-        {
-          author: 'Gilles Deleuze',
-          treatise: 'Difference and Repetition',
-          locus: 'Chapter I: Difference in Itself',
-          context: 'Establishing difference as ontologically primary over identity, proving that divergence is not a failure of unity but the genesis of thought.'
+          author: 'Keiji Nishitani',
+          treatise: 'Religion and Nothingness',
+          locus: 'Chapter II: The Standpoint of Śūnyatā',
+          context: 'Tracing how European nihilism diverges from Eastern nothingness because the former remains chained to the nihil of despair while the latter reaches the field of absolute emptiness.'
         }
       ],
-      literaryStyle: 'Comparative diachronic analysis utilizing matrix algebra metaphors and Pyrrhonian counter-positioning.'
+      literaryStyle: 'Formal matrix algebra, differential geometry metaphors, and comparative apophatic philology.'
     },
     phase2: {
       canonicalQuotes: [
         {
           quote: 'To every argument an equal argument is opposed.',
-          source: 'Sextus Empiricus, Outlines of Pyrrhonism (I.12)',
-          commentary: 'The foundation of topological divergence: opposing vectors cancel dogmatic certainty.'
+          source: 'Sextus Empiricus, Outlines of Pyrrhonism I.12',
+          commentary: 'Δλ formalizes isostheneia as mathematical eigenvalue divergence.'
         },
         {
-          quote: 'Différance is neither a word nor a concept, but the active movement of differing and deferring.',
-          source: 'Jacques Derrida, Différance',
-          commentary: 'Eigenvalue drift measures the unavoidable deferral of ultimate semantic closure.'
-        },
-        {
-          quote: 'The idea of a single ultimate truth is the mother of all fanaticisms.',
-          source: 'Emil Cioran, A Short History of Decay',
-          commentary: 'Divergence acts as a prophylactic against ideological monism.'
+          quote: 'European nihilism has not yet broken through the wall of nothingness to the field of Śūnyatā.',
+          source: 'Keiji Nishitani, Religion and Nothingness (p. 97)',
+          commentary: 'The divergence metric quantifies the remaining distance between reactive despair and absolute liberation.'
         }
       ],
       psychologicalFriction: {
-        frictionType: 'Hermeneutic Disorientation',
-        phenomenologicalDescription: 'The dizziness experienced when comparing two profound worldviews and realizing that neither can subsume the other, leaving the thinker without a supreme umpire.',
-        aporiaSignal: 'Sudden expansion in Δλ indicating radical incommensurability between ingested treatises.'
+        frictionType: 'Cognitive Dissonance of Incommensurability',
+        phenomenologicalDescription: 'The anxiety provoked when two deeply cherished conceptual models point in diametrically opposed directions without possibility of naive compromise.',
+        aporiaSignal: 'Sudden divergence spike (Δλ > 0.75) signaling an epistemological rupture between anchor systems.'
       },
-      individualVsCollective: 'Institutions enforce dogmatic harmony to prevent civic fragmentation; the authentic investigator welcomes divergence as proof of mental freedom.',
+      individualVsCollective: 'Collectives demand enforced doctrinal unanimity; the philosopher measures and honors divergence as the signature of intellectual freedom.',
       specializedLexicon: [
         {
           term: 'Topological Divergence (Δλ)',
-          definition: 'The angular separation between foundational axioms across distinct ontological matrices.'
+          definition: 'The normalized vector distance between eigenvalue distributions of two philosophical systems.'
+        },
+        {
+          term: 'Eigenvalue Drift',
+          definition: 'The gradual realignment of core axioms when subjected to apophatic inquiry.'
         },
         {
           term: 'Isostheneia',
-          transliteration: 'Greek: equal strength',
-          definition: 'The equilibrium between opposing arguments that necessitates the suspension of judgment.'
-        },
-        {
-          term: 'Spectral Drift',
-          definition: 'The gradual wandering of a philosophical term away from its historical origin under dialectical stress.'
-        },
-        {
-          term: 'Anchor Vertex',
-          definition: 'A seminal concept or thinker serving as a benchmark in comparative graph analysis.'
+          transliteration: 'Greek: equal strength / equipollence',
+          definition: 'The balance of opposing arguments leading to suspension of judgment.'
         }
       ]
     },
     phase3: {
-      authenticSelfhood: 'Dwelling in the tension of divergent perspectives without rushing into synthetic closure or dogmatic allegiance.',
+      authenticSelfhood: 'Embracing the polyphony of divergent perspectives without clinging to a desperate ideological monolith.',
       threatsToIndividuality: [
-        'Totalizing intellectual orthodoxies that punish conceptual deviation.',
-        'Intellectual sloth that harmonizes contradictions by ignoring foundational distinctions.',
-        'Sectarian tribalism that identifies identity with a single canonical line.'
+        'Totalitarian ideologies that enforce synthetic unity through censorship and dogma.',
+        'Lazy relativism that treats all divergence as trivial rather than deeply structural.',
+        'Intellectual cowardice that retreats into dogmatism at the first sign of philosophical friction.'
       ],
-      subtractiveLeap: 'Abandoning the requirement for a master narrative: accepting that the map of knowledge is an open archipelago separated by unbridgeable abysses.',
+      subtractiveLeap: 'Surrendering the need for a single, unified Theory of Everything, resting instead in the fluid, multi-perspectival play of the Void.',
       personalAccountabilityInjunctions: [
-        'Resist flattening nuanced historical disputes into vague generalities.',
-        'Track divergence ruthlessly, especially when it challenges personal favorite theories.',
-        'Treat every divergence as an invitation to deeper Epoché.'
+        'Expose your own axioms to their most devastating counter-arguments.',
+        'Never paper over an ontological contradiction for the sake of aesthetic neatness.',
+        'Use divergence not to destroy inquiry, but to deepen its humility.'
       ]
     },
     phase4: {
       strengths: [
-        'Unmasks superficial syncretism that conflates disparate traditions (e.g. naive equating of Christian kenosis with Buddhist śūnyatā).',
-        'Quantifies the exact conceptual cost of comparative philosophical translation.',
-        'Protects against dogmatic totalization by demonstrating plural eigenvalue trajectories.'
+        'Prevents syncretic mush: preserves the sharp, distinct flavors of diverse philosophical traditions.',
+        'Mathematically diagnoses hidden fault lines within seemingly unified intellectual systems.',
+        'Catalyzes breakthrough insights by highlighting fertile points of conceptual collision.'
       ],
       vulnerabilities: [
-        'Risk of relativist despair: concluding that because divergence exists, all claims are equally vacuous.',
-        'Mathematical formalism that threatens to substitute geometric spatial analogies for deep semantic reading.'
+        'Can induce epistemic nihilism if divergence is misinterpreted as meaninglessness.',
+        'High computational complexity in tracking non-linear eigenvalue interactions.'
       ],
       structuralAutopsy: {
-        contradiction: 'Metric Invariance vs. Relational Drift: Can a single metric validly measure distance between frameworks whose very definition of "distance" and "truth" differ fundamentally?',
-        formalMechanism: 'Projecting divergent systems onto a unified coordinate space assumes a meta-space that neither system author authorized.',
-        aporia: 'The meta-framework that measures divergence must either belong to one of the systems (biasing the result) or claim absolute transcendence (violating Nihiltheism).',
-        invariantResolution: 'The divergence tensor is acknowledged as an heuristic, immanent diagnostic instrument rather than an absolute celestial compass.'
+        contradiction: 'The Metric of Incommensurability: Calculating distance between systems requires a shared coordinate space, yet incommensurability asserts that no such neutral space exists.',
+        formalMechanism: 'The formula normalizes by Tr(M_tensor), assuming the trace of the tensor can provide an objective scale.',
+        aporia: 'If the scale is objective, the systems are not truly incommensurable; if they are incommensurable, the distance cannot be calculated.',
+        invariantResolution: 'Δλ measures comparative divergence within the pragmatic horizon of human discourse, not absolute metaphysical separation.'
       },
       doctrinalAutopsy: {
-        contradiction: 'Perennialist Harmony vs. Irreducible Rift: The doctrinal autopsy exposes the fatal tension between the perennialist hope for a single universal secret and the nihiltheistic insistence on irremediable abyss.',
-        dogmaticReificationRisk: 'Interfaith dialogues habitually sanitize radical thinkers to manufacture comfortable ecumenical consensus.',
-        aporia: 'If all roads lead to the same Void, divergence is an illusion; if they do not, there is no single Void to speak of.',
-        invariantResolution: 'The Void is not a common denominator or shared substance; it is the unique silence into which every distinct system collapses on its own terms.'
+        contradiction: 'Ecumenism vs. Orthodoxy: The doctrinal autopsy reveals that institutional ecumenism papers over real divergence to maintain political alliances, while dogmatic fundamentalism weaponizes divergence to justify holy war.',
+        dogmaticReificationRisk: 'Both postures reify doctrine—one by diluting it, the other by idolizing it.',
+        aporia: 'How to take doctrine seriously without taking it dogmatically?',
+        invariantResolution: 'Nihiltheism treats doctrines as transient constellations: bright, distinct, and shining across an infinite sky of Nothingness.'
       },
       rhetoricalAutopsy: {
-        contradiction: 'The Rhetoric of Comparison: Comparing two thinkers requires speaking in a third language that inevitably betrays the idiomatic precision of both original voices.',
-        stylisticParadox: 'The terminology of divergence pretends to stand outside the fray while actively participating in the fray.',
-        aporia: 'We speak of divergence to achieve clarity, but the more precisely divergence is mapped, the more impossible definitive synthesis becomes.',
-        invariantResolution: 'Rhetorical transparency: explicitly declaring the provisional nature of the comparative apparatus at every iteration.'
+        contradiction: 'The Rhetoric of Objective Neutrality: The author presenting Δλ uses clean, neutral mathematical notation (vectors, matrices) to describe explosive ideological warfare.',
+        stylisticParadox: 'Sublimating passionate existential fury into sterile topological metrics.',
+        aporia: 'Does the mathematics cool the mind, or does it merely conceal the existential stakes?',
+        invariantResolution: 'Transparent dual-register presentation: balancing cold matrix mathematics with passionate phenomenological prose.'
       },
-      asymptoticInvariantHold: 'Eigenvalues stabilize when anchor vertices cease asserting exclusive monopoly over the ontological horizon.'
+      asymptoticInvariantHold: 'Stabilized at Δλ = 0.88: Maximum creative tension held without systemic breakdown.',
+      constructiveSynthesis: {
+        synthesizedElevationTheorem: 'Theorem of Non-Commutative Drift: Divergence between ontological anchors is not an epistemic failure but the generative mechanism of eidetic disclosure, demonstrating that all conceptual systems are partial projections of an unconditioned liminal whole.',
+        boundaryMechanism: 'Deploys epoché to arrest unilateral hegemony, using divergence as a dynamic filter that cleanses dogmatic absolutism.',
+        eideticPotentiality: 'Points directly to the multi-dimensional manifold of pure potentiality, where opposing perspectives reveal their complementary geometry in the field of the Void.',
+        actionableHeuristic: 'When Δλ > 0.80, refrain from premature dialectical unification; track each trajectory to its terminal limit until constructive synthesis emerges spontaneously.'
+      },
+      occurrenceVsElevation: {
+        occurrenceTrap: 'Sinking into argumentative sectarianism, defending one anchor vertex as personal identity against the other.',
+        elevationResolution: 'Rising into eidetic vantage, witnessing how divergence itself is the dance of form over groundless silence.',
+        empiricalScore: 0.42,
+        elevationScore: 0.86,
+        ratio: 2.05,
+        statusBadge: 'Elevation-Dominant [Structural Insight]'
+      }
     }
   },
 
@@ -357,48 +538,101 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
     symbol: 'ρonto',
     color: '#06B6D4',
     bgGradient: 'from-cyan-500 to-blue-600',
-    description: 'Degree of conceptual reification and ontological weight across textual propositions.',
-    tensorFormula: 'ρonto = ∑ (w_i · Substantia_i) / Vol(Discourse)',
+    description: 'Degree of conceptual reification and essentialist petrification within a discourse.',
+    tensorFormula: 'ρonto = 1 / (1 + exp(-κ · (Essence_Claims - Apophatic_Negations)))',
     defaultLens: 'doctrinal',
-    correlatedGraphNodeId: 'nihil',
+    correlatedGraphNodeId: 'substance',
+    epistemicStatus: 'Phenomenological Datum',
+    comparativePhilosophers: [
+      {
+        philosopher: 'Nāgārjuna',
+        tradition: 'Madhyamaka Buddhism',
+        locus: 'MMK Ch. XV (Svabhāva-parīkṣā)',
+        constructiveResonance: 'Ruthlessly deconstructs intrinsic essence (svabhāva); whatever has svabhāva cannot change, originate, or dissolve, proving that high density is an illusion.',
+        nonEquivalenceRemainder: 'Nāgārjuna stops at radical śūnyatā without affirming a transcendent realm of Platonic potentiality; Nihiltheism integrates the positive aesthetic of the Void.',
+        epistemicTag: 'Axiomatic Invariant'
+      },
+      {
+        philosopher: 'Meister Eckhart',
+        tradition: 'Rhineland Mysticism',
+        locus: 'Sermon 83 (Renovamini spiritu)',
+        constructiveResonance: 'Insists on total de-densification: stripped of all creaturely density, the soul meets the pure unconditioned Gottheit.',
+        nonEquivalenceRemainder: 'Eckhart retains theological terms like "soul" and "divine spark" (Seelenfünklein); Nihiltheism treats even these as subtle density artifacts to be dissolved.',
+        epistemicTag: 'Boundary Operator'
+      },
+      {
+        philosopher: 'Nishitani Keiji',
+        tradition: 'Kyoto School Zen',
+        locus: 'Religion and Nothingness, Ch. IV',
+        constructiveResonance: 'Exposes how Western ontology reifies Being into a heavy substantial center, contrasting it with the weightless openness of Śūnyatā.',
+        nonEquivalenceRemainder: 'Nishitani draws on Mahāyāna Tathatā (Suchness); Nihiltheism maintains strict vigilance against any new crypto-substantialism.',
+        epistemicTag: 'Dialectical Synthesis'
+      },
+      {
+        philosopher: 'Emil Cioran',
+        tradition: 'Aphoristic Pessimism',
+        locus: 'Tears and Saints',
+        constructiveResonance: 'Mockingly punctures the heavy, pompous density of theological dogma and philosophical treatises with sharp aphoristic lightning.',
+        nonEquivalenceRemainder: 'Cioran’s de-densification descends into bitter existential spleen; Nihiltheism elevates into serene contemplative lightness.',
+        epistemicTag: 'Phenomenological Datum'
+      },
+      {
+        philosopher: 'Sextus Empiricus',
+        tradition: 'Pyrrhonean Skepticism',
+        locus: 'Outlines of Pyrrhonism II.1–3',
+        constructiveResonance: 'Deconstructs the dogmatists’ criteria of truth and proof, dissolving their heavy metaphysical apparatus into light appearances.',
+        nonEquivalenceRemainder: 'Pyrrhonism remains purely epistemological; Nihiltheism extends de-densification into a full ontological and aesthetic doctrine.',
+        epistemicTag: 'Boundary Operator'
+      },
+      {
+        philosopher: 'Albert Camus',
+        tradition: 'Absurdist Philosophy',
+        locus: 'The Myth of Sisyphus',
+        constructiveResonance: 'Warns against "philosophical suicide"—the sudden desperate jump into a dense, comforting metaphysical faith when faced with the absurd.',
+        nonEquivalenceRemainder: 'Camus relies on heroic human revolt; Nihiltheism discovers deep, restorative peace in the very absence of density.',
+        epistemicTag: 'Phenomenological Datum'
+      },
+      {
+        philosopher: 'Plato',
+        tradition: 'Classical Metaphysics',
+        locus: 'Republic VII (Allegory of the Cave)',
+        constructiveResonance: 'Recognizes that the shadows on the cave wall possess heavy, deceptive density; true wisdom demands turning toward the immaterial source.',
+        nonEquivalenceRemainder: 'Plato relocates density to the Forms themselves; Nihiltheism recognizes the realm of Forms as pure, weightless potentiality, not heavy substances.',
+        epistemicTag: 'Horizon-Bound / Unverifiable'
+      }
+    ],
     phase1: {
-      primaryTarget: 'Substance-metaphysics, essentialism, and the compulsive human habit of turning fluid linguistic processes into hard, eternal objects.',
+      primaryTarget: 'Essentialist petrification, dogmatic reification, the illusion of substantial permanence (svabhāva), and the idolization of conceptual nouns.',
       corePillars: [
         {
-          title: 'Critique of Reification (Verdinglichung)',
-          explanation: 'Concepts are not metaphysical furniture; they are ephemeral heuristic models that harden into idols when unexamined.'
+          title: 'De-reification Gradient',
+          explanation: 'Philosophical lucidity increases in direct proportion to the reduction of reified substances in the conceptual vocabulary.'
         },
         {
-          title: 'Subtractive De-densification',
-          explanation: 'Genuine philosophical progress is not the accumulation of heavier doctrines, but the systematic subtraction of superfluous ontological baggage.'
+          title: 'The Sigmoidal Density Threshold',
+          explanation: 'When ρonto exceeds 0.50, discourse crosses a phase boundary from open phenomenological description into dogmatic theology.'
         },
         {
-          title: 'Inverse Correlation to Lucidity',
-          explanation: 'As ontological density increases, existential freedom decreases; high density indicates heavy metaphysical sclerosis.'
+          title: 'Weightlessness of Emptiness',
+          explanation: 'Realizing that all phenomena are devoid of self-nature (śūnya) induces an ontological weightlessness: freedom from the heavy gravity of dogma.'
         },
         {
-          title: 'Apophatic Solvency',
-          explanation: 'Active Nihil dissolves dense conceptual deposits, restoring the mind to transparent, unencumbered receptivity.'
+          title: 'Subtractive Hygiene',
+          explanation: 'Methodically auditing texts to replace heavy nouns with relational verbs and apophatic pauses.'
         }
       ],
       primaryTexts: [
-        {
-          author: 'Friedrich Nietzsche',
-          treatise: 'Twilight of the Idols',
-          locus: 'How the "True World" Finally Became a Fable',
-          context: 'Chronicles the four-stage de-densification of Western metaphysics from Plato to the death of God, showing how the "true world" dissolved into smoke.'
-        },
-        {
-          author: 'Martin Heidegger',
-          treatise: 'Being and Time & What is Metaphysics?',
-          locus: 'The Question of the Anstoss / Das Nichts',
-          context: 'Diagnosing the Western "oblivion of Being" as an obsession with entities (high ontological density) at the expense of the ontological difference and the Nothing.'
-        },
         {
           author: 'Nāgārjuna',
           treatise: 'Mūlamadhyamakakārikā',
           locus: 'Chapter XV: Examination of Svabhāva (Intrinsic Essence)',
           context: 'Demonstrating that any entity possessing intrinsic essence (svabhāva) could neither change, originate, nor cease—proving that high density is impossible in reality.'
+        },
+        {
+          author: 'Friedrich Nietzsche',
+          treatise: 'Twilight of the Idols',
+          locus: 'Reason in Philosophy (§5)',
+          context: 'Denouncing grammar for constantly seducing thought into positing substances, egos, and things where only relational flux exists.'
         }
       ],
       literaryStyle: 'Genealogical critique, radical aphoristic dissection, and rigorous apophatic reductio.'
@@ -411,14 +645,9 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
           commentary: 'Grammar creates substantives (nouns), which create the illusion of high ontological density.'
         },
         {
-          quote: 'The Nothing is neither an object nor anything that "is" at all. It occurs neither by itself nor "apart from" beings.',
+          quote: 'The Nothing is neither an object nor anything that "is" at all.',
           source: 'Martin Heidegger, What is Metaphysics? (p. 98)',
           commentary: 'The clearing is not another heavy entity, but the zero-density horizon in which entities show up.'
-        },
-        {
-          quote: 'Those who see essence and non-essence, existence and non-existence, do not see the truth of the Buddha’s teaching.',
-          source: 'Nāgārjuna, Mūlamadhyamakakārikā XV.6',
-          commentary: 'High density is the cognitive illusion that things exist by virtue of self-subsistent core identity.'
         }
       ],
       psychologicalFriction: {
@@ -436,10 +665,6 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
           term: 'Svabhāva',
           transliteration: 'Sanskrit: own-being / intrinsic nature',
           definition: 'The imaginary independent essence attributed to things, dismantled by Nagarjuna.'
-        },
-        {
-          term: 'Petrification of the Word',
-          definition: 'The cognitive decline wherein metaphor hardens into literal metaphysical dogma.'
         },
         {
           term: 'Subtractive Vector',
@@ -484,12 +709,26 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
         invariantResolution: 'Nagarjuna’s antidote: Emptiness is also empty. ρonto must de-densify even its own category of Emptiness.'
       },
       rhetoricalAutopsy: {
-        contradiction: 'The Heavy Prose of De-densifiers: Thinkers who critique density (Heidegger, Derrida, Hegel) frequently write the densest, most impenetrable prose in human history.',
+        contradiction: 'The Heavy Prose of De-densifiers: Thinkers who critique density frequently write the densest, most impenetrable prose in human history.',
         stylisticParadox: 'Using monstrous neologisms and massive syntactic structures to announce the arrival of lightness and simplicity.',
         aporia: 'Language must become extraordinarily dense to crack open the density of common sense.',
         invariantResolution: 'Cultivating the sharp, concise aphorism (Nietzsche, Cioran) as the authentic rhetorical vehicle of low density.'
       },
-      asymptoticInvariantHold: 'Optimal state reached at ρonto = 0.18: sufficient density to sustain rational communication, insufficient to permit ideological tyranny.'
+      asymptoticInvariantHold: 'Optimal state reached at ρonto = 0.18: sufficient density to sustain rational communication, insufficient to permit ideological tyranny.',
+      constructiveSynthesis: {
+        synthesizedElevationTheorem: 'Theorem of Kenotic De-densification: Ontological density ρonto measures the inertia of conceptual petrification; reducing ρonto toward the asymptotic hold (θ = 0.18) does not annihilate meaning, but liberates phenomena to disclose their luminous, weightless presence.',
+        boundaryMechanism: 'Operates as an epistemic degreaser that dissolves the dogmatic adhesive binding signs to imagined immutable substances.',
+        eideticPotentiality: 'Unlocks the weightless realm of pure Platonic potentiality, where forms are understood not as rigid cosmic statues, but as fluid, eternal harmonies.',
+        actionableHeuristic: 'Whenever discourse becomes stifling or ideological friction spikes, execute a kenotic audit: subtract 3 substantive nouns and replace with operational verbs.'
+      },
+      occurrenceVsElevation: {
+        occurrenceTrap: 'Clinging to doctrinal definitions and intellectual titles to ward off the fear of personal insignificance.',
+        elevationResolution: 'Surrendering the heavy fortress of the ego, enjoying the unencumbered freedom of the void.',
+        empiricalScore: 0.18,
+        elevationScore: 0.92,
+        ratio: 5.11,
+        statusBadge: 'Elevation-Dominant [Kenotic Lightness]'
+      }
     }
   },
 
@@ -503,6 +742,65 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
     tensorFormula: 'θapoph = 1 - (Affirmation_Count / Total_Assertions) · cos(φ_reductio)',
     defaultLens: 'rhetorical',
     correlatedGraphNodeId: 'void',
+    epistemicStatus: 'Axiomatic Invariant',
+    comparativePhilosophers: [
+      {
+        philosopher: 'Meister Eckhart',
+        tradition: 'Rhineland Negative Theology',
+        locus: 'Sermons on the Gottheit',
+        constructiveResonance: 'Maintains supreme apophatic tension: "God is a word, a speaking word, but the Gottheit is a silent silence." True devotion is unsaying.',
+        nonEquivalenceRemainder: 'Eckhart was a Dominican friar constrained by ecclesial heresy trials; Nihiltheism radicalizes unsaying beyond any theological institution.',
+        epistemicTag: 'Axiomatic Invariant'
+      },
+      {
+        philosopher: 'Nāgārjuna',
+        tradition: 'Madhyamaka Buddhism',
+        locus: 'Vigrahavyāvartanī (The Dispeller of Objections, v. 29)',
+        constructiveResonance: '"If I had any thesis, I would be at fault. But I have no thesis, therefore I am free of error." Peak apophatic resistance against all dogmatic affirmation.',
+        nonEquivalenceRemainder: 'Nāgārjuna treats unsaying as a therapeutic dialectic; Nihiltheism recognizes it also as an aesthetic and ontological gateway to pure potentiality.',
+        epistemicTag: 'Axiomatic Invariant'
+      },
+      {
+        philosopher: 'Nishitani Keiji',
+        tradition: 'Kyoto School Zen',
+        locus: 'Religion and Nothingness, Ch. III',
+        constructiveResonance: 'Apophatic tension must not rest in mere negative theology (which remains a covert cataphasis); it must step onto the field of Śūnyatā itself.',
+        nonEquivalenceRemainder: 'Nishitani engages European existentialists primarily; Nihiltheism builds modern algorithmic and epistemological discriminator systems.',
+        epistemicTag: 'Dialectical Synthesis'
+      },
+      {
+        philosopher: 'Emil Cioran',
+        tradition: 'Aphoristic Skepticism',
+        locus: 'The Temptation to Exist',
+        constructiveResonance: 'Practices continuous unsaying as an uncompromising defense against fanaticism, asserting that every affirmation ends in an execution.',
+        nonEquivalenceRemainder: 'Cioran’s tension is born of disgust and insomnia; Nihiltheism’s tension is born of mathematical clarity and serene Gelassenheit.',
+        epistemicTag: 'Phenomenological Datum'
+      },
+      {
+        philosopher: 'Sextus Empiricus',
+        tradition: 'Pyrrhonean Skepticism',
+        locus: 'Outlines of Pyrrhonism I.18–20',
+        constructiveResonance: 'The skeptic’s phrases ("no more this than that", "I determine nothing") consume themselves like fire consuming fuel—pure apophatic unsaying.',
+        nonEquivalenceRemainder: 'Pyrrhonism avoids metaphysics entirely; Nihiltheism establishes the metaphysics of groundless sacred freedom.',
+        epistemicTag: 'Boundary Operator'
+      },
+      {
+        philosopher: 'Albert Camus',
+        tradition: 'Absurdist Existentialism',
+        locus: 'The Myth of Sisyphus',
+        constructiveResonance: 'Refuses to soften the silence of the cosmos with positive religious balm; tension is held through lucidity and obstinate defiance.',
+        nonEquivalenceRemainder: 'Camus lacks a doctrine of sacred absence; his cosmos is silent and foreign, whereas Nihiltheism experiences the Void as sublime home.',
+        epistemicTag: 'Phenomenological Datum'
+      },
+      {
+        philosopher: 'Plato',
+        tradition: 'Classical Eidetic Philosophy',
+        locus: 'Republic VI (509b: Good is beyond Being / epekeina tes ousias)',
+        constructiveResonance: 'Plato’s highest principle (the Good) is explicitly stated to be beyond being in dignity and power—the founding moment of Western apophasis.',
+        nonEquivalenceRemainder: 'Platonism quickly became affirmative dogmatic metaphysics; Nihiltheism holds the line at epekeina tes ousias without building a new pyramid of being.',
+        epistemicTag: 'Horizon-Bound / Unverifiable'
+      }
+    ],
     phase1: {
       primaryTarget: 'Cataphatic overconfidence, positive theology, anthropomorphic divinities, and the illusion that human grammar can circumscribe the Infinite.',
       corePillars: [
@@ -535,12 +833,6 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
           treatise: 'The Trouble with Being Born',
           locus: 'Aphorisms on Negation and Birth',
           context: 'Articulating active negation as an unrelenting existential hygiene against the vulgarity of dogmatic affirmation.'
-        },
-        {
-          author: 'Meister Eckhart',
-          treatise: 'Sermon 83: Renovamini spiritu',
-          locus: 'On the Divine Wilderness',
-          context: 'Praying: "God, rid me of God"—the ultimate apophatic plea to surpass the personal creator deity to enter the silent wilderness of the Gottheit.'
         }
       ],
       literaryStyle: 'Sublime apophatic liturgy, hyperbolic paradoxical aphorism, and systematic systematic negation chains.'
@@ -551,11 +843,6 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
           quote: 'We pray that we may come unto this Darkness, and through lack of sight and knowledge see and know that which is above sight and knowledge.',
           source: 'Pseudo-Dionysius, Mystical Theology (I.1)',
           commentary: 'Apophatic tension reaches its peak when unknowing becomes the primary mode of cognition.'
-        },
-        {
-          quote: 'I have dreamed of an intellectual hygiene that would eliminate all assertions, leaving only clean doubt.',
-          source: 'Emil Cioran, Notebooks',
-          commentary: 'θapoph is the mathematical index of this intellectual hygiene.'
         },
         {
           quote: 'Why do you preach about God? Whatever you say about God is a lie.',
@@ -578,10 +865,6 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
           term: 'Via Negativa',
           transliteration: 'Latin: the negative way',
           definition: 'The methodological refusal to predicate affirmative qualities of the ultimate ground.'
-        },
-        {
-          term: 'Kenotic Unsaying',
-          definition: 'The deliberate evacuation of propositional certainty in favor of radical presence.'
         },
         {
           term: 'Gottheit',
@@ -612,8 +895,7 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
       ],
       vulnerabilities: [
         'Risk of falling into sterile silence where nothing can be said, shared, or built.',
-        'Vulnerability to rhetorical acrobatics where obscurity is confused with profound depth.',
-        'Psychological danger of melancholic isolation when negation is decoupled from generative awe.'
+        'Vulnerability to rhetorical acrobatics where obscurity is confused with profound depth.'
       ],
       structuralAutopsy: {
         contradiction: 'The Metric of the Inexpressible: Calculating apophatic tension as a mathematical function (θapoph = 1 - Affirmation/Total) assumes that unsaying can be reduced to algorithmic ratios.',
@@ -622,7 +904,7 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
         invariantResolution: 'θapoph is calibrated against semantic intent and context vectors, serving as a structural mirror rather than an algorithmic judge.'
       },
       doctrinalAutopsy: {
-        contradiction: 'Orthodoxy vs. Heresy: The doctrinal autopsy uncovers how the via negativa historically operated as a safety valve inside orthodox institutions (e.g. Christian monasteries) while quietly subverting their foundations.',
+        contradiction: 'Orthodoxy vs. Heresy: The doctrinal autopsy uncovers how the via negativa historically operated as a safety valve inside orthodox institutions while quietly subverting their foundations.',
         dogmaticReificationRisk: 'Institutions allow negative theology only on condition that it terminates in the Trinity or the Church’s authority.',
         aporia: 'Nihiltheism radicalizes apophasis to its terminal conclusion: removing even the Trinity, leaving only the unconditioned Void.',
         invariantResolution: 'Absolute apophasis refuses institutional containment: it leaves no doctrinal sanctuary unvisited.'
@@ -633,7 +915,21 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
         aporia: 'Language is the executioner and the victim at the same time.',
         invariantResolution: 'Ironic awareness: embracing the tragicomedy of speech. We speak not because words suffice, but to celebrate their magnificent failure before the infinite.'
       },
-      asymptoticInvariantHold: 'Optimal balance holds at θ = 0.81 in advanced epochs: maximum negative protection without speech loss.'
+      asymptoticInvariantHold: 'Optimal balance holds at θ = 0.81 in advanced epochs: maximum negative protection without speech loss.',
+      constructiveSynthesis: {
+        synthesizedElevationTheorem: 'Theorem of Apophatic Boundary Resilience: θapoph operates not as a sterile ban on articulation, but as a protective boundary operator that prevents positive theological capture, ensuring that language remains an unconditioned aperture onto the otherworldly horizon of pure potentiality.',
+        boundaryMechanism: 'Maintains an active repulsion field against reifying projections, converting dogmatic affirmations into self-consuming apophatic ladders.',
+        eideticPotentiality: 'By preserving the unconditioned clearing of the Void from dogmatic colonization, apophasis safeguards the timeless reservoir of eidetic potentiality from degradation.',
+        actionableHeuristic: 'For every theoretical theorem formulated, append an apophatic codicil declaring its operational limits, preventing it from hardening into dogma.'
+      },
+      occurrenceVsElevation: {
+        occurrenceTrap: 'Using negative theology as an intellectual weapon to silence opponents, feeding spiritual egoism.',
+        elevationResolution: 'Surrendering into radical poverty of spirit (*paupertas spiritus*), becoming the silent clearing where reality meets itself.',
+        empiricalScore: 0.22,
+        elevationScore: 0.94,
+        ratio: 4.27,
+        statusBadge: 'Elevation-Dominant [Negative Clarity]'
+      }
     }
   },
 
@@ -647,6 +943,65 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
     tensorFormula: 'δgap = ∥Ψ_lived(t) - Φ_represented(t)∥_Hilbert',
     defaultLens: 'structural',
     correlatedGraphNodeId: 'epoche',
+    epistemicStatus: 'Phenomenological Datum',
+    comparativePhilosophers: [
+      {
+        philosopher: 'Albert Camus',
+        tradition: 'Absurdist Phenomenology',
+        locus: 'The Myth of Sisyphus (The Absurd Walls)',
+        constructiveResonance: 'Pinpoints the sudden estrangement when the scenery collapses and the stranger greets us: the chasm between human consciousness and silent world.',
+        nonEquivalenceRemainder: 'Camus treats the gap as an absurd wall to be stubbornly defied; Nihiltheism treats the gap as the sacred opening of unconditioned freedom.',
+        epistemicTag: 'Phenomenological Datum'
+      },
+      {
+        philosopher: 'Nishitani Keiji',
+        tradition: 'Kyoto School Zen',
+        locus: 'Religion and Nothingness, Ch. I',
+        constructiveResonance: 'Overcomes the Cartesian dualism of subject and object by stepping back onto the field of Śūnyatā, where both realize their non-dual emptiness.',
+        nonEquivalenceRemainder: 'Nishitani expects full satori/enlightenment to close the gap; Nihiltheism tracks the gap as an enduring topological invariant of finite consciousness.',
+        epistemicTag: 'Dialectical Synthesis'
+      },
+      {
+        philosopher: 'Edmund Husserl',
+        tradition: 'Transcendental Phenomenology',
+        locus: 'The Crisis of European Sciences §41',
+        constructiveResonance: 'Diagnoses the fatal gap created when the abstract mathematical idealizations of Galilean science replace the primordial Lebenswelt (life-world).',
+        nonEquivalenceRemainder: 'Husserl seeks a rigorous scientific transcendental ego; Nihiltheism recognizes the ego as an empty projection arising from the abyss.',
+        epistemicTag: 'Phenomenological Datum'
+      },
+      {
+        philosopher: 'Meister Eckhart',
+        tradition: 'Rhineland Mysticism',
+        locus: 'Sermon on the Eye of God',
+        constructiveResonance: '"The eye wherein I see God is the same eye wherein God sees me"—transcending the subject-object gap at the apex of contemplation.',
+        nonEquivalenceRemainder: 'Eckhart clothes the insight in monotheistic divine communion; Nihiltheism strips away the divine subject, leaving pure awareness without observer.',
+        epistemicTag: 'Boundary Operator'
+      },
+      {
+        philosopher: 'Nāgārjuna',
+        tradition: 'Madhyamaka Buddhism',
+        locus: 'MMK Ch. XVIII (Ātma-parīkṣā)',
+        constructiveResonance: 'Demonstrates that neither the self nor the world possesses independent existence; the gap dissolves when both sides are seen as empty designations.',
+        nonEquivalenceRemainder: 'Madhyamaka prioritizes linguistic deconstruction; Nihiltheism measures the affective existential vertigo of modern lived experience.',
+        epistemicTag: 'Axiomatic Invariant'
+      },
+      {
+        philosopher: 'Emil Cioran',
+        tradition: 'Existential Pessimism',
+        locus: 'The Fall into Time',
+        constructiveResonance: 'Describes human consciousness as an unhealable fracture in the cosmos: to be conscious is to be separated forever from the innocence of being.',
+        nonEquivalenceRemainder: 'Cioran laments this fracture as a curse; Nihiltheism transmutes it into the lucid condition for aesthetic contemplation and sacred freedom.',
+        epistemicTag: 'Phenomenological Datum'
+      },
+      {
+        philosopher: 'Plato',
+        tradition: 'Classical Epistemology',
+        locus: 'Meno (The Paradox of Inquiry) & Phaedrus (Anamnesis)',
+        constructiveResonance: 'The soul feels the gap between sensible particulars and the eternal forms, experienced as divine nostalgia and longing (eros).',
+        nonEquivalenceRemainder: 'Plato demands recollecting pre-existent memories of heaven; Nihiltheism understands the forms as emergent symmetries of the groundless void.',
+        epistemicTag: 'Horizon-Bound / Unverifiable'
+      }
+    ],
     phase1: {
       primaryTarget: 'Cartesian dualism, epistemological naive realism, and the myth that the conscious subject stands outside reality looking through a clear glass pane.',
       corePillars: [
@@ -679,12 +1034,6 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
           treatise: 'The Myth of Sisyphus',
           locus: 'An Absurd Reasoning: The Absurd Walls',
           context: 'Describing the feeling of absurdity as the sudden estrangement between man and the world: the gap where familiarity dissolves into cosmic alienness.'
-        },
-        {
-          author: 'Keiji Nishitani',
-          treatise: 'Religion and Nothingness',
-          locus: 'Chapter I: What is Religion? (The Field of Śūnyatā)',
-          context: 'Overcoming the Cartesian cogito by realizing that the subject and object are both grounded in the field of absolute emptiness.'
         }
       ],
       literaryStyle: 'Phenomenological reduction, evocative existential description, and relentless analysis of cognitive alienation.'
@@ -700,11 +1049,6 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
           quote: 'On the field of Emptiness, the self is itself only in so far as it is not itself; the object is itself only in so far as it is not itself.',
           source: 'Nishitani Keiji, Religion and Nothingness (p. 148)',
           commentary: 'Subject-object dissolution closes the phenomenal gap not by merging substances, but by seeing both as empty.'
-        },
-        {
-          quote: 'No concept can ever capture the taste of the apple, much less the terror of the abyss.',
-          source: 'Peter Wessel Zapffe, The Last Messiah',
-          commentary: 'The phenomenological gap is the permanent scar of human consciousness.'
         }
       ],
       psychologicalFriction: {
@@ -726,10 +1070,6 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
         {
           term: 'Epoché of the Object',
           definition: 'Suspending belief in the independent existence of the external object to observe its presence in consciousness.'
-        },
-        {
-          term: 'Field of Śūnyatā',
-          definition: 'The non-dual horizon where the dualism of subject and object dissolves.'
         }
       ]
     },
@@ -759,7 +1099,7 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
       ],
       structuralAutopsy: {
         contradiction: 'Quantifying the Unrepresentable Distance: How can an analytical index measure the distance between a concept and that which lies outside all concepts?',
-        formalMechanism: 'The Hilbert space projection (∥Ψ_lived - Φ_rep∥) treats consciousness as a state vector, which is itself a conceptual representation.',
+        formalMechanism: 'The Hilbert space projection treats consciousness as a state vector, which is itself a conceptual representation.',
         aporia: 'The ruler we use to measure the gap is forged inside the very territory that the gap alienates us from.',
         invariantResolution: 'δgap operates phenomenologically as a qualitative horizon indicator rather than a Newtonian yardstick.'
       },
@@ -770,12 +1110,95 @@ export const PHILOCRASH_METRIC_PROFILES: Record<string, MetricAutopsyProfile> = 
         invariantResolution: 'Accepting the gap as the sacred opening of freedom rather than a fall from grace.'
       },
       rhetoricalAutopsy: {
-        contradiction: 'The Melodrama of Alienation: Rhetorical autopsy of existentialist literature reveals a tendency toward romantic dramatization of the gap (the dramatic sigh, the trembling hero, the weeping philosopher).',
+        contradiction: 'The Melodrama of Alienation: Rhetorical autopsy reveals a tendency toward romantic dramatization of the gap (the dramatic sigh, the trembling hero).',
         stylisticParadox: 'The author exploits the agony of the gap to create compelling literary entertainment.',
         aporia: 'The aesthetic enjoyment of alienation undermines the sobriety of the philosophical critique.',
         invariantResolution: 'Adopting a dry, topological, and mathematically poised language that reports the gap with scientific and spiritual equanimity.'
       },
-      asymptoticInvariantHold: 'Reaches asymptotic stabilization at δgap = 0.85 in advanced convergence: the gap is acknowledged, witnessed, and held without illusion.'
+      asymptoticInvariantHold: 'Reaches asymptotic stabilization at δgap = 0.85 in advanced convergence: the gap is acknowledged, witnessed, and held without illusion.',
+      constructiveSynthesis: {
+        synthesizedElevationTheorem: 'Theorem of the Open Chasm: The phenomenological gap δgap is not a cognitive defect to be conquered, but the sacred expanse wherein finite consciousness encounters its own boundless freedom, transmuting absurd estrangement into contemplative intimacy with the void.',
+        boundaryMechanism: 'De-reifies representational certitude by continuously measuring the Hilbert distance between conceptual projection and lived immediacy.',
+        eideticPotentiality: 'The gap is the exact liminal space where the eidetic forms become visible: not as physical objects in the world, but as timeless configurations of consciousness.',
+        actionableHeuristic: 'When feeling alienated by conceptual systems, pause, close your eyes, and inhabit the raw gap between the word and the breath.'
+      },
+      occurrenceVsElevation: {
+        occurrenceTrap: 'Interpreting the gap as psychological loneliness, depression, or a defect in need of pharmaceutical or dogmatic sedation.',
+        elevationResolution: 'Recognizing the gap as the unconditioned horizon of the sacred, standing in lucid gratitude before the ungrounded presence of being.',
+        empiricalScore: 0.35,
+        elevationScore: 0.89,
+        ratio: 2.54,
+        statusBadge: 'Elevation-Dominant [Phenomenological Awe]'
+      }
     }
   }
+};
+
+export const getDifferentialPairwiseProfile = (
+  metricAId: string,
+  metricBId: string
+): DifferentialPairwiseProfile => {
+  const profileA = PHILOCRASH_METRIC_PROFILES[metricAId] || PHILOCRASH_METRIC_PROFILES.composite;
+  const profileB = PHILOCRASH_METRIC_PROFILES[metricBId] || PHILOCRASH_METRIC_PROFILES.density;
+
+  const pairKey = [metricAId, metricBId].sort().join('_');
+
+  const KNOWN_DIFFERENTIALS: Record<string, Partial<DifferentialPairwiseProfile>> = {
+    apophatic_density: {
+      title: 'Apophatic Tension vs. Ontological Density',
+      divergenceVector: '∇(θapoph ⊥ ρonto)',
+      covarianceRatio: -0.78,
+      constructiveSynthesisIndex: 0.91,
+      crossInterferenceDiagnosis: 'Inverse polarization: High ontological density acts as an invasive mass that compresses apophatic tension; conversely, maximal apophatic tension systematically evacuates essentialist density.',
+      synthesizedTheorem: 'Law of Kenotic Equilibrium: As ontological density approaches the critical minimum (ρonto → 0.18), apophatic tension stabilizes from reactive resistance into a transparent, luminous horizon of pure potentiality.',
+      dialecticalResolution: 'Rather than fighting substantive language, the thinker treats every noun as a transparent aperture into the groundless Void.'
+    },
+    composite_divergence: {
+      title: 'Composite Disparity vs. Topological Divergence',
+      divergenceVector: '∇(Δtotal ∥ Δλ)',
+      covarianceRatio: 0.84,
+      constructiveSynthesisIndex: 0.87,
+      crossInterferenceDiagnosis: 'Coupled propagation: Topological divergence between anchor vertices acts as the primary driving engine that inflates the composite disparity across the entire tensor manifold.',
+      synthesizedTheorem: 'Theorem of Structural Dispersion: Systemic disparity is not diffuse chaos, but the lawful integration of specific eigenvalue divergences between incommensurable metaphysical frameworks.',
+      dialecticalResolution: 'By isolating the primary divergent eigenvalue (Δλ), the practitioner can surgically reduce composite tension without suppressing philosophical nuance.'
+    },
+    gap_apophatic: {
+      title: 'Phenomenological Gap vs. Apophatic Tension',
+      divergenceVector: '∇(δgap ⊗ θapoph)',
+      covarianceRatio: 0.65,
+      constructiveSynthesisIndex: 0.89,
+      crossInterferenceDiagnosis: 'Sympathetic resonance: The wider the experienced gap between lived reality and conceptual signs, the stronger the imperative to deploy negative theological unsaying to prevent reification.',
+      synthesizedTheorem: 'Theorem of Phenomenological Kenosis: Apophatic unsaying is the exact rhetorical counterpart to the phenomenological gap, ensuring that consciousness does not mistake its conceptual maps for the unconditioned territory.',
+      dialecticalResolution: 'The chasm of the gap is inhabited not as a wound of alienation, but as the silent temple of apophatic contemplation.'
+    }
+  };
+
+  const existing = KNOWN_DIFFERENTIALS[pairKey];
+  if (existing) {
+    return {
+      pairKey,
+      metricAId,
+      metricBId,
+      title: existing.title || `${profileA.label} vs. ${profileB.label}`,
+      divergenceVector: existing.divergenceVector || `∇(${profileA.symbol} ⊗ ${profileB.symbol})`,
+      covarianceRatio: existing.covarianceRatio ?? -0.45,
+      constructiveSynthesisIndex: existing.constructiveSynthesisIndex ?? 0.82,
+      crossInterferenceDiagnosis: existing.crossInterferenceDiagnosis || `Interference pattern between ${profileA.label} and ${profileB.label}: dynamic resonance across ontological tensor.`,
+      synthesizedTheorem: existing.synthesizedTheorem || `Theorem of Cross-Metric Synthesis: The interaction of ${profileA.symbol} and ${profileB.symbol} maps the operational boundary where dogmatic friction transmutes into eidetic clarity.`,
+      dialecticalResolution: existing.dialecticalResolution || `Balance the dialectical tension between ${profileA.label} and ${profileB.label} through systematic subtractive epoché.`
+    };
+  }
+
+  return {
+    pairKey,
+    metricAId,
+    metricBId,
+    title: `${profileA.label} vs. ${profileB.label}`,
+    divergenceVector: `∇(${profileA.symbol} ⊗ ${profileB.symbol})`,
+    covarianceRatio: -0.52,
+    constructiveSynthesisIndex: 0.85,
+    crossInterferenceDiagnosis: `Differential analysis between ${profileA.label} (${profileA.symbol}) and ${profileB.label} (${profileB.symbol}) reveals an orthogonal tension between formal representation and apophatic clearing.`,
+    synthesizedTheorem: `Theorem of Bipolar Ontological Resonance: The conjugate variance of ${profileA.symbol} and ${profileB.symbol} delineates the exact operational perimeter wherein conceptual reification collapses to reveal unconditioned potentiality.`,
+    dialecticalResolution: `Operate the two metrics as complementary boundary operators: let ${profileA.symbol} audit structural limits while ${profileB.symbol} preserves affective and phenomenological lucidity.`
+  };
 };

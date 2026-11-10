@@ -1,0 +1,11 @@
+# HYPERMARKMAP Ω — DEFECT LEDGER
+
+| Defect ID | Severity | Description | Root Cause | Resolution Status | Fix Verification |
+|---|---|---|---|---|---|
+| **DEF-001** | High | Runtime CDN dependency (`jsdelivr`) caused fatal render timeout if external CDN failed or was blocked. | Live code dynamically appended `<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js">` with a 12-second timeout. | **Resolved** | Replaced runtime CDN injection with local bundled `d3` (v7.9.0) imported from `node_modules`. |
+| **DEF-002** | High | Visual rendering failed to match target aesthetic in `image_2e60a0.jpg`. | Nodes were plain SVG circles with solid fill and flat line strokes without glow or depth. | **Resolved** | Built multi-pass SVG filters (`feGaussianBlur`, `feMerge`), radiant radial gradients, glowing orb halos, and neon bezier filaments. |
+| **DEF-003** | Medium | Search did not disclose hidden matching nodes inside collapsed subtrees. | Nodes in collapsed branches remained hidden from view even when matching the query. | **Resolved** | Added auto-unfolding algorithm in search engine that expands all ancestor nodes leading to matched items. |
+| **DEF-004** | Medium | No real-time Markdown editing capability; users had to upload or replace entire files. | Lack of integrated editor component. | **Resolved** | Implemented split-pane Markdown editor with real-time bidirectional AST parsing and instant map updates. |
+| **DEF-005** | Medium | Lack of depth-isolation control for dense conceptual trees. | All levels were either rendered or manually collapsed one by one. | **Resolved** | Added dynamic depth filter slider (Levels 1 to 6+) with instant visual tree clipping. |
+| **DEF-006** | Low | Missing visual feedback for collapsed branches with many children. | Collapsed nodes looked identical to childless leaves. | **Resolved** | Added glowing child-count badges (`+N`) indicating the number of collapsed descendants. |
+| **DEF-007** | Medium | Incomplete export formats (could not export high-res PNG or standalone SVG). | Canvas rasterization and XML serialization were absent. | **Resolved** | Created clean SVG serializer with embedded styles and 2x scaled HTML5 Canvas PNG rasterizer. |

@@ -27,7 +27,9 @@ import {
   ShieldAlert,
   Check,
   Wand2,
-  Info
+  Info,
+  Flame,
+  Compass
 } from 'lucide-react';
 import {
   CorpusIngestionBatch,
@@ -494,6 +496,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
   const [pastedTitle, setPastedTitle] = useState('');
   const [sourceType, setSourceType] = useState('essay');
   const [autoSuggestEpistemicTags, setAutoSuggestEpistemicTags] = useState(false);
+  const [claimClassification, setClaimClassification] = useState<'Occurrence' | 'Elevation'>('Occurrence');
   const [isProcessing, setIsProcessing] = useState(false);
   const [ingestionStep, setIngestionStep] = useState<number>(0);
   const [ingestionStepDetail, setIngestionStepDetail] = useState<string>('');
@@ -773,6 +776,7 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
           rawContent: contentWithoutFrontmatter.slice(0, 50000),
           title: title || metadata.title || fname.replace(/\.[^/.]+$/, ''),
           sourceType: metadata.sourceType || sourceType,
+          claimType: claimClassification,
           existingBatches: ingestionBatches.map(b => ({
             batchId: b.batchId,
             sha256Hash: b.sha256Hash,
@@ -797,6 +801,15 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
 
       const batchResult: CorpusIngestionBatch = await response.json();
       batchResult.rawContent = contentWithoutFrontmatter;
+
+      // Ensure extracts inherit user-selected claimClassification
+      if (batchResult.extracts) {
+        batchResult.extracts = batchResult.extracts.map(ext => ({
+          ...ext,
+          claimType: ext.claimType || claimClassification,
+          occurrenceElevationLabel: ext.occurrenceElevationLabel || claimClassification,
+        }));
+      }
 
       if (autoSuggestEpistemicTags && batchResult.extracts) {
         batchResult.extracts = batchResult.extracts.map(ext => {
@@ -1811,6 +1824,15 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                     </div>
 
                     <div className="flex items-center gap-2">
+                      {onNavigateToTab && (
+                        <button
+                          onClick={() => onNavigateToTab('balance')}
+                          className="px-3.5 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-semibold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Compass className="w-4 h-4 text-cyan-400" />
+                          <span>O/E Balance View →</span>
+                        </button>
+                      )}
                       <button
                         onClick={() => {
                           if (lastProcessedBatchId) setAuditViewMode(lastProcessedBatchId);
@@ -1923,27 +1945,92 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
               </div>
             </div>
 
-            {/* Intake Options */}
-            <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-4 flex items-center justify-between shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-500/10 border border-purple-500/30 rounded-xl">
-                  <Brain className="w-4 h-4 text-purple-400" />
+            {/* Intake Options Bar with Epistemic Match & Claim Category Toggle Switch */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Option A: Occurrence vs Elevation Ingestion Category Toggle Switch */}
+              <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-4 flex flex-col justify-between gap-3 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`p-2 rounded-xl border ${
+                      claimClassification === 'Occurrence'
+                        ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                        : 'bg-violet-500/10 border-violet-500/30 text-violet-400'
+                    }`}>
+                      {claimClassification === 'Occurrence' ? <Flame className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                    </div>
+                    <div>
+                      <h4 className="font-display text-xs uppercase tracking-wider font-bold text-white">
+                        Claim Classification Category
+                      </h4>
+                      <p className="text-[10px] font-mono text-neutral-400">
+                        {claimClassification === 'Occurrence'
+                          ? 'Phenomenological event & empirical friction'
+                          : 'Transcendent structural claim & eidetic clarity'}
+                      </p>
+                    </div>
+                  </div>
+                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                    claimClassification === 'Occurrence'
+                      ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                      : 'bg-violet-950 text-violet-300 border border-violet-800'
+                  }`}>
+                    {claimClassification.toUpperCase()}
+                  </span>
                 </div>
-                <div>
-                  <h4 className="font-display text-xs uppercase tracking-wider font-bold text-white">Auto-Suggest Epistemic Tags</h4>
-                  <p className="text-[10px] font-mono text-neutral-400">Match ingested text with existing philosophical node semantics</p>
+
+                {/* The Interactive Switch Buttons */}
+                <div className="grid grid-cols-2 gap-1.5 p-1 bg-black/60 rounded-xl border border-neutral-800 text-xs font-mono font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => setClaimClassification('Occurrence')}
+                    disabled={isProcessing}
+                    className={`py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      claimClassification === 'Occurrence'
+                        ? 'bg-amber-600 text-white shadow-[0_0_12px_rgba(245,158,11,0.35)]'
+                        : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
+                    }`}
+                  >
+                    <Flame className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Occurrence (Event)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setClaimClassification('Elevation')}
+                    disabled={isProcessing}
+                    className={`py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      claimClassification === 'Elevation'
+                        ? 'bg-violet-600 text-white shadow-[0_0_12px_rgba(139,92,246,0.35)]'
+                        : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900/60'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-violet-300" />
+                    <span>Elevation (Transcendent)</span>
+                  </button>
                 </div>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer" title="Automatically suggest epistemic status tags based on philosophical ontology node matching">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={autoSuggestEpistemicTags}
-                  onChange={(e) => setAutoSuggestEpistemicTags(e.target.checked)}
-                  disabled={isProcessing}
-                />
-                <div className="w-9 h-5 bg-neutral-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-neutral-300 after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-500"></div>
-              </label>
+
+              {/* Option B: Auto-Suggest Epistemic Tags */}
+              <div className="bg-neutral-950 border border-neutral-900 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-500/10 border border-purple-500/30 rounded-xl">
+                    <Brain className="w-4 h-4 text-purple-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-display text-xs uppercase tracking-wider font-bold text-white">Auto-Suggest Epistemic Tags</h4>
+                    <p className="text-[10px] font-mono text-neutral-400">Match ingested text with existing philosophical node semantics</p>
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer" title="Automatically suggest epistemic status tags based on philosophical ontology node matching">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={autoSuggestEpistemicTags}
+                    onChange={(e) => setAutoSuggestEpistemicTags(e.target.checked)}
+                    disabled={isProcessing}
+                  />
+                  <div className="w-9 h-5 bg-neutral-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-neutral-300 after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-500"></div>
+                </label>
+              </div>
             </div>
 
             {/* Direct Upload / Drag-and-Drop Dropzone */}
@@ -2016,6 +2103,37 @@ export const CorpusIntakeTool: React.FC<CorpusIntakeToolProps> = ({
                     <option value="personal_note">Personal Note</option>
                     <option value="aphorism">Aphorisms</option>
                   </select>
+                </div>
+
+                {/* Dedicated Toggle Switch for Pasted Text Segments */}
+                <div className="flex items-center justify-between p-2 rounded-xl bg-black/50 border border-neutral-850">
+                  <span className="text-[11px] font-mono text-neutral-400 font-medium">Categorize As:</span>
+                  <div className="flex items-center gap-1 bg-neutral-900 p-0.5 rounded-lg border border-neutral-800">
+                    <button
+                      type="button"
+                      onClick={() => setClaimClassification('Occurrence')}
+                      className={`px-2.5 py-1 rounded text-[10px] font-mono font-semibold transition-all flex items-center gap-1 cursor-pointer ${
+                        claimClassification === 'Occurrence'
+                          ? 'bg-amber-600 text-white shadow-sm'
+                          : 'text-neutral-400 hover:text-neutral-200'
+                      }`}
+                    >
+                      <Flame className="w-3 h-3 text-amber-300" />
+                      <span>Occurrence (Event)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setClaimClassification('Elevation')}
+                      className={`px-2.5 py-1 rounded text-[10px] font-mono font-semibold transition-all flex items-center gap-1 cursor-pointer ${
+                        claimClassification === 'Elevation'
+                          ? 'bg-violet-600 text-white shadow-sm'
+                          : 'text-neutral-400 hover:text-neutral-200'
+                      }`}
+                    >
+                      <Sparkles className="w-3 h-3 text-violet-300" />
+                      <span>Elevation (Claim)</span>
+                    </button>
+                  </div>
                 </div>
 
                 <input

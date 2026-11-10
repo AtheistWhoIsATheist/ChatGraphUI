@@ -67,6 +67,8 @@ export interface CanonicalChunk {
   text: string;
 }
 
+export type ClaimClassification = 'Occurrence' | 'Elevation';
+
 export interface EpistemicExtract {
   id: string;
   elementType: 'claim' | 'concept' | 'thinker' | 'quote' | 'relationship';
@@ -74,8 +76,26 @@ export interface EpistemicExtract {
   thinker?: string;
   tradition?: string;
   epistemicStatus: EpistemicStatus;
+  claimType?: ClaimClassification;
+  occurrenceElevationLabel?: ClaimClassification;
   chunkReference: string;
   provenance: string;
+}
+
+export interface IngestedClaimItem {
+  id: string;
+  text: string;
+  classification: ClaimClassification;
+  epistemicStatus?: string;
+  sourceTitle: string;
+  sourceType?: string;
+  authorOrThinker?: string;
+  timestamp?: string;
+  confidence?: number;
+  noteId?: string;
+  batchId?: string;
+  chunkRef?: string;
+  tags?: string[];
 }
 
 export interface CorpusIssueFlag {

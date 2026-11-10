@@ -31,7 +31,11 @@ import {
   PanelRightClose,
   PanelRight,
   Activity,
-  Bookmark
+  Bookmark,
+  Compass,
+  Download,
+  Upload,
+  Sparkles
 } from 'lucide-react';
 import { CosmicCosmosBackdrop } from './CosmicCosmosBackdrop';
 import { RadialStarGraph } from './RadialStarGraph';
@@ -39,6 +43,7 @@ import { CommandPalette } from './CommandPalette';
 import { ObsidianCanvasView } from './ObsidianCanvasView';
 import { InboxModal } from './InboxModal';
 import { TemplatesModal } from './TemplatesModal';
+import { J314DiscriminatorWorkbench } from './J314DiscriminatorWorkbench';
 import { INITIAL_NOTES, INITIAL_VAULT, TAG_LIST } from './data';
 import { NoteDocument, WorkspaceTabType, VaultFile } from './types';
 
@@ -54,6 +59,8 @@ import { SettingsView } from '../ANG/views/SettingsView';
 import { GateMode, BoundaryState } from '../../types/ang';
 import { Marginalia, CorpusIngestionBatch } from '../../types';
 import { DisparityHistoryChart } from '../ANG/DisparityHistoryChart';
+import { OccurrenceElevationBalanceView } from './OccurrenceElevationBalanceView';
+import { HyperMarkmapView } from '../HyperMarkmap/HyperMarkmapView';
 
 export interface NihiltheismWorkspaceProps {
   // Dialectic State
@@ -116,8 +123,29 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
   onDeleteBatch = () => {},
   onClearAllBatches = () => {}
 }) => {
-  // Vault & Notes State
-  const [notes, setNotes] = useState<Record<string, NoteDocument>>(INITIAL_NOTES);
+  // Vault & Notes State with localStorage Persistence
+  const [notes, setNotes] = useState<Record<string, NoteDocument>>(() => {
+    try {
+      const saved = localStorage.getItem('nihiltheism_vault_notes_v2');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return { ...INITIAL_NOTES, ...parsed };
+      }
+    } catch (e) {
+      // fallback to initial
+    }
+    return INITIAL_NOTES;
+  });
+
+  // Persist notes changes to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('nihiltheism_vault_notes_v2', JSON.stringify(notes));
+    } catch (e) {
+      // ignore
+    }
+  }, [notes]);
+
   const [activeTabKey, setActiveTabKey] = useState<string>('note:nihiltheism');
   const [openTabs, setOpenTabs] = useState<OpenTabItem[]>([
     { key: 'note:nihiltheism', type: 'note', title: 'Nihiltheism', noteId: 'nihiltheism' },
@@ -126,10 +154,19 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
     { key: 'tool:academic', type: 'academic', title: 'Dissertation Pipeline' }
   ]);
 
+  // Toast notification state
+  const [toastMessage, setToastMessage] = useState<{ id: string; title: string; noteId?: string } | null>(null);
+
+  const triggerToast = (title: string, noteId?: string) => {
+    setToastMessage({ id: String(Date.now()), title, noteId });
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
   // Sidebar visibilities for distraction-free focus
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(true);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
-  const [rightSidebarTab, setRightSidebarTab] = useState<'context' | 'telemetry' | 'citations'>('context');
+  const [rightSidebarTab, setRightSidebarTab] = useState<'context' | 'telemetry' | 'citations'>('telemetry');
+  const [telemetrySubMode, setTelemetrySubMode] = useState<'chart' | 'discriminator'>('chart');
 
   // Modals & Panels
   const [isInboxOpen, setIsInboxOpen] = useState(false);
@@ -185,6 +222,43 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
     setActiveTabKey(tabKey);
   };
 
+  // Commit Note to Vault from Autopsy or J314 Discriminator
+  const handleCommitNoteToVault = (newDoc: NoteDocument) => {
+    setNotes((prev) => ({
+      ...prev,
+      [newDoc.id]: newDoc
+    }));
+    triggerToast(`Elevated Note Committed: "${newDoc.title}"`, newDoc.id);
+  };
+
+  // Export & Import Vault JSON
+  const handleExportVaultJSON = () => {
+    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(notes, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute('href', dataStr);
+    downloadAnchor.setAttribute('download', `nihiltheism-vault-${new Date().toISOString().slice(0, 10)}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    triggerToast('Vault JSON backup exported successfully');
+  };
+
+  const handleImportVaultJSON = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const parsed = JSON.parse(e.target?.result as string);
+        if (typeof parsed === 'object' && parsed !== null) {
+          setNotes((prev) => ({ ...prev, ...parsed }));
+          triggerToast(`Successfully restored ${Object.keys(parsed).length} notes to vault`);
+        }
+      } catch (err) {
+        triggerToast('Failed to parse vault JSON backup file');
+      }
+    };
+    reader.readAsText(file);
+  };
+
   // Open tool helper
   const handleOpenTool = (type: WorkspaceTabType) => {
     const tabKey = `tool:${type}`;
@@ -198,7 +272,9 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
       questions: 'Aporia Registry',
       ingest: 'Source Intake',
       digest: 'Synthesis Digest',
-      settings: 'Abyssal Settings'
+      settings: 'Abyssal Settings',
+      balance: 'O/E Balance',
+      hypermarkmap: 'HyperMarkmap Ω'
     };
     if (!exists) {
       setOpenTabs((prev) => [
@@ -292,6 +368,8 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
         return <Clock size={12} className="text-teal-400" />;
       case 'settings':
         return <Settings size={12} className="text-neutral-400" />;
+      case 'balance':
+        return <Compass size={12} className="text-amber-400" />;
       default:
         return <FileText size={12} className="text-white/40" />;
     }
@@ -415,6 +493,30 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
           >
             <HelpCircle size={11} className="text-rose-400" />
             <span>Aporias</span>
+          </button>
+
+          <button
+            onClick={() => handleOpenTool('balance')}
+            className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-all flex items-center gap-1.5 ${
+              activeTab.type === 'balance'
+                ? 'bg-gradient-to-r from-amber-600/30 to-violet-600/30 text-white border border-amber-500/40 shadow-sm'
+                : 'text-white/60 hover:text-white hover:bg-white/[0.04]'
+            }`}
+          >
+            <Compass size={11} className="text-amber-400" />
+            <span>Balance</span>
+          </button>
+
+          <button
+            onClick={() => handleOpenTool('hypermarkmap')}
+            className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-all flex items-center gap-1.5 ${
+              activeTab.type === 'hypermarkmap'
+                ? 'bg-gradient-to-r from-cyan-600/30 to-violet-600/30 text-white border border-cyan-500/40 shadow-sm'
+                : 'text-white/60 hover:text-white hover:bg-white/[0.04]'
+            }`}
+          >
+            <Sparkles size={11} className="text-cyan-400" />
+            <span>HyperMarkmap Ω</span>
           </button>
         </div>
 
@@ -569,6 +671,40 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
               </button>
 
               <button
+                onClick={() => handleOpenTool('balance')}
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
+                  activeTab.type === 'balance'
+                    ? 'text-white bg-white/[0.06] font-medium'
+                    : 'text-white/60 hover:text-white hover:bg-white/[0.03]'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Compass size={13} className="text-amber-400" />
+                  <span>O/E Balance</span>
+                </div>
+                <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  Claims
+                </span>
+              </button>
+
+              <button
+                onClick={() => handleOpenTool('hypermarkmap')}
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-colors ${
+                  activeTab.type === 'hypermarkmap'
+                    ? 'text-white bg-white/[0.06] font-medium'
+                    : 'text-white/60 hover:text-white hover:bg-white/[0.03]'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Sparkles size={13} className="text-cyan-400" />
+                  <span>HyperMarkmap Ω</span>
+                </div>
+                <span className="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  Visual
+                </span>
+              </button>
+
+              <button
                 onClick={() => {
                   const today = new Date().toISOString().split('T')[0];
                   const dailyNoteId = `daily-${today}`;
@@ -691,6 +827,32 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
                   </div>
                 );
               })}
+            </div>
+
+            {/* Backup & Restore Controls */}
+            <div className="px-3 py-2 border-t border-white/[0.06] bg-black/40 flex items-center justify-between gap-1 text-[10px] font-mono">
+              <button
+                onClick={handleExportVaultJSON}
+                className="flex items-center gap-1 px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+                title="Export Vault as JSON Backup"
+              >
+                <Download size={11} />
+                <span>Backup JSON</span>
+              </button>
+
+              <label className="flex items-center gap-1 px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors cursor-pointer">
+                <Upload size={11} />
+                <span>Restore</span>
+                <input
+                  type="file"
+                  accept=".json"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleImportVaultJSON(file);
+                  }}
+                />
+              </label>
             </div>
 
             {/* Bottom Planetary Art with Epigraph Quote */}
@@ -1059,7 +1221,7 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
                   onSaveBatch={onSaveBatch}
                   onDeleteBatch={onDeleteBatch}
                   onClearAllBatches={onClearAllBatches}
-                  onNavigateToTab={() => {}}
+                  onNavigateToTab={(tab) => handleOpenTool(tab as any)}
                 />
               </div>
             )}
@@ -1091,6 +1253,27 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
             {activeTab.type === 'settings' && (
               <div className="w-full h-full overflow-y-auto">
                 <SettingsView />
+              </div>
+            )}
+
+            {/* 11. Occurrence vs Elevation Claims Balance View */}
+            {activeTab.type === 'balance' && (
+              <div className="w-full h-full overflow-hidden">
+                <OccurrenceElevationBalanceView
+                  ingestionBatches={ingestionBatches}
+                  vaultNotes={notes}
+                  onOpenNote={handleOpenNote}
+                  onNavigateToTab={handleOpenTool}
+                  onSaveBatch={onSaveBatch}
+                  onCommitNoteToVault={handleCommitNoteToVault}
+                />
+              </div>
+            )}
+
+            {/* 12. HyperMarkmap Visual Engine */}
+            {activeTab.type === 'hypermarkmap' && (
+              <div className="w-full h-full overflow-hidden">
+                <HyperMarkmapView />
               </div>
             )}
           </div>
@@ -1216,78 +1399,123 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
               </>
             )}
 
-            {/* 2. Telemetry Mode: Boundary θ, Gate Mode, Invariants */}
+            {/* 2. Telemetry Mode: Boundary θ, Gate Mode, Disparity Index & J314 Discriminator */}
             {rightSidebarTab === 'telemetry' && (
               <div className="space-y-3">
-                <div className="obsidian-card rounded-2xl p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Activity size={14} className="text-violet-400" />
-                      <h4 className="text-xs font-semibold text-white font-mono uppercase">
-                        Boundary θ Tension
-                      </h4>
-                    </div>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                      {boundaryState.mode}
-                    </span>
-                  </div>
+                {/* Segmented Mode Selector: Disparity Index vs J314 Discriminator */}
+                <div className="flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-white/10 font-mono text-xs">
+                  <button
+                    onClick={() => setTelemetrySubMode('chart')}
+                    className={`flex-1 py-1.5 rounded-lg text-center transition-all flex items-center justify-center gap-1.5 ${
+                      telemetrySubMode === 'chart'
+                        ? 'bg-amber-500/20 text-amber-200 border border-amber-500/40 shadow-sm font-bold'
+                        : 'text-white/50 hover:text-white'
+                    }`}
+                  >
+                    <Activity size={12} className={telemetrySubMode === 'chart' ? 'text-amber-400' : ''} />
+                    <span>Disparity Index</span>
+                  </button>
 
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-xs font-mono text-white/60">
-                      <span>Dissolution Coefficient</span>
-                      <span className="text-white font-bold">{boundaryState.theta.toFixed(2)} / 1.00</span>
-                    </div>
-                    <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-violet-500 via-indigo-500 to-cyan-400 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min(100, boundaryState.theta * 100)}%` }}
-                      />
-                    </div>
-                    <p className="text-[10px] text-white/40 font-mono pt-1">
-                      Apophatic discipline holding. Zero paradox contamination detected.
-                    </p>
-                  </div>
+                  <button
+                    onClick={() => setTelemetrySubMode('discriminator')}
+                    className={`flex-1 py-1.5 rounded-lg text-center transition-all flex items-center justify-center gap-1.5 ${
+                      telemetrySubMode === 'discriminator'
+                        ? 'bg-violet-600/30 text-white border border-violet-400 shadow-sm font-bold'
+                        : 'text-white/50 hover:text-white'
+                    }`}
+                  >
+                    <Compass size={12} className={telemetrySubMode === 'discriminator' ? 'text-violet-300' : ''} />
+                    <span>J314 Engine</span>
+                  </button>
                 </div>
 
-                <div className="obsidian-card rounded-2xl p-4 space-y-2.5">
-                  <h4 className="text-xs font-semibold text-white font-mono uppercase">Gate Mode</h4>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {(['AUTO', 'DEEP', 'FAST'] as GateMode[]).map((mode) => (
-                      <button
-                        key={mode}
-                        onClick={() => onGateModeChange(mode)}
-                        className={`py-1.5 rounded-lg text-xs font-mono transition-all border ${
-                          gateMode === mode
-                            ? 'bg-violet-600/30 text-white border-violet-400 shadow-sm font-bold'
-                            : 'border-white/10 text-white/60 hover:text-white'
-                        }`}
-                      >
-                        {mode}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                {telemetrySubMode === 'chart' ? (
+                  <>
+                    <div className="obsidian-card rounded-2xl p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Activity size={14} className="text-violet-400" />
+                          <h4 className="text-xs font-semibold text-white font-mono uppercase">
+                            Boundary θ Tension
+                          </h4>
+                        </div>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          {boundaryState.mode}
+                        </span>
+                      </div>
 
-                <div className="obsidian-card rounded-2xl p-4 space-y-2 text-xs font-mono text-white/70">
-                  <div className="flex justify-between py-1 border-b border-white/5">
-                    <span>Aporias Active</span>
-                    <span className="text-white">{aporias.length}</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-white/5">
-                    <span>Ontology Nodes</span>
-                    <span className="text-white">{displayNodes.length || 12}</span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                    <span>Corpus Ingested</span>
-                    <span className="text-white">{corpusTexts.length || 5} works</span>
-                  </div>
-                </div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs font-mono text-white/60">
+                          <span>Dissolution Coefficient</span>
+                          <span className="text-white font-bold">{boundaryState.theta.toFixed(2)} / 1.00</span>
+                        </div>
+                        <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-violet-500 via-indigo-500 to-cyan-400 rounded-full transition-all duration-500"
+                            style={{ width: `${Math.min(100, boundaryState.theta * 100)}%` }}
+                          />
+                        </div>
+                        <p className="text-[10px] text-white/40 font-mono pt-1">
+                          Apophatic discipline holding. Zero paradox contamination detected.
+                        </p>
+                      </div>
+                    </div>
 
-                {/* Live Animated Visual Disparity Index */}
-                <DisparityHistoryChart
-                  className="w-full rounded-2xl border border-white/10"
-                  onSelectGraphNode={onSelectNode}
-                />
+                    <div className="obsidian-card rounded-2xl p-4 space-y-2.5">
+                      <h4 className="text-xs font-semibold text-white font-mono uppercase">Gate Mode</h4>
+                      <div className="grid grid-cols-3 gap-1.5">
+                        {(['AUTO', 'DEEP', 'FAST'] as GateMode[]).map((mode) => (
+                          <button
+                            key={mode}
+                            onClick={() => onGateModeChange(mode)}
+                            className={`py-1.5 rounded-lg text-xs font-mono transition-all border ${
+                              gateMode === mode
+                                ? 'bg-violet-600/30 text-white border-violet-400 shadow-sm font-bold'
+                                : 'border-white/10 text-white/60 hover:text-white'
+                            }`}
+                          >
+                            {mode}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="obsidian-card rounded-2xl p-4 space-y-2 text-xs font-mono text-white/70">
+                      <div className="flex justify-between py-1 border-b border-white/5">
+                        <span>Aporias Active</span>
+                        <span className="text-white">{aporias.length}</span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-white/5">
+                        <span>Ontology Nodes</span>
+                        <span className="text-white">{displayNodes.length || 12}</span>
+                      </div>
+                      <div className="flex justify-between py-1">
+                        <span>Corpus Ingested</span>
+                        <span className="text-white">{corpusTexts.length || 5} works</span>
+                      </div>
+                    </div>
+
+                    {/* Live Animated Visual Disparity Index with Multi-Node Comparison & Live Vault Reactivity */}
+                    <DisparityHistoryChart
+                      className="w-full rounded-2xl border border-white/10"
+                      onSelectGraphNode={onSelectNode}
+                      vaultNotesCount={Object.keys(notes).length}
+                      activeAporiasCount={aporias.length}
+                      dialecticMessagesCount={messages.length}
+                      boundaryTheta={boundaryState.theta}
+                      onCommitToVault={handleCommitNoteToVault}
+                      onOpenNote={handleOpenNote}
+                    />
+                  </>
+                ) : (
+                  /* J314 Occurrence-Elevation Discriminator Workbench */
+                  <J314DiscriminatorWorkbench
+                    vaultNotes={notes}
+                    onCommitToVault={handleCommitNoteToVault}
+                    onOpenNote={handleOpenNote}
+                    className="w-full shadow-lg"
+                  />
+                )}
               </div>
             )}
 
@@ -1394,6 +1622,31 @@ export const NihiltheismWorkspace: React.FC<NihiltheismWorkspaceProps> = ({
           handleOpenNote(newDoc.id);
         }}
       />
+
+      {/* 5. Ambient Floating Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#0e091c] border border-amber-500/40 text-neutral-100 shadow-[0_0_25px_rgba(245,158,11,0.25)] animate-fade-in font-mono text-xs">
+          <div className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+          <span className="font-sans font-medium text-white">{toastMessage.title}</span>
+          {toastMessage.noteId && (
+            <button
+              onClick={() => {
+                if (toastMessage.noteId) handleOpenNote(toastMessage.noteId);
+                setToastMessage(null);
+              }}
+              className="px-2.5 py-1 rounded bg-amber-500 hover:bg-amber-400 text-black font-bold text-[11px] transition-colors ml-1"
+            >
+              Open Note
+            </button>
+          )}
+          <button
+            onClick={() => setToastMessage(null)}
+            className="text-white/40 hover:text-white ml-1"
+          >
+            <X size={13} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

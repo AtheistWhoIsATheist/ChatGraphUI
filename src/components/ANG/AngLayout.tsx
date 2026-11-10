@@ -93,6 +93,16 @@ export const AngLayout: React.FC<AngLayoutProps> = ({
             <Sparkles size={12} className="text-violet-400" /> Visual Core
           </button>
           <button 
+            onClick={() => onNavigate('hypermarkmap')} 
+            className={`neumorphic-button px-3 py-1.5 text-xs font-mono flex items-center gap-1.5 transition-all border ${
+              activeView === 'hypermarkmap' 
+                ? 'border-cyan-400/60 text-cyan-200 bg-cyan-600/20 font-bold shadow-[0_0_12px_rgba(0,240,255,0.3)]' 
+                : 'border-white/10 text-white/80 hover:text-cyan-300'
+            }`}
+          >
+            <Sparkles size={12} className="text-cyan-400" /> HyperMarkmap Ω
+          </button>
+          <button 
             onClick={() => onNavigate('graph')} 
             className={`neumorphic-button px-3 py-1.5 text-xs font-mono flex items-center gap-1.5 transition-all border ${
               activeView === 'graph' 

@@ -6,7 +6,7 @@ export interface BoundaryState {
   mode: BoundaryMode;
 }
 
-export type AngView = 'workspace' | 'chat' | 'graph' | 'library' | 'questions' | 'ingest' | 'digest' | 'settings' | 'academic';
+export type AngView = 'workspace' | 'chat' | 'graph' | 'library' | 'questions' | 'ingest' | 'digest' | 'settings' | 'academic' | 'balance' | 'hypermarkmap';
 
 export interface AporiaNode {
   id: string;

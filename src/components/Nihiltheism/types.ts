@@ -33,6 +33,7 @@ export interface NoteDocument {
   contentMarkdown?: string;
   linkedMentions?: LinkedMention[];
   isCustom?: boolean;
+  claimCategory?: 'Occurrence' | 'Elevation';
 }
 
 export interface VaultFile {
@@ -55,7 +56,7 @@ export interface GraphStarNode {
   description?: string;
 }
 
-export type WorkspaceTabType = 'note' | 'academic' | 'graph' | 'canvas' | 'chat' | 'library' | 'questions' | 'ingest' | 'digest' | 'settings';
+export type WorkspaceTabType = 'note' | 'academic' | 'graph' | 'canvas' | 'chat' | 'library' | 'questions' | 'ingest' | 'digest' | 'settings' | 'balance' | 'hypermarkmap';
 
 export interface WorkspaceTab {
   id: string;
